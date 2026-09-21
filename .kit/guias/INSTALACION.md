@@ -8,6 +8,8 @@ propio profesor, que te irá explicando cada cosa y pidiéndote permiso.
 > - **Hace falta una suscripción de pago de Claude.** El plan gratuito no sirve. Con el plan **Pro**
 >   (unos 20 $ al mes) es suficiente.
 > - Una cuenta de **GitHub**, que es gratis.
+> - El programa **Obsidian**, también gratis, que es donde leerás tus apuntes. No hace falta que lo
+>   instales tú: lo hace tu profesor durante la instalación.
 > - Unos **30 minutos**.
 > - Probado en **Mac**. En **Windows** debería funcionar igual, pero todavía no lo ha probado
 >   nadie: si algo falla, tu profesor te ayudará a contarlo para que se arregle.

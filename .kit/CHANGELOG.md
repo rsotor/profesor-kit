@@ -6,6 +6,11 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.5.0
+- Tu profesor instala Obsidian por ti y te guía, con las palabras exactas que ves en pantalla, para
+  abrir tu carpeta de estudio.
+- Opcional: puedes hablar con tu profesor desde dentro de Obsidian, sin abrir otra ventana.
+
 ## 0.4.0
 - Al configurar un curso puedes elegir: contarle los datos a tu profesor hablando, o rellenar con calma
   una hoja y avisarle cuando termines. Él solo te preguntará por lo que falte.

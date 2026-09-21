@@ -41,3 +41,11 @@ test('comprobar() incluye los secretos como error', () => {
   const raiz = cursoTemporal({ 'estudio/inbox/notas.txt': TOKEN_GH });
   assert.ok(comprobar(raiz).errores.some(e => e.regla === 'secreto'));
 });
+
+test('no escanea el código de los complementos de Obsidian, pero sí los ajustes de la bóveda', () => {
+  const raiz = cursoTemporal({
+    'estudio/.obsidian/plugins/terminal/main.js': `var t="${TOKEN_GH}"`,
+    'estudio/.obsidian/app.json': `{"x":"${TOKEN_GH}"}`,
+  });
+  assert.deepEqual(escanearSecretos(raiz).map(h => h.fichero), ['estudio/.obsidian/app.json']);
+});
