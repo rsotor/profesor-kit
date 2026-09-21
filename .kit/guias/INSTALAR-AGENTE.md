@@ -22,6 +22,32 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 | 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/` (Obsidian la crea al abrir la carpeta) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
 | 10 | Arranca la sesión 0 | — | dile que **cierre esta ventana, abra una terminal nueva y escriba su atajo**. Avísale antes: al abrirse le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso. Ya dentro, que escriba "empezamos" (o lanza tú `/configurar`) |
 
+## Antes de nada — ¿es su primer curso?
+
+Node, Git, `gh`, la sesión de GitHub y Obsidian se instalan **una vez para todo el ordenador**, no por
+curso. Mira si en la carpeta donde estás ya hay otro curso del kit (una carpeta hermana con
+`.kit/VERSION`), o pregúntaselo.
+
+- **Ya tiene otro curso:** comprueba los pasos 1 y 2 **de una sola vez** (`node --version`, `git --version`,
+  `gh --version`, `gh auth status`) y, si todo responde, **ve directo al paso 3**. No reinstales ni vuelvas
+  a explicar qué es cada cosa: son dos minutos, no treinta. Obsidian también lo tiene ya: en el paso 9
+  solo hay que abrir la carpeta `estudio` del curso nuevo como otra bóveda.
+- **Es el primero:** sigue la tabla entera.
+
+## Paso 1 — comprobar antes de instalar
+
+**Instala solo lo que falte, y comprueba antes de decidir que falta.** Que un comando "no exista" no
+siempre significa que el programa no esté instalado:
+
+- **En Windows, lo recién instalado no se ve en la ventana de terminal que ya estaba abierta**: el PATH
+  solo se actualiza al abrir una ventana nueva. Si `gh --version` falla pero `winget list --id GitHub.cli`
+  dice que está instalado (lo mismo con `OpenJS.NodeJS.LTS` y `Git.Git`), **no lo reinstales**: dile al
+  alumno que cierre esta ventana, abra otra, vuelva a entrar en su carpeta de cursos y te pegue otra vez
+  el texto de arranque. Retomarás donde lo dejaste, porque todo lo instalado seguirá ahí.
+- En Mac pasa menos, pero pasa tras instalar Homebrew: misma solución, ventana nueva.
+- Si la instalación se interrumpió a medias (por lo que sea), **no empieces de cero**: repasa la tabla de
+  arriba abajo comprobando cada objetivo y continúa por el primero que no se cumpla.
+
 ## Paso 2 — la sesión de GitHub
 
 `gh auth login` es interactivo: escribe un código de un solo uso y **se queda esperando**. Si lo ejecutas

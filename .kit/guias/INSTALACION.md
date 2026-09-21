@@ -168,8 +168,10 @@ Copia desde "Vas a instalarme" hasta el final del recuadro:
 Vas a instalarme un kit de estudio. Soy una persona sin perfil técnico: explícame cada cosa en una
 frase y pídeme permiso antes de instalar nada.
 
-1. Comprueba si tengo Git y GitHub CLI (gh). Instala lo que falte con el gestor de paquetes de mi
-   sistema operativo. Si acabas de instalar Git en Windows, dime que cierre y vuelva a abrir esta
+1. Comprueba primero qué tengo ya instalado: Git y GitHub CLI (gh). Instala SOLO lo que falte, con el
+   gestor de paquetes de mi sistema operativo, y no reinstales nada que ya esté. Ojo en Windows: lo
+   recién instalado no se ve en esta ventana hasta que la cierre y abra otra; antes de reinstalar algo
+   que "no aparece", mira si el gestor de paquetes ya lo tiene instalado. Si acabas de instalar Git en Windows, dime que cierre y vuelva a abrir esta
    sesión antes de seguir, y que te vuelva a pegar este mismo texto.
 2. Inicia mi sesión de GitHub por el navegador. Ojo: "gh auth login" enseña un código y se queda
    esperando, y yo no veo lo que escribe un comando tuyo hasta que termina. Así que lánzalo EN SEGUNDO
