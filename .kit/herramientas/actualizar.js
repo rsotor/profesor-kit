@@ -60,13 +60,13 @@ function actualizar({ raiz, origen }) {
   const hechas = [];
   try {
     for (const f of motorViejo.ficheros) {
-      if (!motorNuevo.ficheros.includes(f)) fs.rmSync(path.join(raiz, ...f.split('/')), { recursive: true, force: true });
+      if (!motorNuevo.ficheros.includes(f)) fs.rmSync(path.join(raiz, ...f.split('/')), { recursive: true, force: true, maxRetries: 3 });
     }
     for (const f of motorNuevo.ficheros) {
       const desde = path.join(origen, ...f.split('/'));
       const hasta = path.join(raiz, ...f.split('/'));
       if (!fs.existsSync(desde)) continue;
-      fs.rmSync(hasta, { recursive: true, force: true });
+      fs.rmSync(hasta, { recursive: true, force: true, maxRetries: 3 });
       fs.mkdirSync(path.dirname(hasta), { recursive: true });
       fs.cpSync(desde, hasta, { recursive: true });
     }

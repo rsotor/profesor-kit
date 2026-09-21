@@ -16,7 +16,7 @@ function instalarSkills({ raiz, destino = '.claude/skills' }) {
     : [];
 
   const retiradas = anteriores.filter(n => !actuales.includes(n));
-  for (const nombre of [...retiradas, ...actuales]) fs.rmSync(path.join(dirDestino, nombre), { recursive: true, force: true });
+  for (const nombre of [...retiradas, ...actuales]) fs.rmSync(path.join(dirDestino, nombre), { recursive: true, force: true, maxRetries: 3 });
   for (const nombre of actuales) fs.cpSync(path.join(origen, nombre), path.join(dirDestino, nombre), { recursive: true });
 
   fs.writeFileSync(ficheroManifiesto, JSON.stringify(actuales, null, 2) + '\n');

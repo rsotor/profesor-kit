@@ -12,7 +12,7 @@ function prepararCurso({ raiz, subir, llm = 'claude-code' }) {
   const borrado = [];
   for (const nombre of SOLO_DEL_KIT) {
     const ruta = path.join(raiz, nombre);
-    if (fs.existsSync(ruta)) { fs.rmSync(ruta, { recursive: true, force: true }); borrado.push(nombre); }
+    if (fs.existsSync(ruta)) { fs.rmSync(ruta, { recursive: true, force: true, maxRetries: 3 }); borrado.push(nombre); }
   }
 
   let remotoEliminado = false;
