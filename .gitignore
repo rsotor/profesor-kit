@@ -1,5 +1,24 @@
+# Copias de las skills: la única fuente es .kit/skills/ (las regenera instalar-skills.js)
+.claude/skills/
+.agents/skills/
+.codex/skills/
+.gemini/skills/
+
+# Secretos: nunca entran en el repo
+.env
+.env.*
+*.pem
+*.key
+
+# Obsidian: la configuración local no se comparte
+.obsidian/workspace*.json
+.obsidian/cache
+
 # Banco de pruebas del kit: cursos de usar y tirar para probar instalaciones. Nunca se sube.
 pruebas-local/
 
 # Sistema
 .DS_Store
+Thumbs.db
+*.tmp
+*~
