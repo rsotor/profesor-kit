@@ -67,3 +67,12 @@ test('cli: lo cuenta en llano, y sale con 1 si algo no tiene arreglo', t => {
   assert.equal(cli([], raiz), 1);
   assert.match(lineas.join('\n'), /No he podido recuperar: AGENTS\.md/);
 });
+
+test('la guía de uso solo se echa en falta cuando la configuración está completa', () => {
+  const sinConfigurar = cursoTemporal(MOTOR);
+  assert.ok(!ausentes(sinConfigurar).includes('estudio/como-usar-tu-profesor.md'));
+  const configurado = cursoTemporal({ ...MOTOR, 'config/ajustes.json': JSON.stringify({ configuracion: { curso: true, estilo: true, nivel: true } }) });
+  assert.deepEqual(ausentes(configurado), ['estudio/como-usar-tu-profesor.md']);
+  escribir(configurado, { 'estudio/como-usar-tu-profesor.md': '# Cómo usar tu profesor\n' });
+  assert.deepEqual(ausentes(configurado), []);
+});

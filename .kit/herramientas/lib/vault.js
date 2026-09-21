@@ -9,9 +9,12 @@ const CARPETA_ALUMNO = 'estudio';
 // Carpetas del alumno que no son notas: 'inbox' es su material en bruto y 'repasos' es HTML generado.
 const OTRAS_CARPETAS_ALUMNO = ['inbox', 'repasos'];
 const RUTAS_PROTEGIDAS = ['config', CARPETA_ALUMNO];
+const GUIA_DE_USO = 'como-usar-tu-profesor.md';
 const AJUSTES_POR_DEFECTO = {
   subir_a_github: true,
   llm: 'claude-code',
+  nombre_curso: '',
+  atajo: '',
   version_datos: 1,
   configuracion: { curso: false, estilo: false, nivel: false },
   patrones_prohibidos: [],
@@ -120,7 +123,9 @@ function piezasAusentes(raiz) {
   for (const carpeta of [...CARPETAS_NOTAS, ...OTRAS_CARPETAS_ALUMNO]) {
     if (falta(`${CARPETA_ALUMNO}/${carpeta}`)) ausentes.push({ ruta: `${CARPETA_ALUMNO}/${carpeta}`, tipo: 'carpeta' });
   }
-  for (const vivo of [...FICHEROS_VIVOS, 'conceptos/_index.md']) {
+  // La guía de uso la escribe /configurar al cerrar: solo se exige cuando la configuración está completa.
+  const conGuia = leerAjustes(raiz).configuracion.nivel ? [GUIA_DE_USO] : [];
+  for (const vivo of [...FICHEROS_VIVOS, 'conceptos/_index.md', ...conGuia]) {
     if (falta(`${CARPETA_ALUMNO}/${vivo}`)) ausentes.push({ ruta: `${CARPETA_ALUMNO}/${vivo}`, tipo: 'fichero' });
   }
   return ausentes;
@@ -135,7 +140,7 @@ function leerVersion(dir) {
 }
 
 module.exports = {
-  CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, CARPETAS_NOTAS, FICHEROS_VIVOS, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
+  CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
   aPosix, baseAlumno,
   recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter,
   leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, piezasAusentes,

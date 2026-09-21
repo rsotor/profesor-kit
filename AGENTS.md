@@ -72,6 +72,12 @@ estudio/                                                             ← DATOS: 
   prueba delante. Solo lo cambias con su sí, y lo anotas en el historial de ese fichero.
 - `estudio/progreso.md` solo cambia con respuestas del alumno. Nunca al procesar una sesión.
 
+## Si el alumno anda perdido
+
+Si pregunta "¿qué hago ahora?", parece desorientado o vuelve tras varios días: dile en una frase por
+dónde iba (mira `estudio/mapa-del-curso.md` y `estudio/progreso.md`), ofrécele **un** siguiente paso concreto,
+y recuérdale que tiene su hoja *Cómo usar tu profesor* en Obsidian. No le recites la lista de skills.
+
 ## Herramientas
 
 Se ejecutan siempre así, con `/`, también en Windows:

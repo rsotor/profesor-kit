@@ -71,9 +71,25 @@ Presenta al profesor en **cinco líneas**: cómo es · por dónde empieza · qu�
 desde cero · cómo dejarle dudas. El alumno puede corregir cualquier cosa; si corrige, actualiza el
 fichero que toque.
 
+### La hoja para otro día
+
+Antes de guardar, escribe **`estudio/como-usar-tu-profesor.md`** a partir de
+`.kit/plantillas/guia-de-uso.md`. Es lo que el alumno va a abrir dentro de dos días, cuando no se
+acuerde de nada: escríbela para alguien que no sabe qué es una terminal. Rellena:
+
+| Hueco | Con qué |
+|---|---|
+| `{{NOMBRE_DEL_CURSO}}` | `nombre_curso` de `config/ajustes.json` (o el nombre de `config/curso.md`) |
+| `{{ATAJO}}` | `atajo` de `config/ajustes.json`. Si está vacío, créalo ahora con `node .kit/herramientas/crear-atajo.js --nombre <palabra>` |
+| `{{MARCADOR}}` | `marcador_dudas` de `config/profesor.md` |
+| `{{COMO_ABRIR_LA_TERMINAL}}` | Según su ordenador. Mac: "Pulsa a la vez las teclas **Cmd** y **Espacio**, escribe **Terminal** y pulsa **Intro**." Windows: "Pulsa la tecla **Windows**, escribe **PowerShell** y pulsa **Intro**." |
+
+No añadas secciones ni comandos: una pantalla, sin jerga. Puedes adaptar las frases de ejemplo de la
+tabla a su curso ("Ponme un ejercicio de la bóveda de cañón"). No dejes ningún `{{…}}` sin rellenar.
+
 Después:
 
     node .kit/herramientas/guardar.js "config: sesión 0"
 
-Y dile cuál es el siguiente paso: dejar el material de la primera clase en `estudio/inbox/` (dentro de
+Dile dónde está su hoja (es lo primero que verá en Obsidian) y cuál es el siguiente paso: dejar el material de la primera clase en `estudio/inbox/` (dentro de
 Obsidian la verá como la carpeta **inbox**) y pedir `/sesion`.

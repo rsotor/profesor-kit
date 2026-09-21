@@ -101,10 +101,10 @@ test('preparar-curso: exige --subir si|no y prepara el curso', t => {
   assert.equal(cli([], raiz), 2);
   assert.equal(cli(['--subir', 'quizas'], raiz), 2);
   assert.match(salida(), /Uso:/);
-  assert.equal(cli(['--subir', 'no', '--llm', 'otro-llm'], raiz), 0);
+  assert.equal(cli(['--subir', 'no', '--llm', 'otro-llm', '--nombre', 'Historia del Arte'], raiz), 0);
   assert.match(salida(), /Borrado: docs.*ajustes creados: sí/);
   const ajustes = JSON.parse(fs.readFileSync(path.join(raiz, 'config', 'ajustes.json'), 'utf8'));
-  assert.deepEqual([ajustes.subir_a_github, ajustes.llm], [false, 'otro-llm']);
+  assert.deepEqual([ajustes.subir_a_github, ajustes.llm, ajustes.nombre_curso], [false, 'otro-llm', 'Historia del Arte']);
   assert.equal(cli(['--subir', 'si'], raiz), 0);
   assert.match(salida(), /Borrado: nada.*ya existían/);
 });
