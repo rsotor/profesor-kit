@@ -12,7 +12,7 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 | # | Objetivo | Cómo se comprueba | Ejemplo |
 |---|---|---|---|
 | 1 | Node LTS (22 o superior), Git y `gh` instalados | `node --version` · `git --version` · `gh --version` | Mac: `brew install node git gh` · Windows: `winget install OpenJS.NodeJS.LTS Git.Git GitHub.cli` |
-| 2 | Sesión de GitHub iniciada | `gh auth status` en verde | `gh auth login` por navegador. **Nunca un token.** |
+| 2 | Sesión de GitHub iniciada, **con la cuenta a la que se invitó al alumno** | `gh auth status` en verde y `gh api repos/rsotor/profesor-kit --jq .name` responde | ver abajo. **Nunca un token.** |
 | 3 | El curso tiene nombre, y está creado desde la plantilla dentro de la carpeta de cursos del alumno | existe `<carpeta>/.kit/VERSION` | ver abajo |
 | 4 | Git sabe quién es el alumno | `git config user.name` y `git config user.email` devuelven algo | ver abajo |
 | 5 | Curso limpio y ajustes creados | existe `config/ajustes.json`; no existen `docs/` ni `.github/` | `node .kit/herramientas/preparar-curso.js --subir si --nombre "<nombre del curso>"` (o `--subir no`) |
@@ -21,6 +21,28 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 | 8 | Todo sano y guardado | `node .kit/herramientas/comprobar.js` dice "Curso sano" | `node .kit/herramientas/guardar.js "curso: instalación"` |
 | 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/` (Obsidian la crea al abrir la carpeta) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
 | 10 | Arranca la sesión 0 | — | dile que **cierre esta ventana, abra una terminal nueva y escriba su atajo**. Avísale antes: al abrirse le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso. Ya dentro, que escriba "empezamos" (o lanza tú `/configurar`) |
+
+## Paso 2 — la sesión de GitHub
+
+`gh auth login` es interactivo: escribe un código de un solo uso y **se queda esperando**. Si lo ejecutas
+como un comando normal, el alumno no ve el código hasta que el comando termina, y no termina hasta que
+él mete el código. Hazlo así:
+
+1. Lánzalo **en segundo plano**: `gh auth login --web -h github.com -p https`
+   (`-p https` hace que git use la sesión de `gh`; sin él, puede intentar SSH y fallar al subir).
+2. Lee su salida en cuanto aparezca. Trae dos cosas: un **código de 8 caracteres** (`XXXX-XXXX`) y la
+   dirección `https://github.com/login/device`. `gh` **no abre el navegador** en este modo: ábrelo tú
+   (`open <url>` en Mac, `start <url>` en Windows).
+3. Dile el código con claridad y qué va a ver: pegar el código, pulsar *Continue* y *Authorize*.
+4. Espera a que el proceso termine y comprueba con `gh auth status`.
+
+**Plan B**, si no puedes lanzar procesos en segundo plano o algo falla: que abra **otra ventana de
+terminal**, pegue ahí ese mismo comando, siga lo que le diga y vuelva a decirte "hecho".
+
+**Si ya tenía sesión iniciada** (`gh auth status` en verde antes de empezar): comprueba que es la cuenta a
+la que se invitó, leyendo el kit (`gh api repos/rsotor/profesor-kit --jq .name`). Un **404** aquí casi
+nunca es "falta la invitación": suele ser **otra cuenta activa**. Enséñale las cuentas que ve
+`gh auth status` y, si procede, `gh auth switch --user <la suya>`.
 
 ## Paso 3 — nombre y creación del curso
 

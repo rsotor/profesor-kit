@@ -171,13 +171,20 @@ frase y pídeme permiso antes de instalar nada.
 1. Comprueba si tengo Git y GitHub CLI (gh). Instala lo que falte con el gestor de paquetes de mi
    sistema operativo. Si acabas de instalar Git en Windows, dime que cierre y vuelva a abrir esta
    sesión antes de seguir, y que te vuelva a pegar este mismo texto.
-2. Ejecuta "gh auth login" para que inicie sesión por el navegador. Nunca me pidas un token ni una
-   contraseña, y si te pego uno, no lo uses y avísame.
+2. Inicia mi sesión de GitHub por el navegador. Ojo: "gh auth login" enseña un código y se queda
+   esperando, y yo no veo lo que escribe un comando tuyo hasta que termina. Así que lánzalo EN SEGUNDO
+   PLANO con: gh auth login --web -h github.com -p https
+   lee su salida en cuanto aparezca, dime el código de 8 caracteres, ábreme tú la página
+   https://github.com/login/device en el navegador y espera a que yo lo confirme. Si no puedes lanzar
+   comandos en segundo plano, pídeme que abra otra ventana de terminal y pegue ahí ese mismo comando.
+   Nunca me pidas un token ni una contraseña, y si te pego uno, no lo uses y avísame.
 3. Cuando "gh auth status" esté en verde, lee la guía de instalación del repositorio privado
    rsotor/profesor-kit con este comando y sigue sus pasos uno a uno:
    gh api repos/rsotor/profesor-kit/contents/.kit/guias/INSTALAR-AGENTE.md -H "Accept: application/vnd.github.raw"
-4. Si ese comando da un error 404, no tengo acceso todavía: dime que acepte la invitación que me
-   llegó por correo, y no sigas.
+4. Si ese comando da un error 404, no sigas. Mira primero con "gh auth status" con qué cuenta de GitHub
+   he iniciado sesión y dímelo: si tengo varias, puede que esté activa otra (se cambia con
+   "gh auth switch"). Si la cuenta es la correcta, es que no he aceptado la invitación que me llegó por
+   correo.
 ```
 
 ---
