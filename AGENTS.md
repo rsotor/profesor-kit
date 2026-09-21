@@ -74,7 +74,7 @@ Nunca hagas `git add`, `git commit` ni `git push` a mano: `guardar.js` es quien 
 subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no bloquean.
 
 Mensajes de guardado: `sesion(<id>): <tema>` · `dudas: N resueltas` · `examen: <alcance>` ·
-`ejercicio: <concepto>` · `config: <qué cambió>`.
+`ejercicio: <concepto>` · `repaso: <alcance>` · `config: <qué cambió>`.
 
 ## Material del alumno
 
