@@ -3,7 +3,7 @@ marcador_dudas: "@@"
 longitud_nota: una pantalla
 orden_explicacion: [problema, ejemplo, nombre, formula, error-tipico]
 flashcards_por_sesion: 3-6
-tipo_ejercicio: sin-configurar
+tipo_ejercicio: segun-concepto   # lo decide la tabla de /ejercicio; cámbialo solo si prefieres siempre un formato
 tono: sin-configurar
 lente: desactivada
 ---
