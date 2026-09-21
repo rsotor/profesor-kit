@@ -1,0 +1,26 @@
+'use strict';
+const { spawnSync } = require('node:child_process');
+
+function intentarGit(raiz, args) {
+  const r = spawnSync('git', args, { cwd: raiz, encoding: 'utf8' });
+  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+}
+
+function git(raiz, args) {
+  const r = intentarGit(raiz, args);
+  if (!r.ok) throw new Error(`git ${args[0]} falló: ${r.salida}`);
+  return r.salida;
+}
+
+const esRepo = raiz => intentarGit(raiz, ['rev-parse', '--is-inside-work-tree']).ok;
+const hayCambios = raiz => git(raiz, ['status', '--porcelain']) !== '';
+const shaActual = raiz => git(raiz, ['rev-parse', 'HEAD']);
+const tieneIdentidad = raiz =>
+  intentarGit(raiz, ['config', 'user.name']).ok && intentarGit(raiz, ['config', 'user.email']).ok;
+
+function urlOrigen(raiz) {
+  const r = intentarGit(raiz, ['remote', 'get-url', 'origin']);
+  return r.ok ? r.salida : null;
+}
+
+module.exports = { git, intentarGit, esRepo, hayCambios, shaActual, tieneIdentidad, urlOrigen };
