@@ -2759,6 +2759,37 @@ Sospechosos habituales, por orden: separadores de ruta en alguna comparación de
 
 ---
 
+### Task 14b: Reorganizar la estructura — lo del alumno en una sola carpeta (pendiente del OK de Roberto)
+
+**Por qué (Roberto, 2026-09-21):** la raíz de un curso mezcla motor y material de estudio. Un usuario
+no técnico puede borrar o mover piezas sin querer. Se hace **antes de la 1.0.0**: hoy no hay alumnos
+y no hace falta migración; después costaría una.
+
+**Estructura objetivo:**
+
+```
+curso-X/
+├── AGENTS.md  CLAUDE.md  GEMINI.md     ← se quedan en la raíz: es donde los busca cada LLM
+├── .kit/                               ← motor; INSTALACION.md e INSTALAR-AGENTE.md pasan a .kit/guias/
+├── config/
+└── estudio/                            ← todo lo del alumno; es la carpeta que abre en Obsidian
+    ├── inbox/ conceptos/ sesiones/ ejercicios/ examenes/ flashcards/ repasos/
+    └── progreso.md  formulario.md  mapa-del-curso.md
+```
+
+Nombre de la carpeta (`estudio/`) a confirmar por Roberto.
+
+- [ ] **Step 1:** `lib/vault.js`: constante `CARPETA_ALUMNO = 'estudio'`; `listarNotas`, `listarConceptos` y los ficheros vivos cuelgan de ella; `RUTAS_PROTEGIDAS = ['config', 'estudio']`. Tests de `vault`, y `ayuda.js` crea el curso mínimo bajo `estudio/`.
+- [ ] **Step 2:** `comprobar.js` lee y resuelve enlaces dentro de `estudio/` (las rutas de los hallazgos se muestran relativas a `estudio/`, que es lo que el alumno ve en Obsidian). Tests de estructura y avisos.
+- [ ] **Step 3: red de seguridad.** Regla nueva `pieza-ausente` en `comprobar.js`: falta un fichero de `motor.json`, una carpeta de `estudio/` o un fichero vivo. Herramienta nueva `reparar.js` (con `cli` testeable y permiso en `.claude/settings.json`): restaura desde git lo que falte (`git checkout HEAD -- <ruta>`) y recrea las carpetas vacías; nunca pisa un fichero que exista. `AGENTS.md`: si `comprobar.js` da `pieza-ausente`, el profesor ejecuta `reparar.js` y se lo cuenta al alumno en una frase. Tests: borrar `AGENTS.md`, borrar `estudio/conceptos/`, mover `progreso.md` a la raíz.
+- [ ] **Step 4:** mover las guías a `.kit/guias/`; actualizar `README.md`, `motor.json`, el comando `gh api …/contents/.kit/guias/INSTALAR-AGENTE.md` del texto de arranque, `preparar-curso.js` y el paso de Obsidian ("abre la carpeta `estudio/` como bóveda").
+- [ ] **Step 5:** skills, plantillas y `AGENTS.md`: todas las rutas del alumno pasan a `estudio/…`. El test `generico` gana una comprobación: ninguna skill nombra `conceptos/`, `sesiones/`, etc. sin el prefijo `estudio/`.
+- [ ] **Step 6:** `secretos.js` sigue escaneando **todo** el repo, no solo `estudio/`.
+- [ ] **Step 7:** línea en `.kit/CHANGELOG.md`, suite completa con cobertura ≥ 80 %, PR, `tests-ok` en verde, merge.
+- [ ] **Step 8:** repetir en `pruebas-local/` una instalación + `/sesion` corta para confirmar que las skills escriben en `estudio/`.
+
+---
+
 ### Task 15: Prueba de instalación en limpio (criterio 2) — necesita a Roberto
 
 > **Decidido por Roberto (2026-09-21): el kit se queda en `rsotor/profesor-kit`, cuenta personal.**
