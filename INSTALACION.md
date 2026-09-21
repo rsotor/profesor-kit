@@ -62,7 +62,9 @@ y pulsa Intro.
 
 **Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. A partir de aquí, síguele
 a él: te hará preguntas sencillas y acabará con una sesión de unos 20 minutos para conocer tu
-curso y cómo aprendes.
+curso y cómo aprendes. En algún momento te pedirá que cierres Claude y lo vuelvas a abrir dentro
+de la carpeta de tu curso; al hacerlo te preguntará **si confías en esa carpeta**: di que sí, es
+la tuya.
 
 **Si ves otra cosa:** si Claude dice que no encuentra el kit o ve un error 404, es que la
 invitación del paso 1 no está aceptada.
@@ -114,7 +116,8 @@ Claude te espera en la terminal, copia **todo** el [texto de arranque](#texto-de
 y pulsa Intro.
 
 **Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. A partir de aquí, síguele
-a él. En algún momento te pedirá que cierres Claude y lo vuelvas a abrir: es normal.
+a él. En algún momento te pedirá que cierres Claude y lo vuelvas a abrir: es normal. Al abrirlo
+en la carpeta de tu curso te preguntará **si confías en esa carpeta**: di que sí, es la tuya.
 
 **Si ves otra cosa:** si Claude dice que no encuentra el kit o ve un error 404, es que la
 invitación del paso 1 no está aceptada.
