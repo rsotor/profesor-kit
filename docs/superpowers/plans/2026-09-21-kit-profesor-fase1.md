@@ -2792,6 +2792,7 @@ Crea y borra un repo real en GitHub: **pedir confirmación a Roberto antes de em
 - [ ] **Step 2:** Elegir con Roberto una sesión ya procesada en el vault (propuesta: `M01 b1·c02`, porque trae conceptos, fórmulas y ejercicios interactivos) y procesar **el mismo PDF** con `/sesion`.
 - [ ] **Step 3: Comparación automática** — un script de usar y tirar en `docs/superpowers/pruebas/` que saque: conceptos detectados en cada lado (y la diferencia), duplicados (tiene que ser cero), presencia de las marcas de origen, y resultado de `comprobar.js`.
 - [ ] **Step 4: Comparación de calidad** — Roberto lee las dos versiones, nota a nota, y decide si el kit **suple o mejora** al vault. Cada "aquí el vault es mejor" se convierte en un cambio concreto en una skill o en `AGENTS.md`, y se repite el Step 2.
+- [ ] **Step 5a:** Proteger `main` para que solo entre por PR (pedido por Roberto el 2026-09-21; no tiene GitHub Pro). **Verificar antes en docs.github.com** si en un repo privado de plan gratuito la regla se aplica de verdad o solo se puede crear sin efecto; si no se aplica, decírselo con la fuente y decidir.
 - [ ] **Step 5:** Cuando Roberto dé el visto bueno: `.kit/VERSION` → `1.0.0`, entrada en el CHANGELOG, etiqueta `v1.0.0`, y aviso al primer compañero. **Su instalación manda sobre todas las pruebas anteriores.**
 
 ---
