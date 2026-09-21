@@ -29,13 +29,15 @@ function prepararCurso({ raiz, subir, llm = 'claude-code' }) {
   return { borrado, remotoEliminado, ajustesCreados };
 }
 
-if (require.main === module) {
-  const args = process.argv.slice(2);
+function cli(args, raiz) {
   const valor = nombre => { const i = args.indexOf(nombre); return i >= 0 ? args[i + 1] : undefined; };
   const subir = valor('--subir');
-  if (subir !== 'si' && subir !== 'no') { console.error('Uso: node .kit/herramientas/preparar-curso.js --subir si|no [--llm <nombre>]'); process.exit(2); }
-  const r = prepararCurso({ raiz: path.resolve(__dirname, '..', '..'), subir: subir === 'si', llm: valor('--llm') });
+  if (subir !== 'si' && subir !== 'no') { console.error('Uso: node .kit/herramientas/preparar-curso.js --subir si|no [--llm <nombre>]'); return 2; }
+  const r = prepararCurso({ raiz, subir: subir === 'si', llm: valor('--llm') });
   console.log(`Curso preparado. Borrado: ${r.borrado.join(', ') || 'nada'} · remoto del kit eliminado: ${r.remotoEliminado ? 'sí' : 'no'} · ajustes creados: ${r.ajustesCreados ? 'sí' : 'ya existían'}`);
+  return 0;
 }
 
-module.exports = { prepararCurso };
+if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
+
+module.exports = { prepararCurso, cli };

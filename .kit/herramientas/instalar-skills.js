@@ -23,11 +23,13 @@ function instalarSkills({ raiz, destino = '.claude/skills' }) {
   return { instaladas: actuales, retiradas };
 }
 
-if (require.main === module) {
-  const args = process.argv.slice(2);
+function cli(args, raiz) {
   const i = args.indexOf('--destino');
-  const r = instalarSkills({ raiz: path.resolve(__dirname, '..', '..'), destino: i >= 0 ? args[i + 1] : undefined });
+  const r = instalarSkills({ raiz, destino: i >= 0 ? args[i + 1] : undefined });
   console.log(`Skills instaladas: ${r.instaladas.join(', ') || 'ninguna'}${r.retiradas.length ? ` · retiradas: ${r.retiradas.join(', ')}` : ''}`);
+  return 0;
 }
 
-module.exports = { instalarSkills };
+if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
+
+module.exports = { instalarSkills, cli };

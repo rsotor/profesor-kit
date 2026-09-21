@@ -106,21 +106,27 @@ function novedades(origen, versionActual) {
   return lineas.slice(inicio < 0 ? 0 : inicio, fin < 0 ? lineas.length : fin).join('\n').trim();
 }
 
-if (require.main === module) {
-  const args = process.argv.slice(2);
-  const raiz = path.resolve(__dirname, '..', '..');
+// `descargarKit` se inyecta para poder probar el flujo sin red.
+function cli(args, raiz, descargarKit = descargar) {
   const i = args.indexOf('--origen');
-  const origen = i >= 0 ? path.resolve(args[i + 1]) : descargar(v.leerMotor(raiz).repo);
+  const origen = i >= 0 ? path.resolve(args[i + 1]) : descargarKit(v.leerMotor(raiz).repo);
   const de = v.leerVersion(raiz);
   const a = v.leerVersion(origen);
 
-  if (de === a) console.log(`Ya tienes la última versión (${de}).`);
-  else if (!args.includes('--aplicar')) console.log(`Tienes la ${de}; hay una ${a}.\n\n${novedades(origen, de)}\n\nPara aplicarla: node .kit/herramientas/actualizar.js --aplicar`);
-  else {
-    const r = actualizar({ raiz, origen });
-    if (r.actualizado) console.log(`Actualizado de ${r.de} a ${r.a}.${r.migraciones.length ? ` Datos migrados: ${r.migraciones.join(', ')}.` : ''}`);
-    else { console.log(`No se ha actualizado: todo sigue como estaba, en la ${r.de}. Motivo: ${r.detalle || r.motivo}`); process.exit(1); }
+  if (de === a) { console.log(`Ya tienes la última versión (${de}).`); return 0; }
+  if (!args.includes('--aplicar')) {
+    console.log(`Tienes la ${de}; hay una ${a}.\n\n${novedades(origen, de)}\n\nPara aplicarla: node .kit/herramientas/actualizar.js --aplicar`);
+    return 0;
   }
+  const r = actualizar({ raiz, origen });
+  if (r.actualizado) {
+    console.log(`Actualizado de ${r.de} a ${r.a}.${r.migraciones.length ? ` Datos migrados: ${r.migraciones.join(', ')}.` : ''}`);
+    return 0;
+  }
+  console.log(`No se ha actualizado: todo sigue como estaba, en la ${r.de}. Motivo: ${r.detalle || r.motivo}`);
+  return 1;
 }
 
-module.exports = { actualizar, validarMotor, novedades };
+if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
+
+module.exports = { actualizar, validarMotor, novedades, cli };

@@ -9,6 +9,10 @@ configuración.
 - **Probado** en Claude Code y en Mac. Con otros LLMs de terminal y en Windows es compatible pero
   está sin probar: si algo falla, tu profesor te ayudará a contarlo con una issue en este repo.
 - **¿Vas a desarrollarlo?** El diseño y el plan están en `docs/superpowers/`. Tests:
-  `node --test ".kit/herramientas/tests/*.test.js"`.
+  `node --test ".kit/herramientas/tests/*.test.js"`. `main` solo recibe cambios por PR, y el CI
+  exige todos los tests en verde en Mac, Windows y Linux y una **cobertura mínima del 80 %** de
+  las herramientas (check obligatorio: `tests-ok`).
+- **Versiones:** todo cambio que note el alumno lleva su línea en `.kit/CHANGELOG.md`. El kit está
+  en `0.x` hasta que sustituya al curso con el que nació; entonces, `1.0.0`.
 
 Este fichero, `docs/` y `.github/` son del repo del kit: desaparecen al crear un curso.

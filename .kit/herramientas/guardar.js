@@ -33,12 +33,15 @@ const EXPLICACION = {
   'sin-repo': 'Esta carpeta no es un repositorio git.',
 };
 
-if (require.main === module) {
-  const mensaje = process.argv[2];
-  if (!mensaje) { console.error('Uso: node .kit/herramientas/guardar.js "<mensaje>"'); process.exit(2); }
-  const r = guardar({ raiz: path.resolve(__dirname, '..', '..'), mensaje });
-  if (!r.guardado) { console.log(EXPLICACION[r.motivo]); process.exit(r.motivo === 'sin-cambios' ? 0 : 1); }
+function cli(args, raiz) {
+  const mensaje = args[0];
+  if (!mensaje) { console.error('Uso: node .kit/herramientas/guardar.js "<mensaje>"'); return 2; }
+  const r = guardar({ raiz, mensaje });
+  if (!r.guardado) { console.log(EXPLICACION[r.motivo]); return r.motivo === 'sin-cambios' ? 0 : 1; }
   console.log(r.subido ? 'Guardado y subido a GitHub.' : `Guardado en local. No se ha subido: ${r.motivoSubida}.`);
+  return 0;
 }
 
-module.exports = { guardar };
+if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
+
+module.exports = { guardar, cli };

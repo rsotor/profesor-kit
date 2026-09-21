@@ -194,14 +194,15 @@ function imprimir(informe) {
   else console.log(color(32, '\nCurso sano.'));
 }
 
-if (require.main === module) {
-  const args = process.argv.slice(2);
+// Devuelve el código de salida. `raizPorDefecto` es la carpeta del curso al que pertenece esta herramienta.
+function cli(args, raizPorDefecto) {
   const i = args.indexOf('--raiz');
-  const raiz = i >= 0 ? path.resolve(args[i + 1]) : path.resolve(__dirname, '..', '..');
-  const informe = comprobar(raiz);
+  const informe = comprobar(i >= 0 ? path.resolve(args[i + 1]) : raizPorDefecto);
   if (args.includes('--json')) console.log(JSON.stringify(informe));
   else imprimir(informe);
-  process.exit(informe.errores.length ? 1 : 0);
+  return informe.errores.length ? 1 : 0;
 }
 
-module.exports = { comprobar, slugsDelIndice };
+if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
+
+module.exports = { comprobar, slugsDelIndice, cli };
