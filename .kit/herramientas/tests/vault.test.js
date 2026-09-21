@@ -4,13 +4,13 @@ const assert = require('node:assert/strict');
 const v = require('../lib/vault');
 const { cursoTemporal } = require('./ayuda');
 
-test('listarNotas devuelve rutas relativas con / y sin config ni inbox', () => {
-  const raiz = cursoTemporal({ 'inbox/apuntes.md': 'hola' });
+test('listarNotas mira dentro de estudio/ y devuelve rutas relativas a esa carpeta, con /', () => {
+  const raiz = cursoTemporal({ 'estudio/inbox/apuntes.md': 'hola', 'conceptos/fuera-de-sitio.md': 'no es del alumno' });
   const notas = v.listarNotas(raiz);
   assert.ok(notas.includes('conceptos/alfa.md'));
   assert.ok(notas.includes('progreso.md'));
-  assert.ok(!notas.some(n => n.startsWith('config/')));
-  assert.ok(!notas.some(n => n.startsWith('inbox/')));
+  assert.ok(!notas.includes('conceptos/fuera-de-sitio.md'));
+  assert.ok(!notas.some(n => n.startsWith('config/') || n.startsWith('estudio/') || n.startsWith('inbox/')));
   assert.ok(v.listarNotas(raiz, { conInbox: true }).includes('inbox/apuntes.md'));
 });
 
@@ -41,4 +41,9 @@ test('leerAjustes aplica valores por defecto si falta el fichero', () => {
   const raiz = cursoTemporal();
   require('node:fs').rmSync(require('node:path').join(raiz, 'config', 'ajustes.json'));
   assert.deepEqual(v.leerAjustes(raiz), { subir_a_github: true, llm: 'claude-code', version_datos: 1, configuracion: { curso: false, estilo: false, nivel: false }, patrones_prohibidos: [] });
+});
+
+test('las rutas protegidas son config y la carpeta del alumno entera', () => {
+  assert.deepEqual(v.RUTAS_PROTEGIDAS, ['config', 'estudio']);
+  assert.equal(v.CARPETA_ALUMNO, 'estudio');
 });

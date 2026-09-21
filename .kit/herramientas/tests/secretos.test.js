@@ -11,12 +11,12 @@ const CLAVE_ANT = 'sk-ant-' + 'x'.repeat(40);
 const CLAVE_PRIV = '-----BEGIN ' + 'RSA PRIVATE KEY-----';
 
 test('detecta tokens en cualquier fichero de texto y no imprime el valor', () => {
-  const raiz = cursoTemporal({ 'inbox/notas.txt': `hola\nmi token es ${TOKEN_GH}\n`, 'conceptos/alfa.md': `---\ntipo: concepto\nalias: []\n---\n${CLAVE_ANT}\n` });
+  const raiz = cursoTemporal({ 'estudio/inbox/notas.txt': `hola\nmi token es ${TOKEN_GH}\n`, 'estudio/conceptos/alfa.md': `---\ntipo: concepto\nalias: []\n---\n${CLAVE_ANT}\n` });
   const h = escanearSecretos(raiz);
   assert.equal(h.length, 2);
   assert.ok(h.every(x => x.regla === 'secreto'));
   assert.ok(h.every(x => !x.detalle.includes(TOKEN_GH) && !x.detalle.includes(CLAVE_ANT)));
-  assert.match(h.find(x => x.fichero === 'inbox/notas.txt').detalle, /línea 2: token de GitHub/);
+  assert.match(h.find(x => x.fichero === 'estudio/inbox/notas.txt').detalle, /línea 2: token de GitHub/);
 });
 
 test('detecta claves privadas y ficheros .env sin ignorar', () => {
@@ -33,11 +33,11 @@ test('respeta .gitignore cuando hay repo git', () => {
 });
 
 test('ignora binarios y texto normal', () => {
-  const raiz = cursoTemporal({ 'inbox/x.bin': `\0\0${TOKEN_GH}`, 'inbox/y.md': 'sk-corto ghp_corto AKIA' });
+  const raiz = cursoTemporal({ 'estudio/inbox/x.bin': `\0\0${TOKEN_GH}`, 'estudio/inbox/y.md': 'sk-corto ghp_corto AKIA' });
   assert.deepEqual(escanearSecretos(raiz), []);
 });
 
 test('comprobar() incluye los secretos como error', () => {
-  const raiz = cursoTemporal({ 'inbox/notas.txt': TOKEN_GH });
+  const raiz = cursoTemporal({ 'estudio/inbox/notas.txt': TOKEN_GH });
   assert.ok(comprobar(raiz).errores.some(e => e.regla === 'secreto'));
 });

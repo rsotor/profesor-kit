@@ -20,7 +20,7 @@ test('guarda en local y no sube si subir_a_github es false', () => {
   const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(false) });
   iniciarGit(raiz);
   const remoto = conOrigen(raiz);
-  escribir(raiz, { 'formulario.md': '# Formulario\n\nnuevo\n' });
+  escribir(raiz, { 'estudio/formulario.md': '# Formulario\n\nnuevo\n' });
   const r = guardar({ raiz, mensaje: 'sesion(s02): prueba' });
   assert.equal(r.guardado, true);
   assert.equal(r.subido, false);
@@ -32,7 +32,7 @@ test('sube cuando subir_a_github es true', () => {
   const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
   iniciarGit(raiz);
   const remoto = conOrigen(raiz);
-  escribir(raiz, { 'formulario.md': '# Formulario\n\nnuevo\n' });
+  escribir(raiz, { 'estudio/formulario.md': '# Formulario\n\nnuevo\n' });
   const r = guardar({ raiz, mensaje: 'x' });
   assert.equal(r.subido, true);
   assert.equal(git(remoto, 'rev-parse', 'main'), git(raiz, 'rev-parse', 'HEAD'));
@@ -41,7 +41,7 @@ test('sube cuando subir_a_github es true', () => {
 test('con errores no guarda', () => {
   const raiz = cursoTemporal();
   iniciarGit(raiz);
-  escribir(raiz, { 'sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
+  escribir(raiz, { 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
   const r = guardar({ raiz, mensaje: 'x' });
   assert.equal(r.guardado, false);
   assert.equal(r.motivo, 'errores');
@@ -52,7 +52,7 @@ test('con permitirErrores guarda, pero un secreto nunca se sube', () => {
   const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
   iniciarGit(raiz);
   const remoto = conOrigen(raiz);
-  escribir(raiz, { 'inbox/x.txt': 'ghp_' + 'a1B2'.repeat(9) });
+  escribir(raiz, { 'estudio/inbox/x.txt': 'ghp_' + 'a1B2'.repeat(9) });
   const r = guardar({ raiz, mensaje: 'copia', permitirErrores: true });
   assert.equal(r.guardado, true);
   assert.equal(r.subido, false);
@@ -69,7 +69,7 @@ test('sin cambios no crea commit', () => {
 test('sin remoto guarda en local y lo dice', () => {
   const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
   iniciarGit(raiz);
-  escribir(raiz, { 'formulario.md': '# F\n\nx\n' });
+  escribir(raiz, { 'estudio/formulario.md': '# F\n\nx\n' });
   const r = guardar({ raiz, mensaje: 'x' });
   assert.equal(r.guardado, true);
   assert.equal(r.subido, false);

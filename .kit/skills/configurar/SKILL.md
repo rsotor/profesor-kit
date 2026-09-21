@@ -20,7 +20,7 @@ inventes: lo que el alumno no sepa se queda como `**TODO:**` en el fichero.
 
 ## Bloque A — El curso → `config/curso.md`
 
-1. Pide el programa del curso. Lo mejor es el PDF en `inbox/`; si no lo tiene, que te lo cuente.
+1. Pide el programa del curso. Lo mejor es el PDF en `estudio/inbox/`; si no lo tiene, que te lo cuente.
 2. Rellena cada sección de `config/curso.md`: nombre, de qué va, objetivo (examen oficial ·
    cultura general · uso profesional), temario por bloques, fechas.
 3. **Cómo numera el centro las clases.** Pide un ejemplo real ("¿cómo se llama la última clase que
@@ -75,4 +75,5 @@ Después:
 
     node .kit/herramientas/guardar.js "config: sesión 0"
 
-Y dile cuál es el siguiente paso: dejar el material de la primera clase en `inbox/` y pedir `/sesion`.
+Y dile cuál es el siguiente paso: dejar el material de la primera clase en `estudio/inbox/` (dentro de
+Obsidian la verá como la carpeta **inbox**) y pedir `/sesion`.

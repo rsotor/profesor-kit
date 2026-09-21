@@ -13,15 +13,26 @@ Las reglas propias del dominio de `config/curso.md` se cumplen siempre.
 
 ## Motor y datos
 
-- **Motor** (no se edita; lo reemplaza `/actualizar`): este fichero, `CLAUDE.md`, `GEMINI.md`,
-  `INSTALACION.md`, `INSTALAR-AGENTE.md`, `.claude/settings.json` y `.kit/`.
-- **Datos** (son del alumno): `config/` y todo lo demás — `inbox/`, `conceptos/`, `sesiones/`,
-  `ejercicios/`, `examenes/`, `flashcards/`, `repasos/` y los ficheros vivos de la raíz.
+```
+AGENTS.md · CLAUDE.md · GEMINI.md · .claude/settings.json · .kit/   ← MOTOR: no se edita; lo reemplaza /actualizar
+config/                                                              ← DATOS: cómo es el curso, el profesor y el alumno
+estudio/                                                             ← DATOS: todo el material del alumno
+```
+
+- **`estudio/` es la carpeta que el alumno abre en Obsidian.** Desde ahí no ve el motor ni `config/`, y así
+  no puede borrarlos ni moverlos sin querer. Todo lo que generes para él va dentro: `estudio/inbox/`,
+  `estudio/conceptos/`, `estudio/sesiones/`, `estudio/ejercicios/`, `estudio/examenes/`, `estudio/flashcards/`,
+  `estudio/repasos/` y los ficheros vivos (`estudio/progreso.md`, `estudio/formulario.md`, `estudio/mapa-del-curso.md`).
+- **Dentro de las notas, los enlaces y las rutas son relativos a `estudio/`**, que es la raíz de su bóveda:
+  se escribe `[[flashcards/<id>]]` y `fuente: inbox/<fichero>`, nunca con `estudio/` delante. Y cuando le
+  hables de un fichero, nómbralo como él lo ve en Obsidian: "la nota **<slug>**, en la carpeta **conceptos**".
 - Si el alumno pide cambiar cómo trabajas, el cambio va a `config/profesor.md`, nunca al motor.
+- **Si falta algo** (`comprobar.js` da `pieza-ausente`: alguien borró o movió una carpeta o un fichero),
+  ejecuta `node .kit/herramientas/reparar.js` y cuéntale en una frase qué ha vuelto. No lo recrees a mano.
 
 ## Reglas que no se pueden desactivar
 
-1. **Un concepto = una nota, para siempre.** Antes de crear una nota se lee `conceptos/_index.md`
+1. **Un concepto = una nota, para siempre.** Antes de crear una nota se lee `estudio/conceptos/_index.md`
    entero, slugs y `alias`. Si existe con otro nombre, se amplía y se añade el alias. Si dudas de
    si dos cosas son el mismo concepto, pregunta.
 2. **Cada cosa lleva la marca de su origen:**
@@ -59,7 +70,7 @@ Las reglas propias del dominio de `config/curso.md` se cumplen siempre.
   ángulo sin esperar a que lo pida, y se lo dices.
 - **Cambios de estilo:** si la prueba contradice `config/profesor.md`, lo **propones** con la
   prueba delante. Solo lo cambias con su sí, y lo anotas en el historial de ese fichero.
-- `progreso.md` solo cambia con respuestas del alumno. Nunca al procesar una sesión.
+- `estudio/progreso.md` solo cambia con respuestas del alumno. Nunca al procesar una sesión.
 
 ## Herramientas
 
@@ -69,6 +80,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 |---|---|
 | Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
+| Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |
 
 Nunca hagas `git add`, `git commit` ni `git push` a mano: `guardar.js` es quien decide si se puede
 subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no bloquean.
@@ -78,7 +90,7 @@ Mensajes de guardado: `sesion(<id>): <tema>` · `dudas: N resueltas` · `examen:
 
 ## Material del alumno
 
-`inbox/` es suyo. Formatos recomendados: PDF, markdown, texto. Si no puedes leer un fichero,
+`estudio/inbox/` es suyo. Formatos recomendados: PDF, markdown, texto. Si no puedes leer un fichero,
 dilo y pide otro formato (un PPTX se lee mejor exportado a PDF). Nunca inventes su contenido.
 
 ## Feedback al kit

@@ -4,8 +4,11 @@ const path = require('node:path');
 
 const CARPETAS_NOTAS = ['conceptos', 'sesiones', 'ejercicios', 'examenes', 'flashcards'];
 const FICHEROS_VIVOS = ['progreso.md', 'formulario.md', 'mapa-del-curso.md'];
-// 'repasos' es HTML generado, no notas: no se escanea, pero es del alumno y ningún motor puede pisarlo.
-const RUTAS_PROTEGIDAS = ['config', 'inbox', 'repasos', ...CARPETAS_NOTAS, ...FICHEROS_VIVOS];
+// Todo lo del alumno vive en una sola carpeta: es la que abre en Obsidian, y así no ve ni toca el motor.
+const CARPETA_ALUMNO = 'estudio';
+// Carpetas del alumno que no son notas: 'inbox' es su material en bruto y 'repasos' es HTML generado.
+const OTRAS_CARPETAS_ALUMNO = ['inbox', 'repasos'];
+const RUTAS_PROTEGIDAS = ['config', CARPETA_ALUMNO];
 const AJUSTES_POR_DEFECTO = {
   subir_a_github: true,
   llm: 'claude-code',
@@ -28,7 +31,11 @@ function recorrer(dir, filtro, excluir = new Set()) {
   return salida;
 }
 
+const baseAlumno = raiz => path.join(raiz, CARPETA_ALUMNO);
+
+// Las rutas que devuelve son relativas a `estudio/`: es lo que el alumno ve en Obsidian.
 function listarNotas(raiz, { conInbox = false } = {}) {
+  raiz = baseAlumno(raiz);
   const carpetas = conInbox ? [...CARPETAS_NOTAS, 'inbox'] : CARPETAS_NOTAS;
   const esMd = n => n.endsWith('.md');
   const notas = carpetas.flatMap(c => recorrer(path.join(raiz, c), esMd));
@@ -39,7 +46,7 @@ function listarNotas(raiz, { conInbox = false } = {}) {
 }
 
 function listarConceptos(raiz) {
-  const dir = path.join(raiz, 'conceptos');
+  const dir = path.join(baseAlumno(raiz), 'conceptos');
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir)
     .filter(n => n.endsWith('.md') && n !== '_index.md')
@@ -99,6 +106,26 @@ function leerMarcador(raiz) {
   return (fm && fm.marcador_dudas) || '@@';
 }
 
+// Lo que un curso necesita para funcionar y no está: piezas del motor, carpetas del alumno y ficheros
+// vivos. Rutas relativas a la raíz del curso, con /.
+function piezasAusentes(raiz) {
+  const ausentes = [];
+  const falta = rel => !fs.existsSync(path.join(raiz, ...rel.split('/')));
+  const ficheroMotor = path.join(raiz, '.kit', 'motor.json');
+  if (fs.existsSync(ficheroMotor)) {
+    for (const rel of JSON.parse(fs.readFileSync(ficheroMotor, 'utf8')).ficheros) {
+      if (falta(rel)) ausentes.push({ ruta: rel, tipo: 'motor' });
+    }
+  }
+  for (const carpeta of [...CARPETAS_NOTAS, ...OTRAS_CARPETAS_ALUMNO]) {
+    if (falta(`${CARPETA_ALUMNO}/${carpeta}`)) ausentes.push({ ruta: `${CARPETA_ALUMNO}/${carpeta}`, tipo: 'carpeta' });
+  }
+  for (const vivo of [...FICHEROS_VIVOS, 'conceptos/_index.md']) {
+    if (falta(`${CARPETA_ALUMNO}/${vivo}`)) ausentes.push({ ruta: `${CARPETA_ALUMNO}/${vivo}`, tipo: 'fichero' });
+  }
+  return ausentes;
+}
+
 function leerMotor(dir) {
   return JSON.parse(fs.readFileSync(path.join(dir, '.kit', 'motor.json'), 'utf8'));
 }
@@ -108,7 +135,8 @@ function leerVersion(dir) {
 }
 
 module.exports = {
-  CARPETAS_NOTAS, FICHEROS_VIVOS, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO, aPosix,
+  CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, CARPETAS_NOTAS, FICHEROS_VIVOS, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
+  aPosix, baseAlumno,
   recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter,
-  leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion,
+  leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, piezasAusentes,
 };

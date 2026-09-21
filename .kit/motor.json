@@ -5,8 +5,6 @@
     "AGENTS.md",
     "CLAUDE.md",
     "GEMINI.md",
-    "INSTALACION.md",
-    "INSTALAR-AGENTE.md",
     ".claude/settings.json",
     ".kit"
   ]

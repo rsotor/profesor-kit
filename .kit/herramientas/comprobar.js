@@ -6,12 +6,13 @@ const { escanearSecretos } = require('./lib/secretos');
 
 const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidian', 'docs', 'node_modules', 'pruebas-local']);
 
-const leer = (raiz, rel) => fs.readFileSync(path.join(raiz, ...rel.split('/')), 'utf8');
-const existe = (raiz, rel) => fs.existsSync(path.join(raiz, ...rel.split('/')));
+// Rutas relativas a la carpeta del alumno (`estudio/`), que es lo que él ve.
+const leer = (raiz, rel) => fs.readFileSync(path.join(v.baseAlumno(raiz), ...rel.split('/')), 'utf8');
+const existe = (raiz, rel) => fs.existsSync(path.join(v.baseAlumno(raiz), ...rel.split('/')));
 
 function comprobarEnlaces(raiz, notas, informe) {
   const nombres = new Set(
-    v.recorrer(raiz, n => n.endsWith('.md'), FUERA_DE_ENLACES).map(r => path.basename(r, '.md'))
+    v.recorrer(v.baseAlumno(raiz), n => n.endsWith('.md'), FUERA_DE_ENLACES).map(r => path.basename(r, '.md'))
   );
   for (const nota of notas) {
     const texto = v.sinCodigo(leer(raiz, nota));
@@ -75,7 +76,7 @@ function comprobarProgreso(raiz, informe) {
 }
 
 function comprobarMapa(raiz, informe) {
-  const dir = path.join(raiz, 'sesiones');
+  const dir = path.join(v.baseAlumno(raiz), 'sesiones');
   if (!fs.existsSync(dir)) return;
   const mapa = existe(raiz, 'mapa-del-curso.md') ? leer(raiz, 'mapa-del-curso.md') : '';
   for (const n of fs.readdirSync(dir)) {
@@ -158,7 +159,7 @@ function comprobarDuplicados(raiz, informe) {
 }
 
 function comprobarEjerciciosSueltos(raiz, declarados, informe) {
-  const dir = path.join(raiz, 'ejercicios');
+  const dir = path.join(v.baseAlumno(raiz), 'ejercicios');
   if (!fs.existsSync(dir)) return;
   for (const n of fs.readdirSync(dir)) {
     if (n.endsWith('.html') && !declarados.has(n.slice(0, -5))) {
@@ -167,8 +168,15 @@ function comprobarEjerciciosSueltos(raiz, declarados, informe) {
   }
 }
 
+function comprobarPiezas(raiz, informe) {
+  for (const p of v.piezasAusentes(raiz)) {
+    informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
+  }
+}
+
 function comprobar(raiz) {
   const informe = { errores: [], avisos: [] };
+  comprobarPiezas(raiz, informe);
   const notas = v.listarNotas(raiz);
   comprobarEnlaces(raiz, notas, informe);
   comprobarIndice(raiz, informe);

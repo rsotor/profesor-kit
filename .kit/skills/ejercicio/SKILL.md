@@ -44,7 +44,7 @@ forma que enseñe algo —idealmente invirtiéndose.
 Si no se mueve, **dilo y para.** Forzar un ejercicio para que el concepto "tenga uno" es peor
 que no tenerlo: entrena a mirar la solución en vez de razonar.
 
-Si el alumno lo pide porque **está fallando algo** (`progreso.md` en 🟡 o 🔴), lee antes su
+Si el alumno lo pide porque **está fallando algo** (`estudio/progreso.md` en 🟡 o 🔴), lee antes su
 nota y `config/alumno.md`: el ejercicio tiene que atacar el error concreto, no el concepto en
 general.
 
@@ -65,7 +65,7 @@ tablas, enunciados— es andamiaje para esa pregunta.
 | tiene parámetros que se pueden mover y el resultado se recalcula (cuantitativo, con umbral o punto donde el veredicto se invierte) | **HTML interactivo**: controles para cada parámetro, el reto pregunta antes de mostrar, y plantea casos distintos cada vez | tocar el parámetro y ver invertirse el resultado es lo que fija el mecanismo |
 | es una decisión, una clasificación con casos frontera o un procedimiento con pasos (tangible, pero sin nada que recalcular) | **HTML tipo formulario**: el alumno elige o rellena, y la corrección explica **por qué** falla la opción equivocada | se puede comprobar solo, sin esperar al profesor |
 | pide argumentar, interpretar o comparar (respuesta abierta) | **Markdown**: caso con condiciones + pregunta + respuesta plegada que dice qué condición cambiaría el veredicto; el alumno contesta y el profesor corrige en la conversación | un formulario no sabe corregir un argumento |
-| pide producir algo (un texto, un esquema, un cálculo largo, código) | **Markdown con enunciado y criterios de corrección** plegados; el alumno entrega su fichero en `ejercicios/entregas/` y el profesor lo corrige contra los criterios | lo que se evalúa es lo producido |
+| pide producir algo (un texto, un esquema, un cálculo largo, código) | **Markdown con enunciado y criterios de corrección** plegados; el alumno entrega su fichero en `estudio/ejercicios/entregas/` y el profesor lo corrige contra los criterios | lo que se evalúa es lo producido |
 
 Si dos formatos valen, manda `tipo_ejercicio` de `config/profesor.md`. Si ninguno encaja,
 propón otro y explica por qué: la tabla es una guía, no un corsé.
@@ -108,15 +108,15 @@ sitios, y `node .kit/herramientas/comprobar.js` valida que no falte el primero:
    declara y cada uno explica qué se ve *desde su lado* (no se copia el mismo párrafo).
 2. **Ejercicio → concepto**: el ejercicio enlaza de vuelta a la nota o notas, no solo a la
    sesión de la que salió.
-3. **`ejercicios/<id-de-sesion>.md`** de la sesión de la que salga, con su versión a mano. Si
-   nace suelto, va a `ejercicios/extra.md`.
-4. **`ejercicios/_index.md`**: fila en las dos tablas —por ejercicio y por concepto—, con *qué
+3. **`estudio/ejercicios/<id-de-sesion>.md`** de la sesión de la que salga, con su versión a mano. Si
+   nace suelto, va a `estudio/ejercicios/extra.md`.
+4. **`estudio/ejercicios/_index.md`**: fila en las dos tablas —por ejercicio y por concepto—, con *qué
    se descubre fallándolo*. Es el único sitio donde se ve qué practica qué sin abrir nada.
 
 ### 7. Lo que aprende el profesor
 
 Un fallo en un ejercicio es una prueba. Va a `config/alumno.md` citando el ejercicio, y mueve
-el eje *aplicación* de `progreso.md`.
+el eje *aplicación* de `estudio/progreso.md`.
 
 ### 8. Cerrar
 
