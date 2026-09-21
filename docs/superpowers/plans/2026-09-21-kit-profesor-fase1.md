@@ -2790,6 +2790,49 @@ Nombre de la carpeta (`estudio/`) a confirmar por Roberto.
 
 ---
 
+### Task 14c: Nombre del curso, atajo de terminal y guía de uso para el día 3 (pedido por Roberto, 2026-09-21)
+
+**El problema:** la instalación deja al alumno con el profesor funcionando, pero no le dice **qué hacer
+dos días después**: cómo se abre, qué se le pide, dónde deja el material. Y si tiene varios cursos,
+necesita distinguirlos y abrir cada uno sin saber qué es `cd`. El usuario de referencia es una persona
+sin ningún perfil técnico.
+
+**Diseño:**
+
+1. **Nombre del curso.** `INSTALAR-AGENTE.md` pregunta "¿cómo quieres llamar a este curso?" y deriva dos
+   cosas: la carpeta `~/cursos/<nombre-en-kebab>/` y el **atajo**, una sola palabra corta sin acentos
+   (p. ej. `historia`). Los dos se guardan en `config/ajustes.json` (`nombre_curso`, `atajo`). Si ya
+   existe otro curso con ese atajo, se pide otro.
+2. **Atajo de terminal: el alumno escribe `historia` y se abre su profesor en su curso.** Herramienta
+   nueva `crear-atajo.js --nombre <atajo>`: escribe un lanzador en `~/.local/bin/` —la carpeta donde el
+   instalador de Claude Code deja `claude`, que ya está en el PATH en Mac y en Windows—: un script
+   ejecutable en Mac/Linux y un `.cmd` en Windows que entran en la carpeta del curso y abren el LLM.
+   **No se toca el perfil de la shell** (`.zshrc`, `$PROFILE`): es frágil, distinto en cada sistema, y en
+   Windows la política de ejecución puede impedir que el perfil se cargue. Reglas: idempotente; nunca
+   pisa un fichero que no sea un lanzador del kit (lleva una marca); se niega si ya existe un comando
+   con ese nombre en el PATH; avisa si `~/.local/bin` no está en el PATH. El comando del LLM sale de
+   `ajustes.json` (`llm`), así vale para otros LLMs.
+3. **Guía de uso personalizada**, `estudio/como-usar-tu-profesor.md` (dentro de `estudio/` para que la
+   vea en Obsidian). La genera `/configurar` en su cierre, desde `.kit/plantillas/guia-de-uso.md`,
+   rellenando nombre del curso, atajo, sistema operativo y marcador de dudas. Escrita para quien no
+   sabe qué es una terminal. Contenido: **cómo abrir a tu profesor** (abrir la terminal paso a paso,
+   escribir el atajo) · **lo que puedes pedirle, con frases normales** ("he dejado los apuntes de hoy",
+   "tengo dudas", "ponme un ejercicio de…", "hazme un test", "quiero repasar", "deshaz lo último",
+   "¿hay mejoras?") · **dónde dejo el material** · **cómo dejo una duda** mientras leo · **cómo se cierra**
+   · **si algo va raro** (decírselo: él lo repara). Una pantalla; sin jerga; sin barras ni comandos
+   salvo el atajo.
+4. `INSTALAR-AGENTE.md` termina diciéndole dónde está la guía, y `AGENTS.md` añade: si el alumno parece
+   perdido o pregunta "¿qué hago ahora?", se le remite a su guía y se le ofrece el siguiente paso.
+
+- [ ] **Step 1:** `crear-atajo.js` con `cli` testeable (carpeta de destino y plataforma inyectables) + tests: crea el lanzador en Mac y en Windows, es idempotente, no pisa un fichero ajeno, rechaza nombres no válidos y nombres que ya son un comando, avisa si la carpeta no está en el PATH. Permiso en `.claude/settings.json`.
+- [ ] **Step 2:** `nombre_curso` y `atajo` en `AJUSTES_POR_DEFECTO` y en `preparar-curso.js` (`--nombre`, `--atajo`).
+- [ ] **Step 3:** `.kit/plantillas/guia-de-uso.md` y el paso de cierre de `/configurar`; `comprobar.js` la cuenta como pieza del alumno **solo si** `configuracion.nivel` es `true`.
+- [ ] **Step 4:** `INSTALAR-AGENTE.md` (pregunta del nombre, paso del atajo con su comprobación, mención final de la guía), `INSTALACION.md` (una frase: "a partir de mañana solo tendrás que escribir una palabra") y `AGENTS.md`.
+- [ ] **Step 5:** CHANGELOG, suite con cobertura ≥ 80 %, PR, `tests-ok` en verde, merge.
+- [ ] **Step 6:** prueba real en `pruebas-local/` con un `HOME` de mentira: crear dos cursos con atajos distintos, abrir cada uno con su atajo, y leer la guía generada con ojos de quien no sabe qué es una terminal.
+
+---
+
 ### Task 15: Prueba de instalación en limpio (criterio 2) — necesita a Roberto
 
 > **Decidido por Roberto (2026-09-21): el kit se queda en `rsotor/profesor-kit`, cuenta personal.**
