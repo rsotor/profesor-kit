@@ -51,19 +51,29 @@ terminal. Ciérrala del todo (`Cmd + Q`) y ábrela otra vez.
 
 ### Paso 3 — Arrancar al profesor
 
-En la terminal, pega estas tres líneas, una a una. Crean una carpeta para tus cursos, entran en ella y
-abren Claude **dentro de esa carpeta**, para que solo trabaje ahí y no en todo tu ordenador:
+Primero decide **dónde quieres guardar tus cursos**. Tu profesor trabajará solo dentro de esa carpeta,
+no en todo tu ordenador.
+
+**Lo más fácil:** una carpeta `cursos` en tu carpeta personal. Pega estas tres líneas, una a una:
 
     mkdir -p ~/cursos
     cd ~/cursos
     claude
+
+**Si prefieres otro sitio** (por ejemplo, dentro de Documentos):
+
+1. Crea la carpeta con el Finder, donde quieras, y llámala `cursos`. Evita las carpetas que se suben solas
+   a la nube (iCloud, Dropbox, Google Drive): dan problemas.
+2. En la terminal escribe `cd` seguido de **un espacio**, y sin pulsar Intro, **arrastra la carpeta desde
+   el Finder hasta la ventana de la terminal**: se escribe sola la dirección. Ahora sí, pulsa Intro.
+3. Escribe `claude` y pulsa Intro.
 
 La primera vez, Claude abrirá el navegador para que inicies sesión con tu cuenta. Cuando veas que
 Claude te espera en la terminal, copia **todo** el [texto de arranque](#texto-de-arranque), pégalo
 y pulsa Intro.
 
 **Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. Te preguntará cómo quieres
-llamar al curso y **dónde guardarlo**: te propondrá esta misma carpeta y puedes elegir otra. A partir de aquí, síguele
+llamar al curso, y lo guardará en la carpeta que acabas de elegir. A partir de aquí, síguele
 a él: te hará preguntas sencillas y acabará con una sesión de unos 20 minutos para conocer tu
 curso y cómo aprendes. En algún momento te pedirá que cierres Claude y lo vuelvas a abrir dentro
 de la carpeta de tu curso; al hacerlo te preguntará **si confías en esa carpeta**: di que sí, es
@@ -111,19 +121,33 @@ PowerShell.
 
 ### Paso 3 — Arrancar al profesor
 
-En PowerShell, pega estas tres líneas, una a una. Crean una carpeta para tus cursos, entran en ella y
-abren Claude **dentro de esa carpeta**, para que solo trabaje ahí y no en todo tu ordenador:
+Primero decide **dónde quieres guardar tus cursos**. Tu profesor trabajará solo dentro de esa carpeta,
+no en todo tu ordenador.
+
+**Lo más fácil:** una carpeta `cursos` en tu carpeta personal. Pega estas tres líneas, una a una:
 
     mkdir $HOME\cursos -Force
     cd $HOME\cursos
     claude
+
+**Si prefieres otro sitio:**
+
+1. Crea la carpeta con el Explorador de archivos, donde quieras, y llámala `cursos`. **Ojo: en Windows,
+   *Documentos* y *Escritorio* suelen subirse solos a OneDrive**, y eso da problemas: mejor fuera de ahí.
+2. Entra en esa carpeta con el Explorador, haz **clic derecho en un hueco vacío** y elige **"Abrir en
+   Terminal"**. Se abre una ventana nueva que ya está dentro de tu carpeta: usa esa a partir de ahora.
+   - *Si no te aparece esa opción:* vuelve a la ventana de PowerShell de antes, escribe `cd` seguido de
+     **un espacio**, y sin pulsar Intro **arrastra la carpeta desde el Explorador hasta la ventana**: se
+     escribe sola la dirección. Pulsa Intro. (También vale clic derecho sobre la carpeta → *"Copiar como
+     ruta de acceso"*, y pegarla después de `cd `.)
+3. Escribe `claude` y pulsa Intro.
 
 La primera vez, Claude abrirá el navegador para que inicies sesión con tu cuenta. Cuando veas que
 Claude te espera en la terminal, copia **todo** el [texto de arranque](#texto-de-arranque), pégalo
 y pulsa Intro.
 
 **Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. Te preguntará cómo quieres
-llamar al curso y **dónde guardarlo**: te propondrá esta misma carpeta y puedes elegir otra. A partir de aquí, síguele
+llamar al curso, y lo guardará en la carpeta que acabas de elegir. A partir de aquí, síguele
 a él. En algún momento te pedirá que cierres Claude y lo vuelvas a abrir: es normal. Al abrirlo
 en la carpeta de tu curso te preguntará **si confías en esa carpeta**: di que sí, es la tuya.
 

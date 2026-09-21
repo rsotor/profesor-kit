@@ -29,22 +29,19 @@ que las confirme:
 
 - **La carpeta del curso:** el nombre en minúsculas, sin acentos y con guiones (`historia-del-arte`). Si
   ya existe una con ese nombre, es otro curso suyo: pide otro nombre.
-- **Dónde se guarda.** Estás trabajando dentro de una carpeta que el alumno creó solo para sus cursos
-  (normalmente `cursos`, en su carpeta personal): **no estás en su carpeta personal ni debes trabajar
-  ahí**. Por defecto el curso se crea **aquí**. Confírmalo: *"Voy a guardar tu curso en esta carpeta,
-  `<ruta>`. ¿Te va bien, o prefieres otro sitio?"*. Si no le importa, no insistas: con el atajo nunca va
-  a necesitar saber dónde está.
-  - **Si prefiere otro sitio**, créalo allí. Vas a necesitar permiso para trabajar fuera de esta carpeta:
-    explícaselo en una frase antes de pedirlo. Si ya tiene otros cursos instalados, lo natural es la
-    carpeta donde están (lo dice el lanzador de cualquier atajo suyo).
-  - **Si se abrió el LLM directamente en la carpeta personal** (no siguió la guía): crea tú la carpeta
-    `cursos`, entra en ella y sigue desde ahí.
-  - **Si elige una carpeta sincronizada con la nube, avísale antes de seguir.** Señales: la ruta contiene
-    `OneDrive`, `iCloud`, `Mobile Documents`, `Dropbox` o `Google Drive`; en Windows, *Documentos* y
-    *Escritorio* suelen estar dentro de OneDrive; en Mac, *Documentos* y *Escritorio* están en iCloud si
-    `defaults read com.apple.finder FXICloudDriveDocuments` devuelve `1`. El motivo, en una frase: *"ahí
-    el ordenador sube y baja los ficheros por su cuenta, y eso puede estropear el historial de tu curso;
-    tu copia de seguridad ya la hace GitHub"*. Si aun así la quiere, es su decisión: respétala.
+- **Dónde se guarda: aquí.** El alumno ya ha elegido la carpeta de sus cursos **antes de abrirte** (la guía
+  le explica cómo), y es la carpeta en la que estás. No le preguntes dónde: dile en una frase dónde va a
+  quedar (*"Lo guardo en `<ruta>`"*) y **comprueba dos cosas antes de crear nada**:
+  - **Que no estás en su carpeta personal** (ni en la raíz del disco). Si lo estás, es que abrió el LLM
+    sin entrar en ninguna carpeta: crea `cursos`, entra en ella y sigue desde ahí. Nunca trabajes con
+    todo su ordenador como zona de trabajo.
+  - **Que la carpeta no se sincroniza con la nube.** Señales: la ruta contiene `OneDrive`, `iCloud`,
+    `Mobile Documents`, `Dropbox` o `Google Drive`; en Windows, *Documentos* y *Escritorio* suelen estar
+    dentro de OneDrive; en Mac lo están en iCloud si `defaults read com.apple.finder FXICloudDriveDocuments`
+    devuelve `1`. Si es el caso, avísale **antes de seguir**: *"ahí el ordenador sube y baja los ficheros
+    por su cuenta, y eso puede estropear el historial de tu curso; tu copia de seguridad ya la hace
+    GitHub"*. Si prefiere cambiar, que cierre, elija otra carpeta como dice la guía y te vuelva a abrir
+    allí. Si aun así la quiere, es su decisión: respétala.
 - **El atajo:** una sola palabra corta para abrirlo (`historia`). Es lo único que tendrá que recordar.
 
 Después pregunta: **"¿Quieres una copia de seguridad de tu curso en GitHub? Será privada: solo la

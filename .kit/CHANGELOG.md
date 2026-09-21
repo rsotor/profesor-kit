@@ -7,9 +7,9 @@ solo cuando el kit haya demostrado que puede sustituir al curso con el que naci�
 que migran tus datos.
 
 ## 0.5.1
-- Al instalar, tu profesor trabaja solo dentro de la carpeta de tus cursos, no en todo tu ordenador. Te
-  propone guardar ahí el curso y puedes elegir otro sitio; te avisa si eliges una carpeta que se sincroniza
-  con la nube, porque puede dar problemas.
+- Tú eliges dónde guardar tus cursos **antes** de instalar nada (basta con arrastrar la carpeta a la
+  terminal), y tu profesor trabaja solo dentro de esa carpeta, no en todo tu ordenador. Te avisa si has
+  elegido una carpeta que se sincroniza con la nube, porque puede dar problemas.
 - Si algún día mueves tu curso a otra carpeta, tu atajo te lo dice y se arregla en un momento.
 
 ## 0.5.0
