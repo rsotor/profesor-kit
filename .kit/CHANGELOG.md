@@ -12,6 +12,7 @@ que migran tus datos.
 - Iniciar sesión en GitHub ya no se queda colgado: tu profesor te dice el código y te abre la página.
 - Tu profesor te dice dónde está la copia de tu curso en GitHub y comprueba que es privada.
 - Instalar un segundo curso es cuestión de dos minutos.
+- Tu profesor vigila que las fórmulas y las tablas se vean bien en Obsidian, en cualquier curso.
 
 ## 0.5.1
 - Tú eliges dónde guardar tus cursos **antes** de instalar nada (basta con arrastrar la carpeta a la

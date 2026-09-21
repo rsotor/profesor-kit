@@ -168,6 +168,38 @@ function comprobarEjerciciosSueltos(raiz, declarados, informe) {
   }
 }
 
+// Cosas que Obsidian no va a dibujar bien. No son del dominio de ningún curso: son límites del motor de
+// fórmulas (MathJax) y de las tablas de markdown, y por eso viven en el núcleo y no en `patrones_prohibidos`.
+const MONEDA = /[\u20ac\u00a3\u00a5]/;   // símbolos de moneda, escritos por su código: MathJax no los acepta en una fórmula
+const PORCENTAJE_SIN_PROTEGER = /(?<!\\)%/;                   // en una fórmula, % abre un comentario: lo que sigue desaparece
+const FORMULA_EN_LINEA = /(?<!\$)\$(?![\s$])([^$\n]+?)(?<!\s)\$(?!\$)/g;
+const ALIAS_SIN_PROTEGER_EN_TABLA = /\[\[[^\]|\\]*\|[^\]]*\]\]/; // [[nota|texto]] dentro de una tabla descuadra la fila
+
+function revisarFormula(formula, nota, linea, informe) {
+  if (MONEDA.test(formula)) informe.avisos.push({ regla: 'no-se-vera-bien', fichero: nota, detalle: `línea ${linea}: símbolo de moneda dentro de una fórmula — Obsidian enseñará el código en vez de la fórmula. La cifra con su moneda va fuera, en texto normal` });
+  if (PORCENTAJE_SIN_PROTEGER.test(formula)) informe.avisos.push({ regla: 'no-se-vera-bien', fichero: nota, detalle: `línea ${linea}: % sin proteger dentro de una fórmula — lo que va detrás desaparece. Escribe \\%` });
+}
+
+function comprobarQueSeVeraBien(raiz, notas, informe) {
+  for (const nota of notas) {
+    let enBloque = false;
+    let enCodigo = false;
+    leer(raiz, nota).split(/\r?\n/).forEach((lineaTexto, i) => {
+      if (/^\s*```/.test(lineaTexto)) { enCodigo = !enCodigo; return; }
+      if (enCodigo) return;
+      const linea = lineaTexto.replace(/`[^`]*`/g, '');
+      const marcas = (linea.match(/\$\$/g) || []).length;
+      if (marcas === 1) { enBloque = !enBloque; revisarFormula(linea.replace('$$', ''), nota, i + 1, informe); return; }
+      if (enBloque) { revisarFormula(linea, nota, i + 1, informe); return; }
+      if (marcas >= 2) for (const m of linea.matchAll(/\$\$(.+?)\$\$/g)) revisarFormula(m[1], nota, i + 1, informe);
+      for (const m of linea.replace(/\$\$.+?\$\$/g, '').matchAll(FORMULA_EN_LINEA)) revisarFormula(m[1], nota, i + 1, informe);
+      if (/^\s*\|/.test(linea) && ALIAS_SIN_PROTEGER_EN_TABLA.test(linea)) {
+        informe.avisos.push({ regla: 'no-se-vera-bien', fichero: nota, detalle: `línea ${i + 1}: enlace con alias dentro de una tabla — la barra del alias descuadra la fila. Escribe [[nota\\|texto]]` });
+      }
+    });
+  }
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -186,6 +218,7 @@ function comprobar(raiz) {
   const declarados = comprobarEjercicios(raiz, notas, informe);
   comprobarEjerciciosSueltos(raiz, declarados, informe);
   comprobarPatrones(raiz, notas, informe);
+  comprobarQueSeVeraBien(raiz, notas, informe);
   comprobarPendientes(raiz, informe);
   comprobarHuerfanos(raiz, notas, informe);
   comprobarDuplicados(raiz, informe);
