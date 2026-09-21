@@ -6,6 +6,12 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.5.1
+- Tú eliges dónde guardar tus cursos **antes** de instalar nada (basta con arrastrar la carpeta a la
+  terminal), y tu profesor trabaja solo dentro de esa carpeta, no en todo tu ordenador. Te avisa si has
+  elegido una carpeta que se sincroniza con la nube, porque puede dar problemas.
+- Si algún día mueves tu curso a otra carpeta, tu atajo te lo dice y se arregla en un momento.
+
 ## 0.5.0
 - Tu profesor instala Obsidian por ti y te guía, con las palabras exactas que ves en pantalla, para
   abrir tu carpeta de estudio.

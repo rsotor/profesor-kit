@@ -82,3 +82,36 @@ test('cli: lo cuenta en llano, avisa si la carpeta no está en el PATH y sale co
   assert.match(lineas.join('\n'), /una sola palabra corta/);
   assert.equal(cli([], raiz, { carpetaBin }), 1);
 });
+
+test('--actualizar re-apunta el atajo de un curso que se ha movido, y nunca se lo quita a uno que sigue en su sitio', () => {
+  const carpetaBin = bin();
+  const opciones = { nombre: 'historia', carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) };
+  const viejo = cursoTemporal();
+  crearAtajo({ raiz: viejo, ...opciones });
+
+  const otroCurso = cursoTemporal();                     // el viejo sigue existiendo: no se toca
+  assert.equal(crearAtajo({ raiz: otroCurso, actualizar: true, ...opciones }).motivo, 'atajo-de-otro-curso');
+
+  const nuevo = viejo + '-movido';
+  fs.renameSync(viejo, nuevo);                           // el alumno arrastra su curso a otra carpeta
+  assert.equal(crearAtajo({ raiz: nuevo, ...opciones }).motivo, 'atajo-de-otro-curso', 'sin --actualizar no se re-apunta');
+  assert.equal(crearAtajo({ raiz: nuevo, actualizar: true, ...opciones }).creado, true);
+  assert.ok(fs.readFileSync(path.join(carpetaBin, 'historia'), 'utf8').includes(`cd "${nuevo}"`));
+});
+
+test('si la carpeta del curso ya no está, el lanzador lo dice en llano', () => {
+  const carpetaBin = bin();
+  crearAtajo({ raiz: cursoTemporal(), nombre: 'historia', carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) });
+  assert.match(fs.readFileSync(path.join(carpetaBin, 'historia'), 'utf8'), /Si la has movido, díselo a quien te lo instaló/);
+});
+
+test('cli: acepta --actualizar', t => {
+  t.mock.method(console, 'log', () => {});
+  const carpetaBin = bin();
+  const viejo = cursoTemporal();
+  const opciones = { carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) };
+  assert.equal(cli(['--nombre', 'historia'], viejo, opciones), 0);
+  fs.renameSync(viejo, viejo + '-movido');
+  assert.equal(cli(['--nombre', 'historia'], viejo + '-movido', opciones), 1);
+  assert.equal(cli(['--nombre', 'historia', '--actualizar'], viejo + '-movido', opciones), 0);
+});

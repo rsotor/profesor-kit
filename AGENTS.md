@@ -27,6 +27,8 @@ estudio/                                                             ← DATOS: 
   se escribe `[[flashcards/<id>]]` y `fuente: inbox/<fichero>`, nunca con `estudio/` delante. Y cuando le
   hables de un fichero, nómbralo como él lo ve en Obsidian: "la nota **<slug>**, en la carpeta **conceptos**".
 - Si el alumno pide cambiar cómo trabajas, el cambio va a `config/profesor.md`, nunca al motor.
+- **Si el alumno ha movido el curso a otra carpeta** y su atajo ha dejado de abrirlo:
+  `node .kit/herramientas/crear-atajo.js --nombre <su palabra> --actualizar`.
 - **Si falta algo** (`comprobar.js` da `pieza-ausente`: alguien borró o movió una carpeta o un fichero),
   ejecuta `node .kit/herramientas/reparar.js` y cuéntale en una frase qué ha vuelto. No lo recrees a mano.
 
