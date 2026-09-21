@@ -18,7 +18,7 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 | 5 | Curso limpio y ajustes creados | existe `config/ajustes.json`; no existen `docs/` ni `.github/` | `node .kit/herramientas/preparar-curso.js --subir si --nombre "<nombre del curso>"` (o `--subir no`) |
 | 6 | Skills instaladas | Claude Code: existe `.claude/skills/sesion/SKILL.md` | `node .kit/herramientas/instalar-skills.js` |
 | 7 | **El atajo funciona:** escribir una palabra en la terminal abre este curso | `config/ajustes.json` tiene `atajo`; en una terminal nueva, esa palabra abre el LLM en el curso | `node .kit/herramientas/crear-atajo.js --nombre <palabra>` — ver abajo |
-| 8 | Todo sano y guardado | `node .kit/herramientas/comprobar.js` dice "Curso sano" | `node .kit/herramientas/guardar.js "curso: instalación"` |
+| 8 | **Instalación verificada** y guardada | `node .kit/herramientas/diagnostico.js` termina con **"Todo listo"** | después, `node .kit/herramientas/guardar.js "curso: instalación"` — ver abajo |
 | 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/` (Obsidian la crea al abrir la carpeta) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
 | 10 | Arranca la sesión 0 | — | dile que **cierre esta ventana, abra una terminal nueva y escriba su atajo**. Avísale antes: al abrirse le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso. Ya dentro, que escriba "empezamos" (o lanza tú `/configurar`) |
 
@@ -45,6 +45,16 @@ siempre significa que el programa no esté instalado:
   alumno que cierre esta ventana, abra otra, vuelva a entrar en su carpeta de cursos y te pegue otra vez
   el texto de arranque. Retomarás donde lo dejaste, porque todo lo instalado seguirá ahí.
 - En Mac pasa menos, pero pasa tras instalar Homebrew: misma solución, ventana nueva.
+
+**Cómo comprobarlo bien** (no te fíes de un solo intento):
+
+| | Mac / Linux | Windows (PowerShell) |
+|---|---|---|
+| ¿Responde el comando? | `node --version; git --version; gh --version` | `node --version; git --version; gh --version` |
+| ¿Está instalado aunque no responda? | `brew list --versions node git gh` | `winget list --id OpenJS.NodeJS.LTS -e; winget list --id Git.Git -e; winget list --id GitHub.cli -e` |
+| Hacer que esta ventana lo vea sin cerrarla | `hash -r` (o abrir ventana nueva) | `$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')` — **en la misma línea** que el comando que quieras probar, porque cada comando que lanzas nace con el PATH viejo |
+
+Node tiene que ser **22 o superior**: mira el número, no solo que responda.
 - Si la instalación se interrumpió a medias (por lo que sea), **no empieces de cero**: repasa la tabla de
   arriba abajo comprobando cada objetivo y continúa por el primero que no se cumpla.
 
@@ -108,6 +118,16 @@ Si falta, configúrala **solo en este repo** (sin `--global`), con los datos de 
     git config user.name "<login>"
     git config user.email "<id>+<login>@users.noreply.github.com"
 
+## Paso 3 (continuación) — dile dónde queda su copia
+
+Si eligió copia en GitHub, **en cuanto crees el repo** comprueba que es privado
+(`gh repo view --json visibility,url`) y díselo con el enlace:
+
+> "Tu curso tiene una copia de seguridad en GitHub: `<url>`. **Es privada: solo la ves tú.** Si algún día
+> quisieras cambiarlo, se hace en esa página, en *Settings → General → Danger Zone → Change repository
+> visibility*. No te lo recomiendo: dentro hay material del curso, que tiene derechos de autor, y lo que
+> tu profesor sabe de cómo aprendes."
+
 ## Paso 7 — el atajo
 
     node .kit/herramientas/crear-atajo.js --nombre <palabra>
@@ -116,6 +136,18 @@ Si la herramienta dice que esa palabra no vale (ya es un programa, o ya abre otr
 otra y repite. Si avisa de que la carpeta no está en el PATH, lo normal es que baste con abrir una
 terminal nueva; si no, añádela al PATH explicándoselo en una frase. **Compruébalo de verdad** antes de
 seguir: en una terminal nueva, la palabra tiene que abrir el LLM dentro del curso.
+
+## Paso 8 — verificar la instalación, no darla por buena
+
+    node .kit/herramientas/diagnostico.js
+
+Repasa **todo**: Node, Git, `gh`, la sesión de GitHub, el acceso al kit, la identidad de git, que la copia
+en GitHub sea privada de verdad, las skills, el atajo y la salud del curso. Cada línea sale con ✓ o ✗, y
+cada ✗ trae su arreglo. **La instalación no está terminada hasta que diga "Todo listo"**: arregla lo que
+marque y vuelve a ejecutarlo. El aviso de Obsidian (⚠) no bloquea: se resuelve en el paso 9.
+
+Si algo falla y no sabes por qué, el diagnóstico es también lo que se pega en una issue
+(`diagnostico.js --json`), sin datos del alumno.
 
 ## Paso 9 — Obsidian
 
