@@ -29,11 +29,16 @@ que las confirme:
 
 - **La carpeta del curso:** el nombre en minúsculas, sin acentos y con guiones (`historia-del-arte`). Si
   ya existe una con ese nombre, es otro curso suyo: pide otro nombre.
-- **Dónde se guarda.** Los cursos viven juntos, cada uno en su carpeta, dentro de una carpeta común.
-  **Propón** `cursos` dentro de su carpeta personal y **deja que la cambie**: *"Voy a guardar tus cursos en
-  la carpeta `cursos` de tu carpeta personal. ¿Te va bien ahí, o prefieres otro sitio?"*. Si ya tiene
-  cursos instalados, propón la carpeta donde están (lo dice el lanzador de cualquier atajo suyo).
-  Si no le importa, no insistas: con el atajo nunca va a necesitar saber dónde está.
+- **Dónde se guarda.** Estás trabajando dentro de una carpeta que el alumno creó solo para sus cursos
+  (normalmente `cursos`, en su carpeta personal): **no estás en su carpeta personal ni debes trabajar
+  ahí**. Por defecto el curso se crea **aquí**. Confírmalo: *"Voy a guardar tu curso en esta carpeta,
+  `<ruta>`. ¿Te va bien, o prefieres otro sitio?"*. Si no le importa, no insistas: con el atajo nunca va
+  a necesitar saber dónde está.
+  - **Si prefiere otro sitio**, créalo allí. Vas a necesitar permiso para trabajar fuera de esta carpeta:
+    explícaselo en una frase antes de pedirlo. Si ya tiene otros cursos instalados, lo natural es la
+    carpeta donde están (lo dice el lanzador de cualquier atajo suyo).
+  - **Si se abrió el LLM directamente en la carpeta personal** (no siguió la guía): crea tú la carpeta
+    `cursos`, entra en ella y sigue desde ahí.
   - **Si elige una carpeta sincronizada con la nube, avísale antes de seguir.** Señales: la ruta contiene
     `OneDrive`, `iCloud`, `Mobile Documents`, `Dropbox` o `Google Drive`; en Windows, *Documentos* y
     *Escritorio* suelen estar dentro de OneDrive; en Mac, *Documentos* y *Escritorio* están en iCloud si
@@ -104,6 +109,16 @@ instalación, no una memorizada. Lo que él verá en Obsidian: *Ajustes → Comp
 
 Comprobación: dentro de Obsidian abre un terminal, escribe su atajo, y te abres tú en su curso. Si algo
 no va, **no insistas**: déjalo con el camino normal y, si quiere, propón una issue.
+
+## Si más adelante mueve el curso a otra carpeta
+
+El atajo guarda la ruta del curso: al moverlo deja de funcionar y se lo dice ("no encuentro la carpeta
+del curso"). Se arregla desde el sitio nuevo, con el LLM abierto dentro de la carpeta del curso:
+
+    node .kit/herramientas/crear-atajo.js --nombre <su palabra> --actualizar
+
+`--actualizar` solo vuelve a apuntar un atajo **suyo** cuya carpeta anterior **ya no existe**; nunca le
+quita el atajo a otro curso que siga en su sitio.
 
 ## Al terminar
 

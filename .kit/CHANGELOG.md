@@ -7,8 +7,10 @@ solo cuando el kit haya demostrado que puede sustituir al curso con el que naci�
 que migran tus datos.
 
 ## 0.5.1
-- Al instalar, tu profesor te propone dónde guardar tus cursos y puedes elegir otro sitio. Te avisa si
-  eliges una carpeta que se sincroniza con la nube, porque puede dar problemas.
+- Al instalar, tu profesor trabaja solo dentro de la carpeta de tus cursos, no en todo tu ordenador. Te
+  propone guardar ahí el curso y puedes elegir otro sitio; te avisa si eliges una carpeta que se sincroniza
+  con la nube, porque puede dar problemas.
+- Si algún día mueves tu curso a otra carpeta, tu atajo te lo dice y se arregla en un momento.
 
 ## 0.5.0
 - Tu profesor instala Obsidian por ti y te guía, con las palabras exactas que ves en pantalla, para
