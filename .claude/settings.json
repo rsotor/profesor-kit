@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node .kit/herramientas/comprobar.js *)",
+      "Bash(node .kit/herramientas/guardar.js *)",
+      "Bash(node .kit/herramientas/actualizar.js *)",
+      "Bash(node .kit/herramientas/instalar-skills.js *)",
+      "Bash(node .kit/herramientas/preparar-curso.js *)",
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git diff *)"
+    ]
+  }
+}

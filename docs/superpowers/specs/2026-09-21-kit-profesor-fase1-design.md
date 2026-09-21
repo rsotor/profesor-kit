@@ -249,7 +249,13 @@ datos (frontmatter, estructura de `alumno.md`, índices):
 Canal único para mejorar el kit. Cuando el LLM de un alumno encuentra algo del **motor** que
 no funciona o que se puede mejorar (un paso que falla en Windows, un fichero que tuvo que
 generar por usar otro LLM, una skill ambigua), crea una issue en `rsotor/profesor-kit` con
-`gh issue create`. Los compañeros invitados tienen permiso de lectura, que basta para abrir issues.
+`gh issue create`. Los compañeros invitados pueden abrir issues.
+
+> **Decisión de Roberto (2026-09-21): el kit se queda en su cuenta personal.** Verificado en
+> docs.github.com: en un repo privado de cuenta personal no existe el permiso de solo lectura, así
+> que todo compañero invitado tiene **escritura** y puede hacer push al kit. Es un **riesgo
+> aceptado**: los invitados son compañeros de confianza. Mitigación disponible si la cuenta tiene
+> GitHub Pro: proteger la rama `main`.
 
 - **Plantilla fija** (`.github/ISSUE_TEMPLATE/` del kit): sistema operativo, LLM y versión,
   versión del kit, paso o skill, qué se esperaba, qué pasó, y el arreglo aplicado si lo hubo
@@ -299,6 +305,7 @@ La regla vive en `AGENTS.md` y en `INSTALAR-AGENTE.md` (la instalación es donde
 | El alumno abandona por las peticiones de permiso | El kit trae la lista de comandos permitidos de Claude Code |
 | El alumno se atasca en la instalación | Parte manual mínima; el LLM explica cada error en lenguaje llano |
 | Un profesor genérico sale insípido | Bloques B y C de `/configurar`, más la adaptación continua con prueba |
+| Un compañero invitado hace push al kit por error (en repo personal todos tienen escritura) | Riesgo aceptado por Roberto; `AGENTS.md` prohíbe tocar el motor y el feedback va por issue, no por push. Proteger `main` si hay GitHub Pro |
 | Material del centro o tokens subidos por error | Repo siempre privado y escaneo de secretos antes de cada push |
 | Actualizar rompe los datos del alumno | `actualizar.js` solo toca ficheros del motor, con una lista explícita; los cambios de formato van con migración automática, commit previo y reversión si `comprobar.js` falla |
 | El LLM no puede leer un formato del material | Formatos recomendados en la guía; el LLM avisa y pide otro formato en vez de inventar |

@@ -1,0 +1,13 @@
+#!/bin/sh
+# Seguro local del flujo de trabajo: a main solo se llega por PR con los tests en verde.
+# GitHub no aplica la protección de ramas en repos privados del plan gratuito, así que la ponemos aquí.
+# Se activa una vez por copia del repo:   git config core.hooksPath .githooks
+# Saltárselo a propósito (no por despiste): PERMITIR_PUSH_A_MAIN=1 git push origin main
+while read -r _ref_local _sha_local ref_remota _sha_remota; do
+  if [ "$ref_remota" = "refs/heads/main" ] && [ "$PERMITIR_PUSH_A_MAIN" != "1" ]; then
+    echo "✗ Push directo a main rechazado. Flujo: rama → PR → check 'tests-ok' en verde → merge." >&2
+    echo "  Ver CONTRIBUTING.md. Para saltarlo a propósito: PERMITIR_PUSH_A_MAIN=1 git push ..." >&2
+    exit 1
+  fi
+done
+exit 0

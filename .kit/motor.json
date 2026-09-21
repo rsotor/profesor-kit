@@ -1,0 +1,13 @@
+{
+  "repo": "rsotor/profesor-kit",
+  "version_datos": 1,
+  "ficheros": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "INSTALACION.md",
+    "INSTALAR-AGENTE.md",
+    ".claude/settings.json",
+    ".kit"
+  ]
+}

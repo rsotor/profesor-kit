@@ -2204,20 +2204,26 @@ No inventes rutas: si tu documentación no lo aclara, pregunta al alumno o déja
 
 - [ ] **Step 4: `.claude/settings.json`**
 
-Verificar primero la sintaxis vigente de `permissions.allow` en https://code.claude.com/docs/en/settings (sección de permisos). A fecha de este plan:
+Verificado el 2026-09-21 contra https://code.claude.com/docs/en/permissions y https://code.claude.com/docs/en/settings: `.claude/settings.json` es el fichero compartido del proyecto; un `*` final **precedido de espacio** cubre cualquier argumento (también con comillas y espacios) y también el comando sin argumentos; los comandos encadenados con `&&`, `;` o `|` se evalúan por partes. Se usa **una regla por herramienta**, no un comodín sobre la carpeta, para que un script futuro no quede permitido sin decidirlo:
 
 ```json
 {
   "permissions": {
     "allow": [
-      "Bash(node .kit/herramientas/*)",
-      "Bash(git status*)",
-      "Bash(git log*)",
-      "Bash(git diff*)"
+      "Bash(node .kit/herramientas/comprobar.js *)",
+      "Bash(node .kit/herramientas/guardar.js *)",
+      "Bash(node .kit/herramientas/actualizar.js *)",
+      "Bash(node .kit/herramientas/instalar-skills.js *)",
+      "Bash(node .kit/herramientas/preparar-curso.js *)",
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git diff *)"
     ]
   }
 }
 ```
+
+**Sin aclarar en la documentación:** si en Windows una ruta escrita con `\` coincide con una regla escrita con `/`. Por eso `AGENTS.md` obliga a invocar siempre con `/`. Queda como punto a observar por el primer compañero con Windows.
 
 Comprobación manual: abrir Claude Code en el repo, pedir "ejecuta comprobar" y confirmar que **no** aparece el diálogo de permiso. Si aparece, ajustar el patrón según la documentación y repetir.
 
@@ -2755,6 +2761,10 @@ Sospechosos habituales, por orden: separadores de ruta en alguna comparación de
 
 ### Task 15: Prueba de instalación en limpio (criterio 2) — necesita a Roberto
 
+> **Decidido por Roberto (2026-09-21): el kit se queda en `rsotor/profesor-kit`, cuenta personal.**
+> Los colaboradores invitados tienen escritura (no existe rol de lectura en repos personales): riesgo
+> aceptado. No volver a proponer moverlo. Si la cuenta tiene GitHub Pro, proteger `main`.
+
 Crea y borra un repo real en GitHub: **pedir confirmación a Roberto antes de empezar.**
 
 - [ ] **Step 1:** Fusionar `fase1-kit-base` en `main` (la plantilla se crea desde la rama por defecto) y confirmar que el repo sigue marcado como plantilla: `gh repo view rsotor/profesor-kit --json isTemplate`.
@@ -2782,7 +2792,8 @@ Crea y borra un repo real en GitHub: **pedir confirmación a Roberto antes de em
 - [ ] **Step 2:** Elegir con Roberto una sesión ya procesada en el vault (propuesta: `M01 b1·c02`, porque trae conceptos, fórmulas y ejercicios interactivos) y procesar **el mismo PDF** con `/sesion`.
 - [ ] **Step 3: Comparación automática** — un script de usar y tirar en `docs/superpowers/pruebas/` que saque: conceptos detectados en cada lado (y la diferencia), duplicados (tiene que ser cero), presencia de las marcas de origen, y resultado de `comprobar.js`.
 - [ ] **Step 4: Comparación de calidad** — Roberto lee las dos versiones, nota a nota, y decide si el kit **suple o mejora** al vault. Cada "aquí el vault es mejor" se convierte en un cambio concreto en una skill o en `AGENTS.md`, y se repite el Step 2.
-- [ ] **Step 5:** Cuando Roberto dé el visto bueno: `.kit/VERSION` → `1.0.0`, entrada en el CHANGELOG, etiqueta `v1.0.0`, y aviso al primer compañero. **Su instalación manda sobre todas las pruebas anteriores.**
+- [ ] **Step 5a:** Proteger `main` para que solo entre por PR (pedido por Roberto el 2026-09-21; no tiene GitHub Pro). **Verificar antes en docs.github.com** si en un repo privado de plan gratuito la regla se aplica de verdad o solo se puede crear sin efecto; si no se aplica, decírselo con la fuente y decidir.
+- [ ] **Step 5:** **Solo** cuando Roberto valide que el kit puede sustituir al vault `inversion-multimercado` (hasta entonces el kit sigue en `0.x`, con su línea de CHANGELOG por cada cambio que note el alumno): `.kit/VERSION` → `1.0.0`, entrada en el CHANGELOG, etiqueta `v1.0.0`, y aviso al primer compañero. **Su instalación manda sobre todas las pruebas anteriores.**
 
 ---
 

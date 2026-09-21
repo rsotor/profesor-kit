@@ -1,0 +1,36 @@
+name: tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  herramientas:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        node: [22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: git config --global core.autocrlf false
+      # Falla si algún test falla O si la cobertura de las herramientas baja del 80 %.
+      - run: >
+          node --test --experimental-test-coverage
+          --test-coverage-include=".kit/herramientas/**"
+          --test-coverage-exclude=".kit/herramientas/tests/**"
+          --test-coverage-lines=80 --test-coverage-functions=80 --test-coverage-branches=80
+          ".kit/herramientas/tests/*.test.js"
+      - run: node .kit/herramientas/comprobar.js
+
+  # Un único check que resume toda la matriz: es el que se marca como obligatorio en la regla de main.
+  tests-ok:
+    if: always()
+    needs: herramientas
+    runs-on: ubuntu-latest
+    steps:
+      - run: test "${{ needs.herramientas.result }}" = "success"
