@@ -107,6 +107,65 @@ function comprobarEjercicios(raiz, notas, informe) {
   return declarados;
 }
 
+const escaparRegex = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+function comprobarPendientes(raiz, informe) {
+  const marcador = new RegExp(escaparRegex(v.leerMarcador(raiz)), 'g');
+  for (const nota of v.listarNotas(raiz, { conInbox: true })) {
+    const limpio = v.sinCodigo(leer(raiz, nota));
+    const dudas = (limpio.match(marcador) || []).length;
+    const todos = (limpio.match(/\*\*TODO:\*\*|^TODO:|\bTBD\b/gm) || []).length;
+    const faltas = (limpio.match(/FALTA INFO:/g) || []).length;
+    if (dudas) informe.avisos.push({ regla: 'duda-pendiente', fichero: nota, detalle: `${dudas} sin responder → /dudas` });
+    if (todos) informe.avisos.push({ regla: 'todo', fichero: nota, detalle: `${todos} TODO/TBD` });
+    if (faltas) informe.avisos.push({ regla: 'falta-info', fichero: nota, detalle: `${faltas} FALTA INFO` });
+  }
+}
+
+function comprobarPatrones(raiz, notas, informe) {
+  for (const { patron, mensaje } of v.leerAjustes(raiz).patrones_prohibidos || []) {
+    let regex;
+    try { regex = new RegExp(patron); } catch {
+      informe.avisos.push({ regla: 'patron-invalido', fichero: 'config/ajustes.json', detalle: `patrón no válido: ${patron}` });
+      continue;
+    }
+    for (const nota of notas) {
+      leer(raiz, nota).split(/\r?\n/).forEach((linea, i) => {
+        if (regex.test(linea)) informe.errores.push({ regla: 'patron-prohibido', fichero: nota, detalle: `línea ${i + 1}: ${mensaje}` });
+      });
+    }
+  }
+}
+
+function comprobarHuerfanos(raiz, notas, informe) {
+  const textos = notas.filter(n => n !== 'conceptos/_index.md').map(n => [n, leer(raiz, n)]);
+  for (const slug of v.listarConceptos(raiz)) {
+    const enlazado = textos.some(([n, t]) => n !== `conceptos/${slug}.md` && n !== 'progreso.md'
+      && (t.includes(`[[${slug}]]`) || t.includes(`[[${slug}|`) || t.includes(`[[${slug}#`)));
+    if (!enlazado) informe.avisos.push({ regla: 'huerfano', fichero: `conceptos/${slug}.md`, detalle: 'ninguna sesión ni concepto lo enlaza' });
+  }
+}
+
+function comprobarDuplicados(raiz, informe) {
+  const slugs = v.listarConceptos(raiz);
+  for (let i = 0; i < slugs.length; i++) {
+    for (let j = i + 1; j < slugs.length; j++) {
+      const comun = slugs[i].split('-').find(p => p.length >= 6 && slugs[j].split('-').includes(p));
+      if (comun) informe.avisos.push({ regla: 'posible-duplicado', fichero: `conceptos/${slugs[i]}.md`, detalle: `comparte «${comun}» con ${slugs[j]} — ¿son el mismo concepto?` });
+    }
+  }
+}
+
+function comprobarEjerciciosSueltos(raiz, declarados, informe) {
+  const dir = path.join(raiz, 'ejercicios');
+  if (!fs.existsSync(dir)) return;
+  for (const n of fs.readdirSync(dir)) {
+    if (n.endsWith('.html') && !declarados.has(n.slice(0, -5))) {
+      informe.avisos.push({ regla: 'ejercicio-suelto', fichero: `ejercicios/${n}`, detalle: 'ningún concepto lo declara en su frontmatter' });
+    }
+  }
+}
+
 function comprobar(raiz) {
   const informe = { errores: [], avisos: [] };
   const notas = v.listarNotas(raiz);
@@ -115,7 +174,12 @@ function comprobar(raiz) {
   comprobarFrontmatter(raiz, informe);
   comprobarProgreso(raiz, informe);
   comprobarMapa(raiz, informe);
-  comprobarEjercicios(raiz, notas, informe);
+  const declarados = comprobarEjercicios(raiz, notas, informe);
+  comprobarEjerciciosSueltos(raiz, declarados, informe);
+  comprobarPatrones(raiz, notas, informe);
+  comprobarPendientes(raiz, informe);
+  comprobarHuerfanos(raiz, notas, informe);
+  comprobarDuplicados(raiz, informe);
   return informe;
 }
 
