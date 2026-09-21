@@ -1,0 +1,21 @@
+name: tests
+on:
+  push:
+  pull_request:
+
+jobs:
+  herramientas:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        node: [22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: git config --global core.autocrlf false
+      - run: node --test ".kit/herramientas/tests/*.test.js"
+      - run: node .kit/herramientas/comprobar.js
