@@ -59,14 +59,13 @@ Escribe el fichero en `repasos/<alcance>.html` y ábrelo en el navegador del alu
 - Mac: `open repasos/<alcance>.html`
 - Windows: `start repasos/<alcance>.html`
 
-## Al terminar
-
-Dile en una línea qué alcance cubre la página y cuántos conceptos, ejercicios y flashcards
-incluye. Nada más —la página se explica sola o está mal hecha.
-
-### Cerrar
+### 5. Cerrar
 
 El repaso es un fichero del alumno como cualquier otro: se guarda.
 
     node .kit/herramientas/guardar.js "repaso: <alcance>"
 
+## Al terminar
+
+Dile en una línea qué alcance cubre la página y cuántos conceptos, ejercicios y flashcards
+incluye. Nada más —la página se explica sola o está mal hecha.

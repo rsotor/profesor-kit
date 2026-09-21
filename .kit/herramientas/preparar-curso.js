@@ -4,7 +4,7 @@ const path = require('node:path');
 const v = require('./lib/vault');
 const g = require('./lib/git');
 
-const SOLO_DEL_KIT = ['docs', '.github'];
+const SOLO_DEL_KIT = ['docs', '.github', 'README.md'];
 
 function prepararCurso({ raiz, subir, llm = 'claude-code' }) {
   const motor = v.leerMotor(raiz);

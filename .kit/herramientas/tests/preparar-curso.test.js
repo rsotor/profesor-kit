@@ -9,10 +9,10 @@ const { cursoTemporal, iniciarGit, git } = require('./ayuda');
 const MOTOR = { '.kit/motor.json': JSON.stringify({ repo: 'rsotor/profesor-kit', version_datos: 3, ficheros: ['.kit'] }) };
 
 test('borra docs y .github, y crea ajustes con la version_datos del motor', () => {
-  const raiz = cursoTemporal({ ...MOTOR, 'docs/spec.md': 'x', '.github/ISSUE_TEMPLATE/f.md': 'x' });
+  const raiz = cursoTemporal({ ...MOTOR, 'docs/spec.md': 'x', '.github/ISSUE_TEMPLATE/f.md': 'x', 'README.md': 'del kit' });
   fs.rmSync(path.join(raiz, 'config', 'ajustes.json'));
   const r = prepararCurso({ raiz, subir: false });
-  assert.deepEqual(r.borrado.sort(), ['.github', 'docs']);
+  assert.deepEqual(r.borrado.sort(), ['.github', 'README.md', 'docs']);
   assert.ok(!fs.existsSync(path.join(raiz, 'docs')));
   const ajustes = JSON.parse(fs.readFileSync(path.join(raiz, 'config', 'ajustes.json'), 'utf8'));
   assert.equal(ajustes.subir_a_github, false);
