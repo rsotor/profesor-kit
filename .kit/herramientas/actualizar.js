@@ -43,6 +43,23 @@ function migracionesPendientes(raiz, desde) {
     .sort((a, b) => a.version - b.version);
 }
 
+// Pone la fecha de modificación a "ahora" en todo lo copiado. En Windows, copiar un fichero conserva
+// la fecha del original: si además pesa lo mismo que el que sustituye, git lo da por no modificado y
+// ni lo guarda ni lo restaura. Con la fecha nueva, git siempre mira el contenido.
+function tocar(ruta) {
+  const ahora = new Date();
+  const ficheros = fs.statSync(ruta).isDirectory() ? v.recorrer(ruta, () => true) : [ruta];
+  for (const f of ficheros) fs.utimesSync(f, ahora, ahora);
+}
+
+// Deja el curso exactamente como estaba en `sha`. El índice se vacía antes para que git reescriba
+// TODOS los ficheros en vez de fiarse de fechas y tamaños (ver `tocar`).
+function restaurar(raiz, sha) {
+  g.git(raiz, ['read-tree', '--empty']);
+  g.git(raiz, ['reset', '-q', '--hard', sha]);
+  g.git(raiz, ['clean', '-q', '-fd']);
+}
+
 function actualizar({ raiz, origen }) {
   const motorViejo = v.leerMotor(raiz);
   const motorNuevo = v.leerMotor(origen);
@@ -69,6 +86,7 @@ function actualizar({ raiz, origen }) {
       fs.rmSync(hasta, { recursive: true, force: true, maxRetries: 3 });
       fs.mkdirSync(path.dirname(hasta), { recursive: true });
       fs.cpSync(desde, hasta, { recursive: true });
+      tocar(hasta);
     }
 
     const ajustes = v.leerAjustes(raiz);
@@ -82,8 +100,7 @@ function actualizar({ raiz, origen }) {
     const despues = contarErrores(raiz, raiz);
     if (despues > antes) throw new Error(`tras actualizar hay ${despues} errores (antes había ${antes})`);
   } catch (error) {
-    g.git(raiz, ['reset', '-q', '--hard', sha]);
-    g.git(raiz, ['clean', '-q', '-fd']);
+    restaurar(raiz, sha);
     reinstalarSkills(raiz);
     return { actualizado: false, motivo: 'revertido', de, a, migraciones: hechas, detalle: error.message };
   }
@@ -129,4 +146,4 @@ function cli(args, raiz, descargarKit = descargar) {
 
 if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
 
-module.exports = { actualizar, validarMotor, novedades, cli };
+module.exports = { actualizar, restaurar, validarMotor, novedades, cli };

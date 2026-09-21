@@ -103,3 +103,32 @@ test('rechaza un motor que pretende tocar datos del alumno', () => {
     assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
   }
 });
+
+// Regresión de un fallo visto solo en Windows. Allí, copiar un fichero conserva su fecha y la fecha de
+// creación no cambia al sobrescribirlo: si el fichero nuevo pesa lo mismo que el viejo, git lo da por no
+// modificado y `reset --hard` no lo restaura. Aquí se fabrica esa situación en cualquier sistema.
+test('restaurar reescribe también los ficheros que git cree intactos (misma fecha y mismo tamaño)', t => {
+  const { restaurar } = require('../actualizar');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  git(raiz, 'config', 'core.trustctime', 'false');              // como en Windows
+  const fichero = path.join(raiz, 'AGENTS.md');
+  const fecha = new Date('2020-01-01T00:00:00Z');
+  fs.writeFileSync(fichero, 'reglas v1');
+  fs.utimesSync(fichero, fecha, fecha);
+  git(raiz, 'add', '-A');
+  git(raiz, 'commit', '-q', '-m', 'v1');
+  const sha = git(raiz, 'rev-parse', 'HEAD');
+
+  fs.writeFileSync(fichero, 'reglas v2');                        // mismo tamaño…
+  fs.utimesSync(fichero, fecha, fecha);                          // …y misma fecha
+  if (git(raiz, 'status', '--porcelain') !== '') return t.skip('este sistema detecta el cambio igualmente: no hay trampa que probar');
+
+  git(raiz, 'reset', '-q', '--hard', sha);
+  assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v2', 'la trampa: un reset normal NO lo restaura');
+
+  restaurar(raiz, sha);
+  assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
+  assert.equal(leer(raiz, 'conceptos/alfa.md').includes('# Alfa'), true);
+  assert.equal(git(raiz, 'status', '--porcelain'), '');
+});
