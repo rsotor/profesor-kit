@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./lib/vault');
+const { escanearSecretos } = require('./lib/secretos');
 
 const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidian', 'docs', 'node_modules', 'pruebas-local']);
 
@@ -180,6 +181,7 @@ function comprobar(raiz) {
   comprobarPendientes(raiz, informe);
   comprobarHuerfanos(raiz, notas, informe);
   comprobarDuplicados(raiz, informe);
+  informe.errores.push(...escanearSecretos(raiz));
   return informe;
 }
 
