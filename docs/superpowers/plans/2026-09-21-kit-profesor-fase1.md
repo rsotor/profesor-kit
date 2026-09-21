@@ -2204,20 +2204,26 @@ No inventes rutas: si tu documentación no lo aclara, pregunta al alumno o déja
 
 - [ ] **Step 4: `.claude/settings.json`**
 
-Verificar primero la sintaxis vigente de `permissions.allow` en https://code.claude.com/docs/en/settings (sección de permisos). A fecha de este plan:
+Verificado el 2026-09-21 contra https://code.claude.com/docs/en/permissions y https://code.claude.com/docs/en/settings: `.claude/settings.json` es el fichero compartido del proyecto; un `*` final **precedido de espacio** cubre cualquier argumento (también con comillas y espacios) y también el comando sin argumentos; los comandos encadenados con `&&`, `;` o `|` se evalúan por partes. Se usa **una regla por herramienta**, no un comodín sobre la carpeta, para que un script futuro no quede permitido sin decidirlo:
 
 ```json
 {
   "permissions": {
     "allow": [
-      "Bash(node .kit/herramientas/*)",
-      "Bash(git status*)",
-      "Bash(git log*)",
-      "Bash(git diff*)"
+      "Bash(node .kit/herramientas/comprobar.js *)",
+      "Bash(node .kit/herramientas/guardar.js *)",
+      "Bash(node .kit/herramientas/actualizar.js *)",
+      "Bash(node .kit/herramientas/instalar-skills.js *)",
+      "Bash(node .kit/herramientas/preparar-curso.js *)",
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git diff *)"
     ]
   }
 }
 ```
+
+**Sin aclarar en la documentación:** si en Windows una ruta escrita con `\` coincide con una regla escrita con `/`. Por eso `AGENTS.md` obliga a invocar siempre con `/`. Queda como punto a observar por el primer compañero con Windows.
 
 Comprobación manual: abrir Claude Code en el repo, pedir "ejecuta comprobar" y confirmar que **no** aparece el diálogo de permiso. Si aparece, ajustar el patrón según la documentación y repetir.
 

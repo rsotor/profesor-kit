@@ -4,7 +4,8 @@ const path = require('node:path');
 
 const CARPETAS_NOTAS = ['conceptos', 'sesiones', 'ejercicios', 'examenes', 'flashcards'];
 const FICHEROS_VIVOS = ['progreso.md', 'formulario.md', 'mapa-del-curso.md'];
-const RUTAS_PROTEGIDAS = ['config', 'inbox', ...CARPETAS_NOTAS, ...FICHEROS_VIVOS];
+// 'repasos' es HTML generado, no notas: no se escanea, pero es del alumno y ningún motor puede pisarlo.
+const RUTAS_PROTEGIDAS = ['config', 'inbox', 'repasos', ...CARPETAS_NOTAS, ...FICHEROS_VIVOS];
 const AJUSTES_POR_DEFECTO = {
   subir_a_github: true,
   llm: 'claude-code',

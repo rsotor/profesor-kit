@@ -15,7 +15,8 @@ Las reglas propias del dominio de `config/curso.md` se cumplen siempre.
 
 - **Motor** (no se edita; lo reemplaza `/actualizar`): este fichero, `CLAUDE.md`, `GEMINI.md`,
   `INSTALACION.md`, `INSTALAR-AGENTE.md`, `.claude/settings.json` y `.kit/`.
-- **Datos** (son del alumno): `config/` y todo lo demás.
+- **Datos** (son del alumno): `config/` y todo lo demás — `inbox/`, `conceptos/`, `sesiones/`,
+  `ejercicios/`, `examenes/`, `flashcards/`, `repasos/` y los ficheros vivos de la raíz.
 - Si el alumno pide cambiar cómo trabajas, el cambio va a `config/profesor.md`, nunca al motor.
 
 ## Reglas que no se pueden desactivar

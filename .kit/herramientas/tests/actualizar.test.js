@@ -97,7 +97,7 @@ test('un curso que ya tenía errores se actualiza igual (no empeora)', () => {
 });
 
 test('rechaza un motor que pretende tocar datos del alumno', () => {
-  for (const mala of ['conceptos', 'config/alumno.md', '../fuera', 'progreso.md']) {
+  for (const mala of ['conceptos', 'config/alumno.md', '../fuera', 'progreso.md', 'repasos']) {
     const { raiz, origen } = montar({ motorNuevo: { ficheros: ['AGENTS.md', mala] } });
     assert.throws(() => actualizar({ raiz, origen }), /motor/i);
     assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
