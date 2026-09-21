@@ -19,7 +19,7 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 | 6 | Skills instaladas | Claude Code: existe `.claude/skills/sesion/SKILL.md` | `node .kit/herramientas/instalar-skills.js` |
 | 7 | **El atajo funciona:** escribir una palabra en la terminal abre este curso | `config/ajustes.json` tiene `atajo`; en una terminal nueva, esa palabra abre el LLM en el curso | `node .kit/herramientas/crear-atajo.js --nombre <palabra>` — ver abajo |
 | 8 | Todo sano y guardado | `node .kit/herramientas/comprobar.js` dice "Curso sano" | `node .kit/herramientas/guardar.js "curso: instalación"` |
-| 9 | El alumno sabe leer sus notas | ha abierto la carpeta `estudio/` en Obsidian | ver abajo |
+| 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/` (Obsidian la crea al abrir la carpeta) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
 | 10 | Arranca la sesión 0 | — | dile que **cierre esta ventana, abra una terminal nueva y escriba su atajo**. Avísale antes: al abrirse le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso. Ya dentro, que escriba "empezamos" (o lanza tú `/configurar`) |
 
 ## Paso 3 — nombre y creación del curso
@@ -59,10 +59,41 @@ seguir: en una terminal nueva, la palabra tiene que abrir el LLM dentro del curs
 
 ## Paso 9 — Obsidian
 
-Obsidian es el programa gratuito para leer las notas. Que lo descargue de https://obsidian.md, lo
-abra, elija "Abrir carpeta como bóveda" y seleccione la carpeta **`estudio`** que hay dentro de su curso
-(no la carpeta del curso entera: en `estudio/` está todo lo suyo y nada que pueda romper). No hace falta cuenta.
-Dile también que su material de clase lo deja en `estudio/inbox/`.
+Obsidian es el programa donde el alumno **lee** todo lo que preparas. Es gratis y no pide cuenta.
+Explícaselo en una frase e instálalo tú, con su permiso, igual que el resto.
+
+No existe forma de abrirle la bóveda desde aquí (Obsidian no tiene ningún enlace ni comando para
+registrar una carpeta nueva como bóveda), así que **guíale, con las palabras exactas que va a ver**:
+
+1. Que abra **Obsidian** (en Mac: `Cmd + Espacio`, escribir *Obsidian*; en Windows: tecla Windows, escribir *Obsidian*).
+2. En la primera pantalla, a la derecha de **"Abrir una carpeta como bóveda"** (si le sale en inglés:
+   *"Open folder as vault"*), que pulse **Abrir** (*Open*).
+3. Que busque su carpeta de cursos, entre en la de **este curso**, seleccione la carpeta **`estudio`** y
+   pulse **Abrir**. **Importante: `estudio`, no la carpeta del curso entera** — dentro está todo lo suyo y
+   nada que pueda romper.
+4. Si Obsidian pregunta si confía en el autor de la bóveda, que diga que sí: es la suya.
+
+Si la interfaz le sale en inglés y lo prefiere en español: rueda dentada (abajo a la izquierda) →
+*General* → *Language* → *Español*, y reiniciar Obsidian.
+
+Comprueba que ha ido bien: tiene que existir `estudio/.obsidian/`, y él tiene que ver en la columna
+izquierda las carpetas **conceptos**, **inbox**, **sesiones**… Dile que su material de clase lo deja en
+**inbox**.
+
+### Opcional — hablar contigo desde dentro de Obsidian
+
+**Ofrécelo al final, cuando todo lo demás funcione, y solo si le apetece:** *"¿Quieres poder hablar
+conmigo desde dentro de Obsidian, sin abrir otra ventana?"*. Es un extra: el camino normal (terminal +
+su palabra) funciona siempre.
+
+Se hace con el complemento **Terminal**, de polyipseity (<https://github.com/polyipseity/obsidian-terminal>).
+Es de la comunidad, no de Obsidian ni de este kit: díselo. Requisitos según su guía oficial: **Python 3.9
+o superior**, y en Windows además los paquetes de Python que indica esa guía. Sigue **su** guía de
+instalación, no una memorizada. Lo que él verá en Obsidian: *Ajustes → Complementos de la comunidad →
+"Salir del modo restringido"*, buscar **Terminal**, *Instalar* y *Activar*.
+
+Comprobación: dentro de Obsidian abre un terminal, escribe su atajo, y te abres tú en su curso. Si algo
+no va, **no insistas**: déjalo con el camino normal y, si quiere, propón una issue.
 
 ## Al terminar
 

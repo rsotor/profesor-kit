@@ -10,9 +10,10 @@
 *.pem
 *.key
 
-# Obsidian: la configuración local no se comparte
-.obsidian/workspace*.json
-.obsidian/cache
+# Obsidian: la disposición de ventanas cambia cada vez que se abre un fichero; no se guarda.
+# (La documentación oficial recomienda ignorar workspace.json y workspaces.json.)
+**/.obsidian/workspace*.json
+**/.obsidian/cache
 
 # Banco de pruebas del kit: cursos de usar y tirar para probar instalaciones. Nunca se sube.
 pruebas-local/

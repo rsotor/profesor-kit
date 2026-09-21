@@ -35,8 +35,12 @@ dile a tu profesor que lo has dejado. Lo mejor es PDF; si tienes una presentaci�
 
 ## 4. Dónde lees tus notas
 
-En el programa **Obsidian**, abriendo la carpeta **estudio**. Todo lo que tu profesor prepara aparece
-ahí solo: los conceptos, los ejercicios, los tests y tu progreso.
+En el programa **Obsidian**. Ábrelo y verás tus carpetas a la izquierda: todo lo que tu profesor
+prepara aparece ahí solo —los conceptos, los ejercicios, los tests y tu progreso—.
+
+Si algún día Obsidian se abre vacío o con otra cosa: pulsa el icono de la bóveda (abajo a la
+izquierda), elige **"Abrir una carpeta como bóveda"** y selecciona la carpeta **estudio** de tu curso.
+{{TERMINAL_EN_OBSIDIAN}}
 
 ## 5. Cómo dejar una duda mientras lees
 

@@ -38,3 +38,11 @@ test('las plantillas existen, y el kit no trae código de ejercicios', () => {
   assert.ok(!fs.existsSync(path.join(RAIZ, '.kit', 'recursos')));
   assert.ok(!fs.existsSync(path.join(RAIZ, '.kit', 'plantillas', 'ejercicio.html')));
 });
+
+test('git ignora la disposición de ventanas de Obsidian también dentro de estudio/', () => {
+  const { execFileSync } = require('node:child_process');
+  const ignorado = ruta => { try { execFileSync('git', ['check-ignore', '-q', ruta], { cwd: RAIZ }); return true; } catch { return false; } };
+  assert.ok(ignorado('estudio/.obsidian/workspace.json'));
+  assert.ok(ignorado('estudio/.obsidian/workspaces.json'));
+  assert.ok(!ignorado('estudio/.obsidian/app.json'), 'los ajustes de la bóveda sí se guardan');
+});
