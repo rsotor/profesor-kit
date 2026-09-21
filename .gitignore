@@ -1,0 +1,5 @@
+# Banco de pruebas del kit: cursos de usar y tirar para probar instalaciones. Nunca se sube.
+pruebas-local/
+
+# Sistema
+.DS_Store

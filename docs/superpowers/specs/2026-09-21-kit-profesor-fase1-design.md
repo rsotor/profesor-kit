@@ -85,7 +85,7 @@ curso-X/
 | `curso.md` | Nombre, de qué va, temario (bloques/módulos), objetivo (examen oficial · cultura general · uso profesional), fechas, cómo numera el centro las clases, **reglas-propias** del dominio | `/configurar`; el alumno a mano |
 | `profesor.md` | Tono, longitud máxima de nota, orden de explicación, tipo de ejercicio preferido, marcador de dudas (`@@` por defecto), lente personal (opcional) | `/configurar`; cambios propuestos por el profesor y aceptados por el alumno |
 | `alumno.md` | Nivel de partida por bloque, prerrequisitos flojos, conceptos que costaron, errores repetidos, qué funcionó. **Cada entrada con su prueba** | El profesor, en cada sesión, duda, ejercicio o examen |
-| `ajustes.json` | `subir_a_github`, `llm`, `version_datos` (versión del formato de los datos, la usan las migraciones), `configuracion` (qué bloques de `/configurar` están completos) | `/configurar`; el alumno; `actualizar.js` solo `version_datos` |
+| `ajustes.json` | `subir_a_github`, `llm`, `patrones_prohibidos` (reglas de texto propias de este curso; vacío por defecto), `version_datos` (versión del formato de los datos, la usan las migraciones), `configuracion` (qué bloques de `/configurar` están completos) | `/configurar`; el alumno; `actualizar.js` solo `version_datos` |
 
 La versión del motor vive solo en `.kit/VERSION`; no se duplica en `ajustes.json`.
 
@@ -205,7 +205,7 @@ fichero, lo dice y pide otro formato.
 | `/configurar` | Sesión 0 | Nueva |
 | `/sesion` | Procesa el `inbox/`: auditoría del material, conceptos (con alias), índice de sesión, flashcards, ejercicios y ficheros vivos | `sesion`, con la numeración y las reglas del dominio tomadas de `curso.md` |
 | `/dudas` | Responde a los marcadores de duda en el sitio y aprende de ellos | `dudas`, casi igual |
-| `/ejercicio` | Práctica a demanda. Interactivo con sliders **solo si el concepto es cuantitativo y algo se mueve**; si no, casos y decisiones en markdown | `ejercicio`, generalizado |
+| `/ejercicio` | Práctica a demanda. La skill es una **guía, no código**: el kit no trae plantillas de ejercicio. El profesor elige el formato según lo que haya que tocar — HTML interactivo si hay parámetros que mover, HTML tipo formulario si es una decisión comprobable, markdown si la respuesta es abierta o hay que producir algo — y lo genera como fichero autocontenido | `ejercicio`: se conserva el método, no el código |
 | `/examen` | Test interno con autocorrección, ponderado por los errores del alumno | `examen`, sin lente salvo que esté activada |
 | `/repaso` | Página HTML **local**, que se abre en el navegador | `repaso`, sin Artifact |
 | `/actualizar` | Enseña qué cambia en la versión nueva del motor, lo aplica y migra los datos automáticamente si el formato cambió (§9) | Nueva |
@@ -225,7 +225,7 @@ fichero, lo dice y pide otro formato.
 
 | Herramienta | Qué hace |
 |---|---|
-| `comprobar.js` | Enlaces rotos, frontmatter, índices sincronizados (`_index`, progreso, mapa), lista de marcadores de duda pendientes (aviso, no error), **escaneo de secretos** |
+| `comprobar.js` | Enlaces rotos, frontmatter, índices sincronizados (`_index`, progreso, mapa), lista de marcadores de duda pendientes (aviso, no error), **escaneo de secretos**, y los **patrones prohibidos propios de cada curso** (el motor trae el mecanismo vacío; las reglas son datos del curso, en `ajustes.json`) |
 | `guardar.js` | Ejecuta `comprobar.js` y hace commit local. Hace push **solo si** `subir_a_github` es `true` **y** el escaneo de secretos está limpio |
 | `instalar-skills.js` | Copia las skills a las carpetas de cada LLM |
 | `actualizar.js` | Descarga la versión nueva del motor, enseña el CHANGELOG, reemplaza solo los ficheros del motor, ejecuta las migraciones pendientes y vuelve a lanzar `instalar-skills.js` |
@@ -271,7 +271,7 @@ La regla vive en `AGENTS.md` y en `INSTALAR-AGENTE.md` (la instalación es donde
    - Automático: conceptos detectados, cero duplicados, marcas de origen presentes y `comprobar.js` en verde.
    - Calidad: la juzga Roberto leyendo las dos versiones (criterio 3 de abajo).
 2. **Curso que no es de finanzas.** Un temario libre y sin números, instalado simulando al
-   alumno. Se comprueba que no se cuela nada de finanzas y que los ejercicios salen sin sliders.
+   alumno. Se comprueba que no se cuela nada de finanzas y que el formato de los ejercicios es el que corresponde a un temario sin números.
    La hace Claude; Roberto no tiene que hacer nada.
 3. **LLM:** instalación, `/configurar` y una `/sesion` en **Claude Code**. Otros LLMs: sin
    suscripción para probarlos. Se entrega marcado como **compatible, sin probar**, y el primer
