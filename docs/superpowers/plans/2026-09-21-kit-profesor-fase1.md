@@ -2790,7 +2790,7 @@ Nombre de la carpeta (`estudio/`) a confirmar por Roberto.
 
 ---
 
-### Task 14c: Nombre del curso, atajo de terminal y guía de uso para el día 3 (pedido por Roberto, 2026-09-21)
+### Task 14c: Nombre del curso, atajo de terminal y guía de uso para el día 3 (pedido por Roberto, 2026-09-21; hecha, kit 0.3.0)
 
 **El problema:** la instalación deja al alumno con el profesor funcionando, pero no le dice **qué hacer
 dos días después**: cómo se abre, qué se le pide, dónde deja el material. Y si tiene varios cursos,
@@ -2830,6 +2830,42 @@ sin ningún perfil técnico.
 - [ ] **Step 4:** `INSTALAR-AGENTE.md` (pregunta del nombre, paso del atajo con su comprobación, mención final de la guía), `INSTALACION.md` (una frase: "a partir de mañana solo tendrás que escribir una palabra") y `AGENTS.md`.
 - [ ] **Step 5:** CHANGELOG, suite con cobertura ≥ 80 %, PR, `tests-ok` en verde, merge.
 - [ ] **Step 6:** prueba real en `pruebas-local/` con un `HOME` de mentira: crear dos cursos con atajos distintos, abrir cada uno con su atajo, y leer la guía generada con ojos de quien no sabe qué es una terminal.
+
+---
+
+### Task 14d: Obsidian forma parte de la instalación (pedido por Roberto, 2026-09-21)
+
+Todo el kit da por hecho Obsidian, pero la instalación solo dice "descárgalo". El profesor tiene que
+instalarlo y dejar la bóveda lista.
+
+**Aclaración de diseño (no cambia):** el atajo abre la **raíz** del curso —ahí están `AGENTS.md`, las
+skills, los permisos y las herramientas que necesita el profesor— y Obsidian abre **`estudio/`**, que es
+lo único que ve el alumno. Son dos puertas distintas al mismo curso.
+
+- [ ] **Step 1: verificar en documentación oficial, no de memoria:** identificador de Obsidian en `winget` y cask de Homebrew · si `obsidian://open?path=<ruta>` abre una carpeta que Obsidian aún no conoce, o solo bóvedas ya registradas (de eso depende que el profesor pueda abrirla él o tenga que guiar los tres clics).
+- [ ] **Step 2:** el kit trae `estudio/.obsidian/` con la configuración mínima (que sea una bóveda al abrirla; adjuntos a `inbox/`; sin plugins). `.gitignore`: los patrones de Obsidian pasan a `**/.obsidian/…`, porque hoy solo cubren la raíz.
+- [ ] **Step 3:** `INSTALAR-AGENTE.md`, paso de Obsidian como **objetivo + comprobación**: instalado con el gestor de paquetes (con permiso y una frase de qué es) · bóveda `estudio/` abierta. Si el enlace no sirve, guion de los tres clics con **las palabras exactas que ve en pantalla**, en español.
+- [ ] **Step 4:** `estudio/como-usar-tu-profesor.md` (plantilla): cómo volver a abrir Obsidian y qué hacer si abre otra bóveda.
+- [ ] **Step 5:** tests (la plantilla del kit trae la bóveda; `comprobar.js` no la escanea como notas; `preparar-curso` no la borra), CHANGELOG, PR, `tests-ok` en verde.
+
+---
+
+### Task 14e: Cuestionario inicial híbrido — hoja para los datos, conversación para lo demás (**pendiente del OK de Roberto**)
+
+**Por qué:** en la prueba 16, `/configurar` fueron ~15 turnos de conversación. Funcionó, pero el bloque A
+son **datos**, y los datos salen mejor de una hoja que el alumno rellena con calma que de ocho preguntas
+contestadas de memoria.
+
+| Bloque | Formato | Por qué |
+|---|---|---|
+| A. El curso | **Hoja** `estudio/hoja-del-curso.md` (o el PDF del programa) | Son datos: se consultan, no se recuerdan |
+| B. Cómo aprende | **Conversación** | Se mide su reacción a dos explicaciones; en una hoja volverían las preguntas abstractas |
+| C. Cuánto sabe | Autoevaluación 0-3 **en la hoja**; test corto **en conversación** | El test se adapta a cada respuesta y baja a prerrequisitos |
+
+- [ ] **Step 1:** `/configurar` empieza ofreciendo elegir: *"¿me lo cuentas aquí o te dejo una hoja y la rellenas con calma?"*. La conversación sigue existendo tal cual; la hoja es la vía alternativa.
+- [ ] **Step 2:** plantilla `.kit/plantillas/hoja-del-curso.md`: pocas casillas, con ejemplo en cada una, y la autoevaluación por bloque. Escrita para quien no es técnico.
+- [ ] **Step 3:** al volver, el profesor lee la hoja, pregunta **solo por los huecos y las ambigüedades**, escribe `config/curso.md` y sigue con el bloque B. La hoja rellena es también el estado para retomar.
+- [ ] **Step 4:** probarlo en `pruebas-local/` con una hoja a medio rellenar.
 
 ---
 
