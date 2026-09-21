@@ -27,9 +27,19 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 Pregunta **"¿Cómo quieres llamar a este curso?"** y de la respuesta saca dos cosas, que le enseñas para
 que las confirme:
 
-- **La carpeta:** el nombre en minúsculas, sin acentos y con guiones (`historia-del-arte`). Los cursos
-  viven juntos, cada uno en su carpeta, dentro de la carpeta en la que estás ahora (normalmente `cursos`
-  en su carpeta personal). Si ya existe una con ese nombre, es otro curso suyo: pide otro nombre.
+- **La carpeta del curso:** el nombre en minúsculas, sin acentos y con guiones (`historia-del-arte`). Si
+  ya existe una con ese nombre, es otro curso suyo: pide otro nombre.
+- **Dónde se guarda.** Los cursos viven juntos, cada uno en su carpeta, dentro de una carpeta común.
+  **Propón** `cursos` dentro de su carpeta personal y **deja que la cambie**: *"Voy a guardar tus cursos en
+  la carpeta `cursos` de tu carpeta personal. ¿Te va bien ahí, o prefieres otro sitio?"*. Si ya tiene
+  cursos instalados, propón la carpeta donde están (lo dice el lanzador de cualquier atajo suyo).
+  Si no le importa, no insistas: con el atajo nunca va a necesitar saber dónde está.
+  - **Si elige una carpeta sincronizada con la nube, avísale antes de seguir.** Señales: la ruta contiene
+    `OneDrive`, `iCloud`, `Mobile Documents`, `Dropbox` o `Google Drive`; en Windows, *Documentos* y
+    *Escritorio* suelen estar dentro de OneDrive; en Mac, *Documentos* y *Escritorio* están en iCloud si
+    `defaults read com.apple.finder FXICloudDriveDocuments` devuelve `1`. El motivo, en una frase: *"ahí
+    el ordenador sube y baja los ficheros por su cuenta, y eso puede estropear el historial de tu curso;
+    tu copia de seguridad ya la hace GitHub"*. Si aun así la quiere, es su decisión: respétala.
 - **El atajo:** una sola palabra corta para abrirlo (`historia`). Es lo único que tendrá que recordar.
 
 Después pregunta: **"¿Quieres una copia de seguridad de tu curso en GitHub? Será privada: solo la

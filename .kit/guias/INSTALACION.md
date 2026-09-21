@@ -51,18 +51,16 @@ terminal. Ciérrala del todo (`Cmd + Q`) y ábrela otra vez.
 
 ### Paso 3 — Arrancar al profesor
 
-En la terminal, pega estas tres líneas, una a una. Crean una carpeta para tus cursos, entran en
-ella y abren Claude:
+En la terminal, escribe esto y pulsa Intro:
 
-    mkdir -p ~/cursos
-    cd ~/cursos
     claude
 
 La primera vez, Claude abrirá el navegador para que inicies sesión con tu cuenta. Cuando veas que
 Claude te espera en la terminal, copia **todo** el [texto de arranque](#texto-de-arranque), pégalo
 y pulsa Intro.
 
-**Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. A partir de aquí, síguele
+**Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. Te preguntará cómo quieres
+llamar al curso y **dónde guardarlo**: te propondrá un sitio y puedes cambiarlo. A partir de aquí, síguele
 a él: te hará preguntas sencillas y acabará con una sesión de unos 20 minutos para conocer tu
 curso y cómo aprendes. En algún momento te pedirá que cierres Claude y lo vuelvas a abrir dentro
 de la carpeta de tu curso; al hacerlo te preguntará **si confías en esa carpeta**: di que sí, es
@@ -110,18 +108,16 @@ PowerShell.
 
 ### Paso 3 — Arrancar al profesor
 
-En PowerShell, pega estas tres líneas, una a una. Crean una carpeta para tus cursos, entran en
-ella y abren Claude:
+En PowerShell, escribe esto y pulsa Intro:
 
-    mkdir $HOME\cursos -Force
-    cd $HOME\cursos
     claude
 
 La primera vez, Claude abrirá el navegador para que inicies sesión con tu cuenta. Cuando veas que
 Claude te espera en la terminal, copia **todo** el [texto de arranque](#texto-de-arranque), pégalo
 y pulsa Intro.
 
-**Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. A partir de aquí, síguele
+**Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. Te preguntará cómo quieres
+llamar al curso y **dónde guardarlo**: te propondrá un sitio y puedes cambiarlo. A partir de aquí, síguele
 a él. En algún momento te pedirá que cierres Claude y lo vuelvas a abrir: es normal. Al abrirlo
 en la carpeta de tu curso te preguntará **si confías en esa carpeta**: di que sí, es la tuya.
 
