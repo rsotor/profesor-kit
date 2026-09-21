@@ -2761,15 +2761,9 @@ Sospechosos habituales, por orden: separadores de ruta en alguna comparación de
 
 ### Task 15: Prueba de instalación en limpio (criterio 2) — necesita a Roberto
 
-> ⚠️ **Antes de invitar a nadie — decisión de Roberto.** Verificado en docs.github.com: en un repo
-> privado de cuenta personal, un colaborador invitado tiene siempre **escritura** (no hay rol de
-> lectura). Opciones: **(A)** mover el kit a una organización gratuita de GitHub, donde sí existe el
-> rol *Read* — cambia `repo` en `.kit/motor.json` y el nombre en las dos guías y en `AGENTS.md`;
-> **(B)** hacer el kit público — no contiene secretos ni material de ningún curso, y elimina las
-> invitaciones y el arranque en dos tiempos, pero contradice la decisión de repo privado;
-> **(C)** dejarlo como está y asumir que los compañeros invitados pueden hacer push.
-> Recomendación: **A**. Confirmar antes en la documentación de GitHub que el rol *Read* está
-> disponible en el plan gratuito de organizaciones.
+> **Decidido por Roberto (2026-09-21): el kit se queda en `rsotor/profesor-kit`, cuenta personal.**
+> Los colaboradores invitados tienen escritura (no existe rol de lectura en repos personales): riesgo
+> aceptado. No volver a proponer moverlo. Si la cuenta tiene GitHub Pro, proteger `main`.
 
 Crea y borra un repo real en GitHub: **pedir confirmación a Roberto antes de empezar.**
 
