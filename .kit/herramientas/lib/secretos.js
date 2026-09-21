@@ -16,7 +16,9 @@ const PATRONES = [
 ];
 const NOMBRES_DE_SECRETOS = /^(\.env(\..+)?|.+\.pem|.+\.key)$/;
 const MAX_BYTES = 1024 * 1024;
-const FUERA = '.kit/herramientas/tests/';
+// Fuera del escaneo: los tests del kit (fabrican secretos de mentira) y el código de los complementos de
+// Obsidian, que es de terceros, viene minificado y no contiene nada que el alumno haya escrito.
+const FUERA = [/^\.kit\/herramientas\/tests\//, /(^|\/)\.obsidian\/plugins\//];
 
 function ficherosCandidatos(raiz) {
   const r = spawnSync('git', ['ls-files', '-co', '--exclude-standard', '-z'], { cwd: raiz, encoding: 'utf8' });
@@ -27,7 +29,7 @@ function ficherosCandidatos(raiz) {
 function escanearSecretos(raiz) {
   const hallazgos = [];
   for (const rel of ficherosCandidatos(raiz)) {
-    if (rel.startsWith(FUERA)) continue;
+    if (FUERA.some(patron => patron.test(rel))) continue;
     const abs = path.join(raiz, ...rel.split('/'));
     if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) continue;
     if (NOMBRES_DE_SECRETOS.test(path.posix.basename(rel))) {

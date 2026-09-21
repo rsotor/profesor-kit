@@ -32,9 +32,17 @@ test('profesor.md trae las preferencias por defecto del spec', () => {
 });
 
 test('las plantillas existen, y el kit no trae código de ejercicios', () => {
-  for (const f of ['concepto.md', 'sesion.md', 'flashcards.md']) {
+  for (const f of ['concepto.md', 'sesion.md', 'flashcards.md', 'guia-de-uso.md', 'hoja-del-curso.md']) {
     assert.ok(fs.existsSync(path.join(RAIZ, '.kit', 'plantillas', f)), f);
   }
   assert.ok(!fs.existsSync(path.join(RAIZ, '.kit', 'recursos')));
   assert.ok(!fs.existsSync(path.join(RAIZ, '.kit', 'plantillas', 'ejercicio.html')));
+});
+
+test('git ignora la disposición de ventanas de Obsidian también dentro de estudio/', () => {
+  const { execFileSync } = require('node:child_process');
+  const ignorado = ruta => { try { execFileSync('git', ['check-ignore', '-q', ruta], { cwd: RAIZ }); return true; } catch { return false; } };
+  assert.ok(ignorado('estudio/.obsidian/workspace.json'));
+  assert.ok(ignorado('estudio/.obsidian/workspaces.json'));
+  assert.ok(!ignorado('estudio/.obsidian/app.json'), 'los ajustes de la bóveda sí se guardan');
 });
