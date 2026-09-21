@@ -66,6 +66,10 @@ curso y cómo aprendes. En algún momento te pedirá que cierres Claude y lo vue
 de la carpeta de tu curso; al hacerlo te preguntará **si confías en esa carpeta**: di que sí, es
 la tuya.
 
+**A partir de mañana** no tendrás que repetir nada de esto: abrirás la terminal, escribirás **una
+palabra** que vas a elegir tú durante la instalación, y tu profesor se abrirá en tu curso. Y te dejará
+una hoja, *Cómo usar tu profesor*, con todo lo que necesitas recordar.
+
 **Si ves otra cosa:** si Claude dice que no encuentra el kit o ve un error 404, es que la
 invitación del paso 1 no está aceptada.
 
@@ -118,6 +122,10 @@ y pulsa Intro.
 **Lo que vas a ver:** Claude te dice qué va a instalar y te pide permiso. A partir de aquí, síguele
 a él. En algún momento te pedirá que cierres Claude y lo vuelvas a abrir: es normal. Al abrirlo
 en la carpeta de tu curso te preguntará **si confías en esa carpeta**: di que sí, es la tuya.
+
+**A partir de mañana** no tendrás que repetir nada de esto: abrirás PowerShell, escribirás **una
+palabra** que vas a elegir tú durante la instalación, y tu profesor se abrirá en tu curso. Y te dejará
+una hoja, *Cómo usar tu profesor*, con todo lo que necesitas recordar.
 
 **Si ves otra cosa:** si Claude dice que no encuentra el kit o ve un error 404, es que la
 invitación del paso 1 no está aceptada.

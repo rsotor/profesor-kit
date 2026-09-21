@@ -6,7 +6,7 @@ const g = require('./lib/git');
 
 const SOLO_DEL_KIT = ['docs', '.github', '.githooks', 'README.md', 'CONTRIBUTING.md'];
 
-function prepararCurso({ raiz, subir, llm = 'claude-code' }) {
+function prepararCurso({ raiz, subir, llm = 'claude-code', nombre = '' }) {
   const motor = v.leerMotor(raiz);
 
   const borrado = [];
@@ -24,7 +24,7 @@ function prepararCurso({ raiz, subir, llm = 'claude-code' }) {
   const ficheroAjustes = path.join(raiz, 'config', 'ajustes.json');
   const ajustesCreados = !fs.existsSync(ficheroAjustes);
   if (ajustesCreados) {
-    v.escribirAjustes(raiz, { ...structuredClone(v.AJUSTES_POR_DEFECTO), subir_a_github: subir, llm, version_datos: motor.version_datos });
+    v.escribirAjustes(raiz, { ...structuredClone(v.AJUSTES_POR_DEFECTO), subir_a_github: subir, llm, nombre_curso: nombre, version_datos: motor.version_datos });
   }
   return { borrado, remotoEliminado, ajustesCreados };
 }
@@ -32,8 +32,8 @@ function prepararCurso({ raiz, subir, llm = 'claude-code' }) {
 function cli(args, raiz) {
   const valor = nombre => { const i = args.indexOf(nombre); return i >= 0 ? args[i + 1] : undefined; };
   const subir = valor('--subir');
-  if (subir !== 'si' && subir !== 'no') { console.error('Uso: node .kit/herramientas/preparar-curso.js --subir si|no [--llm <nombre>]'); return 2; }
-  const r = prepararCurso({ raiz, subir: subir === 'si', llm: valor('--llm') });
+  if (subir !== 'si' && subir !== 'no') { console.error('Uso: node .kit/herramientas/preparar-curso.js --subir si|no [--nombre "<nombre del curso>"] [--llm <llm>]'); return 2; }
+  const r = prepararCurso({ raiz, subir: subir === 'si', llm: valor('--llm'), nombre: valor('--nombre') });
   console.log(`Curso preparado. Borrado: ${r.borrado.join(', ') || 'nada'} · remoto del kit eliminado: ${r.remotoEliminado ? 'sí' : 'no'} · ajustes creados: ${r.ajustesCreados ? 'sí' : 'ya existían'}`);
   return 0;
 }

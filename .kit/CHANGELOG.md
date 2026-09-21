@@ -6,6 +6,12 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.3.0
+- Cada curso tiene su nombre y su **atajo**: escribes una palabra en la terminal y se abre tu profesor
+  en ese curso. Puedes tener varios cursos, cada uno con la suya.
+- Al terminar la configuración, tu profesor te deja una hoja a tu medida, *Cómo usar tu profesor*:
+  cómo abrirlo otro día, qué puedes pedirle y qué hacer si algo va raro.
+
 ## 0.2.0
 - Todo tu material vive ahora en una sola carpeta, `estudio/`, que es la que abres en Obsidian. Así no
   ves los ficheros internos del kit ni puedes borrarlos sin querer.

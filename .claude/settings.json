@@ -7,6 +7,7 @@
       "Bash(node .kit/herramientas/instalar-skills.js *)",
       "Bash(node .kit/herramientas/preparar-curso.js *)",
       "Bash(node .kit/herramientas/reparar.js *)",
+      "Bash(node .kit/herramientas/crear-atajo.js *)",
       "Bash(git status *)",
       "Bash(git log *)",
       "Bash(git diff *)"

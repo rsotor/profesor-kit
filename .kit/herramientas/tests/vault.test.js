@@ -40,7 +40,7 @@ test('leerMarcador usa @@ por defecto y respeta config/profesor.md', () => {
 test('leerAjustes aplica valores por defecto si falta el fichero', () => {
   const raiz = cursoTemporal();
   require('node:fs').rmSync(require('node:path').join(raiz, 'config', 'ajustes.json'));
-  assert.deepEqual(v.leerAjustes(raiz), { subir_a_github: true, llm: 'claude-code', version_datos: 1, configuracion: { curso: false, estilo: false, nivel: false }, patrones_prohibidos: [] });
+  assert.deepEqual(v.leerAjustes(raiz), { subir_a_github: true, llm: 'claude-code', nombre_curso: '', atajo: '', version_datos: 1, configuracion: { curso: false, estilo: false, nivel: false }, patrones_prohibidos: [] });
 });
 
 test('las rutas protegidas son config y la carpeta del alumno entera', () => {
