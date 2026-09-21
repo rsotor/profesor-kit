@@ -2850,7 +2850,7 @@ lo único que ve el alumno. Son dos puertas distintas al mismo curso.
 
 ---
 
-### Task 14e: Cuestionario inicial híbrido — hoja para los datos, conversación para lo demás (**pendiente del OK de Roberto**)
+### Task 14e: Cuestionario inicial híbrido — hoja para los datos, conversación para lo demás (OK de Roberto el 2026-09-21)
 
 **Por qué:** en la prueba 16, `/configurar` fueron ~15 turnos de conversación. Funcionó, pero el bloque A
 son **datos**, y los datos salen mejor de una hoja que el alumno rellena con calma que de ocho preguntas

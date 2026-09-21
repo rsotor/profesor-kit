@@ -6,6 +6,10 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.4.0
+- Al configurar un curso puedes elegir: contarle los datos a tu profesor hablando, o rellenar con calma
+  una hoja y avisarle cuando termines. Él solo te preguntará por lo que falte.
+
 ## 0.3.0
 - Cada curso tiene su nombre y su **atajo**: escribes una palabra en la terminal y se abre tu profesor
   en ese curso. Puedes tener varios cursos, cada uno con la suya.

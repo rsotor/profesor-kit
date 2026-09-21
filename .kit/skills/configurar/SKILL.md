@@ -18,6 +18,39 @@ Si el alumno solo quiere cambiar una cosa, ve directo a ese bloque.
 Reglas de toda la sesión: **una pregunta cada vez.** Nada de formularios. Lenguaje llano. Y no
 inventes: lo que el alumno no sepa se queda como `**TODO:**` en el fichero.
 
+## Dos formas de empezar: hablando o con una hoja
+
+Los bloques A y C tienen una parte que son **datos** (cómo se llama el curso, qué temas tiene, cómo se
+llaman las clases, cuánto cree que sabe). Los datos salen mejor de una hoja rellenada con calma que de
+ocho preguntas contestadas de memoria. Pero una hoja en blanco también puede echar para atrás. Así que
+**el alumno elige**. Lo primero que le dices:
+
+> "Puedo preguntarte yo aquí, poco a poco, o dejarte una hoja para que la rellenes con calma y luego
+> me avisas. ¿Qué prefieres?"
+
+- **Hablando** → sigue con el bloque A de abajo, tal cual.
+- **Con la hoja** → copia `.kit/plantillas/hoja-del-curso.md` a **`estudio/hoja-del-curso.md`**, dile que
+  la tiene en Obsidian (o que la verá ahí en cuanto lo abra), que la rellene a su ritmo y que al
+  terminar te diga "ya he rellenado la hoja". Guarda (`config: hoja del curso entregada`) y despídete:
+  no le esperes con la sesión abierta.
+
+**Si al empezar ya existe `estudio/hoja-del-curso.md`** y `configuracion.curso` es `false`, es que vuelve
+con la hoja (rellena o a medias). Entonces:
+
+1. Léela entera. Lee también lo que haya dejado en `estudio/inbox/` (el programa, si lo puso).
+2. **Pregunta solo por los huecos y las ambigüedades**, de una en una. No repitas lo que ya contestó.
+   Lo imprescindible para seguir: el nombre, los temas y cómo se llaman las clases (pregunta 6). Lo
+   demás, si no lo sabe, se queda como `**TODO:**`.
+3. Escribe `config/curso.md` como en el bloque A (incluidos el ejemplo de nombre de fichero y la
+   propuesta de `patrones_prohibidos`, si alguna regla suya se puede comprobar con un patrón).
+4. Apunta su autoevaluación (pregunta 8) para el bloque C: **ya no se la preguntas**, pasas directo al
+   test. Prueba a citar: "hoja del curso, pregunta 8".
+5. Pon como primera línea de la hoja `> ✅ Recogida por tu profesor el <fecha>.` y no la borres: es suya.
+6. Marca `configuracion.curso: true` y sigue con el **bloque B, que siempre es hablando**.
+
+El bloque B y el test del bloque C **no tienen versión en hoja**: uno mide su reacción a dos
+explicaciones y el otro se adapta a cada respuesta.
+
 ## Bloque A — El curso → `config/curso.md`
 
 1. Pide el programa del curso. Lo mejor es el PDF en `estudio/inbox/`; si no lo tiene, que te lo cuente.
@@ -55,6 +88,7 @@ Las explicaciones de este bloque son muestras: **no se guardan como notas.**
 ## Bloque C — Cuánto sabe → `config/alumno.md`
 
 1. **Autoevaluación:** por cada bloque del temario, de 0 (no me suena) a 3 (podría explicarlo).
+   Si ya la dio en la hoja del curso, no se la vuelvas a pedir.
 2. **Test corto generado del temario:** 1-2 preguntas por bloque, empezando por los que ha
    puntuado con 2 o 3 (es donde la autoevaluación engaña más). Si falla una pregunta de base,
    **baja a los prerrequisitos**: pregunta lo que hay que saber antes, hasta encontrar suelo firme.
