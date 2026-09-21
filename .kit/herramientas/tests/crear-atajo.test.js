@@ -8,7 +8,7 @@ const { crearAtajo, cli } = require('../crear-atajo');
 const { cursoTemporal } = require('./ayuda');
 
 const bin = () => fs.mkdtempSync(path.join(os.tmpdir(), 'kit-bin-'));
-const entornoCon = dir => ({ PATH: [dir, '/usr/bin'].join(path.delimiter) });
+const entornoCon = dir => ({ PATH: [dir, os.tmpdir()].join(path.delimiter) });
 
 test('en Mac y Linux crea un lanzador ejecutable que entra en el curso y abre el LLM', () => {
   const raiz = cursoTemporal();

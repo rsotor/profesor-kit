@@ -20,9 +20,13 @@ function contenido({ raiz, comando, plataforma }) {
     `cd "${raiz}" || { echo "No encuentro la carpeta del curso: ${raiz}"; exit 1; }`, `exec ${comando} "$@"`, ''].join('\n');
 }
 
+// El PATH se parte con el separador de la máquina real (`path.delimiter`), no con el de `plataforma`:
+// `plataforma` solo decide el formato del lanzador, y así se puede probar cualquiera en cualquier sistema.
+const carpetasDelPath = entorno => (entorno.PATH || entorno.Path || '').split(path.delimiter).filter(Boolean);
+
 function existeComando(nombre, { entorno, plataforma, salvo }) {
   const extensiones = plataforma === 'win32' ? ['', ...(entorno.PATHEXT || '.COM;.EXE;.BAT;.CMD').split(';')] : [''];
-  for (const dir of (entorno.PATH || entorno.Path || '').split(plataforma === 'win32' ? ';' : ':').filter(Boolean)) {
+  for (const dir of carpetasDelPath(entorno)) {
     for (const ext of extensiones) {
       const candidato = path.join(dir, nombre + ext.toLowerCase());
       if (path.resolve(candidato) !== path.resolve(salvo) && fs.existsSync(candidato)) return true;
@@ -49,8 +53,7 @@ function crearAtajo({ raiz, nombre, carpetaBin = path.join(os.homedir(), '.local
   if (plataforma !== 'win32') fs.chmodSync(fichero, 0o755);
   v.escribirAjustes(raiz, { ...ajustes, atajo: nombre });
 
-  const enPath = (entorno.PATH || entorno.Path || '').split(plataforma === 'win32' ? ';' : ':')
-    .some(dir => dir && path.resolve(dir) === path.resolve(carpetaBin));
+  const enPath = carpetasDelPath(entorno).some(dir => path.resolve(dir) === path.resolve(carpetaBin));
   return { creado: true, fichero, enPath };
 }
 
