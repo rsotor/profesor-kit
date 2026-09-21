@@ -27,10 +27,10 @@ Lee las notas de esos bloques y `config/alumno.md`. Reparto de las preguntas:
 |---|---|---|
 | Errores repetidos de `config/alumno.md` | 40 % | Es lo que va a fallar de verdad |
 | Conceptos `dificultad: 3` | 25 % | Aún no están fijados |
-| Fórmulas de `formulario.md` | 20 % | Se olvidan con el tiempo |
+| Fórmulas de `estudio/formulario.md` | 20 % | Se olvidan con el tiempo |
 | Cobertura del resto | 15 % | Que no quede un hueco entero sin tocar |
 
-Si `formulario.md` está vacío (el curso no tiene fórmulas), su 20 % pasa a cobertura: cobertura
+Si `estudio/formulario.md` está vacío (el curso no tiene fórmulas), su 20 % pasa a cobertura: cobertura
 sube a 35 %.
 
 15-20 preguntas por bloque del temario. Mezcla:
@@ -45,8 +45,8 @@ examen mide lo estudiado, no lo que "debería" saber.
 
 ### 3. Formato
 
-`examenes/YYYY-MM-DD-<alcance>.md` con las soluciones en un callout plegado, o una página HTML
-local autocorregible en `examenes/` si el alumno lo prefiere. **Sin Artifact:** es un test
+`estudio/examenes/YYYY-MM-DD-<alcance>.md` con las soluciones en un callout plegado, o una página HTML
+local autocorregible en `estudio/examenes/` si el alumno lo prefiere. **Sin Artifact:** es un test
 interno, se queda en el repo.
 
 Si `lente` está activada en `config/profesor.md`, añade al final la lectura desde ese punto de
@@ -69,7 +69,7 @@ Cuando te dé las respuestas:
 🔴 Vuelve a la nota  → causas-de-la-revolucion — no está el mecanismo, está memorizado
 ```
 
-5. **Actualiza `progreso.md`** — es el único sitio donde se sabe qué domina de verdad. Un
+5. **Actualiza `estudio/progreso.md`** — es el único sitio donde se sabe qué domina de verdad. Un
    concepto solo cambia de estado si hay una respuesta suya que lo justifique:
    - acertó el mecanismo → `teoría ✅` · acertó el cálculo o supo aplicarlo → `aplicación ✅`
    - falló → `🟡`; falló por segunda vez → `🔴` (y entonces también el paso 3)

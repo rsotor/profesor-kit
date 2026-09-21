@@ -8,8 +8,8 @@ const avisos = (raiz, regla) => comprobar(raiz).avisos.filter(a => a.regla === r
 
 test('los marcadores de duda son aviso, no error, y se cuentan también en inbox', () => {
   const raiz = cursoTemporal({
-    'conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\n@@ no lo pillo\n\n`@@` documentado no cuenta\n',
-    'inbox/apuntes.md': 'texto @@ otra duda\n',
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\n@@ no lo pillo\n\n`@@` documentado no cuenta\n',
+    'estudio/inbox/apuntes.md': 'texto @@ otra duda\n',
   });
   const informe = comprobar(raiz);
   assert.equal(informe.errores.length, 0);
@@ -19,14 +19,14 @@ test('los marcadores de duda son aviso, no error, y se cuentan también en inbox
 test('el marcador se lee de config/profesor.md', () => {
   const raiz = cursoTemporal({
     'config/profesor.md': '---\nmarcador_dudas: "??"\n---\n',
-    'conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\n?? duda\n@@ esto ya no es marcador\n',
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\n?? duda\n@@ esto ya no es marcador\n',
   });
   assert.equal(avisos(raiz, 'duda-pendiente').length, 1);
 });
 
 test('TODO y FALTA INFO son avisos distintos', () => {
   const raiz = cursoTemporal({
-    'conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\n**TODO:** preguntar\n\n⚠️ **FALTA INFO:** la tabla\n',
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\n**TODO:** preguntar\n\n⚠️ **FALTA INFO:** la tabla\n',
   });
   assert.equal(avisos(raiz, 'todo').length, 1);
   assert.equal(avisos(raiz, 'falta-info').length, 1);
@@ -35,7 +35,7 @@ test('TODO y FALTA INFO son avisos distintos', () => {
 test('patrón prohibido de ajustes.json es error', () => {
   const raiz = cursoTemporal({
     'config/ajustes.json': JSON.stringify({ patrones_prohibidos: [{ patron: 'siglo [IVXLC]+\\b(?! [ad]\\. ?C\\.)', mensaje: 'siglo sin a. C. / d. C.' }] }),
-    'conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\nOcurrió en el siglo IV y poco más.\n',
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\nOcurrió en el siglo IV y poco más.\n',
   });
   const e = comprobar(raiz).errores.filter(x => x.regla === 'patron-prohibido');
   assert.equal(e.length, 1);
@@ -48,14 +48,14 @@ test('un patrón mal escrito no rompe la herramienta: es aviso', () => {
 });
 
 test('concepto que nadie enlaza es huérfano', () => {
-  const raiz = cursoTemporal({ 'sesiones/s01-intro.md': '---\ntipo: sesion\n---\nsin enlaces\n' });
+  const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\nsin enlaces\n' });
   assert.equal(avisos(raiz, 'huerfano').length, 1);
 });
 
 test('slugs que comparten palabra larga son posible duplicado', () => {
   const raiz = cursoTemporal({
-    'conceptos/duracion-modificada.md': '---\ntipo: concepto\nalias: []\n---\n',
-    'conceptos/duracion-efectiva.md': '---\ntipo: concepto\nalias: []\n---\n',
+    'estudio/conceptos/duracion-modificada.md': '---\ntipo: concepto\nalias: []\n---\n',
+    'estudio/conceptos/duracion-efectiva.md': '---\ntipo: concepto\nalias: []\n---\n',
   });
   assert.equal(avisos(raiz, 'posible-duplicado').length, 1);
 });

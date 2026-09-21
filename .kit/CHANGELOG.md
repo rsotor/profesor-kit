@@ -6,6 +6,11 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.2.0
+- Todo tu material vive ahora en una sola carpeta, `estudio/`, que es la que abres en Obsidian. Así no
+  ves los ficheros internos del kit ni puedes borrarlos sin querer.
+- Si alguna vez borras o mueves algo por error, el profesor lo recupera solo.
+
 ## 0.1.0
 - Primera versión en pruebas: instalación guiada, sesión de configuración, y las skills para
   procesar clases, resolver dudas, practicar, examinarte, repasar y actualizar el kit.

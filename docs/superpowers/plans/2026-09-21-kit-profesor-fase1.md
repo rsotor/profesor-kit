@@ -2759,7 +2759,7 @@ Sospechosos habituales, por orden: separadores de ruta en alguna comparación de
 
 ---
 
-### Task 14b: Reorganizar la estructura — lo del alumno en una sola carpeta (pendiente del OK de Roberto)
+### Task 14b: Reorganizar la estructura — lo del alumno en una sola carpeta (OK de Roberto el 2026-09-21; hecha)
 
 **Por qué (Roberto, 2026-09-21):** la raíz de un curso mezcla motor y material de estudio. Un usuario
 no técnico puede borrar o mover piezas sin querer. Se hace **antes de la 1.0.0**: hoy no hay alumnos

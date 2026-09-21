@@ -19,14 +19,14 @@ página, se arregla en la nota y se regenera la página, no al contrario.
 `/repaso 3` = bloque 3. `/repaso <concepto>` = ese concepto y su vecindario (lo que enlaza y
 lo que lo enlaza). Si no dice nada, pregunta.
 
-Un alcance, un fichero: `repasos/<alcance>.html`. Si ya existe, se **regenera encima** —nunca
+Un alcance, un fichero: `estudio/repasos/<alcance>.html`. Si ya existe, se **regenera encima** —nunca
 se crea uno segundo para el mismo alcance.
 
 ### 2. Leer el material
 
-- `mapa-del-curso.md` — las sesiones del alcance
-- Las notas de `conceptos/` que enlacen con ellas (las notas enteras, no solo los títulos)
-- `flashcards/` del alcance
+- `estudio/mapa-del-curso.md` — las sesiones del alcance
+- Las notas de `estudio/conceptos/` que enlacen con ellas (las notas enteras, no solo los títulos)
+- `estudio/flashcards/` del alcance
 - `config/alumno.md` — los conceptos marcados `dificultad: 3` en su frontmatter van primero
   y con más aire
 
@@ -54,10 +54,10 @@ lectura; nunca decide qué se explica ni cuánto, y nunca puntúa.
 
 ### 4. Generarlo y abrirlo
 
-Escribe el fichero en `repasos/<alcance>.html` y ábrelo en el navegador del alumno:
+Escribe el fichero en `estudio/repasos/<alcance>.html` y ábrelo en el navegador del alumno:
 
-- Mac: `open repasos/<alcance>.html`
-- Windows: `start repasos/<alcance>.html`
+- Mac: `open estudio/repasos/<alcance>.html`
+- Windows: `start estudio/repasos/<alcance>.html`
 
 ### 5. Cerrar
 

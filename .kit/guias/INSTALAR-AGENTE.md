@@ -18,7 +18,7 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 | 5 | Curso limpio y ajustes creados | existe `config/ajustes.json`; no existen `docs/` ni `.github/` | `node .kit/herramientas/preparar-curso.js --subir si` (o `no`) |
 | 6 | Skills instaladas | Claude Code: existe `.claude/skills/sesion/SKILL.md` | `node .kit/herramientas/instalar-skills.js` |
 | 7 | Todo sano y guardado | `node .kit/herramientas/comprobar.js` dice "Curso sano" | `node .kit/herramientas/guardar.js "curso: instalación"` |
-| 8 | El alumno sabe leer sus notas | ha abierto la carpeta en Obsidian | ver abajo |
+| 8 | El alumno sabe leer sus notas | ha abierto la carpeta `estudio/` en Obsidian | ver abajo |
 | 9 | Arranca la sesión 0 | — | **cierra y vuelve a abrir el LLM dentro de la carpeta del curso**, y lanza `/configurar`. Avísale antes: al abrirlo le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso |
 
 ## Paso 3 — crear el curso
@@ -42,7 +42,9 @@ Si falta, configúrala **solo en este repo** (sin `--global`), con los datos de 
 ## Paso 8 — Obsidian
 
 Obsidian es el programa gratuito para leer las notas. Que lo descargue de https://obsidian.md, lo
-abra, elija "Abrir carpeta como bóveda" y seleccione la carpeta del curso. No hace falta cuenta.
+abra, elija "Abrir carpeta como bóveda" y seleccione la carpeta **`estudio`** que hay dentro de su curso
+(no la carpeta del curso entera: en `estudio/` está todo lo suyo y nada que pueda romper). No hace falta cuenta.
+Dile también que su material de clase lo deja en `estudio/inbox/`.
 
 ## Si algo falla
 

@@ -10,7 +10,7 @@ de `AGENTS.md`).
 
 El alumno estudia por su cuenta y deja el marcador de dudas donde tiene una duda, ve un error o
 quiere que se amplíe algo. El marcador es el de `config/profesor.md` (`@@` por defecto). Puede
-ponerlo **en cualquier fichero**: en apuntes de `inbox/`, o dentro de una nota ya escrita.
+ponerlo **en cualquier fichero**: en apuntes de `estudio/inbox/`, o dentro de una nota ya escrita.
 
 **Ninguna duda se borra sin responderla.** Es el único canal que tiene para dejarte comentarios
 cuando estudia sin ti delante.

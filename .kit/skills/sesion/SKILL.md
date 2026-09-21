@@ -6,7 +6,7 @@ description: Use when the student delivers notes, slides, a transcript or a PDF 
 # Procesar una sesión de clase
 
 **Antes de nada:** lee `config/curso.md`, `config/profesor.md` y `config/alumno.md` (regla común
-de `AGENTS.md`). Sin esos tres y sin `conceptos/_index.md` completo se explica en el vacío y se
+de `AGENTS.md`). Sin esos tres y sin `estudio/conceptos/_index.md` completo se explica en el vacío y se
 duplican conceptos.
 
 Convierte apuntes en bruto en material de estudio, sin duplicar lo que ya existe.
@@ -21,7 +21,7 @@ El identificador de la sesión sale de la sección "Cómo numera el centro las c
 `config/curso.md`. Si esa sección no basta para nombrar esta clase, **pregunta** — no lo
 adivines: un identificador mal puesto rompe el `## Historial` de todas las notas que toque.
 
-Fuente de los apuntes: fichero en `inbox/`, texto pegado, PDF, transcripción. Si es un PDF o una
+Fuente de los apuntes: fichero en `estudio/inbox/`, texto pegado, PDF, transcripción. Si es un PDF o una
 imagen, léelo antes de empezar.
 
 ### 1b. Auditar el material, no solo leerlo
@@ -43,7 +43,7 @@ es: **control de calidad del material, no contenido del curso.**
 
 Lista los conceptos que aparecen en la clase. Para cada uno, decide:
 
-- **¿Está en `conceptos/_index.md`?** Comprueba el slug **y los `alias`**. Quien explique este
+- **¿Está en `estudio/conceptos/_index.md`?** Comprueba el slug **y los `alias`**. Quien explique este
   bloque puede llamarlo distinto a como lo llamó otra fuente antes.
 - **Existe** → amplía la nota existente: añade lo nuevo, añade el nombre nuevo a `alias` si
   procede, añade el bloque a `bloques:`, y añade una línea al `## Historial`. **Nunca crees una
@@ -73,7 +73,7 @@ Reglas de `AGENTS.md`, en corto:
 
 ### 4. Índice de sesión
 
-Carpeta plana `sesiones/<id>-tema.md`, desde `.kit/plantillas/sesion.md`. Es un **mapa, no
+Carpeta plana `estudio/sesiones/<id>-tema.md`, desde `.kit/plantillas/sesion.md`. Es un **mapa, no
 contenido**: ~15-20 líneas.
 
 1. **El nombre sale de `config/curso.md`.** Usa números a dos dígitos para que ordene bien en el
@@ -91,18 +91,18 @@ contenido**: ~15-20 líneas.
      rellenar.**
 
 **Fechas: solo `trabajada:`, el día que se procesa la clase.** El orden lo da
-`mapa-del-curso.md`, no el calendario.
+`estudio/mapa-del-curso.md`, no el calendario.
 
 Las secciones `## Auditoría del material` y `## Para pensarlo despacio` son las que distinguen
 una sesión trabajada de unos apuntes pasados a limpio. **Las preguntas no son flashcards**: no
 tienen respuesta de una línea, y si la tienen, están mal planteadas.
 
-Al crear la nota, actualiza también `mapa-del-curso.md`: marca la clase como procesada con su
+Al crear la nota, actualiza también `estudio/mapa-del-curso.md`: marca la clase como procesada con su
 fecha.
 
 ### 5. Flashcards
 
-`flashcards/<id-de-sesion>.md`, desde `.kit/plantillas/flashcards.md`. El número lo marca
+`estudio/flashcards/<id-de-sesion>.md`, desde `.kit/plantillas/flashcards.md`. El número lo marca
 `flashcards_por_sesion` de `config/profesor.md`. Prioriza lo que sea carne de examen y los
 errores típicos.
 
@@ -125,11 +125,11 @@ después ni se espera a que los pida el alumno.
 
 Los seis, sin saltarse ninguno:
 
-1. `conceptos/_index.md` — línea nueva o alias actualizado
-2. `formulario.md` — cualquier fórmula nueva, en su sección de bloque
-3. `mapa-del-curso.md` — contadores de sesiones y conceptos, estado del bloque
-4. `ejercicios/_index.md` — fila por ejercicio nuevo, en las dos tablas
-5. `progreso.md` — una fila por concepto nuevo, todos en `⬜ sin evaluar`. **Nunca se marca nada
+1. `estudio/conceptos/_index.md` — línea nueva o alias actualizado
+2. `estudio/formulario.md` — cualquier fórmula nueva, en su sección de bloque
+3. `estudio/mapa-del-curso.md` — contadores de sesiones y conceptos, estado del bloque
+4. `estudio/ejercicios/_index.md` — fila por ejercicio nuevo, en las dos tablas
+5. `estudio/progreso.md` — una fila por concepto nuevo, todos en `⬜ sin evaluar`. **Nunca se marca nada
    como sólido aquí:** eso solo lo hacen `/examen` y `/ejercicio`, con respuestas del alumno delante
 6. `config/alumno.md` — **solo si has aprendido algo de él en esta sesión** (una duda, un error
    repetido, una analogía que funcionó). Si no, no lo toques.

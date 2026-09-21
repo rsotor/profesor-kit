@@ -137,9 +137,9 @@ frase y pídeme permiso antes de instalar nada.
    sesión antes de seguir, y que te vuelva a pegar este mismo texto.
 2. Ejecuta "gh auth login" para que inicie sesión por el navegador. Nunca me pidas un token ni una
    contraseña, y si te pego uno, no lo uses y avísame.
-3. Cuando "gh auth status" esté en verde, lee el fichero INSTALAR-AGENTE.md del repositorio privado
+3. Cuando "gh auth status" esté en verde, lee la guía de instalación del repositorio privado
    rsotor/profesor-kit con este comando y sigue sus pasos uno a uno:
-   gh api repos/rsotor/profesor-kit/contents/INSTALAR-AGENTE.md -H "Accept: application/vnd.github.raw"
+   gh api repos/rsotor/profesor-kit/contents/.kit/guias/INSTALAR-AGENTE.md -H "Accept: application/vnd.github.raw"
 4. Si ese comando da un error 404, no tengo acceso todavía: dime que acepte la invitación que me
    llegó por correo, y no sigas.
 ```
@@ -154,8 +154,9 @@ mismo texto de arranque: el kit le explica qué tiene que adaptar.
 
 ## Cómo cambiar tus preferencias
 
-Todo lo que el profesor sabe de tu curso y de ti está en la carpeta `config/` de tu curso, y es
-tuyo. Para cambiar algo, lo más fácil es **pedírselo**: "quiero las notas más cortas", "prefiero
+Tus apuntes, ejercicios y exámenes están en la carpeta `estudio/` de tu curso: es la que abres en
+Obsidian, y el material de cada clase lo dejas en `estudio/inbox/`. Lo que el profesor sabe de tu
+curso y de ti está aparte, en `config/`, y también es tuyo. Para cambiar algo, lo más fácil es **pedírselo**: "quiero las notas más cortas", "prefiero
 otro símbolo para dejar dudas", "explícame con más ejemplos". También puedes editar
 `config/profesor.md` a mano.
 

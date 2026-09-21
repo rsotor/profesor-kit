@@ -32,14 +32,14 @@ const leer = (raiz, rel) => fs.readFileSync(path.join(raiz, ...rel.split('/')), 
 
 test('reemplaza el motor, retira lo que sobra, reinstala skills y no toca los datos', () => {
   const { raiz, origen } = montar();
-  const datosAntes = leer(raiz, 'conceptos/alfa.md');
+  const datosAntes = leer(raiz, 'estudio/conceptos/alfa.md');
   const r = actualizar({ raiz, origen });
   assert.equal(r.actualizado, true);
   assert.deepEqual([r.de, r.a], ['1.0.0', '2.0.0']);
   assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v2');
   assert.ok(!fs.existsSync(path.join(raiz, 'VIEJO.md')));
   assert.equal(leer(raiz, '.claude/skills/nueva/SKILL.md'), 'skill nueva');
-  assert.equal(leer(raiz, 'conceptos/alfa.md'), datosAntes);
+  assert.equal(leer(raiz, 'estudio/conceptos/alfa.md'), datosAntes);
   assert.equal(git(raiz, 'log', '-1', '--format=%s'), 'kit: actualizado a 2.0.0');
   assert.equal(git(raiz, 'status', '--porcelain'), '');
 });
@@ -52,7 +52,7 @@ test('misma versión: no hace nada', () => {
 
 test('ejecuta las migraciones pendientes en orden y sube version_datos', () => {
   const migracion = n => `module.exports = { descripcion: 'm${n}', migrar(raiz) {
-    const f = require('node:path').join(raiz, 'formulario.md');
+    const f = require('node:path').join(raiz, 'estudio/formulario.md');
     require('node:fs').appendFileSync(f, 'migrado-${n}\\n');
   } };`;
   const { raiz, origen } = montar({
@@ -61,20 +61,20 @@ test('ejecuta las migraciones pendientes en orden y sube version_datos', () => {
   });
   const r = actualizar({ raiz, origen });
   assert.deepEqual(r.migraciones, [2, 3]);
-  assert.match(leer(raiz, 'formulario.md'), /migrado-2\nmigrado-3\n$/);
+  assert.match(leer(raiz, 'estudio/formulario.md'), /migrado-2\nmigrado-3\n$/);
   assert.equal(JSON.parse(leer(raiz, 'config/ajustes.json')).version_datos, 3);
 });
 
 test('si una migración rompe el curso, revierte y el alumno sigue como estaba', () => {
   const rompe = `module.exports = { descripcion: 'rompe', migrar(raiz) {
-    require('node:fs').writeFileSync(require('node:path').join(raiz, 'progreso.md'), '# vacío\\n');
+    require('node:fs').writeFileSync(require('node:path').join(raiz, 'estudio/progreso.md'), '# vacío\\n');
   } };`;
   const { raiz, origen } = montar({ motorNuevo: { version_datos: 2 }, extraOrigen: { '.kit/herramientas/migraciones/002-rompe.js': rompe } });
-  const progresoAntes = leer(raiz, 'progreso.md');
+  const progresoAntes = leer(raiz, 'estudio/progreso.md');
   const r = actualizar({ raiz, origen });
   assert.equal(r.actualizado, false);
   assert.equal(r.motivo, 'revertido');
-  assert.equal(leer(raiz, 'progreso.md'), progresoAntes);
+  assert.equal(leer(raiz, 'estudio/progreso.md'), progresoAntes);
   assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
   assert.equal(leer(raiz, '.kit/VERSION').trim(), '1.0.0');
   assert.ok(!fs.existsSync(path.join(raiz, '.claude', 'skills', 'nueva')));
@@ -92,12 +92,12 @@ test('si una migración lanza una excepción, también revierte', () => {
 
 test('un curso que ya tenía errores se actualiza igual (no empeora)', () => {
   const { raiz, origen } = montar();
-  escribir(raiz, { 'sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
+  escribir(raiz, { 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
   assert.equal(actualizar({ raiz, origen }).actualizado, true);
 });
 
 test('rechaza un motor que pretende tocar datos del alumno', () => {
-  for (const mala of ['conceptos', 'config/alumno.md', '../fuera', 'progreso.md', 'repasos']) {
+  for (const mala of ['estudio', 'estudio/conceptos', 'estudio/progreso.md', 'config/alumno.md', '../fuera']) {
     const { raiz, origen } = montar({ motorNuevo: { ficheros: ['AGENTS.md', mala] } });
     assert.throws(() => actualizar({ raiz, origen }), /motor/i);
     assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
@@ -129,6 +129,6 @@ test('restaurar reescribe también los ficheros que git cree intactos (misma fec
 
   restaurar(raiz, sha);
   assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
-  assert.equal(leer(raiz, 'conceptos/alfa.md').includes('# Alfa'), true);
+  assert.equal(leer(raiz, 'estudio/conceptos/alfa.md').includes('# Alfa'), true);
   assert.equal(git(raiz, 'status', '--porcelain'), '');
 });

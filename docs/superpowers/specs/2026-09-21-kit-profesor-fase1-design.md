@@ -49,22 +49,24 @@ ningún curso concreto. Todo lo específico sale de la sesión de configuración
 ```
 curso-X/
 ├── AGENTS.md               ← MOTOR: reglas del profesor (genéricas, fijas)
-├── CLAUDE.md, GEMINI.md    ← una línea que remite a AGENTS.md
-├── INSTALACION.md          ← guía para el alumno (3 pasos manuales)
-├── INSTALAR-AGENTE.md      ← guía para el LLM (el resto de la instalación)
-├── .kit/                   ← MOTOR
+├── CLAUDE.md, GEMINI.md    ← una línea que remite a AGENTS.md (cada LLM los busca en la raíz)
+├── .kit/                   ← MOTOR (oculto)
 │   ├── VERSION, CHANGELOG.md
+│   ├── guias/              ← INSTALACION.md (alumno) e INSTALAR-AGENTE.md (LLM)
 │   ├── skills/             ← única copia de las skills
 │   ├── plantillas/
-│   └── herramientas/       ← comprobar.js, guardar.js, instalar-skills.js, actualizar.js
-├── config/                 ← DATOS (los escribe /configurar)
-│   ├── curso.md
-│   ├── profesor.md
-│   ├── alumno.md
-│   └── ajustes.json
-├── inbox/  conceptos/  sesiones/  ejercicios/  examenes/  flashcards/
-└── progreso.md  formulario.md  mapa-del-curso.md
+│   └── herramientas/       ← comprobar, guardar, reparar, instalar-skills, preparar-curso, actualizar
+├── config/                 ← DATOS (los escribe /configurar): curso.md, profesor.md, alumno.md, ajustes.json
+└── estudio/                ← DATOS: todo lo del alumno. **Es la carpeta que abre en Obsidian.**
+    ├── inbox/  conceptos/  sesiones/  ejercicios/  examenes/  flashcards/  repasos/
+    └── progreso.md  formulario.md  mapa-del-curso.md
 ```
+
+**Por qué `estudio/` (decisión de Roberto, 2026-09-21):** con todo en la raíz, un usuario no técnico
+veía el motor mezclado con sus apuntes y podía borrar o mover piezas sin querer. Abriendo solo
+`estudio/` en Obsidian no ve ni el motor ni `config/`. Y como red de seguridad, `comprobar.js` detecta
+lo que falte y `reparar.js` lo recupera de git (o devuelve a su sitio un fichero movido, sin perder lo
+escrito).
 
 - **Motor** = `AGENTS.md`, los ficheros puente (`CLAUDE.md`, `GEMINI.md`), las guías y `.kit/`.
   Lo reemplaza `/actualizar`.
