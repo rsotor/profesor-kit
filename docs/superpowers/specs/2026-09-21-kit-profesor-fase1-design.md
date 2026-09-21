@@ -249,7 +249,12 @@ datos (frontmatter, estructura de `alumno.md`, índices):
 Canal único para mejorar el kit. Cuando el LLM de un alumno encuentra algo del **motor** que
 no funciona o que se puede mejorar (un paso que falla en Windows, un fichero que tuvo que
 generar por usar otro LLM, una skill ambigua), crea una issue en `rsotor/profesor-kit` con
-`gh issue create`. Los compañeros invitados tienen permiso de lectura, que basta para abrir issues.
+`gh issue create`. Los compañeros invitados pueden abrir issues.
+
+> ⚠️ **Decisión abierta (verificado el 2026-09-21 en docs.github.com):** en un repo privado de **cuenta
+> personal** no existe el permiso de solo lectura: todo colaborador invitado tiene **escritura**, es
+> decir, puede hacer push al kit. Como las actualizaciones del kit llegan a todos los cursos, hay que
+> decidir cómo se cierra esto antes de invitar al primer compañero. Opciones en el plan, Task 15.
 
 - **Plantilla fija** (`.github/ISSUE_TEMPLATE/` del kit): sistema operativo, LLM y versión,
   versión del kit, paso o skill, qué se esperaba, qué pasó, y el arreglo aplicado si lo hubo
