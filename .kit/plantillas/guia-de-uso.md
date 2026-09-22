@@ -25,6 +25,7 @@ una persona.
 | Te has equivocado o no te gusta lo que ha hecho | "Deshaz lo último" |
 | Quieres que te explique de otra manera | Díselo tal cual: "más corto", "con más ejemplos" |
 | No sabes qué toca | "¿Qué hago ahora?" |
+| Tu profesor te ha dicho al saludar que hay una versión nueva | "Actualiza el kit" (te cuenta qué cambia, lo aplica y, si algo falla, lo deja como estaba) |
 
 No hace falta acertar con las palabras. Si no te entiende, te pregunta.
 

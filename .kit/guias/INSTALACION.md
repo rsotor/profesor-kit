@@ -191,6 +191,14 @@ frase y pídeme permiso antes de instalar nada.
 
 ---
 
+## Cómo se actualiza el kit
+
+No tienes que estar pendiente: tu profesor comprueba una vez al día si hay una versión nueva y te lo dice
+al saludar. Cuando quieras, escríbele **"actualiza el kit"**. Él te cuenta en dos frases qué vas a notar, lo
+aplica, adapta tus notas si el cambio lo pide y, si algo saliera mal, lo deja todo como estaba. Tu material
+no se toca: solo cambia el motor. Puedes seguir estudiando con la versión que tengas todo el tiempo que
+quieras.
+
 ## Si usas otro asistente que no sea Claude
 
 El kit está escrito en un formato abierto y debería funcionar con otros asistentes de terminal,

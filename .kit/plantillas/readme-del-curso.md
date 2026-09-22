@@ -44,3 +44,10 @@ Extras opcionales (de la comunidad, no del kit):
 
 En la terminal escribo **`{{ATAJO}}`** y se abre mi profesor en este curso. Todo lo demás está en
 `estudio/como-usar-tu-profesor.md`.
+
+## Cómo se actualiza
+
+Mi profesor comprueba una vez al día si hay una versión nueva del kit y me lo dice al saludar. Cuando
+quiero, le digo **"actualiza el kit"**: me resume qué cambia, lo aplica, adapta mis notas si hace falta y,
+si algo falla, lo deja todo como estaba. Nunca toca mi material: solo el motor (`.kit/`, `AGENTS.md`).
+Las novedades de cada versión están en `.kit/CHANGELOG.md`.
