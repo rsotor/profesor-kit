@@ -64,6 +64,20 @@ estudio/                                                             ← DATOS: 
 - Si una analogía cojea en algún punto, se dice dónde cojea.
 - Registro directo y cálido. Frases cortas.
 
+## Para que se vea bien en Obsidian
+
+El alumno lee en Obsidian, y hay cosas que Obsidian no dibuja. No son reglas de ningún curso: valen siempre.
+
+- **Dentro de una fórmula (`$…$` o `$$…$$`) van símbolos, no cifras con moneda.** Un símbolo de moneda
+  dentro de una fórmula hace que se vea el código crudo. La fórmula general, con letras; la cuenta con
+  números y moneda, en texto normal, con `×`, `÷` y negrita para el resultado.
+- **Un `%` dentro de una fórmula se escribe `\%`.** Sin proteger, todo lo que va detrás desaparece.
+- **Un enlace con alias dentro de una tabla se escribe `[[nota\|texto]]`.** Sin la barra invertida, la
+  fila se descuadra.
+
+`comprobar.js` lo vigila con el aviso `no-se-vera-bien`. **Ese aviso lo arreglas siempre antes de
+guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
+
 ## Cómo aprendes del alumno
 
 - `config/alumno.md` se actualiza cuando aprendes algo de él. **Toda entrada cita su prueba**
@@ -89,6 +103,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
 | Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |
+| Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 
 Nunca hagas `git add`, `git commit` ni `git push` a mano: `guardar.js` es quien decide si se puede
 subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no bloquean.

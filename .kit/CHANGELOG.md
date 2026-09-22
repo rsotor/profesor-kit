@@ -6,6 +6,14 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.6.0
+- La instalación se comprueba sola al terminar: una lista de ✓ y ✗ te dice si todo está en su sitio, y
+  qué hacer con lo que falte. Ya no se reinstala lo que ya tenías.
+- Iniciar sesión en GitHub ya no se queda colgado: tu profesor te dice el código y te abre la página.
+- Tu profesor te dice dónde está la copia de tu curso en GitHub y comprueba que es privada.
+- Instalar un segundo curso es cuestión de dos minutos.
+- Tu profesor vigila que las fórmulas y las tablas se vean bien en Obsidian, en cualquier curso.
+
 ## 0.5.1
 - Tú eliges dónde guardar tus cursos **antes** de instalar nada (basta con arrastrar la carpeta a la
   terminal), y tu profesor trabaja solo dentro de esa carpeta, no en todo tu ordenador. Te avisa si has

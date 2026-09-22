@@ -56,7 +56,13 @@ una en su sitio.
 Escribe "hasta luego" o cierra la ventana. Tu trabajo ya está guardado: tu profesor guarda cada vez
 que termina algo.
 
-## 7. Si algo va raro
+## 7. Si quieres añadir otro curso
+
+Es mucho más rápido que la primera vez, porque en tu ordenador ya está todo instalado. Abre la terminal,
+entra en tu carpeta de cursos, abre a tu asistente y pégale otra vez el **texto de arranque** de la guía
+de instalación. Te preguntará cómo se llama el curso nuevo y qué palabra quieres para abrirlo.
+
+## 8. Si algo va raro
 
 - **Has borrado o movido algo sin querer:** díselo. Lo recupera él.
 - **Te pregunta si puede hacer algo:** lee la frase; casi siempre es que sí.
