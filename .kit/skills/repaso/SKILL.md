@@ -25,7 +25,7 @@ se crea uno segundo para el mismo alcance.
 
 ### 2. Leer el material
 
-- `estudio/mapa-del-curso.md` — las sesiones del alcance
+- `estudio/inicio.md` — las sesiones del alcance, y la carpeta de su unidad en `estudio/sesiones/`
 - Las notas de `estudio/conceptos/` que enlacen con ellas (las notas enteras, no solo los títulos)
 - `estudio/flashcards/` del alcance
 - `config/alumno.md` — los conceptos marcados `dificultad: 3` en su frontmatter van primero

@@ -112,7 +112,10 @@ Cuando te dé las respuestas:
    - un bloque plegado `> [!example]- Intento N · <fecha> · tus respuestas y la corrección` con el veredicto y la
      tabla `| # | Tu respuesta | Resultado | Por qué |`, con sus respuestas **literales**.
 7. **Frontmatter:** `nota:` y `fecha:` son las de **este** intento (`nota` sobre 10, un número: `2`, nunca
-   `2/10`); `intentos:` sube en uno. El aprobado es `aprobado:` del frontmatter de `config/curso.md` (5 si no está).
+   `2/10`); `intentos:` sube en uno.
+
+   Para decidir si aprueba, mira `aprobado:` de `config/curso.md` (5 si no está) — no lo escribas en el
+   frontmatter del examen, esos tres campos son los únicos que le tocan.
 8. **Limpia el examen:** cada `✍️ **Tu respuesta:**` vuelve a quedar vacío. Las preguntas, las cifras, el orden
    de las opciones y las soluciones **no cambian**: al repetirlo, el alumno compara intento a intento.
 9. **Si aprueba** (y no es parcial), marca `estudiada: true` en las notas de sesión que cubría el examen: las de

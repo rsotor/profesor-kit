@@ -19,7 +19,7 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 | 6 | Skills instaladas | Claude Code: existe `.claude/skills/sesion/SKILL.md` | `node .kit/herramientas/instalar-skills.js` |
 | 7 | **El atajo funciona:** escribir una palabra en la terminal abre este curso | `config/ajustes.json` tiene `atajo`; en una terminal nueva, esa palabra abre el LLM en el curso | `node .kit/herramientas/crear-atajo.js --nombre <palabra>` — ver abajo |
 | 8 | **Instalación verificada** y guardada | `node .kit/herramientas/diagnostico.js` termina con **"Todo listo"** | después, `node .kit/herramientas/guardar.js "curso: instalación"` — ver abajo |
-| 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/` (Obsidian la crea al abrir la carpeta) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
+| 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/workspace.json` (solo lo escribe Obsidian al abrir la bóveda) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
 | 10 | Arranca la sesión 0 | — | dile que **cierre esta ventana, abra una terminal nueva y escriba su atajo**. Avísale antes: al abrirse le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso. Ya dentro, que escriba "empezamos" (o lanza tú `/configurar`) |
 
 ## Antes de nada — ¿es su primer curso?
@@ -172,9 +172,10 @@ registrar una carpeta nueva como bóveda), así que **guíale, con las palabras 
 Si la interfaz le sale en inglés y lo prefiere en español: rueda dentada (abajo a la izquierda) →
 *General* → *Language* → *Español*, y reiniciar Obsidian.
 
-Comprueba que ha ido bien: tiene que existir `estudio/.obsidian/`, y él tiene que ver en la columna
-izquierda las carpetas **conceptos**, **inbox**, **sesiones**… Dile que su material de clase lo deja en
-**inbox**.
+Comprueba que ha ido bien: tiene que existir `estudio/.obsidian/workspace.json` (Obsidian la escribe al
+abrir la bóveda; los demás ficheros de `.obsidian/` ya los puso el kit antes), y él tiene que ver en la
+columna izquierda las carpetas **conceptos**, **inbox**, **sesiones**… Dile que su material de clase lo
+deja en **inbox**.
 
 **Que fije su página de inicio.** Tras el primer guardado existe **inicio**, en la columna izquierda: es la
 puerta a todo el curso. Que haga clic en ella para abrirla, luego clic derecho en su pestaña (arriba) →
