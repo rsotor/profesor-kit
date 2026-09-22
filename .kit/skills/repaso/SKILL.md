@@ -19,7 +19,8 @@ página, se arregla en la nota y se regenera la página, no al contrario.
 `/repaso 3` = bloque 3. `/repaso <concepto>` = ese concepto y su vecindario (lo que enlaza y
 lo que lo enlaza). Si no dice nada, pregunta.
 
-Un alcance, un fichero: `estudio/repasos/<alcance>.html`. Si ya existe, se **regenera encima** —nunca
+Un alcance, un fichero: `estudio/repasos/<carpeta de la unidad>/<prefijo>-repaso.html` (un concepto suelto:
+`estudio/repasos/<concepto>.html`, sin unidad). Si ya existe, se **regenera encima** —nunca
 se crea uno segundo para el mismo alcance.
 
 ### 2. Leer el material
@@ -54,10 +55,10 @@ lectura; nunca decide qué se explica ni cuánto, y nunca puntúa.
 
 ### 4. Generarlo y abrirlo
 
-Escribe el fichero en `estudio/repasos/<alcance>.html` y ábrelo en el navegador del alumno:
+Escribe el fichero en su carpeta (ver el punto 1) y ábrelo en el navegador del alumno:
 
-- Mac: `open estudio/repasos/<alcance>.html`
-- Windows: `start estudio/repasos/<alcance>.html`
+- Mac: `open <ruta del fichero>`
+- Windows: `start <ruta del fichero>`
 
 ### 5. Cerrar
 

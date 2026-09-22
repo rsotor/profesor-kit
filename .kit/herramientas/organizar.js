@@ -52,6 +52,30 @@ function reescribirEnlaces(texto, movidos, viejoRel, nuevoRel = viejoRel) {
   });
 }
 
+// Un fichero sin prefijo (un ejercicio nombrado por concepto, un examen con fecha) se coloca por lo que dice
+// de sí mismo (`sesion:` o `unidad:` en el frontmatter) o, si no dice nada, por quién lo enlaza: si todos
+// los ficheros con unidad que lo enlazan son de la misma unidad, es de esa. Los conceptos no cuentan como
+// enlazadores: son de varias unidades a la vez.
+function unidadDeducida(abs, nombre, estructura, base) {
+  if (nombre.endsWith('.md')) {
+    const fm = v.leerFrontmatter(fs.readFileSync(abs, 'utf8')) || {};
+    if (fm.sesion) return unidadDe(`${fm.sesion}.md`, estructura);
+    if (fm.unidad) return unidadDe(`${fm.unidad}-x.md`, estructura);
+  }
+  const sinExt = nombre.replace(/\.[^.]+$/, '');
+  const unidades = new Set();
+  for (const carpeta of CARPETAS_ORGANIZABLES) {
+    for (const otro of v.recorrer(path.join(base, carpeta), n => n.endsWith('.md') && !NO_SE_MUEVE.test(n))) {
+      if (otro === abs) continue;
+      const texto = fs.readFileSync(otro, 'utf8');
+      if (!texto.includes(nombre) && !texto.includes(`[[${sinExt}`) && !texto.includes(`/${sinExt}]]`) && !texto.includes(`/${sinExt}|`) && !texto.includes(`/${sinExt}#`)) continue;
+      const u = unidadDe(path.basename(otro), estructura);
+      if (u) unidades.add(u.carpeta);
+    }
+  }
+  return unidades.size === 1 ? estructura.unidades.find(u => u.carpeta === [...unidades][0]) : null;
+}
+
 function organizar({ raiz }) {
   const estructura = leerEstructura(raiz);
   const base = v.baseAlumno(raiz);
@@ -63,11 +87,7 @@ function organizar({ raiz }) {
     if (!fs.existsSync(dir)) continue;
     for (const abs of v.recorrer(dir, n => !NO_SE_MUEVE.test(n))) {
       const nombre = path.basename(abs);
-      let u = unidadDe(nombre, estructura);
-      if (!u && nombre.endsWith('.md')) {                       // p. ej. un ejercicio nombrado por concepto: hereda la unidad de su sesión
-        const fm = v.leerFrontmatter(fs.readFileSync(abs, 'utf8')) || {};
-        if (fm.sesion) u = unidadDe(`${fm.sesion}.md`, estructura);
-      }
+      const u = unidadDe(nombre, estructura) || unidadDeducida(abs, nombre, estructura, base);
       const relActual = v.aPosix(path.relative(base, abs));
       if (!u) { if (path.dirname(abs) === dir) resultado.sinUnidad.push(relActual); continue; }
       const relNuevo = `${carpeta}/${u.carpeta}/${nombre}`;

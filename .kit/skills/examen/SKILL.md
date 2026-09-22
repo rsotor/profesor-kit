@@ -45,8 +45,10 @@ examen mide lo estudiado, no lo que "debería" saber.
 
 ### 3. Formato
 
-`estudio/examenes/YYYY-MM-DD-<alcance>.md` con las soluciones en un callout plegado, o una página HTML
-local autocorregible en `estudio/examenes/` si el alumno lo prefiere. **Sin Artifact:** es un test
+`estudio/examenes/<carpeta de la unidad>/<prefijo de la unidad>-examen-YYYY-MM-DD.md` (con `unidad: <prefijo>`
+en el frontmatter; si abarca varias unidades, la más amplia que las contenga; sin estructura, directamente en
+`estudio/examenes/`) con las soluciones en un callout plegado, o una página HTML local autocorregible en la
+misma carpeta si el alumno lo prefiere. **Sin Artifact:** es un test
 interno, se queda en el repo.
 
 Si `lente` está activada en `config/profesor.md`, añade al final la lectura desde ese punto de

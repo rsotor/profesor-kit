@@ -88,3 +88,24 @@ test('un ejercicio nombrado por concepto hereda la unidad de su sesión; y compr
   assert.ok(fs.existsSync(en(raiz, 'ejercicios/modulo-01-conceptos/1.2-medidores/van-o-tir.md')));
   assert.deepEqual(comprobar(raiz).avisos.filter(a => a.regla === 'sin-unidad').map(a => a.fichero), ['sesiones/s01-intro.md']);
 });
+
+test('un fichero sin prefijo se coloca por quién lo enlaza: si es una sola unidad, va ahí; si son varias o ninguna, se queda', () => {
+  const raiz = cursoTemporal({ ...ESTRUCTURA,
+    'estudio/sesiones/01-02-04-van-y-tir.md': '---\ntipo: sesion\n---\n[[alfa]]\n',
+    'estudio/sesiones/02-01-intro.md': '---\ntipo: sesion\n---\n[[alfa]]\n',
+    'estudio/ejercicios/01-02-04-van-y-tir.md': '# A mano\n\n→ [Interactivo](van-o-tir.html) · [[ejercicios/sharpe]]\n',
+    'estudio/ejercicios/02-01-intro.md': '# A mano\n\n[[ejercicios/sharpe]]\n',
+    'estudio/ejercicios/van-o-tir.html': '<p>x</p>',
+    'estudio/ejercicios/sharpe.md': 'lo enlazan dos unidades\n',
+    'estudio/ejercicios/nadie.html': '<p>nadie me enlaza</p>',
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\n---\n[jugar](../ejercicios/nadie.html)\n',
+    'estudio/examenes/2026-01-01-bloque-1.md': '---\ntipo: examen\nunidad: 01-02\n---\nx\n',
+    'estudio/mapa-del-curso.md': '[[s01-intro]] [[01-02-04-van-y-tir]] [[02-01-intro]]',
+  });
+  const r = organizar({ raiz });
+  assert.ok(fs.existsSync(en(raiz, 'ejercicios/modulo-01-conceptos/1.2-medidores/van-o-tir.html')), 'lo enlaza solo la unidad 01-02');
+  assert.ok(fs.existsSync(en(raiz, 'examenes/modulo-01-conceptos/1.2-medidores/2026-01-01-bloque-1.md')), 'por su frontmatter unidad:');
+  assert.deepEqual(r.sinUnidad.sort(), ['ejercicios/nadie.html', 'ejercicios/sharpe.md', 'sesiones/s01-intro.md']);
+  assert.match(leer(raiz, 'ejercicios/modulo-01-conceptos/1.2-medidores/01-02-04-van-y-tir.md'), /\(van-o-tir\.html\)/, 'mismo directorio: el enlace relativo no cambia');
+  assert.deepEqual(comprobar(raiz).errores, []);
+});
