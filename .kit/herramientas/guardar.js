@@ -6,7 +6,21 @@ const fs = require('node:fs');
 const { comprobar, markdownPendientes } = require('./comprobar');
 const { CARPETA_ALUMNO } = require('./lib/vault');
 
-function guardar({ raiz, mensaje, permitirErrores = false }) {
+const DIARIO_CABECERA = `# Diario del curso
+
+> Una línea por cada vez que tu profesor guarda. La escribe él (\`guardar.js\`) y la lee al abrir para saber por
+> dónde ibais. Si una línea dice **en curso** y no hay otra después que lo cierre, algo se quedó a medias.
+
+`;
+
+// Anota en config/diario.md qué se guarda. Va antes del commit para que forme parte de él.
+function anotarEnDiario(raiz, mensaje, hoy = new Date().toISOString().slice(0, 10)) {
+  const f = path.join(raiz, 'config', 'diario.md');
+  const previo = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : DIARIO_CABECERA;
+  fs.writeFileSync(f, previo.replace(/\n*$/, '\n') + `- ${hoy} · ${mensaje}\n`);
+}
+
+function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
   const informe = comprobar(raiz);
   if (!g.esRepo(raiz)) return { guardado: false, motivo: 'sin-repo', subido: false, informe };
   if (informe.errores.length && !permitirErrores) return { guardado: false, motivo: 'errores', subido: false, informe };
@@ -17,6 +31,7 @@ function guardar({ raiz, mensaje, permitirErrores = false }) {
   if (!g.hayCambios(raiz)) return { guardado: false, motivo: 'sin-cambios', subido: false, informe };
   if (!g.tieneIdentidad(raiz)) return { guardado: false, motivo: 'sin-identidad', subido: false, informe };
 
+  anotarEnDiario(raiz, mensaje, hoy);
   g.git(raiz, ['add', '-A']);
   g.git(raiz, ['commit', '-q', '-m', mensaje]);
 
@@ -50,4 +65,4 @@ function cli(args, raiz) {
 
 if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
 
-module.exports = { guardar, cli };
+module.exports = { guardar, anotarEnDiario, cli };

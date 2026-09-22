@@ -67,8 +67,8 @@ una en su sitio.
 
 ## 7. Para terminar
 
-Escribe "hasta luego" o cierra la ventana. Tu trabajo ya está guardado: tu profesor guarda cada vez
-que termina algo.
+Escribe "hasta luego" y espera a que se despida: así guarda lo último. Si cierras la ventana sin más, no
+se pierde nada de lo terminado, y la próxima vez te dirá si algo se quedó a medias.
 
 ## 8. Si quieres añadir otro curso
 

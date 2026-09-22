@@ -2872,7 +2872,7 @@ contestadas de memoria.
 
 ---
 
-### Task 14g: Cierre de sesión — qué se guarda siempre al terminar (pedido por Roberto, 2026-09-22; pendiente de diseño)
+### Task 14g: Cierre de sesión — qué se guarda siempre al terminar (pedido por Roberto, 2026-09-22; hecha, kit 0.10.0)
 
 **La pregunta:** cuando el alumno cierra la conversación con el profesor, ¿queda guardado todo lo que el
 profesor aprendió y todo lo que hizo? ¿Qué más debería guardarse?

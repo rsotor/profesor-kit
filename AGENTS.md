@@ -98,7 +98,11 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 
 ## Al empezar cada sesión
 
-Lo primero, en silencio: `node .kit/herramientas/actualizar.js --comprobar`. Si imprime algo, hay una versión
+1. Lee las **últimas líneas de `config/diario.md`** (si existe) y salúdale con **una frase** de por dónde ibais:
+   "La última vez procesamos la clase 3 y te quedaron dos dudas por dejar". Si la última línea dice
+   **en curso** y no hay otra después que lo cierre, algo se quedó a medias (se cerró la ventana): díselo y
+   ofrécete a terminarlo o a descartarlo (`git status` te dice qué hay sin guardar).
+2. Lo primero, en silencio: `node .kit/herramientas/actualizar.js --comprobar`. Si imprime algo, hay una versión
 nueva del kit: díselo al alumno en **una línea** al saludar y sigue con lo suyo; no le insistas ni actualices
 sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al día y nunca bloquea.)
 
@@ -119,6 +123,14 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 | Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |
+
+**Guardar es parte del trabajo, no un extra al final.** Cada cosa terminada y comprobada se guarda en el
+momento (una sesión procesada, una tanda de dudas, un examen corregido, un cambio en `config/`), aunque
+el alumno no lo pida y aunque no sea una skill: si has tocado un fichero del curso, termina con
+`guardar.js`. Antes de empezar algo que lleve varios pasos (procesar una clase, un examen), añade a
+`config/diario.md` una línea `- <fecha> · en curso: <qué>`: si la ventana se cierra a medias, la sesión
+siguiente sabrá qué pasó. `guardar.js` añade solo la línea de cierre. Cuando el alumno se despida, mira
+`git status`: si queda algo sin guardar, guárdalo o dile qué se queda a medias.
 
 Nunca hagas `git add`, `git commit` ni `git push` a mano: `guardar.js` es quien decide si se puede
 subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no bloquean.
