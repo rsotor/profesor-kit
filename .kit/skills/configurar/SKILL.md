@@ -143,7 +143,8 @@ acuerde de nada: escríbela para alguien que no sabe qué es una terminal. Relle
 | `{{TERMINAL_EN_OBSIDIAN}}` | Si tiene instalado el complemento Terminal en Obsidian (existe `estudio/.obsidian/plugins/terminal/`): un párrafo — "También puedes hablar con tu profesor sin salir de Obsidian: abre el terminal de Obsidian y escribe tu palabra." Si no lo tiene, **borra el hueco entero**, sin dejar línea en blanco de más |
 | `{{COMO_ABRIR_LA_TERMINAL}}` | Según su ordenador. Mac: "Pulsa a la vez las teclas **Cmd** y **Espacio**, escribe **Terminal** y pulsa **Intro**." Windows: "Pulsa la tecla **Windows**, escribe **PowerShell** y pulsa **Intro**." |
 
-No añadas secciones ni comandos: una pantalla, sin jerga. Puedes adaptar las frases de ejemplo de la
+No añadas secciones ni comandos, sin jerga: está escrita para leerse de arriba abajo la primera vez y para
+buscar una respuesta las siguientes. Al presentarla, dile que empiece por el punto 1 (fijar **inicio**). Puedes adaptar las frases de ejemplo de la
 tabla a su curso ("Ponme un ejercicio de la bóveda de cañón"). No dejes ningún `{{…}}` sin rellenar.
 
 ### La portada del curso (`README.md`)

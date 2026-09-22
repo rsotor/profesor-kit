@@ -2,7 +2,46 @@
 
 > Esta hoja es tuya. Si algún día no sabes qué hacer, empieza por aquí.
 
-## 1. Abrir a tu profesor
+## 1. Tu curso empieza en **inicio**
+
+En la columna de la izquierda de Obsidian hay una nota que se llama **inicio**. Es la puerta a todo tu curso:
+el temario entero, por módulos, con lo que ya has estudiado y lo que te queda.
+
+**Déjala fijada** para que se abra siempre: haz clic en **inicio**, y luego clic derecho en su pestaña (la
+etiqueta de arriba, donde pone *inicio*) → **Fijar**. Aparece una chincheta. Ya está.
+
+## 2. Estudiar, sin necesitar a tu profesor
+
+1. En **inicio**, haz clic en **👉 Sigue por aquí**. Es la primera sesión que aún no has estudiado.
+2. Lee la sesión. Sus conceptos están enlazados: haz clic en cada uno. Para volver, la flecha **←** de arriba a
+   la izquierda.
+3. En el apartado **Material** de la sesión están sus **flashcards** (tápate la respuesta y contesta de cabeza)
+   y su **ejercicio**, si lo tiene (los interactivos se abren en tu navegador).
+4. Cuando la hayas estudiado, **marca la casilla "estudiada"**: está arriba del todo de la nota, en el recuadro
+   de propiedades. Un clic y queda marcada.
+5. Al final de la sesión tienes **← anterior · 🏠 Inicio · siguiente →**. Pulsa **siguiente** y sigues el
+   temario sin buscar nada.
+
+**Importante:** lo que marques se ve en **inicio** la próxima vez que trabajes con tu profesor (él la
+actualiza al guardar). Tu casilla no se pierde: está guardada en la propia sesión.
+
+## 3. Qué significa cada marca de inicio
+
+| Marca | Qué quiere decir |
+|---|---|
+| ✅ en **Estudiada (tú)** | La marcaste tú: ya la has estudiado |
+| ⬜ en **Estudiada (tú)** | Aún no la has marcado |
+| ✅ superada | Tu profesor tiene comprobado que dominas todos sus conceptos |
+| 📝 faltan 2 | Has demostrado parte; quedan 2 conceptos que nadie te ha preguntado aún |
+| 🔁 repasar | Fallaste algo de esta sesión en un test o un ejercicio: vuelve a ella |
+| 📝 7,5 | La nota de tu último examen de ese módulo o bloque |
+| 📝 4,0 suspenso | Esa nota no llega al aprobado: repasa lo marcado 🔁 y vuelve a pedir el examen |
+
+Arriba del todo, **🔁 Para repasar** junta las sesiones a las que tienes que volver, una por línea.
+
+## 4. Abrir a tu profesor
+
+Para lo que Obsidian no hace solo (preparar una clase nueva, hacerte un test), abre a tu profesor:
 
 {{COMO_ABRIR_LA_TERMINAL}}
 
@@ -10,88 +49,63 @@ Se abre una ventana con letras. Escribe esta palabra y pulsa **Intro**:
 
     {{ATAJO}}
 
-Ya está: tu profesor te saluda y espera a que le escribas. Se le habla con frases normales, como a
-una persona.
+Tu profesor te saluda y espera a que le escribas. Se le habla con frases normales, como a una persona.
+{{TERMINAL_EN_OBSIDIAN}}
 
-## 2. Qué puedes pedirle
+## 5. Qué pedirle y cuándo
 
 | Cuando… | Escríbele algo así |
 |---|---|
 | Has tenido clase y tienes apuntes, un PDF o las diapositivas | "He dejado los apuntes de hoy" |
+| **inicio** dice "📝 faltan…" en una sesión | "Hazme un test de lo que me falta de la 1.2" |
+| **inicio** dice que un módulo está listo para su examen | "Hazme el examen del módulo 1" |
+| Tienes sesiones en 🔁 | "Ayúdame a repasar lo que fallé" |
 | Has leído tus notas y algo no te ha quedado claro | "Tengo dudas" |
 | Quieres practicar | "Ponme un ejercicio de…" y el tema |
-| Quieres saber si te lo sabes | "Hazme un test del bloque 1" |
-| Quieres verlo todo junto y bonito, en una página | "Quiero repasar el bloque 1" |
 | Te has equivocado o no te gusta lo que ha hecho | "Deshaz lo último" |
 | Quieres que te explique de otra manera | Díselo tal cual: "más corto", "con más ejemplos" |
 | No sabes qué toca | "¿Qué hago ahora?" |
-| Tu profesor te ha dicho al saludar que hay una versión nueva | "Actualiza el kit" (te cuenta qué cambia, lo aplica y, si algo falla, lo deja como estaba) |
+| Te ha dicho al saludar que hay una versión nueva | "Actualiza el kit" |
 
 No hace falta acertar con las palabras. Si no te entiende, te pregunta.
 
-## 3. Cómo estudias una clase, paso a paso
+## 6. Dónde dejas el material de clase
 
-Cuando tu profesor termine de preparar una clase, te dirá por dónde empezar. El orden de siempre:
+En la carpeta **inbox**. Arrastra ahí el PDF, las fotos o el documento y dile a tu profesor que lo has dejado.
+Lo mejor es PDF; si tienes una presentación, guárdala como PDF.
 
-1. **La nota de la sesión** (carpeta **sesiones**): un resumen corto de qué se vio y qué hay que llevarse.
-2. **Los conceptos** que enlaza (carpeta **conceptos**): uno a uno, sin prisa. Si algo no te queda claro,
-   deja tu duda ahí mismo con `{{MARCADOR}}` (punto 6).
-3. **Las flashcards** (carpeta **flashcards**): tápate la respuesta y contesta de cabeza.
-4. **El ejercicio**, si lo hay (carpeta **ejercicios**): primero piensa qué va a pasar, luego comprueba.
-   Los interactivos son páginas web: al hacer clic se abren en tu navegador. Si no lo ves en la lista, o
-   prefieres que te lo abra él, dile "ábreme el ejercicio de…".
-5. Al terminar un bloque del temario, pídele **"hazme un test del bloque"**: ahí se ve si te lo sabes.
-
-**Lo que queda pendiente** (algo que faltaba en el material, una duda sin responder) está siempre en la
-nota **pendientes**, en tu carpeta de estudio. Y lo que tu profesor ha encontrado mal o raro en el material
-de las clases, en **auditoria-del-material**. Las dos se actualizan solas.
-
-## 4. Dónde dejas el material de clase
-
-En la carpeta **inbox**, dentro de **estudio**. Arrastra ahí el PDF, las fotos o el documento y luego
-dile a tu profesor que lo has dejado. Lo mejor es PDF; si tienes una presentación, guárdala como PDF.
-
-## 5. Dónde lees tus notas
-
-En el programa **Obsidian**. Ábrelo y verás tus carpetas a la izquierda: todo lo que tu profesor
-prepara aparece ahí solo —los conceptos, los ejercicios, los tests y tu progreso—.
-
-Si algún día Obsidian se abre vacío o con otra cosa: pulsa el icono de la bóveda (abajo a la
-izquierda), elige **"Abrir una carpeta como bóveda"** y selecciona la carpeta **estudio** de tu curso.
-{{TERMINAL_EN_OBSIDIAN}}
-
-## 6. Cómo dejar una duda mientras lees
+## 7. Cómo dejar una duda mientras lees
 
 Escribe `{{MARCADOR}}` en la nota, justo donde te pierdes, y a continuación tu pregunta:
 
     {{MARCADOR}} no entiendo por qué pasa esto
 
-Deja todas las que quieras. La próxima vez que abras a tu profesor, dile "tengo dudas": contesta cada
-una en su sitio.
+Deja todas las que quieras. La próxima vez que abras a tu profesor, dile "tengo dudas": contesta cada una en su
+sitio. Lo que queda por resolver está siempre en la nota **pendientes**.
 
-## 7. Para terminar
+## 8. Para terminar
 
-Escribe "hasta luego" y espera a que se despida: así guarda lo último. Si cierras la ventana sin más, no
-se pierde nada de lo terminado, y la próxima vez te dirá si algo se quedó a medias.
+Escribe "hasta luego" y espera a que se despida: así guarda lo último. Si cierras la ventana sin más, no se
+pierde nada de lo terminado.
 
-## 8. Si quieres cambiar de asistente
+## 9. Si algo no cuadra
 
-Tu curso no está atado a Claude. Si algún día prefieres otro asistente de terminal, instálalo, ábrelo en la
-carpeta de tu curso y dile "a partir de ahora trabajas tú con este curso": él se adapta, y tu palabra de
-siempre pasará a abrirlo a él. Tus notas y tu progreso no cambian.
-
-## 9. Si quieres añadir otro curso
-
-Es mucho más rápido que la primera vez, porque en tu ordenador ya está todo instalado. Abre la terminal,
-entra en tu carpeta de cursos, abre a tu asistente y pégale otra vez el **texto de arranque** de la guía
-de instalación. Te preguntará cómo se llama el curso nuevo y qué palabra quieres para abrirlo.
-
-## 10. Si algo va raro
-
-- **Has borrado o movido algo sin querer:** díselo. Lo recupera él.
+- **Marqué una sesión y en inicio sigue ⬜:** es normal. Inicio se pone al día cuando tu profesor guarda; abre
+  a tu profesor y dile cualquier cosa, o espera a la próxima clase.
+- **Una clase que ya procesó no aparece en inicio:** díselo a tu profesor.
+- **Inicio ya no se abre al entrar:** se desfijó. Vuelve al punto 1.
+- **Obsidian se abre vacío o con otra cosa:** icono de la bóveda (abajo a la izquierda) → **Abrir una carpeta
+  como bóveda** → la carpeta **estudio** de tu curso.
+- **Has borrado o movido algo sin querer:** díselo a tu profesor. Lo recupera él.
 - **Te pregunta si puede hacer algo:** lee la frase; casi siempre es que sí.
-- **Al abrirlo te pregunta si confías en la carpeta:** di que sí, es la tuya.
 - **No se abre al escribir `{{ATAJO}}`:** cierra la ventana de letras, ábrela otra vez y prueba de nuevo.
 - **Sigue sin ir:** cuéntaselo a quien te instaló esto.
-- **Algo de tu profesor te molesta o crees que se podría hacer mejor** (no del curso: de cómo trabaja él):
-  díselo tal cual, "esto es del kit". Él lo envía a quien lo mantiene, y así mejora para todos.
+- **Algo de cómo trabaja tu profesor te molesta:** díselo tal cual, "esto es del kit". Él lo envía a quien lo
+  mantiene.
+
+## 10. Otro curso u otro asistente
+
+- **Añadir otro curso:** abre la terminal, entra en tu carpeta de cursos, abre a tu asistente y pégale otra vez
+  el **texto de arranque** de la guía de instalación.
+- **Cambiar de asistente:** instala el otro, ábrelo en la carpeta de tu curso y dile "a partir de ahora
+  trabajas tú con este curso". Tus notas y tu progreso no cambian.
