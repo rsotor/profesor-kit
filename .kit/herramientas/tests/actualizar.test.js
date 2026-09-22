@@ -158,6 +158,7 @@ test('migración 003: cada sesión gana estudiada: false, sin duplicar ni tocar 
     'estudio/sesiones/m1/01-01-crlf.md': '---\r\ntipo: sesion\r\n---\r\n# Tres\r\n',
     'estudio/sesiones/m1/01-01-sin-fm.md': '# Cuatro\n',
   });
+  fs.cpSync(path.join(KIT_REAL, 'plantillas'), path.join(raiz, '.kit', 'plantillas'), { recursive: true });
   m.migrar(raiz);
   m.migrar(raiz);
   const s = rel => leer(raiz, `estudio/sesiones/m1/${rel}`);
@@ -165,4 +166,17 @@ test('migración 003: cada sesión gana estudiada: false, sin duplicar ni tocar 
   assert.equal(s('01-01-dos.md'), '---\ntipo: sesion\nestudiada: true\n---\n# Dos\n');
   assert.equal(s('01-01-crlf.md'), '---\r\ntipo: sesion\r\nestudiada: false\r\n---\r\n# Tres\r\n');
   assert.equal(s('01-01-sin-fm.md'), '---\nestudiada: false\n---\n# Cuatro\n');
+
+  const app = JSON.parse(leer(raiz, 'estudio/.obsidian/app.json'));
+  assert.equal(app.alwaysUpdateLinks, true);
+});
+
+test('migración 003: un app.json previo con promptDelete lo conserva y añade lo que falta', () => {
+  const m = require('../migraciones/003-casilla-estudiada');
+  const raiz = cursoTemporal({ 'estudio/.obsidian/app.json': JSON.stringify({ promptDelete: true }) });
+  fs.cpSync(path.join(KIT_REAL, 'plantillas'), path.join(raiz, '.kit', 'plantillas'), { recursive: true });
+  m.migrar(raiz);
+  const app = JSON.parse(leer(raiz, 'estudio/.obsidian/app.json'));
+  assert.equal(app.promptDelete, true);
+  assert.equal(app.alwaysUpdateLinks, true);
 });

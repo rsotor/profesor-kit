@@ -66,7 +66,7 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
     anota('atajo-en-path', enPath, 'El atajo se puede escribir desde cualquier sitio', `La carpeta ${carpetaBin} no está en el PATH de esta ventana: abre una nueva; si sigue igual, hay que añadirla al PATH.`);
   }
 
-  anota('obsidian', existe(`${v.CARPETA_ALUMNO}/.obsidian`), 'La carpeta estudio está abierta en Obsidian', 'Falta abrir la carpeta estudio como bóveda en Obsidian (paso 9).', false);
+  anota('obsidian', existe(`${v.CARPETA_ALUMNO}/.obsidian/workspace.json`), 'La carpeta estudio está abierta en Obsidian', 'Falta abrir la carpeta estudio como bóveda en Obsidian (paso 9).', false);
   const errores = comprobar(raiz).errores.length;
   anota('curso-sano', errores === 0, 'El curso está sano', `comprobar.js da ${errores} error(es): ejecútalo para verlos.`);
   return lista;

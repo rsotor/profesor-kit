@@ -15,6 +15,11 @@
 **/.obsidian/workspace*.json
 **/.obsidian/cache
 
+# Complementos de la comunidad: código de terceros que descarga obsidian.js. No entran en el repo.
+# community-plugins.json es la lista de los ACTIVADOS: activarlos es decisión del alumno, nunca del kit.
+**/.obsidian/plugins/
+**/.obsidian/community-plugins.json
+
 # Banco de pruebas del kit: cursos de usar y tirar para probar instalaciones. Nunca se sube.
 pruebas-local/
 

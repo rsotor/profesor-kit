@@ -97,6 +97,7 @@ test('preparar-curso: exige --subir si|no y prepara el curso', t => {
   const salida = capturar(t);
   const { cli } = require('../preparar-curso');
   const raiz = cursoTemporal({ '.kit/motor.json': MOTOR(['.kit']), 'docs/x.md': 'x' });
+  fs.cpSync(path.join(KIT_REAL, 'plantillas', 'obsidian'), path.join(raiz, '.kit', 'plantillas', 'obsidian'), { recursive: true });
   fs.rmSync(path.join(raiz, 'config', 'ajustes.json'));
   assert.equal(cli([], raiz), 2);
   assert.equal(cli(['--subir', 'quizas'], raiz), 2);

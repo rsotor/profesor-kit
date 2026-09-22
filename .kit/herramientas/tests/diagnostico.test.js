@@ -19,7 +19,7 @@ const ordenador = (respuestas = {}) => (comando, args) => {
 
 function cursoInstalado({ subir = false, llm = 'claude-code' } = {}) {
   const raiz = cursoTemporal({ ...MOTOR, 'config/ajustes.json': JSON.stringify({ subir_a_github: subir, llm }),
-    '.claude/skills/sesion/SKILL.md': 'x', 'estudio/.obsidian/app.json': '{}' });
+    '.claude/skills/sesion/SKILL.md': 'x', 'estudio/.obsidian/workspace.json': '{}' });
   iniciarGit(raiz);
   const carpetaBin = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-bin-'));
   const entorno = { PATH: [carpetaBin, os.tmpdir()].join(path.delimiter) };
@@ -78,6 +78,12 @@ test('otro LLM: no exige la carpeta de skills de Claude, sino su adaptación ano
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), ['skills']);
   escribir(raiz, { 'config/adaptacion-llm.md': '# Codex\n' });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), []);
+});
+
+test('una carpeta .obsidian creada por el kit no cuenta como bóveda abierta', () => {
+  const { raiz, carpetaBin, entorno } = cursoInstalado();
+  fs.rmSync(path.join(raiz, 'estudio', '.obsidian', 'workspace.json'));
+  assert.ok(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })).includes('obsidian'));
 });
 
 test('Obsidian sin abrir es un aviso, no bloquea; un curso con errores sí', t => {
