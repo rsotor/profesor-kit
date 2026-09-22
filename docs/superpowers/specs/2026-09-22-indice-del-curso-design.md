@@ -1,6 +1,6 @@
 # Índice del curso: navegar el temario sin el profesor
 
-Fecha: 2026-09-22 · Estado: revisada (Fable), pendiente del sí de Roberto · Parte de: kit 1.0.0 (antes de publicarla)
+Fecha: 2026-09-22 · Estado: aprobada por Roberto (revisada con Fable) · Parte de: kit 1.0.0 (antes de publicarla)
 
 ## 1. Problema
 
@@ -167,18 +167,42 @@ en este orden de prioridad:
 | Skill `examen` | Frontmatter obligatorio: `unidad` (prefijo o lista), `fecha`, `nota` (sobre 10) y `parcial: true` si es de "lo que me falta". Un examen en HTML lleva además su nota `.md` con ese frontmatter. Si aprueba, marca `estudiada: true` en las sesiones cubiertas. Nuevo alcance: "lo que me falta" de una unidad o sesión. |
 | Skill `configurar` | Pregunta el aprobado (`config/curso.md`). Escribe en `estructura.json` **todas** las unidades del temario con su `titulo`, no solo las que ya tienen material. |
 | Saludo (`AGENTS.md`, "Al empezar cada sesión") | Si un módulo está listo para su examen (2.1), lo menciona en la frase de saludo. |
-| `.kit/plantillas/guia-de-uso.md` | Puntos 3 y 5: "empieza por **inicio**"; cómo marcar una sesión como estudiada; cómo pedir "lo que me falta". |
+| `.kit/plantillas/guia-de-uso.md` | Se reescribe: ver 4.3. |
 | `INSTALAR-AGENTE.md`, paso 9 | El alumno abre **inicio** y la fija (clic derecho en la pestaña → *Fijar*). No se toca `workspace.json`: la bóveda la crea Obsidian abierto y lo pisaría. |
 | `AGENTS.md` | Una línea: `inicio.md` lo escribe `guardar.js`, como `pendientes.md`; no se edita ni se cita como fuente. |
 
-### 4.3 Cursos ya creados — migración 003
+### 4.3 La hoja "Cómo usar tu profesor" es parte de la entrega
+
+La plantilla `.kit/plantillas/guia-de-uso.md` (que se convierte en `estudio/como-usar-tu-profesor.md`) se
+reescribe para este cambio, no se parchea con una línea. **Criterio de aceptación:** un alumno sin perfil
+técnico, con esa hoja y nada más, completa el ciclo entero sin preguntar a nadie:
+
+1. **Encontrar su curso:** abrir Obsidian, abrir **inicio** y fijar la pestaña (con captura de pantalla
+   descrita en palabras: dónde está la pestaña, qué es "Fijar").
+2. **Estudiar sin el profesor:** seguir "👉 Sigue por aquí", leer la sesión, sus conceptos y sus flashcards, y
+   pasar a la siguiente con el enlace del pie.
+3. **Marcar lo estudiado:** dónde está la casilla **estudiada** en la nota y qué pasa al marcarla (se verá en
+   **inicio** la próxima vez que use al profesor).
+4. **Leer la página de inicio:** qué significa cada marca (✅ estudiada · ⬜ · ✅ superada · 📝 faltan N ·
+   🔁 repasar · 📝 nota / suspenso), en una tabla con una frase por marca.
+5. **Qué pedirle al profesor y cuándo:** procesar una clase nueva, "hazme un test de lo que me falta de…",
+   el examen de módulo cuando **inicio** lo proponga, repasar lo marcado 🔁.
+6. **Si algo no cuadra:** una casilla marcada que no se ve en **inicio** (se actualiza al guardar), una sesión
+   que no aparece, la pestaña **inicio** que ya no está fijada.
+
+Se valida con una persona real: Roberto se la da a su padre sin explicarle nada y anota dónde se atasca. Cada
+atasco es un cambio en la hoja antes de publicar la 1.0.0.
+
+### 4.4 Cursos ya creados — migración 003
 
 - Añade `estudiada: false` a las notas de sesión que no tengan la propiedad. Nada más: `aprobado` vale 5 si
   falta, sin tocar `config/curso.md`.
 - `inicio.md` y los pies se generan en el siguiente guardado.
 - Lo que la migración no puede saber lo deja como tarea al profesor, que lo hace la próxima vez que trabaje en el
   curso y se lo cuenta al alumno en una frase: completar `estructura.json` con todo el temario y sus títulos
-  (sale de `config/curso.md`), poner `orden:` donde avise `orden-ambiguo`, y decirle "abre **inicio** y fíjala".
+  (sale de `config/curso.md`), poner `orden:` donde avise `orden-ambiguo`, **volver a escribir
+  `como-usar-tu-profesor.md` desde la plantilla nueva** (con los mismos datos que usó `/configurar`: atajo,
+  marcador, nombre del curso), y decirle "abre **inicio** y fíjala".
 - `mapa-del-curso.md` no se toca: su lista de sesiones escrita a mano se queda como está.
 - En el curso de Roberto eso significa: módulos 2-12 y títulos en `estructura.json`, y `orden:` en
   `01-03-01-renta-variable` y `01-03-01-estilos-y-ciclos`.
