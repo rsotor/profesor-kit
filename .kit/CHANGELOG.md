@@ -13,6 +13,10 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.12.0
+- Los ejercicios, exámenes y repasos también se colocan en la carpeta de su unidad, aunque su nombre no
+  lo diga: tu profesor deduce a qué clase pertenecen por quién los enlaza.
+
 ## 0.11.1
 - La guía, la portada del curso y la instalación explican cómo se actualiza el kit.
 
