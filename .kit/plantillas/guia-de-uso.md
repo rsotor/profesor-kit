@@ -64,6 +64,7 @@ Tu profesor te saluda y espera a que le escribas. Se le habla con frases normale
 | Quieres practicar | "Ponme un ejercicio de…" y el tema |
 | Te has equivocado o no te gusta lo que ha hecho | "Deshaz lo último" |
 | Quieres que te explique de otra manera | Díselo tal cual: "más corto", "con más ejemplos" |
+| Quieres (o ya no quieres) el recuadro que conecta cada concepto con lo tuyo | "Pon el recuadro de mi trabajo" · "Quita el recuadro personal" |
 | No sabes qué toca | "¿Qué hago ahora?" |
 | Te ha dicho al saludar que hay una versión nueva | "Actualiza el kit" |
 

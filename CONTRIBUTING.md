@@ -13,6 +13,11 @@ llega de una forma:
    Un PR en rojo no se mezcla, tampoco "para arreglarlo luego": se arregla en la rama.
 5. Si el alumno va a notar el cambio: una línea en `.kit/CHANGELOG.md`. Si cambia el formato de
    los datos: migración en `.kit/herramientas/migraciones/` (sin ella, el test de coherencia falla).
+6. **Toda mejora de la que un alumno antiguo se pueda beneficiar le tiene que llegar.** Si el cambio vive en un
+   sitio por el que un curso ya configurado no vuelve a pasar (la sesión 0, una plantilla que solo se copia al
+   configurar…), la entrada del CHANGELOG lleva una línea `- **Si ya tenías tu curso:** <qué te ofrece tu
+   profesor>`. `/actualizar` la lee y se lo ofrece al alumno tras actualizar; él puede decir que no. Si no
+   se le puede ofrecer (porque hace falta cambiar sus datos sí o sí), no es una oferta: es una migración.
 
 ## Por qué hay un hook y no una regla de GitHub
 

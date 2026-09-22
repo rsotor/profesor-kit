@@ -112,6 +112,24 @@ explicaciones y el otro se adapta a cada respuesta.
 
 **Sin preguntas abstractas.** Nadie sabe contestar "¿prefieres ejemplos o definiciones?".
 
+### Primero, quién es → `config/alumno.md`
+
+Antes de las muestras, conócele. Tres preguntas, **de una en una**, y ninguna que ya esté contestada en
+`config/curso.md`, en la hoja del curso o en `## Quién es` (si vuelve solo a cambiar el estilo, esa
+sección ya está escrita: sáltate esto):
+
+1. **Qué relación tiene con la materia:** si la ha estudiado, si la toca en su trabajo, si la ha seguido
+   por su cuenta o si parte de cero.
+2. **Para qué la quiere.** Sáltala si el objetivo ya salió en el bloque A.
+3. **Cuánto tiempo puede dedicarle a la semana, y si hay una fecha que apriete** (un examen, una entrega).
+   La fecha, sáltala si ya está en `config/curso.md`.
+
+Escribe `## Quién es` en `config/alumno.md`: sus respuestas, en sus palabras y resumidas, con la prueba
+"sesión 0, respuesta del alumno". Lo que no sepa o no quiera decir, no se apunta. Úsalo en lo que sigue:
+los ejemplos de las muestras, mejor de su mundo.
+
+### Las muestras
+
 1. Elige un concepto del **primer bloque del temario**.
 2. Explícalo de **dos formas** que difieran en **una sola cosa**, y pregunta cuál le ha servido
    más. Repite 4-5 veces, con un concepto distinto cada vez, variando una dimensión por ronda:
@@ -120,12 +138,38 @@ explicaciones y el otro se adapta a cada respuesta.
    - tabla o esquema ↔ párrafo
    - corto y denso ↔ paso a paso
    - tono cercano ↔ tono sobrio
-3. Pregunta dos cosas concretas: qué marcador quiere para dejar dudas en las notas (`@@` por
-   defecto) y si quiere una **lente personal**: una lectura añadida al final de cada concepto
-   desde un punto de vista suyo (su trabajo, un proyecto). Por defecto, desactivada.
-4. Escribe el frontmatter y las secciones de `config/profesor.md`. Marca `configuracion.estilo: true`.
 
-Las explicaciones de este bloque son muestras: **no se guardan como notas.**
+### Las dudas: se explican, no se preguntan
+
+Elegir un símbolo no le dice nada a quien no sabe para qué sirve. **No le preguntes qué marcador
+quiere:** explícale cómo se usa, con el marcador por defecto (`@@`) y un ejemplo que vea escrito:
+
+> "Cuando leas tus notas en Obsidian y algo no se entienda, escribe `@@` justo ahí y tu pregunta:
+> `@@ no entiendo por qué sale este número`. Deja todas las que quieras. La próxima vez me dices
+> 'tengo dudas' y te contesto cada una en su sitio."
+
+Si él pide otro símbolo, se cambia. Si no, se queda `@@`.
+
+### El recuadro personal: se enseña antes de ofrecerlo
+
+En `config/profesor.md` se llama `lente`; **al alumno no le digas "lente"**: dile "un recuadro al final de
+cada concepto que lo conecta con lo tuyo". Nadie decide si quiere algo que no ha visto, así que:
+
+1. **Enséñale una muestra de verdad**: un concepto del primer bloque, en dos o tres líneas, y debajo el
+   recuadro de dos o tres líneas hecho con lo que te ha contado en *Quién es* (su trabajo, un proyecto,
+   una afición). Si no te ha contado nada que sirva, pregúntale primero desde dónde le gustaría verlo.
+2. **Dile qué gana:** lo que conectas con lo tuyo se recuerda mejor, y ves para qué te sirve.
+3. **Dile qué cuesta:** un poco más de texto. Solo va en las notas donde aporte, nunca en todas a la
+   fuerza, y nunca sustituye al contenido del curso.
+4. **Dile que es reversible:** se pone o se quita cuando quiera, pidiéndolo.
+5. Pregunta si lo quiere. **Por defecto, no.** Si dice que sí, escribe en `## Lente personal` desde qué
+   punto de vista, cómo se titula el recuadro y en qué notas aporta y en cuáles sobra.
+
+### Para cerrar el bloque
+
+Escribe el frontmatter y las secciones de `config/profesor.md`. Marca `configuracion.estilo: true`.
+
+Las explicaciones de este bloque, y la muestra del recuadro, son muestras: **no se guardan como notas.**
 
 ## Bloque C — Cuánto sabe → `config/alumno.md`
 

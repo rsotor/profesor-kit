@@ -57,6 +57,21 @@ Termina con `node .kit/herramientas/comprobar.js` y guarda con
 - **No se pudo descargar** → casi siempre es la sesión de GitHub: `gh auth status`, y si hace
   falta, `gh auth login` por navegador. Nunca pidas un token.
 
+## 6. Ponerle al día con lo que su curso no recibe solo
+
+Hay mejoras que viven donde un curso ya configurado no vuelve a pasar (la sesión 0, una plantilla que solo se
+copia al configurar). Esas llegan como ofertas: en las novedades que leíste en el paso 1, busca las líneas
+`**Si ya tenías tu curso:**`. Por cada una, **de una en una**:
+
+1. Ofrécesela en una frase, desde lo que gana: "hay tres preguntas nuevas sobre ti que me ayudan a
+   ponerte ejemplos de tu mundo; ¿te las hago ahora?". Puede decir que no, o que otro día.
+2. Si dice que sí, hazlo tal como lo hace la skill o la plantilla de donde sale (por ejemplo, las preguntas de
+   `/configurar` o la hoja desde `.kit/plantillas/guia-de-uso.md`, con los mismos huecos que usó `/configurar`).
+   Mira antes qué tiene ya: no repitas lo que su curso ya tiene hecho.
+3. Si dice que no, dile en una frase cómo pedirlo más tarde.
+
+Guarda al terminar con `node .kit/herramientas/guardar.js "config: al día con la <versión>"`.
+
 Si tras actualizar el curso ya tiene sesiones pero no `config/estructura.json`, propón al alumno la estructura
 (ver `AGENTS.md`, "El material se organiza como el curso") antes de la siguiente clase.
 
