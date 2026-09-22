@@ -246,7 +246,7 @@ function auditorias(raiz) {
   const dir = path.join(v.baseAlumno(raiz), 'sesiones');
   for (const abs of v.recorrer(dir, n => n.endsWith('.md') && !n.startsWith('_'))) {
     const texto = fs.readFileSync(abs, 'utf8');
-    const m = /^## Auditoría del material\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(texto);
+    const m = /^## Auditoría del material\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(indice.sinPie(texto));
     if (!m) continue;
     const cuerpo = m[1].split('\n').filter(l => l.trim() && !/^[*_<>].*[*_>]$/.test(l.trim())).join('\n').trim();
     if (!cuerpo || /^<.*>$/.test(cuerpo)) continue;

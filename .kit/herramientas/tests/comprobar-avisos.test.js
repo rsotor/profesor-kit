@@ -1,7 +1,7 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { comprobar } = require('../comprobar');
+const { comprobar, auditorias } = require('../comprobar');
 const ix = require('../lib/indice');
 const { cursoTemporal } = require('./ayuda');
 
@@ -112,6 +112,14 @@ test('si hay ejercicios web y Obsidian los oculta, aviso; sin ejercicios web o c
   assert.equal(regla(cursoTemporal({ ...html, 'estudio/.obsidian/app.json': '{"showUnsupportedFiles": true}' })), 0);
   assert.equal(regla(cursoTemporal(oculta)), 0);
   assert.equal(regla(cursoTemporal(html)), 0, 'sin app.json aún no se ha abierto la bóveda: nada que avisar');
+});
+
+test('auditorias: una sección "## Auditoría del material" vacía (plantilla) seguida solo del pie de navegación no cuenta', () => {
+  const pie = ix.pieDeSesion(null, null);
+  const raiz = cursoTemporal({
+    'estudio/sesiones/s02-tema.md': `---\ntipo: sesion\n---\n# Tema\n\n## Auditoría del material\n\n<Discrepancias entre los ficheros de la clase, errores detectados y qué falta.>\n\n${pie}\n`,
+  });
+  assert.deepEqual(auditorias(raiz), []);
 });
 
 test('orden-ambiguo: dos sesiones con las mismas cifras y sin orden:', () => {

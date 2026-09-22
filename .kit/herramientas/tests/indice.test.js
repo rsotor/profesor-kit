@@ -188,6 +188,12 @@ test('ponerPie conserva CRLF y no toca una nota con los marcadores rotos', () =>
   assert.equal(ix.marcadoresRotos(crlf), false);
 });
 
+test('sinPie: el pie de navegación no cuenta como conceptos aunque ## Conceptos sea la última sección', () => {
+  const pie = ix.pieDeSesion({ id: 'antes', clases: [], titulo: 'Antes' }, { id: 'despues', clases: [], titulo: 'Después' });
+  const raiz = cursoTemporal({ 'estudio/sesiones/01-01-x.md': `---\ntipo: sesion\n---\n# X\n\n## Conceptos\n\n- [[alfa]]\n\n${pie}\n` });
+  assert.deepEqual(ix.leerSesiones(raiz).find(s => s.id === '01-01-x').conceptos, ['alfa']);
+});
+
 test('piesDeSesion: cada sesión enlaza a la anterior y a la siguiente del temario', () => {
   const raiz = cursoTemporal({
     'estudio/sesiones/01-01-uno.md': sesion({ h1: 'Uno' }),

@@ -19,7 +19,7 @@ const FALLADO = e => e === '🟡' || e === '🔴';
 const destino = crudo => path.posix.basename(crudo.split(/\\?\|/)[0].split('#')[0].trim());
 
 function conceptosDe(texto) {
-  const m = /^## Conceptos\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(texto);
+  const m = /^## Conceptos\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(sinPie(texto));
   if (!m) return [];
   return [...new Set([...m[1].matchAll(/\[\[([^\]]+)\]\]/g)].map(x => destino(x[1])).filter(Boolean))];
 }
@@ -150,6 +150,13 @@ function enlace(s, enTabla = false) {
 const MARCA_INICIO = '%% navegación: la genera guardar.js; no se edita a mano %%';
 const MARCA_FIN = '%% fin de la navegación %%';
 
+// El pie de navegación no es contenido de la nota: se quita antes de leer sus secciones.
+function sinPie(texto) {
+  const i = texto.indexOf(MARCA_INICIO);
+  const f = texto.indexOf(MARCA_FIN);
+  return i >= 0 && f > i ? texto.slice(0, i) + texto.slice(f + MARCA_FIN.length) : texto;
+}
+
 function pieDeSesion(anterior, siguiente) {
   const partes = [];
   if (anterior) partes.push(`← ${enlace(anterior)}`);
@@ -250,5 +257,5 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
 module.exports = {
   INICIO, leerSesiones, compararSesiones, ordenAmbiguo, leerProgreso, estadoProfesor,
   leerExamenes, notaDeUnidad, leerAprobado, enlace, markdownInicio,
-  MARCA_INICIO, MARCA_FIN, pieDeSesion, ponerPie, marcadoresRotos, piesDeSesion,
+  MARCA_INICIO, MARCA_FIN, pieDeSesion, ponerPie, marcadoresRotos, piesDeSesion, sinPie,
 };
