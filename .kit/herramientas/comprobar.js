@@ -250,6 +250,38 @@ function pendientes(raiz) {
   }
   return lista;
 }
+// Los hallazgos sobre el material de cada sesión (la sección "Auditoría del material"), juntos y por bloque:
+// para que el profesor pueda mirar "¿esto ya lo vimos?" y para que al final del curso el informe de errores del
+// material para el centro ya esté escrito.
+function auditorias(raiz) {
+  const lista = [];
+  const dir = path.join(v.baseAlumno(raiz), 'sesiones');
+  for (const abs of v.recorrer(dir, n => n.endsWith('.md') && !n.startsWith('_'))) {
+    const texto = fs.readFileSync(abs, 'utf8');
+    const m = /^## Auditoría del material\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(texto);
+    if (!m) continue;
+    const cuerpo = m[1].split('\n').filter(l => l.trim() && !/^[*_<>].*[*_>]$/.test(l.trim())).join('\n').trim();
+    if (!cuerpo || /^<.*>$/.test(cuerpo)) continue;
+    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
+    lista.push({ bloque: bloqueDe(raiz, rel, texto), sesion: rel.replace(/\.md$/, ''), cuerpo });
+  }
+  return lista;
+}
+function markdownAuditoria(raiz) {
+  const lista = auditorias(raiz);
+  const lineas = ['# Auditoría del material', '', '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Reúne lo que encontró al revisar el material',
+    '> de cada clase (cifras que no cuadran, diapositivas vacías, plantillas tocadas). Es control de calidad del',
+    '> material, no contenido del curso: sirve para no tropezar dos veces y para contárselo al centro.', ''];
+  if (!lista.length) { lineas.push('Nada anotado todavía.', ''); return lineas.join('\n'); }
+  const porBloque = new Map();
+  for (const a of lista) { const k = a.bloque ? `Bloque ${a.bloque}` : 'Sin bloque'; if (!porBloque.has(k)) porBloque.set(k, []); porBloque.get(k).push(a); }
+  for (const [bloque, items] of [...porBloque.entries()].sort()) {
+    lineas.push(`## ${bloque}`, '');
+    for (const a of items.sort((x, y) => x.sesion.localeCompare(y.sesion))) lineas.push(`### [[${a.sesion}]]`, '', a.cuerpo, '');
+  }
+  return lineas.join('\n');
+}
+
 const ETIQUETA = { 'falta-info': 'Falta material del curso', todo: 'Pendiente del profesor', duda: 'Duda tuya sin responder' };
 function markdownPendientes(raiz) {
   const lista = pendientes(raiz);
@@ -344,4 +376,4 @@ function cli(args, raizPorDefecto) {
 
 if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
 
-module.exports = { comprobar, slugsDelIndice, pendientes, markdownPendientes, cli };
+module.exports = { comprobar, slugsDelIndice, pendientes, markdownPendientes, auditorias, markdownAuditoria, cli };

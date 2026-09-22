@@ -16,6 +16,7 @@ const BASE = {
   'README.md': '# Curso de prueba\n',
   // el que escribiría guardar.js en un curso sin nada pendiente
   'estudio/pendientes.md': require('../comprobar').markdownPendientes(path.join(os.tmpdir(), 'kit-curso-inexistente')),
+  'estudio/auditoria-del-material.md': require('../comprobar').markdownAuditoria(path.join(os.tmpdir(), 'kit-curso-inexistente')),
   'estudio/inbox/.gitkeep': '', 'estudio/ejercicios/.gitkeep': '', 'estudio/examenes/.gitkeep': '',
   'estudio/flashcards/.gitkeep': '', 'estudio/repasos/.gitkeep': '',
 };

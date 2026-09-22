@@ -29,7 +29,8 @@ se deja leer, dilo: no des por hecho lo que no has visto.
 
 ### 1b. Auditar el material, no solo leerlo
 
-Los ficheros de clase dicen más de lo que pone en el texto. Antes de escribir nada:
+Los ficheros de clase dicen más de lo que pone en el texto. Antes de escribir nada, mira
+`estudio/auditoria-del-material.md` (lo que ya se encontró en clases anteriores) y luego:
 
 - **Si hay hojas de cálculo, mira las fórmulas, no solo los valores**, si tu entorno lo permite.
   Ahí se ve el modelo real: qué celdas son mandos y qué supuestos esconde.

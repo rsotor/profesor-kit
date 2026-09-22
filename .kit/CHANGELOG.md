@@ -13,6 +13,10 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.13.0
+- Una nota **auditoria-del-material** reúne, por bloques, todo lo que tu profesor encontró mal o raro en el
+  material de las clases. Se actualiza sola, y al final del curso es tu informe para el centro.
+
 ## 0.12.0
 - Los ejercicios, exámenes y repasos también se colocan en la carpeta de su unidad, aunque su nombre no
   lo diga: tu profesor deduce a qué clase pertenecen por quién los enlaza.

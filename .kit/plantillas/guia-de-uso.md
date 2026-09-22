@@ -43,7 +43,8 @@ Cuando tu profesor termine de preparar una clase, te dirá por dónde empezar. E
 5. Al terminar un bloque del temario, pídele **"hazme un test del bloque"**: ahí se ve si te lo sabes.
 
 **Lo que queda pendiente** (algo que faltaba en el material, una duda sin responder) está siempre en la
-nota **pendientes**, en tu carpeta de estudio. Se actualiza sola.
+nota **pendientes**, en tu carpeta de estudio. Y lo que tu profesor ha encontrado mal o raro en el material
+de las clases, en **auditoria-del-material**. Las dos se actualizan solas.
 
 ## 4. Dónde dejas el material de clase
 
