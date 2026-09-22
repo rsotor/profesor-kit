@@ -166,3 +166,18 @@ test('actualizar: una carpeta que no es repo git no se toca', () => {
   assert.equal(actualizar({ raiz, origen }).motivo, 'sin-repo');
   assert.equal(fs.readFileSync(path.join(raiz, 'AGENTS.md'), 'utf8'), 'v1');
 });
+
+test('actualizar --comprobar: avisa en una línea solo si hay versión nueva, una vez al día, y calla sin red', t => {
+  const lineas = [];
+  t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
+  const { comprobarNovedades, cli } = require('../actualizar');
+  const { raiz } = cursoYOrigen();                                   // versión instalada: 1.0.0
+  assert.match(comprobarNovedades(raiz, '2026-01-01', () => '2.0.0'), /tienes la 1\.0\.0 y está publicada la 2\.0\.0/);
+  assert.equal(comprobarNovedades(raiz, '2026-01-01', () => '9.9.9'), null, 'mismo día: no vuelve a consultar');
+  assert.equal(comprobarNovedades(raiz, '2026-01-02', () => '1.0.0'), null, 'al día: nada');
+  assert.equal(comprobarNovedades(raiz, '2026-01-03', () => null), null, 'sin red: nada, y no molesta');
+  assert.equal(comprobarNovedades(raiz, '2026-01-04', () => '0.9.0'), null, 'una publicada más vieja que la instalada no es novedad');
+  assert.match(comprobarNovedades(raiz, '2026-01-05', () => '1.10.0'), /1\.10\.0/, 'compara números, no texto');
+  assert.equal(cli(['--comprobar'], raiz, undefined, () => '3.0.0'), 0);
+  assert.match(lineas.join('\n'), /publicada la 3\.0\.0/);
+});

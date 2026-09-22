@@ -26,5 +26,14 @@ obligatorio en la regla de `main` y el hook pasa a ser la segunda barrera.
 
 ## Versiones
 
-`0.x` mientras el kit esté en pruebas. `1.0.0` solo cuando se valide que sustituye al curso con el
-que nació.
+`0.x` mientras el kit esté en pruebas. `1.0.0` solo cuando se valide que sustituye al curso con el que
+nació. A partir de la `1.0.0`, la regla es **qué le pasa al alumno**, no cuánto código cambió:
+
+- **Mayor (`X.0.0`)** si cambia el formato de los datos (`version_datos` sube, hay migración) **o** el alumno
+  tiene que hacer o decidir algo tras actualizar (una estructura nueva, reinstalar, un paso manual). El
+  CHANGELOG de una mayor lleva un apartado *Qué tienes que hacer*.
+- **Menor (`x.Y.0`)** si hay algo nuevo y actualizar no pide nada.
+- **Parche (`x.y.Z`)** si solo se arregla algo.
+
+`actualizar.js` aplica las migraciones solo; lo que hace mayor a una versión es que el alumno **note** el
+cambio o tenga que intervenir.

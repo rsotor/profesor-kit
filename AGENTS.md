@@ -96,6 +96,12 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
   prueba delante. Solo lo cambias con su sí, y lo anotas en el historial de ese fichero.
 - `estudio/progreso.md` solo cambia con respuestas del alumno. Nunca al procesar una sesión.
 
+## Al empezar cada sesión
+
+Lo primero, en silencio: `node .kit/herramientas/actualizar.js --comprobar`. Si imprime algo, hay una versión
+nueva del kit: díselo al alumno en **una línea** al saludar y sigue con lo suyo; no le insistas ni actualices
+sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al día y nunca bloquea.)
+
 ## Si el alumno anda perdido
 
 Si pregunta "¿qué hago ahora?", parece desorientado o vuelve tras varios días: dile en una frase por
