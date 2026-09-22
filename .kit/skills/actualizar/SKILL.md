@@ -33,5 +33,8 @@ No hace falta pedir permiso por cada cosa: la herramienta hace antes una copia d
 - **No se pudo descargar** → casi siempre es la sesión de GitHub: `gh auth status`, y si hace
   falta, `gh auth login` por navegador. Nunca pidas un token.
 
+Si tras actualizar el curso ya tiene sesiones pero no `config/estructura.json`, propón al alumno la estructura
+(ver `AGENTS.md`, "El material se organiza como el curso") antes de la siguiente clase.
+
 Si no eres Claude Code, después de actualizar vuelve a ejecutar `instalar-skills.js` con tu
 `--destino` (ver `.kit/ESTANDARES.md`).

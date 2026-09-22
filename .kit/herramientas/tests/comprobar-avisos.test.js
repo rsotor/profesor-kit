@@ -52,12 +52,11 @@ test('concepto que nadie enlaza es huérfano', () => {
   assert.equal(avisos(raiz, 'huerfano').length, 1);
 });
 
-test('slugs que comparten palabra larga son posible duplicado', () => {
-  const raiz = cursoTemporal({
-    'estudio/conceptos/duracion-modificada.md': '---\ntipo: concepto\nalias: []\n---\n',
-    'estudio/conceptos/duracion-efectiva.md': '---\ntipo: concepto\nalias: []\n---\n',
-  });
-  assert.equal(avisos(raiz, 'posible-duplicado').length, 1);
+test('posible duplicado: dos palabras significativas en común; una sola, o un nombre contenido en otro, no', () => {
+  const nota = '---\ntipo: concepto\nalias: []\n---\n';
+  assert.equal(avisos(cursoTemporal({ 'estudio/conceptos/interes-compuesto-anual.md': nota, 'estudio/conceptos/compuesto-interes-mensual.md': nota }), 'posible-duplicado').length, 1);
+  assert.equal(avisos(cursoTemporal({ 'estudio/conceptos/riesgo-de-inversion.md': nota, 'estudio/conceptos/tolerancia-al-riesgo.md': nota }), 'posible-duplicado').length, 0);
+  assert.equal(avisos(cursoTemporal({ 'estudio/conceptos/renta-variable.md': nota, 'estudio/conceptos/vehiculos-de-renta-variable.md': nota }), 'posible-duplicado').length, 0);
 });
 
 // Límites de Obsidian al dibujar: van en el núcleo porque no dependen del curso.

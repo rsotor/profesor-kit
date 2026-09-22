@@ -2872,6 +2872,29 @@ contestadas de memoria.
 
 ---
 
+### Task 14g: Cierre de sesión — qué se guarda siempre al terminar (pedido por Roberto, 2026-09-22; pendiente de diseño)
+
+**La pregunta:** cuando el alumno cierra la conversación con el profesor, ¿queda guardado todo lo que el
+profesor aprendió y todo lo que hizo? ¿Qué más debería guardarse?
+
+**Lo que hoy ya se guarda (por skill):** `config/alumno.md` cuando hay prueba nueva · `estudio/progreso.md`
+solo con respuestas del alumno · `README.md` (Estado) y `pendientes.md` en cada `guardar.js` · el commit
+de `guardar.js` al cerrar cada skill. **Lo que no está garantizado:** que el cierre ocurra si la conversación
+termina a medias (el alumno cierra la ventana), y que la sesión siguiente sepa por dónde iba.
+
+- [ ] **Step 1:** decidir con Roberto: (a) un `config/diario.md` de una línea por sesión de trabajo (fecha,
+      qué se hizo, qué quedó a medias) que el profesor lee al abrir y escribe al cerrar; (b) regla en
+      `AGENTS.md`: al terminar **cualquier** trabajo, no solo una skill, `guardar.js`; y "trabajo a medias"
+      se anota en el diario antes de despedirse; (c) al abrir, el profesor saluda con "la última vez…" a
+      partir del diario y de `git log`.
+- [ ] **Step 2:** revisar si `config/alumno.md` se está actualizando de verdad en el curso real de Roberto tras
+      el módulo 1 (¿cuántas entradas, todas con prueba?), y si `progreso.md` sigue en ⬜ salvo por exámenes.
+- [ ] **Step 3:** ¿hay que guardar algo del propio profesor (decisiones de estilo tomadas sobre la marcha, como
+      la granularidad de las notas) para que no se pierdan entre sesiones? Hoy irían a `config/profesor.md`
+      → historial; comprobar que las skills lo hacen.
+
+---
+
 ### Task 15: Prueba de instalación en limpio (criterio 2) — necesita a Roberto
 
 > **Decidido por Roberto (2026-09-21): el kit se queda en `rsotor/profesor-kit`, cuenta personal.**

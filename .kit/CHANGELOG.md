@@ -6,6 +6,13 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.9.0
+- Tu profesor comprueba que ninguna sección del material se le queda fuera al preparar una clase, y ya no
+  avisa de falsos duplicados por palabras comunes.
+- Tus notas se organizan en carpetas que copian la estructura de tu curso (módulos, bloques, semanas…),
+  para que encuentres cada clase por donde la buscas en la plataforma. Si tu curso no tiene estructura,
+  tu profesor te propone una. Lo que ya tenías se coloca solo, sin romper ningún enlace.
+
 ## 0.8.0
 - Tu hoja *Cómo usar tu profesor* explica ahora cómo estudiar una clase paso a paso, y tu profesor
   te dice al terminar cada clase por dónde empezar.

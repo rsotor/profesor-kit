@@ -22,7 +22,10 @@ El identificador de la sesión sale de la sección "Cómo numera el centro las c
 adivines: un identificador mal puesto rompe el `## Historial` de todas las notas que toque.
 
 Fuente de los apuntes: fichero en `estudio/inbox/`, texto pegado, PDF, transcripción. Si es un PDF o una
-imagen, léelo antes de empezar.
+imagen, léelo antes de empezar. **Léelo entero:** la salida de una lectura larga se corta, y un fichero
+leído a medias parece leído. Si la salida termina a mitad de una frase o de una diapositiva, sigue leyendo
+desde ahí (por páginas o por tramos) hasta el final, y solo entonces empieza a escribir. Si un tramo no
+se deja leer, dilo: no des por hecho lo que no has visto.
 
 ### 1b. Auditar el material, no solo leerlo
 
@@ -38,6 +41,14 @@ Los ficheros de clase dicen más de lo que pone en el texto. Antes de escribir n
 
 Todo esto va a la sección `## Auditoría del material` del índice de sesión, marcado como lo que
 es: **control de calidad del material, no contenido del curso.**
+
+### 1c. Cobertura: que nada del material se quede fuera sin saberlo
+
+Antes de escribir notas, lista las **secciones del material** (títulos de diapositivas, apartados del PDF,
+hojas del Excel) y, al terminar, di para cada una **en qué nota ha quedado** o **por qué no** ("solo trae el
+título", "es logística", "repite la 1.2"). Va en el índice de la sesión, en `## Cobertura del material`.
+Una sección sin destino ni motivo es un hueco: vuelve a ella. Es lo único que detecta lo que una lectura
+cortada se dejó por el camino (issue #11).
 
 ### 2. Extraer los conceptos
 
@@ -73,7 +84,12 @@ Reglas de `AGENTS.md`, en corto:
 
 ### 4. Índice de sesión
 
-Carpeta plana `estudio/sesiones/<id>-tema.md`, desde `.kit/plantillas/sesion.md`. Es un **mapa, no
+`estudio/sesiones/<carpeta de su unidad>/<id>-tema.md`, desde `.kit/plantillas/sesion.md`. La carpeta de la
+unidad sale de `config/estructura.json` (el prefijo más largo que coincida con el principio del id); si el
+curso no tiene estructura, va directamente en `estudio/sesiones/`. Las flashcards y los ejercicios de la
+clase van en la **misma carpeta de unidad** dentro de su tipo, y **su nombre empieza por el id de la
+sesión** (`01-02-04-van-o-tir.html`, no `van-o-tir.html`): así `organizar.js` sabe de quién son aunque
+sirvan a varios conceptos. Es un **mapa, no
 contenido**: ~15-20 líneas.
 
 1. **El nombre sale de `config/curso.md`.** Usa números a dos dígitos para que ordene bien en el
