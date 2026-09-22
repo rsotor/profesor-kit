@@ -10,6 +10,7 @@
       "Bash(node .kit/herramientas/crear-atajo.js *)",
       "Bash(node .kit/herramientas/diagnostico.js *)",
       "Bash(node .kit/herramientas/organizar.js *)",
+      "Bash(node .kit/herramientas/obsidian.js *)",
       "Bash(node .kit/herramientas/issue.js *)",
       "Bash(gh issue list *)",
       "Bash(gh issue view *)",

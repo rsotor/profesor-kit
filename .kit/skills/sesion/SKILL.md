@@ -107,15 +107,21 @@ contenido**: ~15-20 líneas.
      una sesión concreta, una línea de aviso en esa sesión y punto. **No se rellena por
      rellenar.**
 
-**Fechas: solo `trabajada:`, el día que se procesa la clase.** El orden lo da
-`estudio/mapa-del-curso.md`, no el calendario.
+**Fechas: solo `trabajada:`, el día que se procesa la clase.** El orden lo da el id de la sesión, que sigue el
+temario: `estudio/inicio.md` y el pie de cada sesión (anterior · inicio · siguiente) los escribe `guardar.js`
+con ese orden. **Si una clase se parte en varias notas**, dales `orden: 1`, `orden: 2`… en el frontmatter, en
+el orden en que se estudian: con las mismas cifras en el id, sin `orden:` no hay forma de saber cuál va antes
+(`comprobar.js` avisa con `orden-ambiguo`). **`estudiada:` se deja en `false`:** la marca el alumno, nunca tú
+al procesar.
 
 Las secciones `## Auditoría del material` y `## Para pensarlo despacio` son las que distinguen
 una sesión trabajada de unos apuntes pasados a limpio. **Las preguntas no son flashcards**: no
 tienen respuesta de una línea, y si la tienen, están mal planteadas.
 
-Al crear la nota, actualiza también `estudio/mapa-del-curso.md`: marca la clase como procesada con su
-fecha.
+Al crear la nota, actualiza en `estudio/mapa-del-curso.md` la cobertura del material (qué clase del centro
+quedó en qué sesión, y qué falta). **No listes ahí las sesiones:** la lista navegable es `estudio/inicio.md`, y
+la escribe `guardar.js`. Si la sesión es de una unidad que no está en `config/estructura.json`, añádela con su
+`titulo` (el nombre que le da el centro) y ejecuta `node .kit/herramientas/organizar.js`.
 
 ### 5. Flashcards
 
@@ -144,7 +150,8 @@ Los siete, sin saltarse ninguno:
 
 1. `estudio/conceptos/_index.md` — línea nueva o alias actualizado
 2. `estudio/formulario.md` — cualquier fórmula nueva, en su sección de bloque
-3. `estudio/mapa-del-curso.md` — contadores de sesiones y conceptos, estado del bloque
+3. `estudio/mapa-del-curso.md` — cobertura del material de la clase y estado del bloque (sin lista de sesiones:
+   esa es `estudio/inicio.md`, y se escribe sola)
 4. `estudio/ejercicios/_index.md` — fila por ejercicio nuevo, en las dos tablas
 5. `estudio/progreso.md` — una fila por concepto nuevo, todos en `⬜ sin evaluar`. **Nunca se marca nada
    como sólido aquí:** eso solo lo hacen `/examen` y `/ejercicio`, con respuestas del alumno delante

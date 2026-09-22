@@ -19,6 +19,11 @@ El alcance se expresa en los bloques del temario de `config/curso.md` (usa el no
 emplee: bloques, módulos, temas…). `/examen 1-3` = bloques 1 a 3. `/examen 7` = bloque 7. Si no
 lo dice, pregunta qué bloques.
 
+**"Lo que me falta".** Si pide un test "de lo que me falta" de una unidad o sesión, el alcance son **solo** los
+conceptos de esas sesiones que en `estudio/progreso.md` no tienen la teoría en ✅ (es lo que `estudio/inicio.md`
+enseña como "📝 faltan N"). 3-5 preguntas, las justas para cubrirlos. Es un examen **parcial**: mueve
+`estudio/progreso.md`, pero no pone nota a la unidad.
+
 ### 2. Componer el test
 
 Lee las notas de esos bloques y `config/alumno.md`. Reparto de las preguntas:
@@ -45,11 +50,38 @@ examen mide lo estudiado, no lo que "debería" saber.
 
 ### 3. Formato
 
-`estudio/examenes/<carpeta de la unidad>/<prefijo de la unidad>-examen-YYYY-MM-DD.md` (con `unidad: <prefijo>`
-en el frontmatter; si abarca varias unidades, la más amplia que las contenga; sin estructura, directamente en
-`estudio/examenes/`) con las soluciones en un callout plegado, o una página HTML local autocorregible en la
-misma carpeta si el alumno lo prefiere. **Sin Artifact:** es un test
-interno, se queda en el repo.
+`estudio/examenes/<carpeta de la unidad>/<prefijo de la unidad>-examen-YYYY-MM-DD.md`, con las soluciones en
+un callout plegado, o una página HTML local autocorregible en la misma carpeta si el alumno lo prefiere.
+**Sin Artifact:** es un test interno, se queda en el repo.
+
+Con este frontmatter, que es lo que lee `estudio/inicio.md`:
+
+    ---
+    tipo: examen
+    unidad: 01-02          # prefijo de la unidad; si abarca varias, lista: [01-02, 01-03]
+    fecha: 2026-10-02
+    nota:                  # sobre 10; se rellena al corregir
+    parcial: true          # solo en los de "lo que me falta"
+    ---
+
+La carpeta es la de la unidad más amplia que contenga todo el alcance; sin estructura, directamente en
+`estudio/examenes/`. **Examen de módulo** es solo el que tiene `unidad:` exactamente el prefijo del módulo: un
+examen de 1.2 + 1.3 lleva `unidad: [01-02, 01-03]`, no `01`. Si el alumno lo prefiere como página HTML
+autocorregible, va en la misma carpeta **y además** su `.md` con este frontmatter (sin él no sale en inicio).
+
+**Debajo de cada pregunta**, una línea vacía para contestar en la propia nota:
+
+    ✍️ **Tu respuesta:**
+
+El alumno escribe a continuación (en esa línea o en las siguientes, hasta la siguiente pregunta). También
+puede contestar en el chat; si dice "he terminado el examen", lee las respuestas **de la nota**.
+
+**Versión nueva de un examen.** El examen limpio se queda para repasar. Si el alumno pide "otra versión", o si
+tú lo propones porque el mismo examen ya lleva dos intentos y la nota puede ser memoria (propónlo; decide él),
+crea un fichero nuevo en la misma carpeta: mismas preguntas y conceptos, mismo reparto, **otras cifras y otro
+orden de opciones**, soluciones rehechas, con `version: 2` (3, 4…) y `anterior:` con el enlace al fichero de la
+versión anterior en el frontmatter. Su histórico empieza vacío. La versión anterior no se toca. Al corregir la
+nueva, el veredicto compara concepto a concepto con el último intento de la anterior.
 
 Si `lente` está activada en `config/profesor.md`, añade al final la lectura desde ese punto de
 vista; nunca decide qué se explica ni cuánto, y nunca puntúa.
@@ -75,7 +107,20 @@ Cuando te dé las respuestas:
    concepto solo cambia de estado si hay una respuesta suya que lo justifique:
    - acertó el mecanismo → `teoría ✅` · acertó el cálculo o supo aplicarlo → `aplicación ✅`
    - falló → `🟡`; falló por segunda vez → `🔴` (y entonces también el paso 3)
-6. Guarda el resultado:
+6. **Guarda el intento aparte**, en `## Histórico de intentos` al final de la nota (créala la primera vez):
+   - una fila en `| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |`;
+   - un bloque plegado `> [!example]- Intento N · <fecha> · tus respuestas y la corrección` con el veredicto y la
+     tabla `| # | Tu respuesta | Resultado | Por qué |`, con sus respuestas **literales**.
+7. **Frontmatter:** `nota:` y `fecha:` son las de **este** intento (`nota` sobre 10, un número: `2`, nunca
+   `2/10`); `intentos:` sube en uno.
+
+   Para decidir si aprueba, mira `aprobado:` de `config/curso.md` (5 si no está) — no lo escribas en el
+   frontmatter del examen, esos tres campos son los únicos que le tocan.
+8. **Limpia el examen:** cada `✍️ **Tu respuesta:**` vuelve a quedar vacío. Las preguntas, las cifras, el orden
+   de las opciones y las soluciones **no cambian**: al repetirlo, el alumno compara intento a intento.
+9. **Si aprueba** (y no es parcial), marca `estudiada: true` en las notas de sesión que cubría el examen: las de
+   su unidad y las de todas las unidades que cuelgan de ella. Es la única vez que el profesor marca esa casilla.
+10. Guarda:
 
     node .kit/herramientas/guardar.js "examen: <alcance>"
 

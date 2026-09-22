@@ -19,7 +19,7 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 | 6 | Skills instaladas | Claude Code: existe `.claude/skills/sesion/SKILL.md` | `node .kit/herramientas/instalar-skills.js` |
 | 7 | **El atajo funciona:** escribir una palabra en la terminal abre este curso | `config/ajustes.json` tiene `atajo`; en una terminal nueva, esa palabra abre el LLM en el curso | `node .kit/herramientas/crear-atajo.js --nombre <palabra>` — ver abajo |
 | 8 | **Instalación verificada** y guardada | `node .kit/herramientas/diagnostico.js` termina con **"Todo listo"** | después, `node .kit/herramientas/guardar.js "curso: instalación"` — ver abajo |
-| 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/` (Obsidian la crea al abrir la carpeta) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
+| 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/workspace.json` (solo lo escribe Obsidian al abrir la bóveda) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
 | 10 | Arranca la sesión 0 | — | dile que **cierre esta ventana, abra una terminal nueva y escriba su atajo**. Avísale antes: al abrirse le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso. Ya dentro, que escriba "empezamos" (o lanza tú `/configurar`) |
 
 ## Antes de nada — ¿es su primer curso?
@@ -154,6 +154,10 @@ Si algo falla y no sabes por qué, el diagnóstico es también lo que se pega en
 Obsidian es el programa donde el alumno **lee** todo lo que preparas. Es gratis y no pide cuenta.
 Explícaselo en una frase e instálalo tú, con su permiso, igual que el resto.
 
+**Antes de que la abra**, ejecuta `node .kit/herramientas/obsidian.js`: deja escritos los ajustes recomendados
+(ya los puso `preparar-curso.js`; no pisa nada) y descarga los complementos **Terminal**, **Code Files** y
+**Claudian** sin activarlos. Si no hay red, lo dice y sigue: se repite más tarde.
+
 No existe forma de abrirle la bóveda desde aquí (Obsidian no tiene ningún enlace ni comando para
 registrar una carpeta nueva como bóveda), así que **guíale, con las palabras exactas que va a ver**:
 
@@ -168,30 +172,27 @@ registrar una carpeta nueva como bóveda), así que **guíale, con las palabras 
 Si la interfaz le sale en inglés y lo prefiere en español: rueda dentada (abajo a la izquierda) →
 *General* → *Language* → *Español*, y reiniciar Obsidian.
 
-Comprueba que ha ido bien: tiene que existir `estudio/.obsidian/`, y él tiene que ver en la columna
-izquierda las carpetas **conceptos**, **inbox**, **sesiones**… Dile que su material de clase lo deja en
-**inbox**.
+Comprueba que ha ido bien: tiene que existir `estudio/.obsidian/workspace.json` (Obsidian la escribe al
+abrir la bóveda; los demás ficheros de `.obsidian/` ya los puso el kit antes), y él tiene que ver en la
+columna izquierda las carpetas **conceptos**, **inbox**, **sesiones**… Dile que su material de clase lo
+deja en **inbox**.
 
-**Que vea también los ejercicios.** Obsidian oculta por defecto lo que no es una nota, y los ejercicios
-interactivos son páginas web (`.html`): sin este paso no los encontrará nunca. En cuanto exista
-`estudio/.obsidian/app.json`, añade (o pon a `true`) la clave `"showUnsupportedFiles": true` en ese JSON,
-sin tocar el resto, y dile que cierre y abra Obsidian. Equivale a *Ajustes → Archivos y enlaces →
-"Detectar todas las extensiones de archivo"*. `comprobar.js` avisará si se queda sin hacer.
+**Que fije su página de inicio.** Tras el primer guardado existe **inicio**, en la columna izquierda: es la
+puerta a todo el curso. Que haga clic en ella para abrirla, luego clic derecho en su pestaña (arriba) →
+**Fijar** (*Pin*). Así queda abierta siempre que abra Obsidian. No se puede hacer por él: Obsidian guarda sus
+pestañas mientras está abierto y pisaría cualquier cambio desde fuera.
 
-### Opcional — hablar contigo desde dentro de Obsidian
+**Los ejercicios web ya se ven:** la configuración recomendada activa "Detectar todas las extensiones de
+archivo". Si `comprobar.js` avisa `obsidian-oculta-ejercicios`, es que el alumno lo desactivó: pregúntale antes
+de volver a activarlo.
 
-**Ofrécelo al final, cuando todo lo demás funcione, y solo si le apetece:** *"¿Quieres poder hablar
-conmigo desde dentro de Obsidian, sin abrir otra ventana?"*. Es un extra: el camino normal (terminal +
-su palabra) funciona siempre.
+### Extras de Obsidian — instalados, sin activar
 
-Se hace con el complemento **Terminal**, de polyipseity (<https://github.com/polyipseity/obsidian-terminal>).
-Es de la comunidad, no de Obsidian ni de este kit: díselo. Requisitos según su guía oficial: **Python 3.9
-o superior**, y en Windows además los paquetes de Python que indica esa guía. Sigue **su** guía de
-instalación, no una memorizada. Lo que él verá en Obsidian: *Ajustes → Complementos de la comunidad →
-"Salir del modo restringido"*, buscar **Terminal**, *Instalar* y *Activar*.
-
-Comprobación: dentro de Obsidian abre un terminal, escribe su atajo, y te abres tú en su curso. Si algo
-no va, **no insistas**: déjalo con el camino normal y, si quiere, propón una issue.
+Los complementos **Terminal** (una terminal dentro de Obsidian, para hablar contigo sin cambiar de ventana;
+necesita Python 3.9 o superior), **Code Files** (ver y editar ficheros de código) y **Claudian** (Claude en un
+panel lateral) ya están instalados, pero **apagados**: son de terceros, no de Obsidian ni del kit, y activarlos
+es decisión suya. Díselo en una frase y que sepa que su hoja *Cómo usar tu profesor* explica cómo activarlos.
+No los actives tú.
 
 ## Si más adelante mueve el curso a otra carpeta
 

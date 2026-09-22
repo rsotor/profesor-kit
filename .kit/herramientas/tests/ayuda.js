@@ -14,9 +14,6 @@ const BASE = {
   'estudio/mapa-del-curso.md': '# Mapa\n\n- [[s01-intro]]\n',
   'estudio/formulario.md': '# Formulario\n',
   'README.md': '# Curso de prueba\n',
-  // el que escribiría guardar.js en un curso sin nada pendiente
-  'estudio/pendientes.md': require('../comprobar').markdownPendientes(path.join(os.tmpdir(), 'kit-curso-inexistente')),
-  'estudio/auditoria-del-material.md': require('../comprobar').markdownAuditoria(path.join(os.tmpdir(), 'kit-curso-inexistente')),
   'estudio/inbox/.gitkeep': '', 'estudio/ejercicios/.gitkeep': '', 'estudio/examenes/.gitkeep': '',
   'estudio/flashcards/.gitkeep': '', 'estudio/repasos/.gitkeep': '',
 };
@@ -32,6 +29,7 @@ function escribir(raiz, ficheros) {
 function cursoTemporal(ficheros = {}) {
   const raiz = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-'));
   escribir(raiz, BASE);
+  require('../guardar').regenerarGenerados(raiz);   // como la dejaría un guardado: inicio, pies, pendientes
   escribir(raiz, ficheros);
   return raiz;
 }

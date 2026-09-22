@@ -4,6 +4,7 @@ bloque:
 clases:                 # tal como las numera el centro; ver config/curso.md
 trabajada: YYYY-MM-DD   # cuándo se procesó la clase
 fuente: inbox/<fichero>
+estudiada: false
 ---
 # <id-de-sesion> · <Tema>
 

@@ -47,3 +47,30 @@ test('las rutas protegidas son config y la carpeta del alumno entera', () => {
   assert.deepEqual(v.RUTAS_PROTEGIDAS, ['config', 'estudio', 'README.md']);
   assert.equal(v.CARPETA_ALUMNO, 'estudio');
 });
+
+test('leerFrontmatter entiende listas en bloque, como las escribe Obsidian al marcar una casilla', () => {
+  const fm = v.leerFrontmatter('---\ntipo: sesion\nclases:\n  - 1.2.2\n  - "1.2.3"\nestudiada: true\nvacio:\n---\n# X\n');
+  assert.deepEqual(fm.clases, ['1.2.2', '1.2.3']);
+  assert.equal(fm.estudiada, 'true');
+  assert.equal(fm.vacio, '');
+  assert.deepEqual(v.leerFrontmatter('---\nclases: [1.1.2]\n---\n').clases, ['1.1.2']);
+});
+
+test('esCierto solo acepta true: "false" como texto no cuenta como marcado', () => {
+  assert.equal(v.esCierto('true'), true);
+  assert.equal(v.esCierto(true), true);
+  assert.equal(v.esCierto(' TRUE '), true);
+  for (const x of ['false', '', undefined, null, 'sí', '1']) assert.equal(v.esCierto(x), false, String(x));
+});
+
+test('numero lee enteros y decimales con coma o punto, y null si no es un número', () => {
+  assert.equal(v.numero('7,5'), 7.5);
+  assert.equal(v.numero('7.5'), 7.5);
+  assert.equal(v.numero(2), 2);
+  for (const x of ['', undefined, null, 'siete', '[]']) assert.equal(v.numero(x), null, String(x));
+});
+
+test('listarNotas incluye inicio.md si existe, para comprobar sus enlaces', () => {
+  const raiz = cursoTemporal({ 'estudio/inicio.md': '# Inicio\n' });
+  assert.ok(v.listarNotas(raiz).includes('inicio.md'));
+});

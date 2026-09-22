@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./lib/vault');
 const g = require('./lib/git');
+const { aplicarAjustes } = require('./lib/obsidian');
 
 const SOLO_DEL_KIT = ['docs', '.github', '.githooks', 'CONTRIBUTING.md'];
 const MARCA_README_DEL_KIT = '# profesor-kit';
@@ -43,7 +44,10 @@ function prepararCurso({ raiz, subir, llm = 'claude-code', nombre = '' }) {
   if (ajustesCreados) {
     v.escribirAjustes(raiz, { ...structuredClone(v.AJUSTES_POR_DEFECTO), subir_a_github: subir, llm, nombre_curso: nombre, version_datos: motor.version_datos });
   }
-  return { borrado, remotoEliminado, ajustesCreados, readmeCreado };
+  // Antes de que el alumno abra la carpeta en Obsidian: así arranca ya configurado (abierto, pisaría los ficheros).
+  const obsidian = aplicarAjustes(raiz);
+
+  return { borrado, remotoEliminado, ajustesCreados, readmeCreado, obsidian };
 }
 
 function cli(args, raiz) {

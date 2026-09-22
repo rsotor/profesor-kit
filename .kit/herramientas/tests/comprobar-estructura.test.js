@@ -52,9 +52,9 @@ test('concepto que no está en progreso.md es error', () => {
   assert.ok(reglas(comprobar(raiz)).includes('progreso'));
 });
 
-test('sesión que no está en el mapa es error', () => {
+test('una sesión que no está en mapa-del-curso.md no es error: el índice es inicio.md, y se genera solo', () => {
   const raiz = cursoTemporal({ 'estudio/mapa-del-curso.md': '# Mapa\n' });
-  assert.ok(reglas(comprobar(raiz)).includes('mapa'));
+  assert.ok(!reglas(comprobar(raiz)).includes('mapa'));
 });
 
 test('enlace a .html inexistente y ejercicio declarado sin fichero', () => {
@@ -64,4 +64,9 @@ test('enlace a .html inexistente y ejercicio declarado sin fichero', () => {
   const r = reglas(comprobar(raiz));
   assert.ok(r.includes('html-roto'));
   assert.ok(r.includes('ejercicio'));
+});
+
+test('un enlace con alias escapado dentro de una tabla ([[nota\\|texto]]) no es un enlace roto', () => {
+  const raiz = cursoTemporal({ 'estudio/formulario.md': '# F\n\n| a | b |\n|---|---|\n| [[alfa\\|Alfa]] | x |\n' });
+  assert.ok(!comprobar(raiz).errores.some(e => e.regla === 'enlace-roto'), JSON.stringify(comprobar(raiz).errores));
 });

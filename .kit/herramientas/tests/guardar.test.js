@@ -48,6 +48,13 @@ test('con errores no guarda', () => {
   assert.equal(git(raiz, 'log', '--format=%s').split('\n').length, 1);
 });
 
+test('una sesión que no está en mapa-del-curso.md ya no impide guardar', () => {
+  const raiz = cursoTemporal({ 'estudio/mapa-del-curso.md': '# Mapa\n' });
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/formulario.md': '# F\n\nx\n' });
+  assert.equal(guardar({ raiz, mensaje: 'x' }).guardado, true);
+});
+
 test('con permitirErrores guarda, pero un secreto nunca se sube', () => {
   const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
   iniciarGit(raiz);
@@ -132,7 +139,7 @@ test('el diario respeta lo que el profesor escribió a mano (una línea "en curs
 test('al guardar se reúne la auditoría del material de todas las sesiones, por bloque; la plantilla vacía no cuenta', () => {
   const raiz = cursoTemporal({
     'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\nbloque: 1\n---\n[[alfa]]\n\n## Auditoría del material\n\n- El Excel usa un 10 % y el PDF un 9 %.\n- La hoja 2 está vacía.\n\n## Para pensarlo despacio\n\nx\n',
-    'estudio/sesiones/s02-tema.md': '---\ntipo: sesion\nbloque: 2\n---\n[[alfa]]\n\n## Auditoría del material\n\n<Discrepancias entre los ficheros de la clase, errores detectados y qué falta.>\n',
+    'estudio/sesiones/s02-tema.md': '---\ntipo: sesion\nbloque: 2\n---\n[[alfa]]\n\n## Auditoría del material\n\n<Discrepancias entre los ficheros de la clase, errores detectados y qué falta.>\n\n## Para pensarlo despacio\n\nx\n',
     'estudio/mapa-del-curso.md': '[[s01-intro]] [[s02-tema]]',
   });
   iniciarGit(raiz);
@@ -141,6 +148,21 @@ test('al guardar se reúne la auditoría del material de todas las sesiones, por
   assert.match(a, /## Bloque 1\n\n### \[\[sesiones\/s01-intro\]\]\n\n- El Excel usa un 10 % y el PDF un 9 %\.\n- La hoja 2 está vacía\./);
   assert.doesNotMatch(a, /Bloque 2|Discrepancias entre/);
   assert.equal(git(raiz, 'status', '--porcelain'), '');
+});
+
+test('un curso sin inicio.md se guarda y sale con él y con el pie en cada sesión', () => {
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  fs.rmSync(path.join(raiz, 'estudio', 'inicio.md'));
+  escribir(raiz, {
+    'estudio/sesiones/s02-tema.md': '---\ntipo: sesion\n---\n# Tema\n\n## Conceptos\n\n- [[alfa]]\n',
+    'estudio/mapa-del-curso.md': '# Mapa\n\n- [[s01-intro]]\n- [[s02-tema]]\n',
+  });
+  const r = guardar({ raiz, mensaje: 'sesion(s02): tema' });
+  assert.equal(r.guardado, true, JSON.stringify(r.informe.errores));
+  assert.match(fs.readFileSync(path.join(raiz, 'estudio', 'inicio.md'), 'utf8'), /\[\[s01-intro\\\|Intro\]\]/);
+  assert.match(fs.readFileSync(path.join(raiz, 'estudio', 'sesiones', 's02-tema.md'), 'utf8'), /← \[\[s01-intro\|Intro\]\] · \[\[inicio\|🏠 Inicio\]\]\n%% fin/);
+  assert.equal(guardar({ raiz, mensaje: 'otra vez' }).motivo, 'sin-cambios');
 });
 
 test('la sección Estado de la portada se calcula sola al guardar, y no toca el resto del README', () => {

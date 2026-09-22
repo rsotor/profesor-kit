@@ -23,7 +23,30 @@ y si algo falla vuelve exactamente a ese punto.
 
     node .kit/herramientas/actualizar.js --aplicar
 
-## 3. Contar el resultado
+## 3. Complementos de Obsidian
+
+Ejecuta `node .kit/herramientas/obsidian.js` (descarga los complementos que falten; los ajustes ya los añadió la
+migración). Si el alumno tenía Obsidian abierto durante la actualización, que lo cierre y lo abra.
+
+## 4. Tras migrar (solo si `--aplicar` migró datos)
+
+Una migración de datos deja tareas que ella no puede hacer sola porque necesitan al alumno delante.
+Hazlas ahora, con él, antes de seguir con lo que estuvierais haciendo:
+
+1. **Completa `config/estructura.json`** con **todas** las unidades del temario de `config/curso.md`
+   (tengan material o no) y su `titulo` (con tildes) — como hace `/configurar`.
+2. **Pon `orden:`** en las sesiones que `node .kit/herramientas/comprobar.js` señale con `orden-ambiguo`.
+3. **Adapta los exámenes antiguos** al formato nuevo: `unidad:` (el prefijo de la unidad), `nota:` como
+   número sobre 10 (nunca `2/10`), `fecha:`, `intentos:`, y un `✍️ **Tu respuesta:**` vacío bajo cada
+   pregunta (ver `.kit/skills/examen/SKILL.md`, sección Formato).
+4. **Reescribe `estudio/como-usar-tu-profesor.md`** desde `.kit/plantillas/guia-de-uso.md`, con los
+   mismos huecos que usó `/configurar` (nombre del curso, atajo, marcador de dudas…).
+5. Dile al alumno, en una frase: "abre **inicio** en Obsidian y fija su pestaña".
+
+Termina con `node .kit/herramientas/comprobar.js` y guarda con
+`node .kit/herramientas/guardar.js "config: índice del curso"`.
+
+## 5. Contar el resultado
 
 - **"Actualizado de X a Y"** → díselo en una frase. Si migró datos, añade: "he adaptado tus notas
   al formato nuevo; no se ha perdido nada".

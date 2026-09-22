@@ -91,3 +91,12 @@ y no una preferencia tuya.
 7. Avisos de lo que Obsidian no dibujará bien (moneda o `%` dentro de una fórmula, alias dentro de tablas): en el
    núcleo, para cualquier curso.
 8. Comparador `docs/superpowers/pruebas/comparar-con-vault.js`.
+
+## Índice del curso (0.16.0)
+
+- [x] Migración 003 probada sobre una copia de `inversion-multimercado` (0.11.0 → 0.16.0): 0 errores,
+      `inicio.md` correcto, pies de navegación correctos, examen del módulo 1 adaptado (2026-09-22).
+- [ ] Migración aplicada al curso real, con Roberto delante.
+- [ ] `inicio.md` del curso real revisado por Roberto en Obsidian: temario entero, orden 1.3.1 correcto, casilla.
+- [ ] Hoja *Cómo usar tu profesor* probada por una persona sin perfil técnico, sin ayuda. Atascos anotados y
+      corregidos.

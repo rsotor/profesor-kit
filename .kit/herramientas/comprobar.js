@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./lib/vault');
 const { escanearSecretos } = require('./lib/secretos');
+const indice = require('./lib/indice');
 
 const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidian', 'docs', 'node_modules', 'pruebas-local']);
 
@@ -10,14 +11,21 @@ const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidi
 const leer = (raiz, rel) => fs.readFileSync(path.join(v.baseAlumno(raiz), ...rel.split('/')), 'utf8');
 const existe = (raiz, rel) => fs.existsSync(path.join(v.baseAlumno(raiz), ...rel.split('/')));
 
+// Lo que regenera guardar.js en cada guardado: si falta ahora (se borró, o aún no se ha guardado),
+// no es un enlace roto, es que toca guardar. `inicio.md` puede llevar más basenames el día que
+// GENERADOS_CON_ENLACES crezca; `pendientes` y `auditoria-del-material` no enlazan a otras notas
+// (por eso no están en GENERADOS_CON_ENLACES), pero sí los enlaza `inicio.md`.
+const BASENAMES_GENERADOS = () => new Set([...v.GENERADOS_CON_ENLACES.map(f => path.basename(f, '.md')), 'pendientes', 'auditoria-del-material']);
+
 function comprobarEnlaces(raiz, notas, informe) {
   const nombres = new Set(
     v.recorrer(v.baseAlumno(raiz), n => n.endsWith('.md'), FUERA_DE_ENLACES).map(r => path.basename(r, '.md'))
   );
+  for (const generado of BASENAMES_GENERADOS()) nombres.add(generado);
   for (const nota of notas) {
     const texto = v.sinCodigo(leer(raiz, nota));
     for (const m of texto.matchAll(/\[\[([^\]]+)\]\]/g)) {
-      const destino = m[1].split('|')[0].split('#')[0].trim();
+      const destino = m[1].split(/\\?\|/)[0].split('#')[0].trim();
       if (!destino) continue;
       const ext = path.posix.extname(destino);
       const ok = ext && ext !== '.md'
@@ -71,19 +79,6 @@ function comprobarProgreso(raiz, informe) {
   for (const slug of v.listarConceptos(raiz)) {
     if (!progreso.includes(`[[${slug}]]`) && !progreso.includes(`[[${slug}|`)) {
       informe.errores.push({ regla: 'progreso', fichero: 'progreso.md', detalle: `${slug} no aparece en progreso.md` });
-    }
-  }
-}
-
-function comprobarMapa(raiz, informe) {
-  const dir = path.join(v.baseAlumno(raiz), 'sesiones');
-  if (!fs.existsSync(dir)) return;
-  const mapa = existe(raiz, 'mapa-del-curso.md') ? leer(raiz, 'mapa-del-curso.md') : '';
-  for (const abs of v.recorrer(dir, n => n.endsWith('.md') && !n.startsWith('_'))) {
-    const base = path.basename(abs, '.md');
-    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs)).replace(/\.md$/, '');
-    if (!mapa.includes(`[[${base}`) && !mapa.includes(`[[${rel}`)) {
-      informe.errores.push({ regla: 'mapa', fichero: 'mapa-del-curso.md', detalle: `la sesión ${base} no está en el mapa` });
     }
   }
 }
@@ -258,7 +253,7 @@ function auditorias(raiz) {
   const dir = path.join(v.baseAlumno(raiz), 'sesiones');
   for (const abs of v.recorrer(dir, n => n.endsWith('.md') && !n.startsWith('_'))) {
     const texto = fs.readFileSync(abs, 'utf8');
-    const m = /^## Auditoría del material\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(texto);
+    const m = /^## Auditoría del material\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(indice.sinPie(texto));
     if (!m) continue;
     const cuerpo = m[1].split('\n').filter(l => l.trim() && !/^[*_<>].*[*_>]$/.test(l.trim())).join('\n').trim();
     if (!cuerpo || /^<.*>$/.test(cuerpo)) continue;
@@ -355,6 +350,27 @@ function comprobarObsidianVeEjercicios(raiz, informe) {
   }
 }
 
+// El índice del curso (inicio.md y los pies) sale de las sesiones y los exámenes: aquí se avisa de lo que haría
+// que saliera mal. No son errores: el índice se genera igual.
+function comprobarIndiceDelCurso(raiz, informe) {
+  const sesiones = indice.leerSesiones(raiz);
+  for (const s of indice.ordenAmbiguo(sesiones)) {
+    informe.avisos.push({ regla: 'orden-ambiguo', fichero: s.rel, detalle: 'comparte cifras con otra sesión y el grupo no tiene `orden:` en todas: pon `orden: 1`, `orden: 2`… en su frontmatter para que la navegación siga el temario' });
+  }
+  for (const s of sesiones) {
+    if (indice.marcadoresRotos(leer(raiz, s.rel))) informe.avisos.push({ regla: 'navegacion-rota', fichero: s.rel, detalle: 'el pie de navegación tiene un marcador %% sin el otro: guardar.js no lo toca hasta que se arregle (borra el pie entero y se vuelve a generar)' });
+  }
+  for (const e of indice.leerExamenes(raiz)) {
+    // La skill crea el examen con `nota:` vacía a propósito (se rellena al corregir): eso solo es
+    // aviso si ya hay un intento corregido y sigue sin nota. `unidad:` y `fecha:` sí hacen falta desde el principio.
+    if (!e.unidades.length || !e.fecha) {
+      informe.avisos.push({ regla: 'examen-sin-nota', fichero: e.rel, detalle: 'le falta `unidad:` o `fecha:` (AAAA-MM-DD) en el frontmatter: sin ellas no sale en inicio' });
+    } else if (e.nota === null && /^## Histórico de intentos/m.test(leer(raiz, e.rel))) {
+      informe.avisos.push({ regla: 'examen-sin-nota', fichero: e.rel, detalle: 'ya tiene un intento corregido en "## Histórico de intentos" y sigue sin `nota:` (sobre 10) en el frontmatter: sin ella no sale en inicio' });
+    }
+  }
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -369,7 +385,6 @@ function comprobar(raiz) {
   comprobarIndice(raiz, informe);
   comprobarFrontmatter(raiz, informe);
   comprobarProgreso(raiz, informe);
-  comprobarMapa(raiz, informe);
   const declarados = comprobarEjercicios(raiz, notas, informe);
   comprobarEjerciciosSueltos(raiz, declarados, informe);
   comprobarPatrones(raiz, notas, informe);
@@ -379,6 +394,7 @@ function comprobar(raiz) {
   comprobarDuplicados(raiz, informe);
   comprobarAlias(raiz, informe);
   comprobarUnidades(raiz, informe);
+  comprobarIndiceDelCurso(raiz, informe);
   comprobarObsidianVeEjercicios(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;

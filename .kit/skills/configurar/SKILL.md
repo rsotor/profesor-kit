@@ -72,17 +72,23 @@ explicaciones y el otro se adapta a cada respuesta.
 
    ```json
    { "unidades": [
-     { "prefijo": "01",    "carpeta": "modulo-01-conceptos-esenciales" },
-     { "prefijo": "01-02", "carpeta": "modulo-01-conceptos-esenciales/1.2-medidores-basicos" }
+     { "prefijo": "01",    "carpeta": "modulo-01-conceptos-esenciales", "titulo": "Módulo 1 · Conceptos esenciales" },
+     { "prefijo": "01-02", "carpeta": "modulo-01-conceptos-esenciales/1.2-medidores-basicos", "titulo": "1.2 Medidores básicos" }
    ] }
    ```
 
    Un fichero pertenece a la unidad cuyo prefijo coincide con el principio de su nombre (gana el más largo).
+   **Escribe todas las unidades del temario**, tengan material o no, cada una con su `titulo` tal como la nombra el
+   centro (con tildes: es lo que el alumno lee en `estudio/inicio.md`). Así la página de inicio enseña el curso
+   entero desde el primer día, y el alumno ve lo que le queda.
+
    Si el curso **no tiene** una arquitectura clara (una lista plana de clases, o nada), **propón una** al
    alumno a partir del temario —por bloques— y escribe la que acepte. Si de verdad no hay nada que agrupar,
    no escribas el fichero: todo se queda plano. Con la estructura escrita, `node .kit/herramientas/organizar.js`
    coloca lo que ya hubiera.
-6. Cambia `estado: sin-configurar` por `estado: configurado`. Marca `configuracion.curso: true`.
+6. **El aprobado.** Pregunta sobre cuánto se aprueba (normalmente 5 sobre 10) y escríbelo en el frontmatter de
+   `config/curso.md` como `aprobado: 5`. Es lo que separa "📝 7,5" de "📝 4,0 suspenso" en `estudio/inicio.md`.
+7. Cambia `estado: sin-configurar` por `estado: configurado`. Marca `configuracion.curso: true`.
 
 ## Bloque B — Cómo aprende → `config/profesor.md`
 
@@ -134,10 +140,11 @@ acuerde de nada: escríbela para alguien que no sabe qué es una terminal. Relle
 | `{{NOMBRE_DEL_CURSO}}` | `nombre_curso` de `config/ajustes.json` (o el nombre de `config/curso.md`) |
 | `{{ATAJO}}` | `atajo` de `config/ajustes.json`. Si está vacío, créalo ahora con `node .kit/herramientas/crear-atajo.js --nombre <palabra>` |
 | `{{MARCADOR}}` | `marcador_dudas` de `config/profesor.md` |
-| `{{TERMINAL_EN_OBSIDIAN}}` | Si tiene instalado el complemento Terminal en Obsidian (existe `estudio/.obsidian/plugins/terminal/`): un párrafo — "También puedes hablar con tu profesor sin salir de Obsidian: abre el terminal de Obsidian y escribe tu palabra." Si no lo tiene, **borra el hueco entero**, sin dejar línea en blanco de más |
+| `{{TERMINAL_EN_OBSIDIAN}}` | Si tiene **activado** el complemento Terminal (`estudio/.obsidian/community-plugins.json` incluye `"terminal"`): un párrafo — "También puedes hablar con tu profesor sin salir de Obsidian: abre el terminal de Obsidian y escribe tu palabra." Si no lo tiene, **borra el hueco entero**, sin dejar línea en blanco de más |
 | `{{COMO_ABRIR_LA_TERMINAL}}` | Según su ordenador. Mac: "Pulsa a la vez las teclas **Cmd** y **Espacio**, escribe **Terminal** y pulsa **Intro**." Windows: "Pulsa la tecla **Windows**, escribe **PowerShell** y pulsa **Intro**." |
 
-No añadas secciones ni comandos: una pantalla, sin jerga. Puedes adaptar las frases de ejemplo de la
+No añadas secciones ni comandos, sin jerga: está escrita para leerse de arriba abajo la primera vez y para
+buscar una respuesta las siguientes. Al presentarla, dile que empiece por el punto 1 (fijar **inicio**). Puedes adaptar las frases de ejemplo de la
 tabla a su curso ("Ponme un ejercicio de la bóveda de cañón"). No dejes ningún `{{…}}` sin rellenar.
 
 ### La portada del curso (`README.md`)
