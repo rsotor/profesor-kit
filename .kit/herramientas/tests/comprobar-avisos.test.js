@@ -101,3 +101,13 @@ test('el mismo alias en dos conceptos es aviso', () => {
   assert.equal(a.length, 1);
   assert.match(a[0].detalle, /«Alpha» también está en alfa/);
 });
+
+test('si hay ejercicios web y Obsidian los oculta, aviso; sin ejercicios web o con el ajuste activo, no', () => {
+  const html = { 'estudio/ejercicios/x.html': '<p>x</p>' };
+  const oculta = { 'estudio/.obsidian/app.json': '{}' };
+  const regla = raiz => avisos(raiz, 'obsidian-oculta-ejercicios').length;
+  assert.equal(regla(cursoTemporal({ ...html, ...oculta })), 1);
+  assert.equal(regla(cursoTemporal({ ...html, 'estudio/.obsidian/app.json': '{"showUnsupportedFiles": true}' })), 0);
+  assert.equal(regla(cursoTemporal(oculta)), 0);
+  assert.equal(regla(cursoTemporal(html)), 0, 'sin app.json aún no se ha abierto la bóveda: nada que avisar');
+});
