@@ -2,9 +2,19 @@
 
 Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/actualizar` le resume.
 
-**Versiones.** Mientras el número empiece por `0.` el kit está en pruebas. La `1.0.0` se publica
-solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
-que migran tus datos.
+**Versiones.** Mientras el número empiece por `0.` el kit está en pruebas. La `1.0.0` se publica solo
+cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí:
+
+| Número | Qué significa para ti | Ejemplo |
+|---|---|---|
+| `x.y.Z` (arreglo) | Algo que fallaba deja de fallar. No notas nada más | un aviso que salía de más |
+| `x.Y.0` (mejora) | Algo nuevo que puedes usar. Actualizar no te pide nada | una skill nueva |
+| `X.0.0` (mayor) | Cambia la forma de tus datos o hay que **hacer algo** (una migración, una decisión tuya, reinstalar). Tu profesor te lo explica al actualizar y lo hace contigo | carpetas nuevas, campos nuevos en tus notas |
+
+Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
+
+## 0.9.1
+- Tu profesor comprueba una vez al día si hay una versión nueva del kit y te lo dice al saludar.
 
 ## 0.9.0
 - Tu profesor comprueba que ninguna sección del material se le queda fuera al preparar una clase, y ya no

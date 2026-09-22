@@ -18,7 +18,8 @@ exactamente como estaba. Tu trabajo es contarlo en lenguaje llano.
 
 ## 2. Aplicar
 
-No hace falta pedir permiso por cada cosa: la herramienta hace antes una copia de seguridad.
+No hace falta pedir permiso por cada cosa: la herramienta guarda antes lo que hubiera sin guardar (un commit),
+y si algo falla vuelve exactamente a ese punto.
 
     node .kit/herramientas/actualizar.js --aplicar
 

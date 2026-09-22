@@ -71,7 +71,8 @@ function actualizar({ raiz, origen }) {
   if (!g.esRepo(raiz)) return { actualizado: false, motivo: 'sin-repo', de, a, migraciones: [] };
 
   const antes = contarErrores(origen, raiz);
-  guardar({ raiz, mensaje: `copia de seguridad antes de actualizar a ${a}`, permitirErrores: true });
+  // No es una copia aparte: es un commit de lo que hubiera sin guardar, para poder volver exactamente aquí.
+  guardar({ raiz, mensaje: `guardado antes de actualizar a ${a}`, permitirErrores: true });
   const sha = g.shaActual(raiz);
 
   const hechas = [];
@@ -123,8 +124,34 @@ function novedades(origen, versionActual) {
   return lineas.slice(inicio < 0 ? 0 : inicio, fin < 0 ? lineas.length : fin).join('\n').trim();
 }
 
+// Consulta ligera (sin clonar): ¿qué versión hay publicada? Devuelve null si no hay red o sesión.
+function versionPublicada(repo) {
+  const r = spawnSync('gh', ['api', `repos/${repo}/contents/.kit/VERSION`, '-H', 'Accept: application/vnd.github.raw'], { encoding: 'utf8' });
+  return r.status === 0 ? r.stdout.trim() : null;
+}
+
+// Compara versiones número a número: '0.10.0' es más nueva que '0.9.1', aunque como texto no lo parezca.
+function esMasNueva(a, b) {
+  const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
+  for (let i = 0; i < 3; i++) { if ((pa[i] || 0) > (pb[i] || 0)) return true; if ((pa[i] || 0) < (pb[i] || 0)) return false; }
+  return false;
+}
+
+// `--comprobar`: para el arranque de cada sesión. Una vez al día como mucho; imprime una línea solo si hay
+// versión nueva, y nada si no la hay o no se puede saber. Nunca bloquea al alumno.
+function comprobarNovedades(raiz, hoy = new Date().toISOString().slice(0, 10), consultar = versionPublicada) {
+  const ajustes = v.leerAjustes(raiz);
+  if (ajustes.ultima_comprobacion === hoy) return null;
+  v.escribirAjustes(raiz, { ...ajustes, ultima_comprobacion: hoy });
+  const nueva = consultar(v.leerMotor(raiz).repo);
+  const actual = v.leerVersion(raiz);
+  if (!nueva || !esMasNueva(nueva, actual)) return null;
+  return `Hay una versión nueva del kit: tienes la ${actual} y está publicada la ${nueva}. Cuando quieras, pídeme "actualiza el kit".`;
+}
+
 // `descargarKit` se inyecta para poder probar el flujo sin red.
-function cli(args, raiz, descargarKit = descargar) {
+function cli(args, raiz, descargarKit = descargar, consultar = versionPublicada) {
+  if (args.includes('--comprobar')) { const aviso = comprobarNovedades(raiz, undefined, consultar); if (aviso) console.log(aviso); return 0; }
   const i = args.indexOf('--origen');
   const origen = i >= 0 ? path.resolve(args[i + 1]) : descargarKit(v.leerMotor(raiz).repo);
   const de = v.leerVersion(raiz);
@@ -146,4 +173,4 @@ function cli(args, raiz, descargarKit = descargar) {
 
 if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
 
-module.exports = { actualizar, restaurar, validarMotor, novedades, cli };
+module.exports = { actualizar, restaurar, validarMotor, novedades, comprobarNovedades, cli };
