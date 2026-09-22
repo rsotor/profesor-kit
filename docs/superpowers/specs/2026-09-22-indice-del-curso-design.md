@@ -54,6 +54,9 @@ Otras hojas: [[mapa-del-curso]] · [[progreso]] · [[formulario]] · [[como-usar
   tiene examen, su cabecera dice "listo para el examen del módulo: pídeselo a tu profesor".
 - **Todo el temario:** cada unidad de `config/estructura.json` aparece, tenga sesiones o no ("aún sin
   sesiones"). Por eso la estructura tiene que listar el temario completo (ver 4.2).
+- **Una unidad sin ninguna sesión ocupa una línea y no despliega lo que cuelga de ella** (decisión de Roberto,
+  2026-09-22, al ver la página de su curso: 57 de sus 176 líneas eran sub-bloques vacíos). El módulo entero se
+  abre solo cuando tenga material.
 - **Nombre de cada sesión:** la numeración del centro (`clases:` del frontmatter, unida con `-` si son
   varias) + el título del H1 sin el prefijo `<id> ·`. Sin `clases:`, solo el título.
 - **Nombre de cada unidad:** `titulo` de `estructura.json`; si falta, el nombre de su carpeta sin guiones.
