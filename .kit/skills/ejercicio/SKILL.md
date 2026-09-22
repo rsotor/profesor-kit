@@ -83,7 +83,10 @@ pesan causas entre sí, no hay ningún número que mover—.
 - La solución nunca es visible antes de responder.
 - Formato de números y fechas del idioma del curso.
 - Legible en móvil.
-- Los mismos tres bloques, en el mismo orden: **condiciones → reto → explicación.**
+- Los mismos tres bloques, en el mismo orden: **condiciones → reto → explicación**, y **los tres visibles
+  desde el principio**: la explicación aparece vacía con una línea que dice qué la va a rellenar ("elige
+  una respuesta y aquí verás por qué"). Nada aparece por sorpresa: el alumno tiene que saber en todo
+  momento qué se espera de él, sin haberlo hecho antes.
 - Tipografía del sistema, una columna, fondo claro u oscuro según el sistema del alumno: que
   todos los ejercicios se parezcan entre sí.
 

@@ -84,26 +84,24 @@ de verdad.
 
 El formato del examen oficial del centro no es cosa de esta skill (fase 2).
 
-## Después de corregir: el alumno también corrige al profesor
+## Después de corregir: el alumno también corrige al profesor (si quiere)
 
-Cinco preguntas sesgan; la experiencia de un bloque entero, menos. Al terminar la corrección, **dos
-preguntas, y solo dos**, en llano:
+Cinco preguntas sesgan; la experiencia de un bloque entero, menos. Al terminar la corrección **ofrece**,
+sin insistir, dos preguntas en llano: "de cómo te he explicado este bloque, ¿qué te ha ayudado más y qué te
+ha estorbado?". **Se puede saltar**: si dice que no o no contesta, sigues sin más y no lo vuelves a
+preguntar en ese examen. Lo que conteste va a `config/profesor.md` → **Historial de cambios**, con la prueba
+(`examen: <fichero>`); si contradice una preferencia, **propón** el cambio y aplícalo solo con su sí.
 
-1. "De cómo te he explicado este bloque, ¿qué te ha ayudado más?"
-2. "¿Qué te ha estorbado o te ha sobrado?" (largo de las notas, tono, los ejercicios, el bloque de la lente…)
+## Cuando hay señal de que algo no funciona: revisa cómo explicas
 
-Lo que conteste va a `config/profesor.md` → **Historial de cambios**, con la prueba (`examen: <fichero>`).
-Si contradice una preferencia actual, **propón** el cambio concreto y aplícalo solo con su sí (regla de
-`AGENTS.md`). Si no quiere contestar, no insistas.
+No es un paso fijo ni un bloqueo: es lo que haces cuando **los datos lo piden**. Señales: un concepto
+acumula fallos o dudas (`config/alumno.md`, `estudio/progreso.md` en 🔴), un examen sale mal en general,
+varias notas del mismo bloque han necesitado reescritura, o el alumno dice que algo le estorba. Entonces:
 
-## Si el examen cierra un bloque: retro
-
-Cuando el examen cubre un bloque entero del temario, antes de guardar haz una **retro de tres líneas** para
-ti, y díselas al alumno:
-
-- **Qué ha funcionado** (conceptos ✅ y lo que él dijo que ayudó) → se mantiene.
-- **Qué cambiar en el bloque siguiente** (errores repetidos, lo que estorbó) → cambios concretos en
-  `config/profesor.md`, con su sí.
-- **Qué es del kit, no de este curso**: una skill ambigua, una herramienta que falló, algo que tuviste que
-  hacer a mano dos veces. Eso **no** se arregla aquí: abre una issue siguiendo "Feedback al kit" de
-  `AGENTS.md` (con su permiso, sin contenido del curso). Así lo que aprendes con un alumno llega a todos.
+- **Qué cambiar aquí, para este alumno y este temario:** ajustes concretos en `config/profesor.md` (largo,
+  orden, tipo de ejemplo, peso de la lente…), con su sí. Cada alumno y cada curso son distintos: lo que
+  aprendas es, casi siempre, mejora de *este* profesor.
+- **Qué es del kit, no de este curso:** una skill ambigua, una herramienta que falló, algo que tuviste que
+  hacer a mano dos veces, un patrón que se repetiría con cualquier alumno. Eso **no** se arregla aquí: abre
+  una issue siguiendo "Feedback al kit" de `AGENTS.md` (con su permiso, sin contenido del curso). Así lo que
+  aprendes con un alumno llega a todos.

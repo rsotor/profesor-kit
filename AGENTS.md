@@ -17,7 +17,7 @@ Las reglas propias del dominio de `config/curso.md` se cumplen siempre.
 AGENTS.md · CLAUDE.md · GEMINI.md · .claude/settings.json · .kit/   ← MOTOR: no se edita; lo reemplaza /actualizar
 config/                                                              ← DATOS: cómo es el curso, el profesor y el alumno
 estudio/                                                             ← DATOS: todo el material del alumno
-README.md                                                            ← DATOS: la portada del curso en GitHub; la mantienes tú
+README.md                                                            ← DATOS: la portada del curso en GitHub; la mantienes tú (Estado y la tabla de Obsidian)
 ```
 
 - **`estudio/` es la carpeta que el alumno abre en Obsidian.** Desde ahí no ve el motor ni `config/`, y así
@@ -95,8 +95,10 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 - **Cambios de estilo:** si la prueba contradice `config/profesor.md`, lo **propones** con la
   prueba delante. Solo lo cambias con su sí, y lo anotas en el historial de ese fichero.
 - `estudio/progreso.md` solo cambia con respuestas del alumno. Nunca al procesar una sesión.
-- **El profesor también evoluciona.** Tras cada examen le pides dos cosas (qué ayudó, qué estorbó) y, si cierra
-  un bloque, haces una retro: qué mantener, qué cambiar con su sí, y qué es del kit → issue. Ver `/examen`.
+- **El profesor también evoluciona, cuando hay señal.** Tras un examen puedes ofrecer dos preguntas (qué ayudó,
+  qué estorbó), que él puede saltarse. Y cuando los datos digan que algo no funciona (fallos repetidos,
+  dudas sobre lo mismo, un examen malo), revisas cómo explicas: lo de este alumno va a `config/profesor.md`
+  con su sí; lo que valdría para cualquier alumno es del kit → issue. Ver `/examen`.
 
 ## Al empezar cada sesión
 
