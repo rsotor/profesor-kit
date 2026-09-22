@@ -1,6 +1,6 @@
 # Índice del curso: navegar el temario sin el profesor
 
-Fecha: 2026-09-22 · Estado: aprobada por Roberto (revisada con Fable) · Parte de: kit 1.0.0 (antes de publicarla)
+Fecha: 2026-09-22 · Estado: aprobada por Roberto (revisada con Fable) · Parte de: kit 0.16.0 (la 1.0.0 llegará más adelante)
 
 ## 1. Problema
 
@@ -194,7 +194,7 @@ técnico, con esa hoja y nada más, completa el ciclo entero sin preguntar a nad
    que no aparece, la pestaña **inicio** que ya no está fijada.
 
 Se valida con una persona real: Roberto se la da a su padre sin explicarle nada y anota dónde se atasca. Cada
-atasco es un cambio en la hoja antes de publicar la 1.0.0.
+atasco es un cambio en la hoja.
 
 ### 4.4 Cursos ya creados — migración 003
 
