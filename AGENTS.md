@@ -168,6 +168,20 @@ temario, del centro) ni de este alumno.
 4. Repite con `--enviar`. Si no hay sesión de `gh`, el texto va a `config/feedback-pendiente.md` y el alumno se
    lo pasa a quien le dio el kit.
 
+## Si el alumno cambia de asistente
+
+El curso no está atado a un LLM: el atajo abre el que diga `config/ajustes.json` (`"llm"`). Para cambiar
+(por ejemplo de Claude Code a Codex):
+
+1. Que instale el asistente nuevo con su guía oficial e inicie sesión en él.
+2. `config/ajustes.json` → `"llm": "<nombre>"` (`claude-code`, `codex-cli`, `gemini-cli`, u otro: si no es
+   uno de esos, se usa tal cual como comando).
+3. `node .kit/herramientas/instalar-skills.js --destino <carpeta donde ese asistente busca sus skills>` y el
+   resto de `.kit/ESTANDARES.md` (fichero puente, permisos), anotándolo en `config/adaptacion-llm.md`.
+4. `node .kit/herramientas/crear-atajo.js --nombre <su palabra>`: vuelve a escribir el atajo con el comando
+   nuevo. Nada más cambia: su material, su configuración y su historial son los mismos.
+5. `node .kit/herramientas/diagnostico.js` hasta "Todo listo".
+
 ## Si no eres Claude Code
 
 Lee `.kit/ESTANDARES.md`: dice qué necesita el kit de ti y cómo generar tus equivalentes.

@@ -115,3 +115,16 @@ test('cli: acepta --actualizar', t => {
   assert.equal(cli(['--nombre', 'historia'], viejo + '-movido', opciones), 1);
   assert.equal(cli(['--nombre', 'historia', '--actualizar'], viejo + '-movido', opciones), 0);
 });
+
+test('cambiar de asistente: con otro llm en ajustes.json, volver a crear el atajo cambia el comando sin tocar nada más', () => {
+  const carpetaBin = bin();
+  const raiz = cursoTemporal();
+  const opciones = { nombre: 'historia', carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) };
+  crearAtajo({ raiz, ...opciones });
+  assert.match(fs.readFileSync(path.join(carpetaBin, 'historia'), 'utf8'), /exec claude/);
+  const ajustes = JSON.parse(fs.readFileSync(path.join(raiz, 'config', 'ajustes.json'), 'utf8'));
+  fs.writeFileSync(path.join(raiz, 'config', 'ajustes.json'), JSON.stringify({ ...ajustes, llm: 'codex-cli' }));
+  assert.equal(crearAtajo({ raiz, ...opciones }).creado, true);
+  assert.match(fs.readFileSync(path.join(carpetaBin, 'historia'), 'utf8'), /exec codex "\$@"/);
+  assert.doesNotMatch(fs.readFileSync(path.join(carpetaBin, 'historia'), 'utf8'), /claude/);
+});
