@@ -1,9 +1,12 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { comprobar, auditorias } = require('../comprobar');
+const { guardar } = require('../guardar');
 const ix = require('../lib/indice');
-const { cursoTemporal } = require('./ayuda');
+const { cursoTemporal, iniciarGit } = require('./ayuda');
 
 const avisos = (raiz, regla) => comprobar(raiz).avisos.filter(a => a.regla === regla);
 const reglas = i => [...i.errores, ...i.avisos].map(x => x.regla);
@@ -137,12 +140,56 @@ test('examen-sin-nota: un examen sin nota: o sin fecha: válida', () => {
   assert.ok(comprobar(raiz).avisos.some(a => a.regla === 'examen-sin-nota' && a.fichero === 'examenes/01-examen.md'));
 });
 
+test('examen-sin-nota: un examen recién creado, con nota: vacía a propósito, no avisa', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen.md': '---\nunidad: 01\nfecha: 2026-10-02\nnota:\n---\n# E\n\n1. Pregunta\n\n✍️ **Tu respuesta:**\n',
+  });
+  assert.ok(!comprobar(raiz).avisos.some(a => a.regla === 'examen-sin-nota'));
+});
+
+test('examen-sin-nota: sin unidad: o sin fecha: sigue avisando aunque nota: esté vacía a propósito', () => {
+  const raiz = cursoTemporal({ 'estudio/examenes/01-examen.md': '---\nfecha: 2026-10-02\nnota:\n---\n# E\n' });
+  assert.ok(comprobar(raiz).avisos.some(a => a.regla === 'examen-sin-nota'));
+});
+
+test('examen-sin-nota: si ya tiene un intento corregido (## Histórico de intentos) y sigue sin nota:, avisa', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen.md': '---\nunidad: 01\nfecha: 2026-10-02\nnota:\n---\n# E\n\n## Histórico de intentos\n\n| Intento | Fecha | Nota |\n|---|---|---|\n',
+  });
+  assert.ok(comprobar(raiz).avisos.some(a => a.regla === 'examen-sin-nota'));
+});
+
 test('navegacion-rota: un marcador del pie sin el otro', () => {
   const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': `---\ntipo: sesion\n---\n# Intro\n\n- [[alfa]]\n\n${ix.MARCA_INICIO}\n` });
+  assert.ok(comprobar(raiz).avisos.some(a => a.regla === 'navegacion-rota'));
+});
+
+test('navegacion-rota: un pie duplicado (dos marcadores de inicio o de fin) también se detecta', () => {
+  const pie = ix.pieDeSesion(null, null);
+  const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': `---\ntipo: sesion\n---\n# Intro\n\n- [[alfa]]\n\n${pie}\n\n${pie}\n` });
   assert.ok(comprobar(raiz).avisos.some(a => a.regla === 'navegacion-rota'));
 });
 
 test('el curso de pruebas recién guardado no da ninguno de los avisos del índice', () => {
   const r = reglas(comprobar(cursoTemporal()));
   for (const regla of ['orden-ambiguo', 'examen-sin-nota', 'navegacion-rota']) assert.ok(!r.includes(regla), regla);
+});
+
+test('borrar un generado (inicio.md) no deja el curso "con errores": guardar.js lo vuelve a dejar bien', () => {
+  const raiz = cursoTemporal();
+  fs.rmSync(path.join(raiz, 'estudio', 'inicio.md'));
+  const informe = comprobar(raiz);
+  assert.deepEqual(informe.errores.filter(e => e.regla === 'enlace-roto'), []);
+  iniciarGit(raiz);
+  const r = guardar({ raiz, mensaje: 'x' });
+  assert.equal(r.guardado, true);
+  assert.ok(fs.existsSync(path.join(raiz, 'estudio', 'inicio.md')));
+  assert.equal(comprobar(raiz).errores.length, 0);
+});
+
+test('borrar pendientes.md o auditoria-del-material.md tampoco es enlace roto', () => {
+  const raiz = cursoTemporal();
+  fs.rmSync(path.join(raiz, 'estudio', 'pendientes.md'));
+  fs.rmSync(path.join(raiz, 'estudio', 'auditoria-del-material.md'));
+  assert.deepEqual(comprobar(raiz).errores.filter(e => e.regla === 'enlace-roto'), []);
 });

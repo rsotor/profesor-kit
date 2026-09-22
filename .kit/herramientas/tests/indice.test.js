@@ -188,6 +188,11 @@ test('ponerPie conserva CRLF y no toca una nota con los marcadores rotos', () =>
   assert.equal(ix.marcadoresRotos(crlf), false);
 });
 
+test('marcadoresRotos: un pie duplicado (dos MARCA_INICIO o dos MARCA_FIN) también es navegación rota', () => {
+  const duplicado = `# X\n\n${ix.MARCA_INICIO}\n\n---\nuno\n${ix.MARCA_FIN}\n\n${ix.MARCA_INICIO}\n\n---\ndos\n${ix.MARCA_FIN}\n`;
+  assert.equal(ix.marcadoresRotos(duplicado), true);
+});
+
 test('sinPie: el pie de navegación no cuenta como conceptos aunque ## Conceptos sea la última sección', () => {
   const pie = ix.pieDeSesion({ id: 'antes', clases: [], titulo: 'Antes' }, { id: 'despues', clases: [], titulo: 'Después' });
   const raiz = cursoTemporal({ 'estudio/sesiones/01-01-x.md': `---\ntipo: sesion\n---\n# X\n\n## Conceptos\n\n- [[alfa]]\n\n${pie}\n` });

@@ -51,3 +51,40 @@ test('cada skill cita al menos guardar.js o remite a otra skill que lo haga (nad
     assert.ok(/guardar\.js|actualizar\.js/.test(texto), `${s}: no guarda al terminar`);
   }
 });
+
+// Red de seguridad del índice del curso (spec §5): lo que las skills y AGENTS.md dicen que existe tiene que
+// existir de verdad en las herramientas. Si una skill nombrara una propiedad de frontmatter que ninguna
+// herramienta lee, este test lo pilla.
+test('estudio/inicio.md lo genera guardar.js a partir de lib/indice, como dice AGENTS.md', () => {
+  const agents = fs.readFileSync(path.join(RAIZ, 'AGENTS.md'), 'utf8');
+  assert.match(agents, /inicio\.md.*guardar\.js|guardar\.js.*inicio\.md/s);
+  const indiceLib = fs.readFileSync(path.join(RAIZ, '.kit', 'herramientas', 'lib', 'indice.js'), 'utf8');
+  const guardar = fs.readFileSync(path.join(RAIZ, '.kit', 'herramientas', 'guardar.js'), 'utf8');
+  assert.match(indiceLib, /INICIO\s*=\s*'inicio\.md'/, 'lib/indice.js define INICIO');
+  assert.match(guardar, /indice\.INICIO/, 'guardar.js escribe el fichero que calcula lib/indice');
+});
+
+test('las propiedades de frontmatter que citan las skills y AGENTS.md las lee alguna herramienta', () => {
+  const codigoHerramientas = [
+    'comprobar.js', 'guardar.js', 'organizar.js',
+    ...fs.readdirSync(path.join(RAIZ, '.kit', 'herramientas', 'lib')).filter(n => n.endsWith('.js')).map(n => `lib/${n}`),
+  ].map(f => fs.readFileSync(path.join(RAIZ, '.kit', 'herramientas', ...f.split('/')), 'utf8')).join('\n');
+
+  // Propiedades que un alumno o el LLM leen directamente en la nota (histórico de intentos, versión
+  // anterior, dependencias de un concepto): no las calcula ninguna herramienta, y está bien que así sea.
+  const SOLO_SE_LEEN_EN_LA_NOTA = new Set(['anterior', 'intentos', 'requiere', 'version']);
+
+  const propiedades = new Set();
+  for (const doc of DOCS) {
+    const texto = fs.readFileSync(path.join(RAIZ, doc), 'utf8');
+    for (const m of texto.matchAll(/`([a-z][a-z0-9_]*):`/g)) propiedades.add(m[1]);
+  }
+  // Las que cita explícitamente el hallazgo de la revisión final (spec §5): `parcial` y `titulo` no los
+  // pilla la extracción de arriba (van en un bloque de código o sin `:` detrás), así que se añaden aquí.
+  for (const p of ['estudiada', 'orden', 'unidad', 'nota', 'fecha', 'parcial', 'aprobado', 'titulo']) propiedades.add(p);
+
+  const sinLeer = [...propiedades]
+    .filter(p => !SOLO_SE_LEEN_EN_LA_NOTA.has(p))
+    .filter(p => !new RegExp(`\\.${p}\\b`).test(codigoHerramientas));
+  assert.deepEqual(sinLeer, [], `ninguna herramienta lee: ${sinLeer.join(', ')}`);
+});

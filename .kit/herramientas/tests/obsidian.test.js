@@ -39,6 +39,14 @@ test('aplicarAjustes: un JSON roto no se toca', () => {
   assert.equal(fs.readFileSync(path.join(raiz, 'estudio', '.obsidian', 'app.json'), 'utf8'), '{roto');
 });
 
+test('aplicarAjustes: un core-plugins.json en formato antiguo (array) no se toca ni se corrompe', () => {
+  const raiz = curso({ 'estudio/.obsidian/core-plugins.json': JSON.stringify(['file-explorer', 'global-search']) });
+  const original = fs.readFileSync(path.join(raiz, 'estudio', '.obsidian', 'core-plugins.json'), 'utf8');
+  assert.ok(!ob.aplicarAjustes(raiz).includes('core-plugins.json'));
+  assert.equal(fs.readFileSync(path.join(raiz, 'estudio', '.obsidian', 'core-plugins.json'), 'utf8'), original);
+  assert.ok(Array.isArray(JSON.parse(original)));
+});
+
 test('instalarComplementos: descarga los que faltan, no activa ninguno y respeta los que ya están', async () => {
   const raiz = curso({ 'estudio/.obsidian/plugins/terminal/manifest.json': '{"id":"terminal"}' });
   const pedidos = [];
