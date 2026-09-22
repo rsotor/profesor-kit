@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./lib/vault');
 const { escanearSecretos } = require('./lib/secretos');
+const indice = require('./lib/indice');
 
 const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidian', 'docs', 'node_modules', 'pruebas-local']);
 
@@ -71,19 +72,6 @@ function comprobarProgreso(raiz, informe) {
   for (const slug of v.listarConceptos(raiz)) {
     if (!progreso.includes(`[[${slug}]]`) && !progreso.includes(`[[${slug}|`)) {
       informe.errores.push({ regla: 'progreso', fichero: 'progreso.md', detalle: `${slug} no aparece en progreso.md` });
-    }
-  }
-}
-
-function comprobarMapa(raiz, informe) {
-  const dir = path.join(v.baseAlumno(raiz), 'sesiones');
-  if (!fs.existsSync(dir)) return;
-  const mapa = existe(raiz, 'mapa-del-curso.md') ? leer(raiz, 'mapa-del-curso.md') : '';
-  for (const abs of v.recorrer(dir, n => n.endsWith('.md') && !n.startsWith('_'))) {
-    const base = path.basename(abs, '.md');
-    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs)).replace(/\.md$/, '');
-    if (!mapa.includes(`[[${base}`) && !mapa.includes(`[[${rel}`)) {
-      informe.errores.push({ regla: 'mapa', fichero: 'mapa-del-curso.md', detalle: `la sesión ${base} no está en el mapa` });
     }
   }
 }
@@ -355,6 +343,21 @@ function comprobarObsidianVeEjercicios(raiz, informe) {
   }
 }
 
+// El índice del curso (inicio.md y los pies) sale de las sesiones y los exámenes: aquí se avisa de lo que haría
+// que saliera mal. No son errores: el índice se genera igual.
+function comprobarIndiceDelCurso(raiz, informe) {
+  const sesiones = indice.leerSesiones(raiz);
+  for (const s of indice.ordenAmbiguo(sesiones)) {
+    informe.avisos.push({ regla: 'orden-ambiguo', fichero: s.rel, detalle: 'comparte cifras con otra sesión y el grupo no tiene `orden:` en todas: pon `orden: 1`, `orden: 2`… en su frontmatter para que la navegación siga el temario' });
+  }
+  for (const s of sesiones) {
+    if (indice.marcadoresRotos(leer(raiz, s.rel))) informe.avisos.push({ regla: 'navegacion-rota', fichero: s.rel, detalle: 'el pie de navegación tiene un marcador %% sin el otro: guardar.js no lo toca hasta que se arregle (borra el pie entero y se vuelve a generar)' });
+  }
+  for (const e of indice.leerExamenes(raiz)) {
+    if (e.nota === null || !e.fecha || !e.unidades.length) informe.avisos.push({ regla: 'examen-sin-nota', fichero: e.rel, detalle: 'le falta `unidad:`, `nota:` (sobre 10) o `fecha:` (AAAA-MM-DD) en el frontmatter: sin ellas no sale en inicio' });
+  }
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -369,7 +372,6 @@ function comprobar(raiz) {
   comprobarIndice(raiz, informe);
   comprobarFrontmatter(raiz, informe);
   comprobarProgreso(raiz, informe);
-  comprobarMapa(raiz, informe);
   const declarados = comprobarEjercicios(raiz, notas, informe);
   comprobarEjerciciosSueltos(raiz, declarados, informe);
   comprobarPatrones(raiz, notas, informe);
@@ -379,6 +381,7 @@ function comprobar(raiz) {
   comprobarDuplicados(raiz, informe);
   comprobarAlias(raiz, informe);
   comprobarUnidades(raiz, informe);
+  comprobarIndiceDelCurso(raiz, informe);
   comprobarObsidianVeEjercicios(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;

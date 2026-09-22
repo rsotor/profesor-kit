@@ -48,6 +48,13 @@ test('con errores no guarda', () => {
   assert.equal(git(raiz, 'log', '--format=%s').split('\n').length, 1);
 });
 
+test('una sesión que no está en mapa-del-curso.md ya no impide guardar', () => {
+  const raiz = cursoTemporal({ 'estudio/mapa-del-curso.md': '# Mapa\n' });
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/formulario.md': '# F\n\nx\n' });
+  assert.equal(guardar({ raiz, mensaje: 'x' }).guardado, true);
+});
+
 test('con permitirErrores guarda, pero un secreto nunca se sube', () => {
   const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
   iniciarGit(raiz);

@@ -2,9 +2,11 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { comprobar } = require('../comprobar');
+const ix = require('../lib/indice');
 const { cursoTemporal } = require('./ayuda');
 
 const avisos = (raiz, regla) => comprobar(raiz).avisos.filter(a => a.regla === regla);
+const reglas = i => [...i.errores, ...i.avisos].map(x => x.regla);
 
 test('los marcadores de duda son aviso, no error, y se cuentan también en inbox', () => {
   const raiz = cursoTemporal({
@@ -110,4 +112,29 @@ test('si hay ejercicios web y Obsidian los oculta, aviso; sin ejercicios web o c
   assert.equal(regla(cursoTemporal({ ...html, 'estudio/.obsidian/app.json': '{"showUnsupportedFiles": true}' })), 0);
   assert.equal(regla(cursoTemporal(oculta)), 0);
   assert.equal(regla(cursoTemporal(html)), 0, 'sin app.json aún no se ha abierto la bóveda: nada que avisar');
+});
+
+test('orden-ambiguo: dos sesiones con las mismas cifras y sin orden:', () => {
+  const raiz = cursoTemporal({
+    'estudio/sesiones/01-03-01-renta-variable.md': '---\ntipo: sesion\n---\n# A\n',
+    'estudio/sesiones/01-03-01-estilos.md': '---\ntipo: sesion\n---\n# B\n',
+  });
+  const avisos = comprobar(raiz).avisos.filter(a => a.regla === 'orden-ambiguo');
+  assert.equal(avisos.length, 2);
+  assert.match(avisos[0].detalle, /orden:/);
+});
+
+test('examen-sin-nota: un examen sin nota: o sin fecha: válida', () => {
+  const raiz = cursoTemporal({ 'estudio/examenes/01-examen.md': '---\nunidad: 01\nfecha: ayer\n---\n# E\n' });
+  assert.ok(comprobar(raiz).avisos.some(a => a.regla === 'examen-sin-nota' && a.fichero === 'examenes/01-examen.md'));
+});
+
+test('navegacion-rota: un marcador del pie sin el otro', () => {
+  const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': `---\ntipo: sesion\n---\n# Intro\n\n- [[alfa]]\n\n${ix.MARCA_INICIO}\n` });
+  assert.ok(comprobar(raiz).avisos.some(a => a.regla === 'navegacion-rota'));
+});
+
+test('el curso de pruebas recién guardado no da ninguno de los avisos del índice', () => {
+  const r = reglas(comprobar(cursoTemporal()));
+  for (const regla of ['orden-ambiguo', 'examen-sin-nota', 'navegacion-rota']) assert.ok(!r.includes(regla), regla);
 });
