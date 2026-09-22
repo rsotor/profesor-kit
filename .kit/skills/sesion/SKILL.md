@@ -73,7 +73,12 @@ Reglas de `AGENTS.md`, en corto:
 
 ### 4. Índice de sesión
 
-Carpeta plana `estudio/sesiones/<id>-tema.md`, desde `.kit/plantillas/sesion.md`. Es un **mapa, no
+`estudio/sesiones/<carpeta de su unidad>/<id>-tema.md`, desde `.kit/plantillas/sesion.md`. La carpeta de la
+unidad sale de `config/estructura.json` (el prefijo más largo que coincida con el principio del id); si el
+curso no tiene estructura, va directamente en `estudio/sesiones/`. Las flashcards y los ejercicios de la
+clase van en la **misma carpeta de unidad** dentro de su tipo, y **su nombre empieza por el id de la
+sesión** (`01-02-04-van-o-tir.html`, no `van-o-tir.html`): así `organizar.js` sabe de quién son aunque
+sirvan a varios conceptos. Es un **mapa, no
 contenido**: ~15-20 líneas.
 
 1. **El nombre sale de `config/curso.md`.** Usa números a dos dígitos para que ordene bien en el

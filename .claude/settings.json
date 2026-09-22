@@ -9,6 +9,7 @@
       "Bash(node .kit/herramientas/reparar.js *)",
       "Bash(node .kit/herramientas/crear-atajo.js *)",
       "Bash(node .kit/herramientas/diagnostico.js *)",
+      "Bash(node .kit/herramientas/organizar.js *)",
       "Bash(git status *)",
       "Bash(git log *)",
       "Bash(git diff *)"

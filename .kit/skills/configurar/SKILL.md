@@ -64,7 +64,25 @@ explicaciones y el otro se adapta a cada respuesta.
    derecho: citar siempre el artículo"; "en uno de cocina: cantidades siempre en gramos"). Si una
    regla se puede comprobar con un patrón de texto, **propón** añadirla a `patrones_prohibidos`
    de `config/ajustes.json` como `{ "patron": "<regex>", "mensaje": "<qué pasa>" }`.
-5. Cambia `estado: sin-configurar` por `estado: configurado`. Marca `configuracion.curso: true`.
+5. **La arquitectura del curso → `config/estructura.json`.** Las carpetas de `estudio/` (sesiones, flashcards,
+   ejercicios, exámenes) copian la estructura del curso **tal como la ve el alumno en la plataforma**, para
+   que dentro de seis meses encuentre las cosas por donde las busca allí: módulos, bloques, semanas, temas…
+   lo que tenga el curso, con los niveles que tenga. De la regla de nombres del punto 3 sale un **prefijo**
+   por unidad; cada unidad tiene su carpeta (anidada si hay niveles):
+
+   ```json
+   { "unidades": [
+     { "prefijo": "01",    "carpeta": "modulo-01-conceptos-esenciales" },
+     { "prefijo": "01-02", "carpeta": "modulo-01-conceptos-esenciales/1.2-medidores-basicos" }
+   ] }
+   ```
+
+   Un fichero pertenece a la unidad cuyo prefijo coincide con el principio de su nombre (gana el más largo).
+   Si el curso **no tiene** una arquitectura clara (una lista plana de clases, o nada), **propón una** al
+   alumno a partir del temario —por bloques— y escribe la que acepte. Si de verdad no hay nada que agrupar,
+   no escribas el fichero: todo se queda plano. Con la estructura escrita, `node .kit/herramientas/organizar.js`
+   coloca lo que ya hubiera.
+6. Cambia `estado: sin-configurar` por `estado: configurado`. Marca `configuracion.curso: true`.
 
 ## Bloque B — Cómo aprende → `config/profesor.md`
 

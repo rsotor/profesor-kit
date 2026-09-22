@@ -79,10 +79,10 @@ function comprobarMapa(raiz, informe) {
   const dir = path.join(v.baseAlumno(raiz), 'sesiones');
   if (!fs.existsSync(dir)) return;
   const mapa = existe(raiz, 'mapa-del-curso.md') ? leer(raiz, 'mapa-del-curso.md') : '';
-  for (const n of fs.readdirSync(dir)) {
-    if (!n.endsWith('.md') || n.startsWith('_')) continue;
-    const base = n.slice(0, -3);
-    if (!mapa.includes(`[[${base}`) && !mapa.includes(`[[sesiones/${base}`)) {
+  for (const abs of v.recorrer(dir, n => n.endsWith('.md') && !n.startsWith('_'))) {
+    const base = path.basename(abs, '.md');
+    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs)).replace(/\.md$/, '');
+    if (!mapa.includes(`[[${base}`) && !mapa.includes(`[[${rel}`)) {
       informe.errores.push({ regla: 'mapa', fichero: 'mapa-del-curso.md', detalle: `la sesión ${base} no está en el mapa` });
     }
   }
@@ -102,7 +102,9 @@ function comprobarEjercicios(raiz, notas, informe) {
     const fm = v.leerFrontmatter(leer(raiz, `conceptos/${slug}.md`));
     if (!fm || !fm.ejercicio) continue;
     declarados.add(fm.ejercicio);
-    if (!existe(raiz, `ejercicios/${fm.ejercicio}.html`) && !existe(raiz, `ejercicios/${fm.ejercicio}.md`)) {
+    const dirEj = path.join(v.baseAlumno(raiz), 'ejercicios');
+    const hayEjercicio = v.recorrer(dirEj, n => n === `${fm.ejercicio}.html` || n === `${fm.ejercicio}.md`).length > 0;
+    if (!hayEjercicio) {
       informe.errores.push({ regla: 'ejercicio', fichero: `conceptos/${slug}.md`, detalle: `declara ejercicio "${fm.ejercicio}" y no existe ejercicios/${fm.ejercicio}.html ni .md` });
     }
   }
@@ -174,9 +176,10 @@ function comprobarDuplicados(raiz, informe) {
 function comprobarEjerciciosSueltos(raiz, declarados, informe) {
   const dir = path.join(v.baseAlumno(raiz), 'ejercicios');
   if (!fs.existsSync(dir)) return;
-  for (const n of fs.readdirSync(dir)) {
-    if (n.endsWith('.html') && !declarados.has(n.slice(0, -5))) {
-      informe.avisos.push({ regla: 'ejercicio-suelto', fichero: `ejercicios/${n}`, detalle: 'ningún concepto lo declara en su frontmatter' });
+  for (const abs of v.recorrer(dir, n => n.endsWith('.html'))) {
+    const n = path.basename(abs);
+    if (!declarados.has(n.slice(0, -5))) {
+      informe.avisos.push({ regla: 'ejercicio-suelto', fichero: v.aPosix(path.relative(v.baseAlumno(raiz), abs)), detalle: 'ningún concepto lo declara en su frontmatter' });
     }
   }
 }
@@ -262,6 +265,16 @@ function markdownPendientes(raiz) {
   return lineas.join('\n');
 }
 
+// Si el curso tiene estructura (config/estructura.json), lo que queda suelto en la raíz de sesiones/ es un despiste.
+function comprobarUnidades(raiz, informe) {
+  const estructura = path.join(raiz, 'config', 'estructura.json');
+  const dir = path.join(v.baseAlumno(raiz), 'sesiones');
+  if (!fs.existsSync(estructura) || !fs.existsSync(dir)) return;
+  for (const n of fs.readdirSync(dir)) {
+    if (n.endsWith('.md') && !n.startsWith('_')) informe.avisos.push({ regla: 'sin-unidad', fichero: `sesiones/${n}`, detalle: 'está suelta en sesiones/: node .kit/herramientas/organizar.js la coloca en su unidad (o su nombre no empieza por ningún prefijo de config/estructura.json)' });
+  }
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -285,6 +298,7 @@ function comprobar(raiz) {
   comprobarHuerfanos(raiz, notas, informe);
   comprobarDuplicados(raiz, informe);
   comprobarAlias(raiz, informe);
+  comprobarUnidades(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;
 }

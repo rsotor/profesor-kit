@@ -28,6 +28,11 @@ README.md                                                            ← DATOS: 
   se escribe `[[flashcards/<id>]]` y `fuente: inbox/<fichero>`, nunca con `estudio/` delante. Y cuando le
   hables de un fichero, nómbralo como él lo ve en Obsidian: "la nota **<slug>**, en la carpeta **conceptos**".
 - Si el alumno pide cambiar cómo trabajas, el cambio va a `config/profesor.md`, nunca al motor.
+- **El material se organiza como el curso.** `config/estructura.json` dice qué carpeta le toca a cada unidad
+  (módulo, bloque, semana… lo que tenga el curso); todo fichero nuevo de sesiones, flashcards, ejercicios o
+  exámenes nace en la carpeta de su unidad y con el id de la sesión delante. `estudio/conceptos/` es plano: un
+  concepto pertenece a varias unidades. Si el curso ya tiene sesiones y **no** tiene estructura, **propón una**
+  al alumno (como en `/configurar`) y, con su sí, escríbela y ejecuta `node .kit/herramientas/organizar.js`.
 - **`estudio/pendientes.md` lo escribe `guardar.js`** con todos los `TODO`, `FALTA INFO` y dudas abiertas,
   por bloques. No lo edites ni lo cites como fuente: se regenera en cada guardado.
 - **Si el alumno ha movido el curso a otra carpeta** y su atajo ha dejado de abrirlo:
@@ -107,6 +112,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
 | Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
+| Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |
 
 Nunca hagas `git add`, `git commit` ni `git push` a mano: `guardar.js` es quien decide si se puede
 subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no bloquean.
