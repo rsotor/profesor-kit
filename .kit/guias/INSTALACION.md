@@ -3,6 +3,38 @@
 Vas a montar un profesor personal para tu curso. Tú haces **tres pasos**; el resto lo hace el
 propio profesor, que te irá explicando cada cosa y pidiéndote permiso.
 
+## Cómo funciona esto
+
+Si nunca has trabajado así, lee esto primero. Son dos minutos y te ahorran muchas dudas.
+
+**Son cuatro piezas:**
+
+| Pieza | Qué es para ti |
+|---|---|
+| **Claude** | Tu profesor. Le hablas escribiendo frases normales, como en un chat. |
+| **La terminal** | La ventana donde habláis. Es un chat sin botones: escribes, pulsas Intro y te contesta. |
+| **Obsidian** | Tu cuaderno. Ahí lees todo lo que tu profesor te prepara: notas, ejercicios, exámenes. |
+| **GitHub** | La caja fuerte. Guarda una copia privada de tu curso y de ahí le llegan las mejoras a tu profesor. |
+
+Donde la imagen cojea: tu profesor **no recuerda la conversación de ayer**. Recuerda lo que dejó escrito en
+tu curso. Por eso guarda cada cosa que termina, y por eso al saludarte te dice por dónde ibais.
+
+**Un día normal:**
+
+1. Tienes clase y dejas el PDF o tus apuntes en la carpeta **inbox**.
+2. Abres la terminal y escribes una palabra: tu profesor se abre en tu curso.
+3. Le dices "he dejado los apuntes de hoy".
+4. Te prepara las notas de la clase. Las lees en Obsidian, a tu ritmo.
+5. Si algo no lo entiendes, se lo dices. Si quieres practicar, le pides un test.
+
+**Lo que vas a notar al principio, y es normal:**
+
+- **Te pide permiso a menudo.** Antes de instalar algo o de tocar un fichero, pregunta. Si no entiendes
+  para qué, pregúntale tú: "¿qué vas a hacer?". Te lo explica sin tecnicismos.
+- **Verás pasar texto técnico.** Son sus herramientas trabajando. No hace falta que lo entiendas.
+- **No puedes romper nada.** Si algo no te gusta, dile "deshaz lo último" y vuelve a como estaba.
+- **Puedes preguntarle cualquier cosa**, también "¿qué es esto?" o "¿qué hago ahora?". Para eso está.
+
 > **Antes de empezar**
 >
 > - **Hace falta una suscripción de pago de Claude.** El plan gratuito no sirve. Con el plan **Pro**

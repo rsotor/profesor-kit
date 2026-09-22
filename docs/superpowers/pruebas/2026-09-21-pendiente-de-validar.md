@@ -78,6 +78,11 @@ y no una preferencia tuya.
 - [ ] ¿El atajo funciona en Windows (`<palabra>.cmd` en `%USERPROFILE%\.local\bin`)? ¿Esa carpeta estaba en el PATH?
 - [ ] ¿"Abrir en Terminal" aparece en el clic derecho del Explorador, como dice la guía?
 - [ ] ¿Obsidian: el texto de los botones coincide con el de la guía?
+- [ ] **`gh` en Windows: "problemas de permisos" (2026-09-22, para una sesión propia).** Antes de tocar nada,
+      trae: en qué paso fue, el mensaje exacto (captura o texto), si salió una ventana de Windows pidiendo permiso
+      y qué asistente era. Candidatos: (1) `winget` pide administrador; (2) PowerShell bloquea scripts
+      (ExecutionPolicy); (3) `gh auth login` no termina o no guarda la sesión; (4) falla
+      `gh repo create --template` sobre el kit privado; (5) git no usa la sesión de `gh` al subir y pide contraseña.
 - [ ] Cualquier momento en que dudaste o el profesor preguntó de más o de menos. En bruto vale.
 
 ## 6. Ya arreglado en el PR #8 (para que sepas qué no hace falta repetir)
