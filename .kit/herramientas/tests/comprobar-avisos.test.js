@@ -91,3 +91,14 @@ test('enlace con alias dentro de una tabla: aviso si la barra no está protegida
 test('son avisos: no bloquean el guardado', () => {
   assert.deepEqual(comprobar(cursoTemporal(nota(`$x = 5 ${EURO}$ y $r = 5%$`))).errores, []);
 });
+
+test('el mismo alias en dos conceptos es aviso', () => {
+  const raiz = cursoTemporal({
+    'estudio/conceptos/beta.md': '---\ntipo: concepto\nalias: [Alpha, otro]\n---\n',
+    'estudio/conceptos/_index.md': '## Conceptos\n\n```\nalfa | d | 1 | 1 | alias: a\nbeta | d | 1 | 1 | alias: otro\n```\n',
+    'estudio/progreso.md': '[[alfa]] [[beta]]', 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[beta]]\n',
+  });
+  const a = avisos(raiz, 'alias-repetido');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /«Alpha» también está en alfa/);
+});

@@ -148,6 +148,19 @@ function comprobarHuerfanos(raiz, notas, informe) {
   }
 }
 
+// Un alias que apunta a dos notas hace ambigua la pregunta "¿este concepto ya existe?".
+function comprobarAlias(raiz, informe) {
+  const duenos = new Map();
+  for (const slug of v.listarConceptos(raiz)) {
+    const fm = v.leerFrontmatter(leer(raiz, `conceptos/${slug}.md`)) || {};
+    for (const alias of Array.isArray(fm.alias) ? fm.alias : []) {
+      const clave = alias.toLowerCase().trim();
+      if (duenos.has(clave) && duenos.get(clave) !== slug) informe.avisos.push({ regla: 'alias-repetido', fichero: `conceptos/${slug}.md`, detalle: `el alias «${alias}» también está en ${duenos.get(clave)} — ¿son el mismo concepto, o el alias sobra en uno?` });
+      else duenos.set(clave, slug);
+    }
+  }
+}
+
 function comprobarDuplicados(raiz, informe) {
   const slugs = v.listarConceptos(raiz);
   for (let i = 0; i < slugs.length; i++) {
@@ -200,6 +213,55 @@ function comprobarQueSeVeraBien(raiz, notas, informe) {
   }
 }
 
+// Todo lo que queda por resolver, con el bloque del temario al que pertenece. Es lo que `guardar.js`
+// vuelca en `estudio/pendientes.md` para que el alumno vea de un vistazo qué le falta.
+const PENDIENTES = [
+  ['falta-info', /FALTA INFO:\s*(.*)/],
+  ['todo', /\*\*TODO:\*\*\s*(.*)|^TODO:\s*(.*)/],
+];
+function bloqueDe(raiz, nota, texto) {
+  const fm = v.leerFrontmatter(texto) || {};
+  if (fm.bloque) return String(fm.bloque);
+  if (Array.isArray(fm.bloques) && fm.bloques.length) return String(fm.bloques[0]);
+  if (fm.sesion && existe(raiz, `sesiones/${fm.sesion}.md`)) return bloqueDe(raiz, `sesiones/${fm.sesion}.md`, leer(raiz, `sesiones/${fm.sesion}.md`));
+  return null;
+}
+function pendientes(raiz) {
+  const lista = [];
+  const marcador = new RegExp(escaparRegex(v.leerMarcador(raiz)) + '\\s*(.*)');
+  for (const nota of v.listarNotas(raiz, { conInbox: true })) {
+    const texto = leer(raiz, nota);
+    const bloque = bloqueDe(raiz, nota, texto);
+    v.sinCodigo(texto).split(/\r?\n/).forEach((linea, i) => {
+      for (const [tipo, regex] of [...PENDIENTES, ['duda', marcador]]) {
+        const m = regex.exec(linea);
+        if (m) { lista.push({ bloque, fichero: nota, linea: i + 1, tipo, texto: (m[1] || m[2] || '').replace(/^[*_\s]+|[*_\s]+$/g, '') }); break; }
+      }
+    });
+  }
+  return lista;
+}
+const ETIQUETA = { 'falta-info': 'Falta material del curso', todo: 'Pendiente del profesor', duda: 'Duda tuya sin responder' };
+function markdownPendientes(raiz) {
+  const lista = pendientes(raiz);
+  const lineas = ['# Pendientes', '', '> Lo genera tu profesor cada vez que guarda: **no lo edites**, se vuelve a escribir solo.',
+    '> Cada línea dice qué falta y en qué nota. Para resolver una duda, dile "tengo dudas"; para lo que falta',
+    '> del material, búscalo en la plataforma del curso o cuéntale lo que recuerdes de clase.', ''];
+  if (!lista.length) { lineas.push('Nada pendiente. 🎉', ''); return lineas.join('\n'); }
+  const porBloque = new Map();
+  for (const p of lista) { const k = p.bloque ? `Bloque ${p.bloque}` : 'Sin bloque'; if (!porBloque.has(k)) porBloque.set(k, []); porBloque.get(k).push(p); }
+  for (const [bloque, items] of [...porBloque.entries()].sort()) {
+    lineas.push(`## ${bloque} (${items.length})`, '');
+    for (const p of items) {
+      const nombre = p.fichero.replace(/\.md$/, '');
+      const enlace = p.fichero.endsWith('.md') ? `[[${nombre}]]` : `\`${p.fichero}\``;
+      lineas.push(`- [ ] **${ETIQUETA[p.tipo]}** · ${enlace}${p.texto ? ` — ${p.texto}` : ''}`);
+    }
+    lineas.push('');
+  }
+  return lineas.join('\n');
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -222,6 +284,7 @@ function comprobar(raiz) {
   comprobarPendientes(raiz, informe);
   comprobarHuerfanos(raiz, notas, informe);
   comprobarDuplicados(raiz, informe);
+  comprobarAlias(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;
 }
@@ -246,4 +309,4 @@ function cli(args, raizPorDefecto) {
 
 if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
 
-module.exports = { comprobar, slugsDelIndice, cli };
+module.exports = { comprobar, slugsDelIndice, pendientes, markdownPendientes, cli };

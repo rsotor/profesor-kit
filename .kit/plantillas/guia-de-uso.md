@@ -28,12 +28,26 @@ una persona.
 
 No hace falta acertar con las palabras. Si no te entiende, te pregunta.
 
-## 3. Dónde dejas el material de clase
+## 3. Cómo estudias una clase, paso a paso
+
+Cuando tu profesor termine de preparar una clase, te dirá por dónde empezar. El orden de siempre:
+
+1. **La nota de la sesión** (carpeta **sesiones**): un resumen corto de qué se vio y qué hay que llevarse.
+2. **Los conceptos** que enlaza (carpeta **conceptos**): uno a uno, sin prisa. Si algo no te queda claro,
+   deja tu duda ahí mismo con `{{MARCADOR}}` (punto 6).
+3. **Las flashcards** (carpeta **flashcards**): tápate la respuesta y contesta de cabeza.
+4. **El ejercicio**, si lo hay (carpeta **ejercicios**): primero piensa qué va a pasar, luego comprueba.
+5. Al terminar un bloque del temario, pídele **"hazme un test del bloque"**: ahí se ve si te lo sabes.
+
+**Lo que queda pendiente** (algo que faltaba en el material, una duda sin responder) está siempre en la
+nota **pendientes**, en tu carpeta de estudio. Se actualiza sola.
+
+## 4. Dónde dejas el material de clase
 
 En la carpeta **inbox**, dentro de **estudio**. Arrastra ahí el PDF, las fotos o el documento y luego
 dile a tu profesor que lo has dejado. Lo mejor es PDF; si tienes una presentación, guárdala como PDF.
 
-## 4. Dónde lees tus notas
+## 5. Dónde lees tus notas
 
 En el programa **Obsidian**. Ábrelo y verás tus carpetas a la izquierda: todo lo que tu profesor
 prepara aparece ahí solo —los conceptos, los ejercicios, los tests y tu progreso—.
@@ -42,7 +56,7 @@ Si algún día Obsidian se abre vacío o con otra cosa: pulsa el icono de la bó
 izquierda), elige **"Abrir una carpeta como bóveda"** y selecciona la carpeta **estudio** de tu curso.
 {{TERMINAL_EN_OBSIDIAN}}
 
-## 5. Cómo dejar una duda mientras lees
+## 6. Cómo dejar una duda mientras lees
 
 Escribe `{{MARCADOR}}` en la nota, justo donde te pierdes, y a continuación tu pregunta:
 
@@ -51,18 +65,18 @@ Escribe `{{MARCADOR}}` en la nota, justo donde te pierdes, y a continuación tu 
 Deja todas las que quieras. La próxima vez que abras a tu profesor, dile "tengo dudas": contesta cada
 una en su sitio.
 
-## 6. Para terminar
+## 7. Para terminar
 
 Escribe "hasta luego" o cierra la ventana. Tu trabajo ya está guardado: tu profesor guarda cada vez
 que termina algo.
 
-## 7. Si quieres añadir otro curso
+## 8. Si quieres añadir otro curso
 
 Es mucho más rápido que la primera vez, porque en tu ordenador ya está todo instalado. Abre la terminal,
 entra en tu carpeta de cursos, abre a tu asistente y pégale otra vez el **texto de arranque** de la guía
 de instalación. Te preguntará cómo se llama el curso nuevo y qué palabra quieres para abrirlo.
 
-## 8. Si algo va raro
+## 9. Si algo va raro
 
 - **Has borrado o movido algo sin querer:** díselo. Lo recupera él.
 - **Te pregunta si puede hacer algo:** lee la frase; casi siempre es que sí.

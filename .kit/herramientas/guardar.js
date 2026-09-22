@@ -2,12 +2,18 @@
 const path = require('node:path');
 const g = require('./lib/git');
 const { leerAjustes } = require('./lib/vault');
-const { comprobar } = require('./comprobar');
+const fs = require('node:fs');
+const { comprobar, markdownPendientes } = require('./comprobar');
+const { CARPETA_ALUMNO } = require('./lib/vault');
 
 function guardar({ raiz, mensaje, permitirErrores = false }) {
   const informe = comprobar(raiz);
   if (!g.esRepo(raiz)) return { guardado: false, motivo: 'sin-repo', subido: false, informe };
   if (informe.errores.length && !permitirErrores) return { guardado: false, motivo: 'errores', subido: false, informe };
+  // Solo se reescribe si cambia: si no, un curso sin novedades parecería tener cambios.
+  const pendientes = path.join(raiz, CARPETA_ALUMNO, 'pendientes.md');
+  const texto = markdownPendientes(raiz);
+  if (!fs.existsSync(pendientes) || fs.readFileSync(pendientes, 'utf8') !== texto) fs.writeFileSync(pendientes, texto);
   if (!g.hayCambios(raiz)) return { guardado: false, motivo: 'sin-cambios', subido: false, informe };
   if (!g.tieneIdentidad(raiz)) return { guardado: false, motivo: 'sin-identidad', subido: false, informe };
 
