@@ -69,12 +69,26 @@ Tu profesor te saluda y espera a que le escribas. Se le habla con frases normale
 
 No hace falta acertar con las palabras. Si no te entiende, te pregunta.
 
-## 6. Dónde dejas el material de clase
+## 6. Hacer un examen
+
+1. Tu profesor te dice qué nota es el examen: está en la carpeta **examenes**.
+2. **Contesta en la propia nota.** Debajo de cada pregunta hay una línea ✍️ **Tu respuesta:**; escribe detrás
+   (en esa línea o en las siguientes). Si no sabes algo, pon "no lo sé": le sirve más que acertar por suerte.
+3. **No abras las soluciones** del final hasta que te corrija.
+4. Cuando acabes, dile a tu profesor **"he terminado el examen"**. Él lee tus respuestas de la nota (también
+   puedes contestarle en el chat, si lo prefieres).
+5. Te corrige y guarda tus respuestas y tu nota al final del examen, en **Histórico de intentos**. Luego deja el
+   examen **limpio**: las mismas preguntas, sin tus respuestas. Puedes repetirlo cuando quieras y comparar con
+   la vez anterior.
+6. Si ya lo has hecho varias veces y quieres uno nuevo, pídele **"hazme otra versión del examen del módulo 1"**:
+   las mismas preguntas con otras cifras. El de antes se queda para repasar.
+
+## 7. Dónde dejas el material de clase
 
 En la carpeta **inbox**. Arrastra ahí el PDF, las fotos o el documento y dile a tu profesor que lo has dejado.
 Lo mejor es PDF; si tienes una presentación, guárdala como PDF.
 
-## 7. Cómo dejar una duda mientras lees
+## 8. Cómo dejar una duda mientras lees
 
 Escribe `{{MARCADOR}}` en la nota, justo donde te pierdes, y a continuación tu pregunta:
 
@@ -83,12 +97,12 @@ Escribe `{{MARCADOR}}` en la nota, justo donde te pierdes, y a continuación tu 
 Deja todas las que quieras. La próxima vez que abras a tu profesor, dile "tengo dudas": contesta cada una en su
 sitio. Lo que queda por resolver está siempre en la nota **pendientes**.
 
-## 8. Para terminar
+## 9. Para terminar
 
 Escribe "hasta luego" y espera a que se despida: así guarda lo último. Si cierras la ventana sin más, no se
 pierde nada de lo terminado.
 
-## 9. Si algo no cuadra
+## 10. Si algo no cuadra
 
 - **Marqué una sesión y en inicio sigue ⬜:** es normal. Inicio se pone al día cuando tu profesor guarda; abre
   a tu profesor y dile cualquier cosa, o espera a la próxima clase.
@@ -103,7 +117,7 @@ pierde nada de lo terminado.
 - **Algo de cómo trabaja tu profesor te molesta:** díselo tal cual, "esto es del kit". Él lo envía a quien lo
   mantiene.
 
-## 10. Otro curso u otro asistente
+## 11. Otro curso u otro asistente
 
 - **Añadir otro curso:** abre la terminal, entra en tu carpeta de cursos, abre a tu asistente y pégale otra vez
   el **texto de arranque** de la guía de instalación.
