@@ -1486,3 +1486,395 @@ Expected: "Actualizado de 0.11.0 a 1.0.0. Datos migrados: 3." (y las que falten 
 
 - [ ] **Step 7: Marcar la validación** en `docs/superpowers/pruebas/2026-09-21-pendiente-de-validar.md` y
   commit. Solo entonces se vuelve a abrir la PR de la release.
+
+---
+
+### Task 12: Obsidian configurado de serie (spec §7)
+
+Se ejecuta **después de la Task 10** y antes de la 11. Spec: §7 de `docs/superpowers/specs/2026-09-22-indice-del-curso-design.md`.
+
+**Files:**
+- Create: `.kit/plantillas/obsidian/app.json`, `.kit/plantillas/obsidian/appearance.json`, `.kit/plantillas/obsidian/core-plugins.json`
+- Create: `.kit/herramientas/lib/obsidian.js`, `.kit/herramientas/obsidian.js`
+- Create: `.kit/herramientas/tests/obsidian.test.js`
+- Modify: `.kit/herramientas/lib/arranque.js` (admitir herramientas asíncronas)
+- Modify: `.kit/herramientas/preparar-curso.js`, `.kit/herramientas/diagnostico.js` (~l.69), `.claude/settings.json`
+- Modify: `.kit/herramientas/migraciones/003-casilla-estudiada.js` (también ajustes de Obsidian)
+- Modify: `.kit/guias/INSTALAR-AGENTE.md` (paso 9 y la sección "Opcional — hablar contigo desde dentro de Obsidian")
+- Modify: `.kit/plantillas/guia-de-uso.md`, `.kit/skills/configurar/SKILL.md` (fila `{{TERMINAL_EN_OBSIDIAN}}`), `.kit/skills/actualizar/SKILL.md`, `AGENTS.md` (tabla de herramientas)
+- Modify tests: `diagnostico.test.js`, `preparar-curso.test.js`, `actualizar.test.js`
+
+**Interfaces:**
+- Produces: `lib/obsidian.js` → `AJUSTES`, `COMPLEMENTOS`, `aplicarAjustes(raiz) → string[]` (ficheros tocados),
+  `async instalarComplementos(raiz, descargar?) → { instalados: string[], yaEstaban: string[], fallidos: {id, motivo}[] }`,
+  `descargarDeGitHub(repo, fichero) → Promise<Buffer|null>` (null si 404).
+  CLI: `node .kit/herramientas/obsidian.js [--sin-complementos]`.
+
+- [ ] **Step 1: Plantillas** — crear los tres JSON (con salto de línea final):
+
+`.kit/plantillas/obsidian/app.json`:
+```json
+{
+  "showUnsupportedFiles": true,
+  "promptDelete": false,
+  "alwaysUpdateLinks": true
+}
+```
+
+`.kit/plantillas/obsidian/appearance.json`:
+```json
+{
+  "translucency": false
+}
+```
+
+`.kit/plantillas/obsidian/core-plugins.json`:
+```json
+{
+  "file-explorer": true,
+  "global-search": true,
+  "switcher": true,
+  "graph": false,
+  "backlink": true,
+  "canvas": false,
+  "outgoing-link": true,
+  "tag-pane": true,
+  "footnotes": false,
+  "properties": true,
+  "page-preview": true,
+  "daily-notes": false,
+  "templates": false,
+  "note-composer": false,
+  "command-palette": true,
+  "slash-command": false,
+  "editor-status": true,
+  "bookmarks": true,
+  "markdown-importer": false,
+  "zk-prefixer": false,
+  "random-note": false,
+  "outline": true,
+  "word-count": false,
+  "slides": false,
+  "audio-recorder": false,
+  "workspaces": false,
+  "file-recovery": true,
+  "publish": false,
+  "sync": false,
+  "bases": false,
+  "webviewer": false
+}
+```
+
+- [ ] **Step 2: Tests que fallan** — crear `tests/obsidian.test.js`:
+
+```js
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const ob = require('../lib/obsidian');
+const { cursoTemporal } = require('./ayuda');
+
+const KIT_REAL = path.resolve(__dirname, '..', '..');
+function curso(ficheros = {}) {
+  const raiz = cursoTemporal(ficheros);
+  fs.cpSync(path.join(KIT_REAL, 'plantillas'), path.join(raiz, '.kit', 'plantillas'), { recursive: true });
+  return raiz;
+}
+const leerJson = (raiz, f) => JSON.parse(fs.readFileSync(path.join(raiz, 'estudio', '.obsidian', f), 'utf8'));
+
+test('aplicarAjustes: en una bóveda sin configurar escribe los tres ficheros recomendados', () => {
+  const raiz = curso();
+  assert.deepEqual(ob.aplicarAjustes(raiz).sort(), ['app.json', 'appearance.json', 'core-plugins.json']);
+  assert.equal(leerJson(raiz, 'app.json').showUnsupportedFiles, true);
+  assert.equal(leerJson(raiz, 'core-plugins.json').properties, true);
+  assert.equal(leerJson(raiz, 'core-plugins.json').sync, false);
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', '.obsidian', 'community-plugins.json')));
+});
+
+test('aplicarAjustes: nunca cambia lo que eligió el alumno, solo añade lo que falta, y es idempotente', () => {
+  const raiz = curso({ 'estudio/.obsidian/app.json': JSON.stringify({ promptDelete: true, vimMode: true }) });
+  ob.aplicarAjustes(raiz);
+  const app = leerJson(raiz, 'app.json');
+  assert.equal(app.promptDelete, true);
+  assert.equal(app.vimMode, true);
+  assert.equal(app.alwaysUpdateLinks, true);
+  assert.deepEqual(ob.aplicarAjustes(raiz), []);
+});
+
+test('aplicarAjustes: un JSON roto no se toca', () => {
+  const raiz = curso({ 'estudio/.obsidian/app.json': '{roto' });
+  assert.ok(!ob.aplicarAjustes(raiz).includes('app.json'));
+  assert.equal(fs.readFileSync(path.join(raiz, 'estudio', '.obsidian', 'app.json'), 'utf8'), '{roto');
+});
+
+test('instalarComplementos: descarga los que faltan, no activa ninguno y respeta los que ya están', async () => {
+  const raiz = curso({ 'estudio/.obsidian/plugins/terminal/manifest.json': '{"id":"terminal"}' });
+  const pedidos = [];
+  const falso = async (repo, fichero) => { pedidos.push(`${repo}/${fichero}`); return fichero === 'styles.css' ? null : Buffer.from(`${repo} ${fichero}`); };
+  const r = await ob.instalarComplementos(raiz, falso);
+  assert.deepEqual(r.yaEstaban, ['terminal']);
+  assert.deepEqual(r.instalados, ['code-files', 'realclaudian']);
+  assert.deepEqual(r.fallidos, []);
+  assert.ok(!pedidos.some(p => p.startsWith('polyipseity/')));
+  const dir = path.join(raiz, 'estudio', '.obsidian', 'plugins');
+  assert.equal(fs.readFileSync(path.join(dir, 'realclaudian', 'main.js'), 'utf8'), 'yishentu/claudian main.js');
+  assert.ok(!fs.existsSync(path.join(dir, 'realclaudian', 'styles.css')));   // 404 → no se escribe
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', '.obsidian', 'community-plugins.json')));
+});
+
+test('instalarComplementos: un fallo de red se cuenta, no revienta, y no deja carpetas a medias', async () => {
+  const raiz = curso();
+  const r = await ob.instalarComplementos(raiz, async () => { throw new Error('sin red'); });
+  assert.deepEqual(r.instalados, []);
+  assert.equal(r.fallidos.length, 3);
+  assert.match(r.fallidos[0].motivo, /sin red/);
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', '.obsidian', 'plugins', 'terminal')));
+});
+
+test('los complementos son los del directorio oficial de Obsidian', () => {
+  assert.deepEqual(ob.COMPLEMENTOS.map(c => [c.id, c.repo]), [
+    ['terminal', 'polyipseity/obsidian-terminal'],
+    ['code-files', 'lukasbach/obsidian-code-files'],
+    ['realclaudian', 'yishentu/claudian'],
+  ]);
+});
+```
+
+Run: `node --test .kit/herramientas/tests/obsidian.test.js` → FAIL (`Cannot find module '../lib/obsidian'`).
+
+- [ ] **Step 3: `lib/obsidian.js`**
+
+```js
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const v = require('./vault');
+
+// Obsidian viene configurado de serie: ajustes y componentes internos por defecto, y los complementos de la
+// comunidad instalados pero SIN activar. Activarlos es decisión del alumno: son código de terceros.
+// community-plugins.json (la lista de activados) no se escribe nunca.
+const AJUSTES = ['app.json', 'appearance.json', 'core-plugins.json'];
+const COMPLEMENTOS = [
+  { id: 'terminal', repo: 'polyipseity/obsidian-terminal', ficheros: ['main.js', 'manifest.json', 'styles.css'] },
+  { id: 'code-files', repo: 'lukasbach/obsidian-code-files', ficheros: ['main.js', 'manifest.json'] },
+  { id: 'realclaudian', repo: 'yishentu/claudian', ficheros: ['main.js', 'manifest.json', 'styles.css'] },
+];
+const dirObsidian = raiz => path.join(v.baseAlumno(raiz), '.obsidian');
+
+// Si un fichero ya existe solo se añaden las claves que falten: nunca se cambia lo que eligió el alumno.
+function aplicarAjustes(raiz) {
+  const origen = path.join(raiz, '.kit', 'plantillas', 'obsidian');
+  const destino = dirObsidian(raiz);
+  fs.mkdirSync(destino, { recursive: true });
+  const tocados = [];
+  for (const nombre of AJUSTES) {
+    const recomendado = JSON.parse(fs.readFileSync(path.join(origen, nombre), 'utf8'));
+    const fichero = path.join(destino, nombre);
+    let actual = null;
+    if (fs.existsSync(fichero)) {
+      try { actual = JSON.parse(fs.readFileSync(fichero, 'utf8')); } catch { continue; }   // roto: no se toca
+      if (Object.keys(recomendado).every(k => k in actual)) continue;
+    }
+    fs.writeFileSync(fichero, JSON.stringify({ ...recomendado, ...(actual || {}) }, null, 2) + '\n');
+    tocados.push(nombre);
+  }
+  return tocados;
+}
+
+async function descargarDeGitHub(repo, fichero) {
+  const r = await fetch(`https://github.com/${repo}/releases/latest/download/${fichero}`);
+  if (r.status === 404) return null;   // ese complemento no publica ese fichero (styles.css es opcional)
+  if (!r.ok) throw new Error(`${repo}/${fichero}: HTTP ${r.status}`);
+  return Buffer.from(await r.arrayBuffer());
+}
+
+// Descarga los que falten. Todo o nada por complemento: si falla una descarga, no queda una carpeta a medias.
+async function instalarComplementos(raiz, descargar = descargarDeGitHub) {
+  const resultado = { instalados: [], yaEstaban: [], fallidos: [] };
+  for (const c of COMPLEMENTOS) {
+    const dir = path.join(dirObsidian(raiz), 'plugins', c.id);
+    if (fs.existsSync(path.join(dir, 'manifest.json'))) { resultado.yaEstaban.push(c.id); continue; }
+    try {
+      const contenidos = {};
+      for (const f of c.ficheros) contenidos[f] = await descargar(c.repo, f);
+      if (!contenidos['main.js'] || !contenidos['manifest.json']) throw new Error('la versión publicada no trae main.js y manifest.json');
+      fs.mkdirSync(dir, { recursive: true });
+      for (const [f, datos] of Object.entries(contenidos)) if (datos) fs.writeFileSync(path.join(dir, f), datos);
+      resultado.instalados.push(c.id);
+    } catch (e) {
+      resultado.fallidos.push({ id: c.id, motivo: e.message });
+    }
+  }
+  return resultado;
+}
+
+module.exports = { AJUSTES, COMPLEMENTOS, aplicarAjustes, descargarDeGitHub, instalarComplementos };
+```
+
+Run: `node --test .kit/herramientas/tests/obsidian.test.js` → PASS.
+
+- [ ] **Step 4: `arranque.js` admite herramientas asíncronas** — sustituir `arrancar` por:
+
+```js
+function arrancar(cli, raiz, nombre) {
+  const fallo = error => {
+    console.error(`Fallo inesperado en ${nombre}: ${error.message}`);
+    console.error('Esto es del kit, no del curso: abre una issue con node .kit/herramientas/issue.js (ver "Feedback al kit" en AGENTS.md).');
+    process.exit(3);
+  };
+  try {
+    const codigo = cli(process.argv.slice(2), raiz);
+    if (codigo && typeof codigo.then === 'function') codigo.then(c => process.exit(c), fallo);
+    else process.exit(codigo);
+  } catch (error) {
+    fallo(error);
+  }
+}
+```
+
+- [ ] **Step 5: la herramienta `obsidian.js`**
+
+```js
+'use strict';
+const path = require('node:path');
+const { aplicarAjustes, instalarComplementos } = require('./lib/obsidian');
+
+// Deja Obsidian como lo recomienda el kit: ajustes (sin pisar los del alumno) y complementos instalados sin activar.
+// Un fallo de red no es un error del curso: lo dice y sale bien.
+async function cli(args, raiz, descargar) {
+  const tocados = aplicarAjustes(raiz);
+  console.log(tocados.length ? `Ajustes de Obsidian escritos: ${tocados.join(', ')}.` : 'Ajustes de Obsidian: ya estaban.');
+  if (args.includes('--sin-complementos')) return 0;
+  const r = await instalarComplementos(raiz, descargar);
+  if (r.instalados.length) console.log(`Complementos instalados (sin activar): ${r.instalados.join(', ')}.`);
+  if (r.yaEstaban.length) console.log(`Ya estaban: ${r.yaEstaban.join(', ')}.`);
+  for (const f of r.fallidos) console.log(`No se pudo descargar ${f.id}: ${f.motivo}. Se puede repetir más tarde.`);
+  return 0;
+}
+
+if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'obsidian.js');
+
+module.exports = { cli };
+```
+
+En `.claude/settings.json`, añadir tras la línea de `organizar.js`:
+`"Bash(node .kit/herramientas/obsidian.js *)",`
+(`coherencia-skills.test.js` exige que toda herramienta tenga permiso.)
+
+En `AGENTS.md`, tabla de "Herramientas", añadir la fila:
+`| Tras preparar el curso (paso 9) y tras actualizar un curso existente | \`node .kit/herramientas/obsidian.js\` |`
+
+- [ ] **Step 6: `preparar-curso.js` configura Obsidian antes de la primera apertura**
+
+Añadir `const { aplicarAjustes } = require('./lib/obsidian');` y, antes del `return` de `prepararCurso`:
+
+```js
+  // Antes de que el alumno abra la carpeta en Obsidian: así arranca ya configurado (abierto, pisaría los ficheros).
+  const obsidian = aplicarAjustes(raiz);
+```
+
+y devolver `obsidian` en el objeto de resultado. En `preparar-curso.test.js`, el test principal comprueba que
+existe `estudio/.obsidian/core-plugins.json` con `sync: false`; si los tests montan un curso sin
+`.kit/plantillas/obsidian`, copiar las plantillas reales como ya hace el test de la migración 002
+(`fs.cpSync(path.join(KIT_REAL, 'plantillas'), path.join(raiz, '.kit', 'plantillas'), { recursive: true })`).
+
+- [ ] **Step 7: `diagnostico.js`** — la bóveda está abierta cuando Obsidian ha escrito su `workspace.json`
+  (`.obsidian/` ya lo crea el kit):
+
+```js
+  anota('obsidian', existe(`${v.CARPETA_ALUMNO}/.obsidian/workspace.json`), 'La carpeta estudio está abierta en Obsidian', 'Falta abrir la carpeta estudio como bóveda en Obsidian (paso 9).', false);
+```
+
+En `diagnostico.test.js`, `cursoInstalado` pasa a escribir `'estudio/.obsidian/workspace.json': '{}'` en vez de
+`app.json`, y se añade:
+
+```js
+test('una carpeta .obsidian creada por el kit no cuenta como bóveda abierta', () => {
+  const { raiz, carpetaBin, entorno } = cursoInstalado();
+  fs.rmSync(path.join(raiz, 'estudio', '.obsidian', 'workspace.json'));
+  assert.ok(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })).includes('obsidian'));
+});
+```
+
+- [ ] **Step 8: migración 003 también añade los ajustes que falten** — en `migrar(raiz)`, al final:
+
+```js
+    // Obsidian configurado de serie (sin red: los complementos los descarga el profesor con obsidian.js).
+    require('../lib/obsidian').aplicarAjustes(raiz);
+```
+
+y actualizar su `descripcion` a `'Cada sesión gana la casilla "estudiada", y Obsidian los ajustes recomendados'`.
+En `actualizar.test.js`, el test de la 003 copia las plantillas reales al curso de prueba (como el de la 002) y
+comprueba además que `estudio/.obsidian/app.json` tiene `alwaysUpdateLinks: true` y que un `app.json` previo con
+`promptDelete: true` lo conserva.
+
+- [ ] **Step 9: guías y skills**
+
+`INSTALAR-AGENTE.md`, paso 9: antes de "No existe forma de abrirle la bóveda desde aquí", añadir:
+
+```markdown
+**Antes de que la abra**, ejecuta `node .kit/herramientas/obsidian.js`: deja escritos los ajustes recomendados
+(ya los puso `preparar-curso.js`; no pisa nada) y descarga los complementos **Terminal**, **Code Files** y
+**Claudian** sin activarlos. Si no hay red, lo dice y sigue: se repite más tarde.
+```
+
+Sustituir el párrafo "**Que vea también los ejercicios.** …" por:
+
+```markdown
+**Los ejercicios web ya se ven:** la configuración recomendada activa "Detectar todas las extensiones de
+archivo". Si `comprobar.js` avisa `obsidian-oculta-ejercicios`, es que el alumno lo desactivó: pregúntale antes
+de volver a activarlo.
+```
+
+Sustituir la sección "### Opcional — hablar contigo desde dentro de Obsidian" entera por:
+
+```markdown
+### Extras de Obsidian — instalados, sin activar
+
+Los complementos **Terminal** (una terminal dentro de Obsidian, para hablar contigo sin cambiar de ventana;
+necesita Python 3.9 o superior), **Code Files** (ver y editar ficheros de código) y **Claudian** (Claude en un
+panel lateral) ya están instalados, pero **apagados**: son de terceros, no de Obsidian ni del kit, y activarlos
+es decisión suya. Díselo en una frase y que sepa que su hoja *Cómo usar tu profesor* explica cómo activarlos.
+No los actives tú.
+```
+
+`.kit/skills/configurar/SKILL.md`, fila `{{TERMINAL_EN_OBSIDIAN}}`: cambiar la condición "Si tiene instalado el
+complemento Terminal en Obsidian (existe `estudio/.obsidian/plugins/terminal/`)" por "Si tiene **activado** el
+complemento Terminal (`estudio/.obsidian/community-plugins.json` incluye `"terminal"`)".
+
+`.kit/skills/actualizar/SKILL.md`: tras aplicar la actualización, añadir el paso "Ejecuta
+`node .kit/herramientas/obsidian.js` (descarga los complementos que falten; los ajustes ya los añadió la
+migración). Si el alumno tenía Obsidian abierto durante la actualización, que lo cierre y lo abra."
+
+`.kit/plantillas/guia-de-uso.md`: añadir antes de "## 9. Si algo no cuadra" (y renumerar las siguientes):
+
+```markdown
+## 9. Extras de Obsidian (opcionales)
+
+Tu Obsidian trae tres complementos instalados pero **apagados**. Son de otras personas, no de Obsidian ni de tu
+profesor: actívalos solo si te interesan.
+
+| Complemento | Para qué sirve |
+|---|---|
+| **Terminal** | Hablar con tu profesor sin salir de Obsidian (necesita Python instalado; si no lo tienes, pídeselo a tu profesor) |
+| **Code Files** | Ver y editar ficheros de código dentro de Obsidian |
+| **Claudian** | Tener a Claude en un panel lateral de Obsidian |
+
+Para activar uno: rueda dentada (abajo a la izquierda) → **Complementos de la comunidad** → **Activar
+complementos de la comunidad** → en la lista, enciende el que quieras. Para apagarlo, lo mismo.
+```
+
+- [ ] **Step 10: Suite completa y commit**
+
+Run: `node --test ".kit/herramientas/tests/*.test.js"` → PASS.
+Run: `grep -o '{{[A-Z_]*}}' .kit/plantillas/guia-de-uso.md | sort -u` → los mismos cinco huecos de siempre.
+
+```bash
+git add .kit/plantillas/obsidian .kit/herramientas/lib/obsidian.js .kit/herramientas/obsidian.js .kit/herramientas/lib/arranque.js .kit/herramientas/preparar-curso.js .kit/herramientas/diagnostico.js .kit/herramientas/migraciones/003-casilla-estudiada.js .kit/herramientas/tests .claude/settings.json .kit/guias/INSTALAR-AGENTE.md .kit/plantillas/guia-de-uso.md .kit/skills/configurar/SKILL.md .kit/skills/actualizar/SKILL.md AGENTS.md
+git commit -m "feat(obsidian): configurado de serie y complementos instalados sin activar"
+```
+
+La Task 11 (validación) gana un paso: en el curso real, tras actualizar, `node .kit/herramientas/obsidian.js` —
+con los complementos de Roberto ya enlazados, debe decir "Ya estaban" y no tocar nada.
