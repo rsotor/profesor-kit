@@ -105,3 +105,26 @@ test('sin nada pendiente lo dice; y las flashcards heredan el bloque de su sesi�
   guardar({ raiz, mensaje: 'y' });
   assert.match(fs.readFileSync(path.join(raiz, 'estudio', 'pendientes.md'), 'utf8'), /## Bloque 3 \(1\)[\s\S]*flashcards\/s01-intro/);
 });
+
+test('cada guardado deja su línea en config/diario.md, dentro del mismo commit; sin cambios, no escribe nada', () => {
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  const diario = path.join(raiz, 'config', 'diario.md');
+  escribir(raiz, { 'estudio/formulario.md': '# F\n\nuno\n' });
+  guardar({ raiz, mensaje: 'sesion(s02): tema', hoy: '2026-03-01' });
+  assert.match(fs.readFileSync(diario, 'utf8'), /^# Diario del curso[\s\S]*- 2026-03-01 · sesion\(s02\): tema\n$/);
+  assert.equal(git(raiz, 'status', '--porcelain'), '', 'el diario va en el commit');
+  guardar({ raiz, mensaje: 'nada', hoy: '2026-03-02' });
+  assert.doesNotMatch(fs.readFileSync(diario, 'utf8'), /nada/);
+  escribir(raiz, { 'estudio/formulario.md': '# F\n\ndos\n' });
+  guardar({ raiz, mensaje: 'dudas: 1 resuelta', hoy: '2026-03-02' });
+  assert.match(fs.readFileSync(diario, 'utf8'), /sesion\(s02\): tema\n- 2026-03-02 · dudas: 1 resuelta\n$/);
+});
+
+test('el diario respeta lo que el profesor escribió a mano (una línea "en curso")', () => {
+  const raiz = cursoTemporal({ 'config/diario.md': '# Diario del curso\n\n- 2026-03-01 · en curso: procesando la clase 3\n' });
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/formulario.md': '# F\n\nx\n' });
+  guardar({ raiz, mensaje: 'sesion(s03): tema', hoy: '2026-03-01' });
+  assert.match(fs.readFileSync(path.join(raiz, 'config', 'diario.md'), 'utf8'), /en curso: procesando la clase 3\n- 2026-03-01 · sesion\(s03\): tema\n$/);
+});
