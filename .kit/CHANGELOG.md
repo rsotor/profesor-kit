@@ -13,6 +13,13 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.17.0
+- **La guía de instalación empieza explicando cómo funciona esto**: qué es cada pieza (tu profesor, la terminal,
+  Obsidian, GitHub), cómo es un día normal y por qué es normal que te pida permiso a menudo. Pensado para quien
+  nunca ha trabajado así.
+- **Tu profesor se presenta** al empezar la primera sesión: quién es, dónde vas a leer, cómo recuerda lo que
+  hacéis y que puedes preguntarle cualquier cosa. Si ya tienes tu curso configurado, no notas nada.
+
 ## 0.16.0
 - **Tu curso tiene una página de inicio.** En Obsidian, la nota **inicio** enseña el temario entero por
   módulos, por dónde vas (👉 *Sigue por aquí*), lo que tienes que repasar y la nota de cada examen. Cada sesión
