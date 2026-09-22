@@ -24,7 +24,7 @@ function conceptos(dir) {
   return fs.readdirSync(dir).filter(n => n.endsWith('.md') && n !== '_index.md').map(n => {
     const texto = fs.readFileSync(path.join(dir, n), 'utf8'); const fm = frontmatter(texto);
     return { slug: n.slice(0, -3), alias: lista(fm.alias), texto, lineas: texto.split('\n').length,
-      visto: (fm.visto_en || '') + ' ' + (texto.match(/## Historial[\s\S]*/) || [''])[0] };
+      visto: (fm.visto_en || '') + ' ' + (fm.modulos || '') + ' ' + (texto.match(/## Historial[\s\S]*/) || [''])[0] };
   });
 }
 const nombres = c => new Set([normal(c.slug), ...c.alias.map(normal)]);
@@ -35,7 +35,12 @@ const delCurso = conceptos(path.join(curso, 'estudio', 'conceptos'));
 if (filtroSesion) delVault = delVault.filter(c => c.visto.toLowerCase().includes(filtroSesion));
 
 const parejas = [], soloVault = [], soloCurso = [...delCurso];
-for (const v of delVault) {
+const pendientesVault = [];
+for (const v of delVault) {                                    // 1ª pasada: mismo slug
+  const k = soloCurso.findIndex(c => normal(c.slug) === normal(v.slug));
+  if (k >= 0) parejas.push([v, soloCurso.splice(k, 1)[0]]); else pendientesVault.push(v);
+}
+for (const v of pendientesVault) {                             // 2ª pasada: por alias
   const k = soloCurso.findIndex(c => mismo(v, c));
   if (k >= 0) parejas.push([v, soloCurso.splice(k, 1)[0]]); else soloVault.push(v);
 }

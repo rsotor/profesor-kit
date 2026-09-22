@@ -163,5 +163,8 @@ FALTA INFO: 1 → <qué falta y dónde debería estar>
 comprobar.js: OK
 ```
 
-Y si hay `TODO` o `FALTA INFO`, dilos en voz alta. Es lo único que el alumno tiene que resolver
-— todo lo demás ya está hecho.
+Y termina siempre con **qué hacer ahora**, en el orden de estudio y con los nombres tal como los ve en
+Obsidian: la nota de la sesión → los conceptos nuevos (di cuáles) → las flashcards → el ejercicio, si lo
+hay. Si algo quedó pendiente (`TODO`, `FALTA INFO`), dilo en una frase y remítele a la nota **pendientes**:
+`guardar.js` la regenera sola con todo lo abierto, por bloques. Es lo único que él tiene que resolver;
+todo lo demás ya está hecho.

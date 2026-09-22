@@ -6,6 +6,12 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.8.0
+- Tu hoja *Cómo usar tu profesor* explica ahora cómo estudiar una clase paso a paso, y tu profesor
+  te dice al terminar cada clase por dónde empezar.
+- Una nota **pendientes** en tu carpeta de estudio recoge, por bloques, todo lo que queda por resolver.
+  Se actualiza sola cada vez que tu profesor guarda.
+
 ## 0.7.0
 - Tu curso tiene portada en GitHub: un README con de qué va, el temario y por dónde vas, que tu
   profesor mantiene al día.
