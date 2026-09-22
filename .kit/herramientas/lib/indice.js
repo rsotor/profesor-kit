@@ -165,10 +165,12 @@ function pieDeSesion(anterior, siguiente) {
   return [MARCA_INICIO, '', '---', partes.join(' · '), MARCA_FIN].join('\n');
 }
 
+const ocurrencias = (texto, marca) => texto.split(marca).length - 1;
+
 function marcadoresRotos(texto) {
   const i = texto.indexOf(MARCA_INICIO);
   const f = texto.indexOf(MARCA_FIN);
-  return (i >= 0) !== (f >= 0) || (i >= 0 && f < i);
+  return (i >= 0) !== (f >= 0) || (i >= 0 && f < i) || ocurrencias(texto, MARCA_INICIO) > 1 || ocurrencias(texto, MARCA_FIN) > 1;
 }
 
 // Solo toca lo que hay entre los marcadores. Respeta el fin de línea del fichero: si no, en Windows cada

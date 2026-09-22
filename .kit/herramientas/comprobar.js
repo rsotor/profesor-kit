@@ -11,10 +11,17 @@ const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidi
 const leer = (raiz, rel) => fs.readFileSync(path.join(v.baseAlumno(raiz), ...rel.split('/')), 'utf8');
 const existe = (raiz, rel) => fs.existsSync(path.join(v.baseAlumno(raiz), ...rel.split('/')));
 
+// Lo que regenera guardar.js en cada guardado: si falta ahora (se borró, o aún no se ha guardado),
+// no es un enlace roto, es que toca guardar. `inicio.md` puede llevar más basenames el día que
+// GENERADOS_CON_ENLACES crezca; `pendientes` y `auditoria-del-material` no enlazan a otras notas
+// (por eso no están en GENERADOS_CON_ENLACES), pero sí los enlaza `inicio.md`.
+const BASENAMES_GENERADOS = () => new Set([...v.GENERADOS_CON_ENLACES.map(f => path.basename(f, '.md')), 'pendientes', 'auditoria-del-material']);
+
 function comprobarEnlaces(raiz, notas, informe) {
   const nombres = new Set(
     v.recorrer(v.baseAlumno(raiz), n => n.endsWith('.md'), FUERA_DE_ENLACES).map(r => path.basename(r, '.md'))
   );
+  for (const generado of BASENAMES_GENERADOS()) nombres.add(generado);
   for (const nota of notas) {
     const texto = v.sinCodigo(leer(raiz, nota));
     for (const m of texto.matchAll(/\[\[([^\]]+)\]\]/g)) {
@@ -354,7 +361,13 @@ function comprobarIndiceDelCurso(raiz, informe) {
     if (indice.marcadoresRotos(leer(raiz, s.rel))) informe.avisos.push({ regla: 'navegacion-rota', fichero: s.rel, detalle: 'el pie de navegación tiene un marcador %% sin el otro: guardar.js no lo toca hasta que se arregle (borra el pie entero y se vuelve a generar)' });
   }
   for (const e of indice.leerExamenes(raiz)) {
-    if (e.nota === null || !e.fecha || !e.unidades.length) informe.avisos.push({ regla: 'examen-sin-nota', fichero: e.rel, detalle: 'le falta `unidad:`, `nota:` (sobre 10) o `fecha:` (AAAA-MM-DD) en el frontmatter: sin ellas no sale en inicio' });
+    // La skill crea el examen con `nota:` vacía a propósito (se rellena al corregir): eso solo es
+    // aviso si ya hay un intento corregido y sigue sin nota. `unidad:` y `fecha:` sí hacen falta desde el principio.
+    if (!e.unidades.length || !e.fecha) {
+      informe.avisos.push({ regla: 'examen-sin-nota', fichero: e.rel, detalle: 'le falta `unidad:` o `fecha:` (AAAA-MM-DD) en el frontmatter: sin ellas no sale en inicio' });
+    } else if (e.nota === null && /^## Histórico de intentos/m.test(leer(raiz, e.rel))) {
+      informe.avisos.push({ regla: 'examen-sin-nota', fichero: e.rel, detalle: 'ya tiene un intento corregido en "## Histórico de intentos" y sigue sin `nota:` (sobre 10) en el frontmatter: sin ella no sale en inicio' });
+    }
   }
 }
 

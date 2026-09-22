@@ -26,6 +26,9 @@ function aplicarAjustes(raiz) {
     let actual = null;
     if (fs.existsSync(fichero)) {
       try { actual = JSON.parse(fs.readFileSync(fichero, 'utf8')); } catch { continue; }   // roto: no se toca
+      // Obsidian guardaba antes core-plugins.json como un array de ids. Fusionarlo con el objeto
+      // recomendado lo convertiría en un objeto de claves numéricas y pisaría la elección del alumno.
+      if (actual === null || typeof actual !== 'object' || Array.isArray(actual)) continue;
       if (Object.keys(recomendado).every(k => k in actual)) continue;
     }
     fs.writeFileSync(fichero, JSON.stringify({ ...recomendado, ...(actual || {}) }, null, 2) + '\n');
