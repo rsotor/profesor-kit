@@ -145,6 +145,41 @@ function enlace(s, enTabla = false) {
   return `[[${s.id}${enTabla ? '\\|' : '|'}${alias}]]`;
 }
 
+// El pie va entre comentarios de Obsidian, que no se ven al leer. La línea en blanco antes de `---` es obligatoria:
+// sin ella, Markdown lee la línea de arriba como un título.
+const MARCA_INICIO = '%% navegación: la genera guardar.js; no se edita a mano %%';
+const MARCA_FIN = '%% fin de la navegación %%';
+
+function pieDeSesion(anterior, siguiente) {
+  const partes = [];
+  if (anterior) partes.push(`← ${enlace(anterior)}`);
+  partes.push('[[inicio|🏠 Inicio]]');
+  if (siguiente) partes.push(`${enlace(siguiente)} →`);
+  return [MARCA_INICIO, '', '---', partes.join(' · '), MARCA_FIN].join('\n');
+}
+
+function marcadoresRotos(texto) {
+  const i = texto.indexOf(MARCA_INICIO);
+  const f = texto.indexOf(MARCA_FIN);
+  return (i >= 0) !== (f >= 0) || (i >= 0 && f < i);
+}
+
+// Solo toca lo que hay entre los marcadores. Respeta el fin de línea del fichero: si no, en Windows cada
+// guardado reescribiría la nota entera.
+function ponerPie(texto, pie) {
+  const eol = texto.includes('\r\n') ? '\r\n' : '\n';
+  const conEol = pie.split('\n').join(eol);
+  if (marcadoresRotos(texto)) return texto;   // comprobar avisa; no se adivina dónde acaba
+  const i = texto.indexOf(MARCA_INICIO);
+  if (i >= 0) return texto.slice(0, i) + conEol + texto.slice(texto.indexOf(MARCA_FIN) + MARCA_FIN.length);
+  return texto.replace(/(\r?\n)*$/, '') + eol + eol + conEol + eol;
+}
+
+function piesDeSesion(raiz) {
+  const sesiones = leerSesiones(raiz).sort(compararSesiones);
+  return new Map(sesiones.map((s, i) => [s.rel, pieDeSesion(sesiones[i - 1] || null, sesiones[i + 1] || null)]));
+}
+
 function estructuraSegura(raiz) {
   try { return leerEstructura(raiz); } catch { return null; }   // una estructura rota no puede impedir guardar
 }
@@ -215,4 +250,5 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
 module.exports = {
   INICIO, leerSesiones, compararSesiones, ordenAmbiguo, leerProgreso, estadoProfesor,
   leerExamenes, notaDeUnidad, leerAprobado, enlace, markdownInicio,
+  MARCA_INICIO, MARCA_FIN, pieDeSesion, ponerPie, marcadoresRotos, piesDeSesion,
 };

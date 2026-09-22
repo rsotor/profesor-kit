@@ -160,3 +160,40 @@ test('inicio solo enlaza las hojas que existen', () => {
   assert.match(md, /\[\[mapa-del-curso\]\]/);
   assert.doesNotMatch(md, /como-usar-tu-profesor/);
 });
+
+test('pieDeSesion: anterior · inicio · siguiente, con línea en blanco antes de la raya', () => {
+  const a = { id: 'a', clases: ['1.1'], titulo: 'Uno' };
+  const b = { id: 'b', clases: [], titulo: 'Dos' };
+  assert.equal(ix.pieDeSesion(a, b), `${ix.MARCA_INICIO}\n\n---\n← [[a|1.1 Uno]] · [[inicio|🏠 Inicio]] · [[b|Dos]] →\n${ix.MARCA_FIN}`);
+  assert.match(ix.pieDeSesion(null, b), /\n\[\[inicio\|🏠 Inicio\]\] · \[\[b\|Dos\]\] →\n/);
+  assert.match(ix.pieDeSesion(a, null), /\n← \[\[a\|1\.1 Uno\]\] · \[\[inicio\|🏠 Inicio\]\]\n/);
+});
+
+test('ponerPie: lo añade al final, lo reescribe entre marcadores y no toca el resto', () => {
+  const pie1 = ix.pieDeSesion(null, { id: 'b', clases: [], titulo: 'Dos' });
+  const pie2 = ix.pieDeSesion(null, { id: 'c', clases: [], titulo: 'Tres' });
+  const con1 = ix.ponerPie('# X\n\nCuerpo.\n\n\n', pie1);
+  assert.equal(con1, `# X\n\nCuerpo.\n\n${pie1}\n`);
+  assert.equal(ix.ponerPie(con1, pie1), con1);                 // idempotente
+  assert.equal(ix.ponerPie(con1, pie2), `# X\n\nCuerpo.\n\n${pie2}\n`);
+});
+
+test('ponerPie conserva CRLF y no toca una nota con los marcadores rotos', () => {
+  const pie = ix.pieDeSesion(null, null);
+  const crlf = ix.ponerPie('# X\r\n\r\nCuerpo.\r\n', pie);
+  assert.ok(!/[^\r]\n/.test(crlf), 'todas las líneas en CRLF');
+  const roto = `# X\n\n${ix.MARCA_INICIO}\nsin cierre\n`;
+  assert.equal(ix.ponerPie(roto, pie), roto);
+  assert.equal(ix.marcadoresRotos(roto), true);
+  assert.equal(ix.marcadoresRotos(crlf), false);
+});
+
+test('piesDeSesion: cada sesión enlaza a la anterior y a la siguiente del temario', () => {
+  const raiz = cursoTemporal({
+    'estudio/sesiones/01-01-uno.md': sesion({ h1: 'Uno' }),
+    'estudio/sesiones/01-02-dos.md': sesion({ h1: 'Dos' }),
+  });
+  const pies = ix.piesDeSesion(raiz);
+  assert.match(pies.get('sesiones/01-01-uno.md'), /\[\[inicio\|🏠 Inicio\]\] · \[\[01-02-dos\|Dos\]\] →/);
+  assert.match(pies.get('sesiones/01-02-dos.md'), /← \[\[01-01-uno\|Uno\]\] · \[\[inicio\|🏠 Inicio\]\] · \[\[s01-intro\|Intro\]\] →/);
+});
