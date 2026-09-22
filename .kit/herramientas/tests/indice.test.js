@@ -208,3 +208,27 @@ test('piesDeSesion: cada sesión enlaza a la anterior y a la siguiente del temar
   assert.match(pies.get('sesiones/01-01-uno.md'), /\[\[inicio\|🏠 Inicio\]\] · \[\[01-02-dos\|Dos\]\] →/);
   assert.match(pies.get('sesiones/01-02-dos.md'), /← \[\[01-01-uno\|Uno\]\] · \[\[inicio\|🏠 Inicio\]\] · \[\[s01-intro\|Intro\]\] →/);
 });
+
+test('inicio: módulo sin sesiones en su árbol ocupa una línea, sin subunidades', () => {
+  const estructura = JSON.stringify({ unidades: [
+    { prefijo: '01', carpeta: 'modulo-01', titulo: 'Módulo 1 · Conceptos' },
+    { prefijo: '01-02', carpeta: 'modulo-01/1.2-medidores', titulo: '1.2 Medidores' },
+    { prefijo: '02', carpeta: 'modulo-02-finanzas-personales', titulo: 'Módulo 2 · Finanzas' },
+    { prefijo: '02-01', carpeta: 'modulo-02-finanzas-personales/2.1-gestion', titulo: '2.1 Gestión' },
+  ] });
+  const raiz = cursoTemporal({
+    'config/ajustes.json': JSON.stringify({ nombre_curso: 'Inversión', version_datos: 3 }),
+    'config/estructura.json': estructura,
+    'estudio/sesiones/modulo-01/1.2-medidores/01-02-01-interes.md': sesion({ fm: 'clases: [1.2.1]\nestudiada: true\n', h1: '01-02-01 · Interés', conceptos: '- [[a]]' }),
+    'estudio/progreso.md': '| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[a]] | ✅ | ⬜ |\n',
+  });
+  const md = ix.markdownInicio(raiz);
+
+  // Módulo 1 con sesiones: debe mostrar su cabecera y la de su hijo
+  assert.match(md, /^## Módulo 1 · Conceptos · 1\/1 estudiadas · listo para el examen del módulo/m);
+  assert.match(md, /^### 1\.2 Medidores · 1\/1 estudiadas$/m);
+
+  // Módulo 2 sin sesiones: debe mostrar solo su cabecera (una línea con "aún sin sesiones"), NO la de su hijo
+  assert.match(md, /^## Módulo 2 · Finanzas · aún sin sesiones$/m);
+  assert.doesNotMatch(md, /^### 2\.1 Gestión/m, 'El hijo vacío de módulo vacío no debe aparecer');
+});

@@ -236,11 +236,20 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
     const todasBajo = u => [...u.sesiones, ...u.hijas.flatMap(todasBajo)];
     const pintar = (u, nivel) => {
       const todas = todasBajo(u);
+
+      // Si el módulo no tiene sesiones en su árbol, mostrar solo la cabecera y no recorrer hijos
+      if (todas.length === 0) {
+        const titulo = u.titulo || path.posix.basename(u.carpeta).replace(/-/g, ' ');
+        l.push(`${'#'.repeat(Math.min(nivel + 2, 6))} ${titulo} · aún sin sesiones`, '');
+        return;
+      }
+
+      // Comportamiento normal para módulos con sesiones
       const partes = [u.titulo || path.posix.basename(u.carpeta).replace(/-/g, ' ')];
-      partes.push(todas.length ? `${todas.filter(s => s.estudiada).length}/${todas.length} estudiadas` : 'aún sin sesiones');
+      partes.push(`${todas.filter(s => s.estudiada).length}/${todas.length} estudiadas`);
       const examen = notaDeUnidad(u.prefijo, examenes);
       if (examen) partes.push(textoNota(examen, aprobado));
-      else if (nivel === 0 && todas.length) {
+      else if (nivel === 0) {
         partes.push(todas.every(s => s.estudiada) ? 'listo para el examen del módulo: pídeselo a tu profesor' : 'sin examen de módulo');
       }
       l.push(`${'#'.repeat(Math.min(nivel + 2, 6))} ${partes.join(' · ')}`, '');
