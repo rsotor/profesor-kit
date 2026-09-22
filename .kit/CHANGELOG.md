@@ -7,6 +7,8 @@ solo cuando el kit haya demostrado que puede sustituir al curso con el que naci�
 que migran tus datos.
 
 ## 0.9.0
+- Tu profesor comprueba que ninguna sección del material se le queda fuera al preparar una clase, y ya no
+  avisa de falsos duplicados por palabras comunes.
 - Tus notas se organizan en carpetas que copian la estructura de tu curso (módulos, bloques, semanas…),
   para que encuentres cada clase por donde la buscas en la plataforma. Si tu curso no tiene estructura,
   tu profesor te propone una. Lo que ya tenías se coloca solo, sin romper ningún enlace.

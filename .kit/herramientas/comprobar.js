@@ -163,12 +163,18 @@ function comprobarAlias(raiz, informe) {
   }
 }
 
+// Dos nombres son sospechosos si comparten al menos dos palabras significativas y ninguno es simplemente el
+// otro con un calificativo delante o detrás (`renta-variable` / `vehiculos-de-renta-variable` son conceptos
+// distintos). Una sola palabra en común («riesgo», «renta») es ruido de dominio, no un duplicado (issue #12).
 function comprobarDuplicados(raiz, informe) {
   const slugs = v.listarConceptos(raiz);
+  const palabras = s => new Set(s.split('-').filter(p => p.length >= 5));
   for (let i = 0; i < slugs.length; i++) {
     for (let j = i + 1; j < slugs.length; j++) {
-      const comun = slugs[i].split('-').find(p => p.length >= 6 && slugs[j].split('-').includes(p));
-      if (comun) informe.avisos.push({ regla: 'posible-duplicado', fichero: `conceptos/${slugs[i]}.md`, detalle: `comparte «${comun}» con ${slugs[j]} — ¿son el mismo concepto?` });
+      const a = palabras(slugs[i]), b = palabras(slugs[j]);
+      const comun = [...a].filter(p => b.has(p));
+      const contenido = [...a].every(p => b.has(p)) || [...b].every(p => a.has(p));
+      if (comun.length >= 2 && !contenido) informe.avisos.push({ regla: 'posible-duplicado', fichero: `conceptos/${slugs[i]}.md`, detalle: `comparte «${comun.join('», «')}» con ${slugs[j]} — ¿son el mismo concepto?` });
     }
   }
 }

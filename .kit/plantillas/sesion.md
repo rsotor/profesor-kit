@@ -27,6 +27,10 @@ fuente: inbox/<fichero>
 - Flashcards: [[flashcards/<id-de-sesion>]]
 - Ejercicios: [[ejercicios/<id-de-sesion>]] _(solo donde algo se mueve al cambiar una condición)_
 
+## Cobertura del material
+
+<Cada sección del material → en qué nota quedó, o por qué no.>
+
 ## Auditoría del material
 
 <Discrepancias entre los ficheros de la clase, errores detectados y qué falta. Control de
