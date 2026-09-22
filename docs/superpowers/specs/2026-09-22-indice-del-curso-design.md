@@ -232,3 +232,47 @@ atasco es un cambio en la hoja antes de publicar la 1.0.0.
 - Abrir `inicio.md` automáticamente al entrar en Obsidian: se fija a mano una vez.
 - Formato del examen oficial del centro (sigue siendo fase 2).
 - Reescribir el `mapa-del-curso.md` de cursos existentes.
+
+## 7. Ampliación (2026-09-22): Obsidian viene configurado de serie
+
+Roberto ha dejado su Obsidian como quiere que lo tengan los alumnos. La instalación lo reproduce.
+
+**Decisiones de Roberto:**
+- Ajustes y componentes internos: **por defecto**, sin preguntar. **Sync apagado** (no usa Obsidian Sync).
+- Complementos de la comunidad (Terminal, Code Files, Claudian): **se instalan pero no se activan**. La hoja del
+  alumno explica qué hace cada uno y cómo activarlo. Son código de terceros: el alumno decide.
+
+### 7.1 Qué se configura
+
+| Fichero en `estudio/.obsidian/` | Contenido |
+|---|---|
+| `app.json` | `showUnsupportedFiles: true`, `promptDelete: false`, `alwaysUpdateLinks: true` |
+| `appearance.json` | `translucency: false` |
+| `core-plugins.json` | el de Roberto con `sync: false` (encendidos: explorador, búsqueda, selector, enlaces entrantes y salientes, etiquetas, **propiedades** —dibuja la casilla *estudiada*—, vista previa, paleta de comandos, barra de estado, marcadores, esquema, recuperación de ficheros) |
+| `plugins/<id>/` | `main.js`, `manifest.json` y `styles.css` (si lo publica) de la última versión de cada complemento |
+
+Complementos, todos en el directorio oficial de Obsidian (`obsidianmd/obsidian-releases`):
+
+| id | Repo | Para qué, en una frase para el alumno |
+|---|---|---|
+| `terminal` | `polyipseity/obsidian-terminal` | Abre una terminal dentro de Obsidian para hablar con tu profesor sin cambiar de ventana (necesita Python) |
+| `code-files` | `lukasbach/obsidian-code-files` | Permite ver y editar ficheros de código dentro de Obsidian |
+| `realclaudian` | `yishentu/claudian` | Mete a Claude dentro de Obsidian, en un panel lateral |
+
+**`community-plugins.json` no se escribe nunca:** es la lista de los activados, y activarlos es decisión del alumno.
+
+### 7.2 Reglas
+
+- **Antes de la primera apertura:** `preparar-curso.js` escribe los tres JSON. Obsidian adopta lo que encuentra
+  al abrir una carpeta por primera vez; escribirlos con Obsidian abierto no sirve (los pisa).
+- **Nunca se pisa una elección del alumno:** si un JSON existe, solo se **añaden las claves que falten**.
+- **Los complementos se descargan** con `node .kit/herramientas/obsidian.js` (paso 9 de la instalación, y tras
+  actualizar un curso existente). Solo descarga los que no estén; un fallo de red no rompe nada: lo dice y sigue.
+- **Diagnóstico:** "la bóveda está abierta" ya no puede ser "existe `estudio/.obsidian/`" (ahora la crea el kit):
+  pasa a ser "existe `estudio/.obsidian/workspace.json`", que solo escribe Obsidian al abrirla.
+- **Cursos existentes:** la migración 003 (aún sin publicar) también añade las claves que falten a los JSON. Sin
+  red: los complementos los descarga el profesor con `obsidian.js` al terminar de actualizar.
+- `plugins/` y `community-plugins.json` ya están en `.gitignore`: los complementos no entran en el repo.
+- **Hoja del alumno:** sección "Extras de Obsidian (opcionales)" con la tabla de 7.1 y los pasos para activarlos:
+  rueda dentada → *Complementos de la comunidad* → *Activar complementos de la comunidad* → activar el que quiera.
+  El hueco `{{TERMINAL_EN_OBSIDIAN}}` pasa a depender de que Terminal esté **activado** (en `community-plugins.json`).
