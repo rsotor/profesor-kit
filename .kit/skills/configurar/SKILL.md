@@ -143,9 +143,8 @@ tabla a su curso ("Ponme un ejercicio de la bóveda de cañón"). No dejes ning�
 ### La portada del curso (`README.md`)
 
 Es lo que se ve al abrir su repositorio en GitHub. `preparar-curso.js` la dejó con huecos: rellénalos ahora
-con lo de `config/curso.md` — "De qué va" (dos frases), "Temario" (la lista de bloques), "Estado" ("Configurado,
-sin clases procesadas todavía") y el atajo en "Cómo se usa". Respeta el resto de la plantilla. A partir de
-aquí la sección **Estado** la mantiene `/sesion`.
+con lo de `config/curso.md` — "De qué va" (dos frases), "Temario" (la lista de bloques) y el atajo en "Cómo se
+usa". Respeta el resto de la plantilla. La sección **Estado** la escribe `guardar.js` sola: no la toques.
 
 Después:
 

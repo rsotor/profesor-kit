@@ -142,3 +142,17 @@ test('al guardar se reúne la auditoría del material de todas las sesiones, por
   assert.doesNotMatch(a, /Bloque 2|Discrepancias entre/);
   assert.equal(git(raiz, 'status', '--porcelain'), '');
 });
+
+test('la sección Estado de la portada se calcula sola al guardar, y no toca el resto del README', () => {
+  const raiz = cursoTemporal({
+    'README.md': '# Mi curso\n\n## De qué va\n\nTexto mío.\n\n## Estado\n\n_Pendiente._\n\n## Cómo se usa\n\nx\n',
+    'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\nbloque: 1\n---\n[[alfa]]\n\n**TODO:** algo\n',
+  });
+  iniciarGit(raiz);
+  guardar({ raiz, mensaje: 'sesion(s01): intro', hoy: '2026-03-01' });
+  const readme = fs.readFileSync(path.join(raiz, 'README.md'), 'utf8');
+  assert.match(readme, /## Estado\n\n- \*\*1 clase\*\* procesada en 1 bloque \(1\), \*\*1 concepto\*\*, 0 exámenes\.\n- \*\*1 pendiente\*\* \(ver `estudio\/pendientes\.md`\)\.\n- Actualizado el 2026-03-01\.\n\n## Cómo se usa/);
+  assert.match(readme, /## De qué va\n\nTexto mío\./);
+  assert.equal(git(raiz, 'status', '--porcelain'), '');
+  assert.equal(guardar({ raiz, mensaje: 'nada', hoy: '2026-03-02' }).motivo, 'sin-cambios', 'un curso quieto no cambia de fecha');
+});

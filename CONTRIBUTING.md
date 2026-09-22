@@ -26,6 +26,22 @@ Es un seguro contra despistes, no una cárcel: el repo es nuestro y se puede sal
 `PERMITIR_PUSH_A_MAIN=1`. Si algún día el repo pasa a GitHub Pro, se marca `tests-ok` como check
 obligatorio en la regla de `main` y el hook pasa a ser la segunda barrera.
 
+## Documentación viva: quién es la fuente de verdad de qué
+
+| Para quién | Fuente viva | Quién la mantiene |
+|---|---|---|
+| El alumno | `estudio/como-usar-tu-profesor.md` (hoja) y `README.md` del curso (portada) | El profesor: la hoja al configurar; la portada, "Estado" lo escribe `guardar.js` solo |
+| El profesor (el LLM) | `AGENTS.md` y `.kit/skills/*/SKILL.md`; `.kit/guias/INSTALAR-AGENTE.md` al instalar; `.kit/ESTANDARES.md` si no es Claude Code | Nosotros, en cada PR que cambie comportamiento |
+| Quien instala | `.kit/guias/INSTALACION.md` | Nosotros |
+| Nosotros | este fichero y `.kit/CHANGELOG.md` | Nosotros, en cada PR |
+| Historia | `docs/superpowers/` (spec y plan) | Nadie: son el diseño inicial y el plan de la fase 1, y se leen como tales |
+
+Regla: **si un PR añade o cambia una herramienta, una skill o un paso, toca la fuente viva de cada audiencia
+afectada en el mismo PR.** El CI lo vigila en parte (`coherencia-skills.test.js`): toda herramienta tiene que
+estar explicada en `AGENTS.md` o en `INSTALAR-AGENTE.md`, toda plantilla tiene que usarla alguna skill, y
+lo que las skills citan tiene que existir. Lo que el CI no ve —que la explicación sea buena— lo ve la
+revisión del PR.
+
 ## Versiones
 
 `0.x` mientras el kit esté en pruebas. `1.0.0` solo cuando se valide que sustituye al curso con el que

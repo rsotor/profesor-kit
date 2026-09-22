@@ -282,6 +282,34 @@ function markdownAuditoria(raiz) {
   return lineas.join('\n');
 }
 
+// La sección "Estado" de la portada del curso (README.md), calculada desde el disco para que esté siempre al día.
+function estadoDelCurso(raiz, hoy = new Date().toISOString().slice(0, 10)) {
+  const base = v.baseAlumno(raiz);
+  const sesiones = v.recorrer(path.join(base, 'sesiones'), n => n.endsWith('.md') && !n.startsWith('_'));
+  const conceptos = v.listarConceptos(raiz).length;
+  const unidades = new Set();
+  for (const s of sesiones) { const fm = v.leerFrontmatter(fs.readFileSync(s, 'utf8')) || {}; if (fm.bloque) unidades.add(String(fm.bloque)); }
+  const examenes = v.recorrer(path.join(base, 'examenes'), n => /\.(md|html)$/.test(n)).length;
+  const abiertos = pendientes(raiz).length;
+  if (!sesiones.length) return 'Configurado, sin clases procesadas todavía.';
+  return [
+    `- **${sesiones.length} clase${sesiones.length === 1 ? '' : 's'}** procesada${sesiones.length === 1 ? '' : 's'}${unidades.size ? ` en ${unidades.size} bloque${unidades.size === 1 ? '' : 's'} (${[...unidades].sort().join(', ')})` : ''}, **${conceptos} concepto${conceptos === 1 ? '' : 's'}**, ${examenes} ${examenes === 1 ? 'examen' : 'exámenes'}.`,
+    `- ${abiertos ? `**${abiertos} pendiente${abiertos === 1 ? '' : 's'}** (ver \`estudio/pendientes.md\`).` : 'Nada pendiente.'}`,
+    `- Actualizado el ${hoy}.`,
+  ].join('\n');
+}
+function actualizarEstadoReadme(raiz, hoy) {
+  const f = path.join(raiz, 'README.md');
+  if (!fs.existsSync(f)) return false;
+  const texto = fs.readFileSync(f, 'utf8');
+  const m = /^## Estado\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(texto);
+  if (!m) return false;
+  const nuevo = texto.slice(0, m.index) + `## Estado\n\n${estadoDelCurso(raiz, hoy)}\n\n` + texto.slice(m.index + m[0].length);
+  if (nuevo === texto) return false;
+  fs.writeFileSync(f, nuevo);
+  return true;
+}
+
 const ETIQUETA = { 'falta-info': 'Falta material del curso', todo: 'Pendiente del profesor', duda: 'Duda tuya sin responder' };
 function markdownPendientes(raiz) {
   const lista = pendientes(raiz);
@@ -376,4 +404,4 @@ function cli(args, raizPorDefecto) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'comprobar.js');
 
-module.exports = { comprobar, slugsDelIndice, pendientes, markdownPendientes, auditorias, markdownAuditoria, cli };
+module.exports = { comprobar, slugsDelIndice, pendientes, markdownPendientes, auditorias, markdownAuditoria, estadoDelCurso, actualizarEstadoReadme, cli };
