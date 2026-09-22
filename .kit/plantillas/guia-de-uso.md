@@ -37,6 +37,8 @@ Cuando tu profesor termine de preparar una clase, te dirá por dónde empezar. E
    deja tu duda ahí mismo con `{{MARCADOR}}` (punto 6).
 3. **Las flashcards** (carpeta **flashcards**): tápate la respuesta y contesta de cabeza.
 4. **El ejercicio**, si lo hay (carpeta **ejercicios**): primero piensa qué va a pasar, luego comprueba.
+   Los interactivos son páginas web: al hacer clic se abren en tu navegador. Si no lo ves en la lista, o
+   prefieres que te lo abra él, dile "ábreme el ejercicio de…".
 5. Al terminar un bloque del temario, pídele **"hazme un test del bloque"**: ahí se ve si te lo sabes.
 
 **Lo que queda pendiente** (algo que faltaba en el material, una duda sin responder) está siempre en la

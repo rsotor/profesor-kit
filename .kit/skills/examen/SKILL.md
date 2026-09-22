@@ -83,3 +83,27 @@ Toda entrada que este examen añada a `config/alumno.md` cita como prueba el fic
 de verdad.
 
 El formato del examen oficial del centro no es cosa de esta skill (fase 2).
+
+## Después de corregir: el alumno también corrige al profesor
+
+Cinco preguntas sesgan; la experiencia de un bloque entero, menos. Al terminar la corrección, **dos
+preguntas, y solo dos**, en llano:
+
+1. "De cómo te he explicado este bloque, ¿qué te ha ayudado más?"
+2. "¿Qué te ha estorbado o te ha sobrado?" (largo de las notas, tono, los ejercicios, el bloque de la lente…)
+
+Lo que conteste va a `config/profesor.md` → **Historial de cambios**, con la prueba (`examen: <fichero>`).
+Si contradice una preferencia actual, **propón** el cambio concreto y aplícalo solo con su sí (regla de
+`AGENTS.md`). Si no quiere contestar, no insistas.
+
+## Si el examen cierra un bloque: retro
+
+Cuando el examen cubre un bloque entero del temario, antes de guardar haz una **retro de tres líneas** para
+ti, y díselas al alumno:
+
+- **Qué ha funcionado** (conceptos ✅ y lo que él dijo que ayudó) → se mantiene.
+- **Qué cambiar en el bloque siguiente** (errores repetidos, lo que estorbó) → cambios concretos en
+  `config/profesor.md`, con su sí.
+- **Qué es del kit, no de este curso**: una skill ambigua, una herramienta que falló, algo que tuviste que
+  hacer a mano dos veces. Eso **no** se arregla aquí: abre una issue siguiendo "Feedback al kit" de
+  `AGENTS.md` (con su permiso, sin contenido del curso). Así lo que aprendes con un alumno llega a todos.

@@ -181,6 +181,7 @@ comprobar.js: OK
 
 Y termina siempre con **qué hacer ahora**, en el orden de estudio y con los nombres tal como los ve en
 Obsidian: la nota de la sesión → los conceptos nuevos (di cuáles) → las flashcards → el ejercicio, si lo
-hay. Si algo quedó pendiente (`TODO`, `FALTA INFO`), dilo en una frase y remítele a la nota **pendientes**:
+hay. Si el ejercicio es una página web, ofrécete a abrírsela ahora en el navegador (`open` en Mac, `start`
+en Windows): es lo que más cuesta encontrar. Si algo quedó pendiente (`TODO`, `FALTA INFO`), dilo en una frase y remítele a la nota **pendientes**:
 `guardar.js` la regenera sola con todo lo abierto, por bloques. Es lo único que él tiene que resolver;
 todo lo demás ya está hecho.

@@ -1,5 +1,11 @@
 # Pendiente de validar por Roberto
 
+> **Veredicto de Roberto (2026-09-22):** las fichas de concepto le gustan mucho (callouts con color, limpio).
+> Largo, tono y bloque "Desde tu producto": bien de entrada; se irá viendo con el curso → **el profesor tiene
+> que evolucionar** con feedback tras cada examen y retro por bloque (hecho en 0.11.0). Granularidad: **depende**,
+> sin número fijo ni una ficha por concepto si se explica mejor junto. Hallazgo: no encontraba el ejercicio
+> porque Obsidian oculta los .html (arreglado en 0.11.0). Falta: feedback de Windows/Codex (esta noche) para la v1.
+
 Estado a 2026-09-21 por la noche. `main` = kit 0.5.1 (lo que se está probando). PR #8 abierto, en verde,
 **sin mezclar**: acumula el feedback de la prueba (kit 0.6.0).
 

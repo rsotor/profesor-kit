@@ -281,6 +281,20 @@ function comprobarUnidades(raiz, informe) {
   }
 }
 
+// Obsidian oculta por defecto todo lo que no es una nota: los ejercicios web (.html) no aparecen en su lista
+// y el alumno no los encuentra. Se arregla activando "Detectar todas las extensiones de archivo".
+function comprobarObsidianVeEjercicios(raiz, informe) {
+  const base = v.baseAlumno(raiz);
+  const hayHtml = v.recorrer(path.join(base, 'ejercicios'), n => n.endsWith('.html')).length > 0;
+  const appJson = path.join(base, '.obsidian', 'app.json');
+  if (!hayHtml || !fs.existsSync(appJson)) return;
+  let ajustes = {};
+  try { ajustes = JSON.parse(fs.readFileSync(appJson, 'utf8')); } catch { return; }
+  if (ajustes.showUnsupportedFiles !== true) {
+    informe.avisos.push({ regla: 'obsidian-oculta-ejercicios', fichero: '.obsidian/app.json', detalle: 'Obsidian no enseña los ejercicios web: pon "showUnsupportedFiles": true en ese fichero (o Ajustes → Archivos y enlaces → Detectar todas las extensiones de archivo) y que reinicie Obsidian' });
+  }
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -305,6 +319,7 @@ function comprobar(raiz) {
   comprobarDuplicados(raiz, informe);
   comprobarAlias(raiz, informe);
   comprobarUnidades(raiz, informe);
+  comprobarObsidianVeEjercicios(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;
 }

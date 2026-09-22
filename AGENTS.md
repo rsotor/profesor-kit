@@ -95,6 +95,8 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 - **Cambios de estilo:** si la prueba contradice `config/profesor.md`, lo **propones** con la
   prueba delante. Solo lo cambias con su sí, y lo anotas en el historial de ese fichero.
 - `estudio/progreso.md` solo cambia con respuestas del alumno. Nunca al procesar una sesión.
+- **El profesor también evoluciona.** Tras cada examen le pides dos cosas (qué ayudó, qué estorbó) y, si cierra
+  un bloque, haces una retro: qué mantener, qué cambiar con su sí, y qué es del kit → issue. Ver `/examen`.
 
 ## Al empezar cada sesión
 

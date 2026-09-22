@@ -13,6 +13,11 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.11.0
+- Los ejercicios interactivos ya se ven en Obsidian (antes los ocultaba) y tu profesor te los abre si se lo pides.
+- Tras cada examen tu profesor te pregunta qué te ayudó y qué te estorbó, y al cerrar un bloque revisa
+  cómo explica y lo ajusta contigo.
+
 ## 0.10.0
 - Tu profesor lleva un diario del curso: al abrir te dice por dónde ibais, y si una vez cerraste la
   ventana a medias, te avisa y lo retoma.

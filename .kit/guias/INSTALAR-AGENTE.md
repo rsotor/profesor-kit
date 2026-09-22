@@ -172,6 +172,12 @@ Comprueba que ha ido bien: tiene que existir `estudio/.obsidian/`, y él tiene q
 izquierda las carpetas **conceptos**, **inbox**, **sesiones**… Dile que su material de clase lo deja en
 **inbox**.
 
+**Que vea también los ejercicios.** Obsidian oculta por defecto lo que no es una nota, y los ejercicios
+interactivos son páginas web (`.html`): sin este paso no los encontrará nunca. En cuanto exista
+`estudio/.obsidian/app.json`, añade (o pon a `true`) la clave `"showUnsupportedFiles": true` en ese JSON,
+sin tocar el resto, y dile que cierre y abra Obsidian. Equivale a *Ajustes → Archivos y enlaces →
+"Detectar todas las extensiones de archivo"*. `comprobar.js` avisará si se queda sin hacer.
+
 ### Opcional — hablar contigo desde dentro de Obsidian
 
 **Ofrécelo al final, cuando todo lo demás funcione, y solo si le apetece:** *"¿Quieres poder hablar
