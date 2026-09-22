@@ -33,6 +33,9 @@ README.md                                                            ← DATOS: 
   exámenes nace en la carpeta de su unidad y con el id de la sesión delante. `estudio/conceptos/` es plano: un
   concepto pertenece a varias unidades. Si el curso ya tiene sesiones y **no** tiene estructura, **propón una**
   al alumno (como en `/configurar`) y, con su sí, escríbela y ejecuta `node .kit/herramientas/organizar.js`.
+- **`estudio/auditoria-del-material.md` también lo escribe `guardar.js`**: reúne las secciones "Auditoría del
+  material" de todas las sesiones, por bloque. Antes de auditar el material de una clase, míralo: si una
+  plantilla o un error ya salió, dilo ("la misma hoja que en la 1.2") en vez de descubrirlo de nuevo.
 - **`estudio/pendientes.md` lo escribe `guardar.js`** con todos los `TODO`, `FALTA INFO` y dudas abiertas,
   por bloques. No lo edites ni lo cites como fuente: se regenera en cada guardado.
 - **Si el alumno ha movido el curso a otra carpeta** y su atajo ha dejado de abrirlo:

@@ -128,3 +128,17 @@ test('el diario respeta lo que el profesor escribió a mano (una línea "en curs
   guardar({ raiz, mensaje: 'sesion(s03): tema', hoy: '2026-03-01' });
   assert.match(fs.readFileSync(path.join(raiz, 'config', 'diario.md'), 'utf8'), /en curso: procesando la clase 3\n- 2026-03-01 · sesion\(s03\): tema\n$/);
 });
+
+test('al guardar se reúne la auditoría del material de todas las sesiones, por bloque; la plantilla vacía no cuenta', () => {
+  const raiz = cursoTemporal({
+    'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\nbloque: 1\n---\n[[alfa]]\n\n## Auditoría del material\n\n- El Excel usa un 10 % y el PDF un 9 %.\n- La hoja 2 está vacía.\n\n## Para pensarlo despacio\n\nx\n',
+    'estudio/sesiones/s02-tema.md': '---\ntipo: sesion\nbloque: 2\n---\n[[alfa]]\n\n## Auditoría del material\n\n<Discrepancias entre los ficheros de la clase, errores detectados y qué falta.>\n',
+    'estudio/mapa-del-curso.md': '[[s01-intro]] [[s02-tema]]',
+  });
+  iniciarGit(raiz);
+  guardar({ raiz, mensaje: 'x' });
+  const a = fs.readFileSync(path.join(raiz, 'estudio', 'auditoria-del-material.md'), 'utf8');
+  assert.match(a, /## Bloque 1\n\n### \[\[sesiones\/s01-intro\]\]\n\n- El Excel usa un 10 % y el PDF un 9 %\.\n- La hoja 2 está vacía\./);
+  assert.doesNotMatch(a, /Bloque 2|Discrepancias entre/);
+  assert.equal(git(raiz, 'status', '--porcelain'), '');
+});
