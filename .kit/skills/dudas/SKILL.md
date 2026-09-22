@@ -85,6 +85,9 @@ En `config/alumno.md`:
 
 ## Al terminar, resume
 
+Y cierra con una línea `Del kit: nada` o `Del kit: <qué>` (algo que no es de este curso ni de este alumno; si no es
+"nada", sigue "Feedback al kit" de `AGENTS.md`).
+
 ```
 3 dudas resueltas
 

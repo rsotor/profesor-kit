@@ -74,16 +74,24 @@ una en su sitio.
 Escribe "hasta luego" y espera a que se despida: así guarda lo último. Si cierras la ventana sin más, no
 se pierde nada de lo terminado, y la próxima vez te dirá si algo se quedó a medias.
 
-## 8. Si quieres añadir otro curso
+## 8. Si quieres cambiar de asistente
+
+Tu curso no está atado a Claude. Si algún día prefieres otro asistente de terminal, instálalo, ábrelo en la
+carpeta de tu curso y dile "a partir de ahora trabajas tú con este curso": él se adapta, y tu palabra de
+siempre pasará a abrirlo a él. Tus notas y tu progreso no cambian.
+
+## 9. Si quieres añadir otro curso
 
 Es mucho más rápido que la primera vez, porque en tu ordenador ya está todo instalado. Abre la terminal,
 entra en tu carpeta de cursos, abre a tu asistente y pégale otra vez el **texto de arranque** de la guía
 de instalación. Te preguntará cómo se llama el curso nuevo y qué palabra quieres para abrirlo.
 
-## 9. Si algo va raro
+## 10. Si algo va raro
 
 - **Has borrado o movido algo sin querer:** díselo. Lo recupera él.
 - **Te pregunta si puede hacer algo:** lee la frase; casi siempre es que sí.
 - **Al abrirlo te pregunta si confías en la carpeta:** di que sí, es la tuya.
 - **No se abre al escribir `{{ATAJO}}`:** cierra la ventana de letras, ábrela otra vez y prueba de nuevo.
 - **Sigue sin ir:** cuéntaselo a quien te instaló esto.
+- **Algo de tu profesor te molesta o crees que se podría hacer mejor** (no del curso: de cómo trabaja él):
+  díselo tal cual, "esto es del kit". Él lo envía a quien lo mantiene, y así mejora para todos.

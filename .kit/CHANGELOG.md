@@ -13,6 +13,14 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.14.0
+- Si cambias de asistente (por ejemplo de Claude a otro), tu palabra de siempre pasa a abrir el nuevo y
+  tu curso no cambia.
+- Cuando tu profesor encuentra un fallo o una mejora del kit, la comunica mejor y sin datos tuyos: una
+  herramienta monta la issue, busca si ya existe y te la enseña antes de enviarla. Y se lo pregunta a sí
+  mismo al cerrar cada tarea, para que no dependa de que se dé cuenta.
+
+
 ## 0.13.0
 - Una nota **auditoria-del-material** reúne, por bloques, todo lo que tu profesor encontró mal o raro en el
   material de las clases. Se actualiza sola, y al final del curso es tu informe para el centro.
