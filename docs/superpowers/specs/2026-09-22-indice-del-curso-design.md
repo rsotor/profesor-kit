@@ -1,6 +1,6 @@
 # Índice del curso: navegar el temario sin el profesor
 
-Fecha: 2026-09-22 · Estado: pendiente de revisión por Roberto · Parte de: kit 1.0.0
+Fecha: 2026-09-22 · Estado: revisada (Fable), pendiente del sí de Roberto · Parte de: kit 1.0.0 (antes de publicarla)
 
 ## 1. Problema
 
@@ -8,10 +8,10 @@ El contenido que genera el kit está bien, pero **para usarlo hay que conocer el
 la bóveda en Obsidian no hay un punto de entrada del curso: `como-usar-tu-profesor.md` son instrucciones
 generales, y `mapa-del-curso.md` lo escribe el profesor a mano como una lista plana de sesiones sin estado de
 estudio. No se puede ir de una sesión a la siguiente ni saber de un vistazo qué está estudiado, qué está
-examinado y qué hay que repasar.
+probado y qué hay que repasar.
 
 **Objetivo:** que el alumno repase el curso **solo en Obsidian, sin abrir al profesor**, siguiendo el temario
-a golpe de clic.
+entero a golpe de clic.
 
 **Restricción dura:** solo Markdown que Obsidian dibuja de serie (enlaces, tablas, propiedades). Ningún plugin.
 
@@ -19,13 +19,13 @@ a golpe de clic.
 
 ### 2.1 `estudio/inicio.md` — la página de inicio
 
-La genera `guardar.js` entera en cada guardado. Es la pestaña que Obsidian abre al entrar.
+La genera `guardar.js` entera en cada guardado.
 
 ```markdown
 # Inversión multimercado
 
 🔁 Para repasar:
-- [[01-02-02-03-ratios-de-rentabilidad|1.2.2 Ratios de rentabilidad]]
+- [[01-02-02-03-ratios-de-rentabilidad|1.2.2-1.2.3 Ratios de rentabilidad]]
 - [[01-02-04-van-y-tir|1.2.4 VAN y TIR]]
 
 👉 Sigue por aquí: [[01-03-01-renta-variable|1.3.1 Renta variable]]
@@ -34,13 +34,13 @@ Estudiadas 5 de 13 · Pendientes abiertos: 4 → [[pendientes]]
 
 ## Módulo 1 · Conceptos teóricos esenciales · 5/13 estudiadas · sin examen de módulo
 
-### 1.2 Medidores básicos de rendimiento · 3/4 estudiadas · 📝 4,0 suspenso (2026-10-02)
+### 1.2 Medidores básicos de rendimiento y análisis · 3/4 estudiadas · 📝 4,0 suspenso (2026-10-02)
 
-| Sesión | Estudiada (tú) | Examen (profesor) |
+| Sesión | Estudiada (tú) | Profesor |
 |---|---|---|
 | [[01-02-01-interes-inflacion-e-impuestos\|1.2.1 Interés, inflación e impuestos]] | ✅ | ✅ superada |
-| [[01-02-02-03-ratios-de-rentabilidad\|1.2.2 Ratios de rentabilidad]] | ✅ | 🔁 repasar |
-| [[01-02-04-van-y-tir\|1.2.4 VAN y TIR]] | ⬜ | 🔁 repasar |
+| [[01-02-02-03-ratios-de-rentabilidad\|1.2.2-1.2.3 Ratios de rentabilidad]] | ✅ | 🔁 repasar |
+| [[01-02-04-van-y-tir\|1.2.4 VAN y TIR]] | ⬜ | 📝 faltan 2 |
 
 ## Módulo 2 · Finanzas personales · aún sin sesiones
 
@@ -50,7 +50,13 @@ Otras hojas: [[mapa-del-curso]] · [[progreso]] · [[formulario]] · [[como-usar
 - **🔁 Para repasar** es una lista, una sesión por línea. Si no hay ninguna, no aparece.
 - **👉 Sigue por aquí** es la primera sesión, en orden del temario, sin `estudiada`. Si están todas
   estudiadas: "Has estudiado todas las sesiones procesadas".
-- Una unidad sin sesiones procesadas aparece con "aún sin sesiones", para que se vea el temario entero.
+- **Examen de módulo pendiente:** si todas las sesiones procesadas de un módulo están estudiadas y el módulo no
+  tiene examen, su cabecera dice "listo para el examen del módulo: pídeselo a tu profesor".
+- **Todo el temario:** cada unidad de `config/estructura.json` aparece, tenga sesiones o no ("aún sin
+  sesiones"). Por eso la estructura tiene que listar el temario completo (ver 4.2).
+- **Nombre de cada sesión:** la numeración del centro (`clases:` del frontmatter, unida con `-` si son
+  varias) + el título del H1 sin el prefijo `<id> ·`. Sin `clases:`, solo el título.
+- **Nombre de cada unidad:** `titulo` de `estructura.json`; si falta, el nombre de su carpeta sin guiones.
 - Los enlaces con alias dentro de tablas llevan `\|` (regla `no-se-vera-bien` de `AGENTS.md`).
 - **Curso sin `config/estructura.json`:** una sola tabla con todas las sesiones en orden, sin agrupar.
 
@@ -61,31 +67,41 @@ al leer):
 
 ```markdown
 %% navegación: la genera guardar.js; no se edita a mano %%
+
 ---
-← [[01-02-02-03-ratios-de-rentabilidad|1.2.2 Ratios]] · [[inicio|🏠 Inicio]] · [[01-03-01-renta-variable|1.3.1 Renta variable]] →
-Repasa: [[flashcards/…|Flashcards]] · [[ejercicios/…|Ejercicio]]
+← [[01-02-02-03-ratios-de-rentabilidad|1.2.2-1.2.3 Ratios]] · [[inicio|🏠 Inicio]] · [[01-03-01-renta-variable|1.3.1 Renta variable]] →
 %% fin de la navegación %%
 ```
 
+- La línea en blanco antes de `---` es obligatoria: sin ella Markdown lee el comentario como un título.
 - **Anterior / siguiente** siguen el orden del temario, cruzando sub-bloques y módulos. La primera sesión no
   tiene "anterior"; la última no tiene "siguiente".
-- **Orden del temario:** por la parte numérica del id (`01-03-01`). Si dos sesiones comparten números (p. ej.
-  `01-03-01-renta-variable` y `01-03-01-estilos-y-ciclos`, las dos de la clase 1.3.1 y del mismo día), desempata
-  la propiedad `orden:` (1, 2…), que `/sesion` escribe cuando parte una clase en varias notas. Sin `orden:`, se
-  usa el slug como último recurso y `comprobar.js` avisa (`orden-ambiguo`), porque el alfabeto no sabe nada del
-  temario.
-- "Repasa" solo enlaza lo que existe (flashcards y ejercicio de esa sesión).
+- Las flashcards y el ejercicio **no** van en el pie: ya están en la sección `## Material` de la nota.
 - `guardar.js` solo reescribe lo que hay entre los marcadores; si no existen, los añade al final. El resto de
-  la nota no se toca nunca.
+  la nota no se toca nunca. Se respeta el fin de línea del fichero (CRLF en Windows): si no, cada guardado
+  reescribiría la nota entera.
+- Añadir una sesión cambia también el pie de la anterior (gana "siguiente"): es esperado.
 
-### 2.3 La casilla "estudiada"
+### 2.3 Orden del temario
+
+Por la parte numérica del id (`01-03-01`). Si dos sesiones comparten números (p. ej.
+`01-03-01-renta-variable` y `01-03-01-estilos-y-ciclos`, las dos de la clase 1.3.1 y del mismo día), desempata
+la propiedad `orden:` (1, 2…), que `/sesion` escribe cuando parte una clase en varias notas. Sin `orden:`, se usa
+el slug como último recurso y `comprobar.js` avisa (`orden-ambiguo`), porque el alfabeto no sabe nada del
+temario. Un id sin parte numérica (curso sin estructura, `semana-3-…`) ordena por `trabajada` y luego por slug.
+
+### 2.4 La casilla "estudiada"
 
 Propiedad `estudiada` en el frontmatter de la nota de sesión. Obsidian la dibuja de serie como una casilla
-arriba de la nota. **La marca el alumno.** Ausente equivale a `false`.
+arriba de la nota. **La marca el alumno.** Ausente equivale a no estudiada.
+
+Obsidian reescribe el frontmatter entero al marcar la casilla: borra los comentarios `#` y puede pasar
+`clases: [1.2.2, 1.2.3]` a lista en bloque (`- 1.2.2`). Consecuencias: la plantilla no lleva instrucciones en
+comentarios YAML que haya que conservar, y el lector de frontmatter entiende las dos formas de lista (4.1).
 
 ## 3. Reglas de estado
 
-Dos columnas que **no se mezclan**: lo que declara el alumno y lo que valida el profesor con un examen.
+Dos columnas que **no se mezclan**: lo que declara el alumno y lo que el profesor tiene probado.
 
 ### 3.1 Estudiada (el alumno)
 
@@ -93,75 +109,101 @@ Dos columnas que **no se mezclan**: lo que declara el alumno y lo que valida el 
 - **Única excepción:** si aprueba un examen, `/examen` marca `estudiada: true` en las sesiones que cubría.
 - **Nunca** se marca al procesar una clase.
 
-### 3.2 Examen (el profesor)
+### 3.2 Profesor (lo que hay probado)
 
-Por sesión, en este orden de prioridad:
+Sale **solo de `progreso.md`**: nadie la escribe. Un concepto cuenta como **probado** cuando su teoría está en
+✅ y ninguna de sus columnas está en 🟡 o 🔴 (la aplicación no se exige: hay conceptos sin cálculo). Por sesión,
+en este orden de prioridad:
 
 | Marca | Cuándo |
 |---|---|
-| 🔁 repasar | Alguno de sus conceptos está en 🟡 o 🔴 en `progreso.md`. Se calcula; nadie lo escribe. |
-| ✅ superada | La cubre un examen y ninguno de sus conceptos está en 🟡 o 🔴. |
-| (vacío) | Ningún examen la cubre todavía. |
+| 🔁 repasar | Alguno de sus conceptos está en 🟡 o 🔴, en cualquier columna. |
+| ✅ superada | Todos sus conceptos están probados. |
+| 📝 faltan N | Alguno está probado y quedan N sin probar. |
+| (vacío) | Ninguno está probado todavía. |
 
-- "Sus conceptos" = los enlazados en la sección `## Conceptos` de la nota de sesión.
-- **Un examen cubre** todas las sesiones cuyo id empieza por su `unidad:`: un examen del módulo `01` cubre
-  también las sesiones de `01-02`, `01-03`… Lo mismo vale para el marcado de `estudiada` al aprobar (3.1).
-- 🔁 desaparece sola cuando esos conceptos pasan a ✅ en un examen posterior (`progreso.md` ya lo refleja).
+- **"Sus conceptos"** = todos los enlazados en la sección `## Conceptos` de la nota de sesión, **nuevos y
+  ampliados**. Un concepto que nace en 1.1.2 y se amplía en 1.3.1 marca 🔁 en las dos: lo fallado puede ser
+  justo la parte ampliada.
+- La columna se llama **Profesor** y no "Examen" porque un ejercicio también mueve `progreso.md`.
+- 🔁 desaparece sola cuando esos conceptos vuelven a ✅ en una prueba posterior.
 - La casilla del alumno no se toca: estudiada y "hay que repasar" conviven.
+- **Cómo se tapan los huecos ("📝 faltan N"):** el alumno pide "hazme un test de lo que me falta de la 1.2" y
+  `/examen` pregunta **solo** los conceptos sin probar de ese alcance (3-5 preguntas). Una conversación en la
+  que el profesor pregunta y el alumno acierta cuenta como mini-test; una explicación sin preguntas no cuenta.
 
 ### 3.3 Nota de unidad y de módulo
 
-- **Cada examen puntúa la unidad que cubre** (`unidad:` en su frontmatter, que ya existe). La nota sale en la
-  fila de esa unidad. **Si hay varios exámenes de la misma unidad, cuenta el último** (por fecha): nunca la
-  media, que castiga haber mejorado.
-- **La nota del módulo es la de su examen final** (un examen con `unidad:` = el módulo). Sin él: "sin examen de
-  módulo".
-- Una nota ≥ **aprobado** se muestra "📝 7,5"; por debajo, "📝 4,0 suspenso".
-- **Aprobado** viene de `config/curso.md` (`aprobado: 5` por defecto). `/configurar` lo pregunta.
+- **Un examen cubre** las unidades de su `unidad:` (un prefijo o una lista de prefijos) y todas las sesiones
+  cuyo id empieza por alguno de ellos: un examen del módulo `01` cubre también las sesiones de `01-02`, `01-03`…
+- **Nota de una unidad:** la del último examen (por `fecha:`) cuya `unidad:` es exactamente esa unidad. Nunca la
+  media, que castiga haber mejorado. Un examen de varias unidades (`[01-02, 01-03]`) pone su nota en cada una.
+- **Nota del módulo:** la de su examen final, que es un examen con `unidad:` **exactamente** el prefijo del
+  módulo. Un examen de 1.2 + 1.3 no es examen de módulo. Sin él: "sin examen de módulo".
+- Notas sobre 10. Una nota ≥ **aprobado** se muestra "📝 7,5"; por debajo, "📝 4,0 suspenso".
+- **Aprobado** viene de `config/curso.md` (`aprobado:`); si falta, vale 5. `/configurar` lo pregunta.
+- Los exámenes de "lo que me falta" (3.2) llevan `parcial: true` y **nunca** cambian la nota de la unidad: solo
+  preguntan unos pocos conceptos. Sí mueven `progreso.md`, que es lo que tapa los huecos.
 
 ## 4. Cómo se genera
 
+### 4.1 Herramientas
+
 | Pieza | Cambio |
 |---|---|
-| `.kit/herramientas/lib/indice.js` (nuevo) | Función pura: lee estructura, sesiones (título del H1, `estudiada`, conceptos, flashcards/ejercicio), exámenes (`unidad`, `nota`, fecha) y estados de `progreso.md`; devuelve el texto de `inicio.md` y el pie de cada sesión. No escribe. |
-| `guardar.js` | Junto a `pendientes.md` y `auditoria-del-material.md`: escribe `estudio/inicio.md` y el pie de cada sesión, **solo si cambian** (un curso quieto no debe parecer que tiene cambios). |
-| `lib/vault.js` | `inicio.md` entra en la lista de ficheros generados (no se cita como fuente, no se edita a mano). |
-| `comprobar.js` | Avisos: examen sin `nota:` numérica · marcadores de navegación rotos (uno sin el otro) · `orden-ambiguo` (dos sesiones con los mismos números y sin `orden:`). |
-| `.kit/plantillas/sesion.md` | Añade `estudiada: false` al frontmatter, y `orden:` comentado para cuando una clase se parte en varias notas. |
-| Skill `sesion` | Deja de listar sesiones en `mapa-del-curso.md`: el mapa queda para la cobertura del material y las fechas. Si parte una clase en varias notas, les pone `orden:`. |
-| Skill `examen` | Escribe `nota:` en el frontmatter del examen. Si aprueba, marca `estudiada: true` en las sesiones de la unidad. Cuando todas las sesiones de un módulo están estudiadas y no hay examen de módulo, lo propone. |
-| Skill `configurar` | Pregunta el aprobado; lo escribe en `config/curso.md`. |
-| `INSTALAR-AGENTE.md`, paso 9 | Tras crear la bóveda, deja `inicio.md` como pestaña abierta en `estudio/.obsidian/workspace.json` (con Obsidian cerrado). |
-| `.kit/plantillas/guia-de-uso.md` | Puntos 3 y 5: "empieza por **inicio**"; cómo marcar una sesión como estudiada. |
-| `AGENTS.md` | Una línea: `inicio.md` lo escribe `guardar.js`, como `pendientes.md`. |
+| `.kit/herramientas/lib/indice.js` (nuevo) | Función pura: lee estructura, sesiones (H1, `clases`, `orden`, `estudiada`, conceptos de `## Conceptos`), exámenes (`unidad`, `nota`, `fecha`, `parcial`) y estados de `progreso.md`; devuelve el texto de `inicio.md` y el pie de cada sesión. No escribe. |
+| `guardar.js` | **Genera primero y comprueba después:** escribe `estudio/inicio.md`, los pies de sesión, `pendientes.md` y `auditoria-del-material.md` (solo si cambian) y luego ejecuta `comprobar()`, que así valida también lo generado. Hoy comprueba antes de generar (`guardar.js:24`), y con `inicio.md` exigido eso sería un punto muerto. |
+| `lib/vault.js` | `leerFrontmatter` entiende listas en bloque (`- item`). Lectores tipados para lo nuevo: `estudiada` es cierta solo si vale `true`; `orden` y `nota` son números. `inicio.md` entra en `listarNotas` (se validan sus enlaces) pero **no** en `piezasAusentes` ni en `reparar.js`: se regenera, no se repara. |
+| `comprobar.js` | `comprobarMapa` deja de exigir que cada sesión esté en `mapa-del-curso.md` (hoy es **error** y bloquearía el guardado) y pasa a exigir que esté en `inicio.md`. Avisos nuevos: examen sin `nota:`/`fecha:` válidas · marcadores de navegación rotos (uno sin el otro) · `orden-ambiguo`. |
+| `organizar.js` | Acepta `titulo` opcional en cada unidad de `estructura.json`. |
+| `.kit/motor.json` | `version_datos: 3` (lo exige `coherencia.test.js`). |
 
-### Cursos ya creados — migración 003
+### 4.2 Skills, plantillas y guías
 
-- Añade `estudiada: false` a las notas de sesión que no tengan la propiedad.
-- Añade `aprobado: 5` a `config/curso.md` si falta.
+| Pieza | Cambio |
+|---|---|
+| `.kit/plantillas/sesion.md` | Añade `estudiada: false`. Sin comentarios YAML nuevos. |
+| Skill `sesion` | Deja de listar sesiones en `mapa-del-curso.md`: el mapa queda para la cobertura del material y las fechas. Si parte una clase en varias notas, les pone `orden:`. Si la sesión es de una unidad que no está en `estructura.json`, la añade con su `titulo`. |
+| Skill `examen` | Frontmatter obligatorio: `unidad` (prefijo o lista), `fecha`, `nota` (sobre 10) y `parcial: true` si es de "lo que me falta". Un examen en HTML lleva además su nota `.md` con ese frontmatter. Si aprueba, marca `estudiada: true` en las sesiones cubiertas. Nuevo alcance: "lo que me falta" de una unidad o sesión. |
+| Skill `configurar` | Pregunta el aprobado (`config/curso.md`). Escribe en `estructura.json` **todas** las unidades del temario con su `titulo`, no solo las que ya tienen material. |
+| Saludo (`AGENTS.md`, "Al empezar cada sesión") | Si un módulo está listo para su examen (2.1), lo menciona en la frase de saludo. |
+| `.kit/plantillas/guia-de-uso.md` | Puntos 3 y 5: "empieza por **inicio**"; cómo marcar una sesión como estudiada; cómo pedir "lo que me falta". |
+| `INSTALAR-AGENTE.md`, paso 9 | El alumno abre **inicio** y la fija (clic derecho en la pestaña → *Fijar*). No se toca `workspace.json`: la bóveda la crea Obsidian abierto y lo pisaría. |
+| `AGENTS.md` | Una línea: `inicio.md` lo escribe `guardar.js`, como `pendientes.md`; no se edita ni se cita como fuente. |
+
+### 4.3 Cursos ya creados — migración 003
+
+- Añade `estudiada: false` a las notas de sesión que no tengan la propiedad. Nada más: `aprobado` vale 5 si
+  falta, sin tocar `config/curso.md`.
 - `inicio.md` y los pies se generan en el siguiente guardado.
-- **No se toca `workspace.json`:** Obsidian lo sobrescribe mientras está abierto. El profesor se lo dice una
-  vez al alumno: "abre **inicio** y fíjala" (clic derecho en la pestaña → *Fijar*).
+- Lo que la migración no puede saber lo deja como tarea al profesor, que lo hace la próxima vez que trabaje en el
+  curso y se lo cuenta al alumno en una frase: completar `estructura.json` con todo el temario y sus títulos
+  (sale de `config/curso.md`), poner `orden:` donde avise `orden-ambiguo`, y decirle "abre **inicio** y fíjala".
 - `mapa-del-curso.md` no se toca: su lista de sesiones escrita a mano se queda como está.
-- Las sesiones con `orden-ambiguo` no se arreglan solas: el aviso le dice al profesor que ponga `orden:` la
-  próxima vez que trabaje en el curso (en el curso de Roberto: `01-03-01-renta-variable` y `01-03-01-estilos-y-ciclos`).
+- En el curso de Roberto eso significa: módulos 2-12 y títulos en `estructura.json`, y `orden:` en
+  `01-03-01-renta-variable` y `01-03-01-estilos-y-ciclos`.
 
 ## 5. Pruebas
 
-- `lib/indice.js`, con cursos de ejemplo: con y sin estructura; sesiones estudiadas y no; examen aprobado,
-  suspendido y repetido (cuenta el último); concepto en 🟡 → 🔁; examen de módulo presente y ausente; unidad
-  sin sesiones; enlaces con alias escapados en tablas; dos sesiones con los mismos números, con y sin `orden:`;
-  examen de módulo que cubre las sesiones de sus sub-bloques.
-- `guardar.js`: el pie se crea si no existe, se reescribe entre marcadores sin tocar el resto de la nota, y un
-  segundo guardado sin cambios no produce diferencias.
-- Migración 003: añade `estudiada` y `aprobado` sin duplicarlos; es idempotente.
+- `lib/indice.js`, con cursos de ejemplo: con y sin estructura; estructura con unidades sin sesiones y con y
+  sin `titulo`; sesiones estudiadas y no; concepto 🟡 en teoría y en aplicación → 🔁; concepto ampliado en otra
+  sesión → 🔁 en las dos; ✅ superada / 📝 faltan N / vacío; examen aprobado, suspendido, repetido (cuenta el
+  último), de varias unidades y parcial; examen de módulo presente y ausente, y examen de 1.2+1.3 que **no**
+  cuenta como de módulo; dos sesiones con los mismos números, con y sin `orden:`; ids sin parte numérica;
+  enlaces con alias escapados en tablas; frontmatter con listas en bloque y `estudiada: false` como texto.
+- `guardar.js`: genera antes de comprobar (un curso sin `inicio.md` se guarda y sale con él); el pie se crea si no
+  existe, se reescribe entre marcadores sin tocar el resto de la nota, conserva CRLF; un segundo guardado sin
+  cambios no produce diferencias.
+- `comprobar.js`: una sesión que no está en `mapa-del-curso.md` ya no es error.
+- Migración 003: añade `estudiada` sin duplicarla; es idempotente.
 - `extremo-a-extremo.test.js`: tras procesar sesiones de ejemplo, `inicio.md` existe y enlaza la primera.
-- `coherencia-skills.test.js`: las skills citan `inicio.md` y `nota:` como existen en las herramientas.
+- `coherencia-skills.test.js`: las skills citan `inicio.md`, `nota:`, `fecha:` y `parcial:` como existen en las herramientas.
 
 ## 6. Fuera de alcance
 
 - Plugins de Obsidian (Dataview, Tasks, Homepage…).
 - Actualizar `inicio.md` en vivo cuando el alumno marca una casilla sin el profesor: se refleja en el
-  siguiente guardado. Navegar no depende de ello.
+  siguiente guardado (y esas casillas entran en ese commit). Navegar no depende de ello.
+- Abrir `inicio.md` automáticamente al entrar en Obsidian: se fija a mano una vez.
 - Formato del examen oficial del centro (sigue siendo fase 2).
 - Reescribir el `mapa-del-curso.md` de cursos existentes.
