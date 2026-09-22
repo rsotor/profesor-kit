@@ -6,6 +6,7 @@ aprende de cómo estudias. Sirve para cualquier curso: todo lo específico sale 
 configuración.
 
 - **¿Vas a usarlo?** Empieza por [`INSTALACION.md`](.kit/guias/INSTALACION.md). No hace falta perfil técnico.
+- **¿Ya lo tienes y hay versión nueva?** Dile a tu profesor "actualiza el kit". Él lo hace todo; tú no tocas nada.
 - **Probado** en Claude Code y en Mac. Con otros LLMs de terminal y en Windows es compatible pero
   está sin probar: si algo falla, tu profesor te ayudará a contarlo con una issue en este repo.
 - **¿Vas a desarrollarlo?** El diseño y el plan están en `docs/superpowers/`. Tests:

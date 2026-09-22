@@ -13,6 +13,9 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.11.1
+- La guía, la portada del curso y la instalación explican cómo se actualiza el kit.
+
 ## 0.11.0
 - Los ejercicios interactivos ya se ven en Obsidian (antes los ocultaba) y tu profesor te los abre si se lo pides.
 - Tras un examen tu profesor puede preguntarte qué te ayudó y qué te estorbó (puedes saltártelo), y cuando
