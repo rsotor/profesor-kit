@@ -44,6 +44,6 @@ test('leerAjustes aplica valores por defecto si falta el fichero', () => {
 });
 
 test('las rutas protegidas son config y la carpeta del alumno entera', () => {
-  assert.deepEqual(v.RUTAS_PROTEGIDAS, ['config', 'estudio']);
+  assert.deepEqual(v.RUTAS_PROTEGIDAS, ['config', 'estudio', 'README.md']);
   assert.equal(v.CARPETA_ALUMNO, 'estudio');
 });

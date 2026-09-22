@@ -32,7 +32,7 @@ test('profesor.md trae las preferencias por defecto del spec', () => {
 });
 
 test('las plantillas existen, y el kit no trae código de ejercicios', () => {
-  for (const f of ['concepto.md', 'sesion.md', 'flashcards.md', 'guia-de-uso.md', 'hoja-del-curso.md']) {
+  for (const f of ['concepto.md', 'sesion.md', 'flashcards.md', 'guia-de-uso.md', 'hoja-del-curso.md', 'readme-del-curso.md']) {
     assert.ok(fs.existsSync(path.join(RAIZ, '.kit', 'plantillas', f)), f);
   }
   assert.ok(!fs.existsSync(path.join(RAIZ, '.kit', 'recursos')));

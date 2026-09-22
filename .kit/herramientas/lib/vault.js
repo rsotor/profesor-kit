@@ -8,7 +8,7 @@ const FICHEROS_VIVOS = ['progreso.md', 'formulario.md', 'mapa-del-curso.md'];
 const CARPETA_ALUMNO = 'estudio';
 // Carpetas del alumno que no son notas: 'inbox' es su material en bruto y 'repasos' es HTML generado.
 const OTRAS_CARPETAS_ALUMNO = ['inbox', 'repasos'];
-const RUTAS_PROTEGIDAS = ['config', CARPETA_ALUMNO];
+const RUTAS_PROTEGIDAS = ['config', CARPETA_ALUMNO, 'README.md'];
 const GUIA_DE_USO = 'como-usar-tu-profesor.md';
 const AJUSTES_POR_DEFECTO = {
   subir_a_github: true,
@@ -120,6 +120,7 @@ function piezasAusentes(raiz) {
       if (falta(rel)) ausentes.push({ ruta: rel, tipo: 'motor' });
     }
   }
+  if (falta('README.md')) ausentes.push({ ruta: 'README.md', tipo: 'fichero' });
   for (const carpeta of [...CARPETAS_NOTAS, ...OTRAS_CARPETAS_ALUMNO]) {
     if (falta(`${CARPETA_ALUMNO}/${carpeta}`)) ausentes.push({ ruta: `${CARPETA_ALUMNO}/${carpeta}`, tipo: 'carpeta' });
   }

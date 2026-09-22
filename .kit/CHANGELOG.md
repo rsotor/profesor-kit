@@ -6,6 +6,10 @@ Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/a
 solo cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí: `x.y.Z` arreglos · `x.Y.0` mejoras · `X.0.0` cambios
 que migran tus datos.
 
+## 0.7.0
+- Tu curso tiene portada en GitHub: un README con de qué va, el temario y por dónde vas, que tu
+  profesor mantiene al día.
+
 ## 0.6.0
 - La instalación se comprueba sola al terminar: una lista de ✓ y ✗ te dice si todo está en su sitio, y
   qué hacer con lo que falte. Ya no se reinstala lo que ya tenías.
