@@ -5,8 +5,10 @@ llega de una forma:
 
 1. **Rama** desde `main` (`git checkout -b <tema>`).
 2. **Tests en local** antes de subir: `node --test ".kit/herramientas/tests/*.test.js"`.
-3. **Pull request.** Cada PR (y cada push) lanza el CI: todos los tests en Mac, Windows y Linux,
-   con Node 22 y 24, y una **cobertura mínima del 80 %** de las herramientas.
+3. **Pull request.** Cada PR lanza el CI: todos los tests en Linux (Node 22 y 24) y Windows (Node 24), y una
+   **cobertura mínima del 80 %** de las herramientas. Mac no está en el CI a propósito (cuesta 10 minutos
+   facturables por minuto; el plan da 2.000 al mes): los tests corren en tu Mac en el hook de pre-push.
+   Un push nuevo cancela el run anterior de la misma rama.
 4. **Merge solo con el check `tests-ok` en verde.** Compruébalo: `gh pr checks <número> --watch`.
    Un PR en rojo no se mezcla, tampoco "para arreglarlo luego": se arregla en la rama.
 5. Si el alumno va a notar el cambio: una línea en `.kit/CHANGELOG.md`. Si cambia el formato de
