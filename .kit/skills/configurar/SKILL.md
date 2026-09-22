@@ -122,6 +122,13 @@ acuerde de nada: escríbela para alguien que no sabe qué es una terminal. Relle
 No añadas secciones ni comandos: una pantalla, sin jerga. Puedes adaptar las frases de ejemplo de la
 tabla a su curso ("Ponme un ejercicio de la bóveda de cañón"). No dejes ningún `{{…}}` sin rellenar.
 
+### La portada del curso (`README.md`)
+
+Es lo que se ve al abrir su repositorio en GitHub. `preparar-curso.js` la dejó con huecos: rellénalos ahora
+con lo de `config/curso.md` — "De qué va" (dos frases), "Temario" (la lista de bloques), "Estado" ("Configurado,
+sin clases procesadas todavía") y el atajo en "Cómo se usa". Respeta el resto de la plantilla. A partir de
+aquí la sección **Estado** la mantiene `/sesion`.
+
 Después:
 
     node .kit/herramientas/guardar.js "config: sesión 0"

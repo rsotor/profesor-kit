@@ -17,6 +17,7 @@ Las reglas propias del dominio de `config/curso.md` se cumplen siempre.
 AGENTS.md · CLAUDE.md · GEMINI.md · .claude/settings.json · .kit/   ← MOTOR: no se edita; lo reemplaza /actualizar
 config/                                                              ← DATOS: cómo es el curso, el profesor y el alumno
 estudio/                                                             ← DATOS: todo el material del alumno
+README.md                                                            ← DATOS: la portada del curso en GitHub; la mantienes tú
 ```
 
 - **`estudio/` es la carpeta que el alumno abre en Obsidian.** Desde ahí no ve el motor ni `config/`, y así

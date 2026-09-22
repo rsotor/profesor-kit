@@ -19,6 +19,7 @@ function montar({ extraCurso = {}, extraOrigen = {}, motorNuevo = {} } = {}) {
 
   const origen = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-origen-'));
   fs.cpSync(KIT_REAL, path.join(origen, '.kit'), { recursive: true });
+  for (const r of [raiz, origen]) fs.rmSync(path.join(r, '.kit', 'herramientas', 'migraciones'), { recursive: true, force: true });
   escribir(origen, {
     'AGENTS.md': 'reglas v2',
     '.kit/VERSION': '2.0.0',
@@ -131,4 +132,20 @@ test('restaurar reescribe también los ficheros que git cree intactos (misma fec
   assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
   assert.equal(leer(raiz, 'estudio/conceptos/alfa.md').includes('# Alfa'), true);
   assert.equal(git(raiz, 'status', '--porcelain'), '');
+});
+
+// La primera migración real: un curso de formato 1 (sin README) pasa a formato 2 con la portada creada.
+test('migración 002: un curso sin README gana su portada con nombre y atajo, y no pisa una que exista', () => {
+  const m = require('../migraciones/002-readme-del-curso');
+  const raiz = cursoTemporal({ 'config/ajustes.json': JSON.stringify({ nombre_curso: 'Historia del Arte', atajo: 'historia' }) });
+  fs.rmSync(path.join(raiz, 'README.md'));
+  fs.cpSync(path.join(KIT_REAL, 'plantillas'), path.join(raiz, '.kit', 'plantillas'), { recursive: true });
+  m.migrar(raiz);
+  const readme = leer(raiz, 'README.md');
+  assert.match(readme, /^# Historia del Arte/);
+  assert.match(readme, /`historia`/);
+  assert.doesNotMatch(readme, /\{\{/);
+  fs.writeFileSync(path.join(raiz, 'README.md'), 'mío');
+  m.migrar(raiz);
+  assert.equal(leer(raiz, 'README.md'), 'mío');
 });

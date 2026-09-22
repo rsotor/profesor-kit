@@ -116,6 +116,7 @@ function cursoYOrigen({ versionOrigen = '2.0.0', migracion } = {}) {
   iniciarGit(raiz);
   const origen = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-origen-'));
   fs.cpSync(KIT_REAL, path.join(origen, '.kit'), { recursive: true });
+  for (const r of [raiz, origen]) fs.rmSync(path.join(r, '.kit', 'herramientas', 'migraciones'), { recursive: true, force: true });
   escribir(origen, {
     'AGENTS.md': 'v2',
     '.kit/VERSION': versionOrigen,
