@@ -13,6 +13,17 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.19.0
+- **Las preguntas de tus tests y exámenes se leen mejor**: cada una pregunta una sola cosa y te dice qué
+  respuesta espera (una cifra, una frase, el porqué en 2-3 líneas). Si tu profesor quiere tu razonamiento, te
+  lo pide.
+- **Una respuesta corta y correcta cuenta como acierto.** Tu profesor ya no te apunta como fallo algo que la
+  pregunta no pedía, como el nombre técnico de una idea que has explicado bien.
+- **Tu test inicial queda guardado** en la nota **test-inicial**, enlazada desde **inicio**: las preguntas, lo
+  que contestaste y cómo se valoró.
+- **Si ya tenías tu curso:** tu profesor te ofrece revisar tu nivel de partida con estas reglas: te hace una
+  pregunta nueva por cada fallo que pudo venir de una pregunta mal hecha, y corrige tu perfil.
+
 ## 0.18.0
 - **En la primera sesión, tu profesor te pregunta por ti**: qué relación tienes con la materia, para qué la
   quieres y cuánto tiempo tienes. Lo usa para que sus ejemplos se parezcan a tu mundo.

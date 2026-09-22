@@ -93,6 +93,32 @@ El alumno lee en Obsidian, y hay cosas que Obsidian no dibuja. No son reglas de 
 `comprobar.js` lo vigila con el aviso `no-se-vera-bien`. **Ese aviso lo arreglas siempre antes de
 guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 
+## Cuando preguntas para medir
+
+Vale para todo lo que mide lo que sabe: el test inicial de `/configurar`, los exámenes, los tests de "lo que me
+falta" y los ejercicios de respuesta abierta. Una pregunta mal hecha da **falsos negativos** (apuntas un hueco
+que no tiene) y **falsos positivos** (das por sabido lo que acertó de rebote), y todo lo que viene después se
+apoya en eso.
+
+**Al redactar:**
+
+- **Una pregunta pregunta una cosa.** Si lleva "y" o dos signos de interrogación, son dos: sepáralas.
+- **Primero el caso, después la pregunta, en su propia línea.** Si hay más de dos datos, en lista.
+- **La pregunta dice qué respuesta espera:** *(una cifra)*, *(en una frase)*, *(el nombre)*,
+  *(explica el porqué en 2-3 líneas)*. Si quieres razonamiento, pídelo; si quieres el nombre o la fórmula,
+  pídelos. Lo que no pides, no lo puedes corregir.
+
+**Al corregir:**
+
+- **Se corrige lo que se pidió, nada más.** Una respuesta corta y correcta es un acierto. Nunca se apunta
+  como hueco algo que la pregunta no pedía.
+- **La idea bien y el nombre no = acierto de la idea.** El nombre solo es hueco si la pregunta lo pedía;
+  si quieres saber si lo conoce, hazle otra pregunta que lo pida.
+- **Acierto sin razonar, cuando te importa el porqué:** en conversación, repregunta "¿por qué?" antes de
+  darlo por sabido o por fallado; en un examen escrito no se puede, así que la pregunta tenía que pedirlo.
+- **Tres veredictos, no dos:** correcta · correcta pero le falta *algo que se pedía* (y dices qué) ·
+  incorrecta.
+
 ## Cómo aprendes del alumno
 
 - `config/alumno.md` se actualiza cuando aprendes algo de él. **Toda entrada cita su prueba**

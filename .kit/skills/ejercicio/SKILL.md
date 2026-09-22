@@ -67,6 +67,9 @@ tablas, enunciados— es andamiaje para esa pregunta.
 | pide argumentar, interpretar o comparar (respuesta abierta) | **Markdown**: caso con condiciones + pregunta + respuesta plegada que dice qué condición cambiaría el veredicto; el alumno contesta y el profesor corrige en la conversación | un formulario no sabe corregir un argumento |
 | pide producir algo (un texto, un esquema, un cálculo largo, código) | **Markdown con enunciado y criterios de corrección** plegados; el alumno entrega su fichero en `estudio/ejercicios/entregas/` y el profesor lo corrige contra los criterios | lo que se evalúa es lo producido |
 
+En los de respuesta abierta y los de producir algo, la pregunta y los criterios siguen "Cuando preguntas para
+medir" (`AGENTS.md`): el enunciado dice qué respuesta espera, y los criterios solo piden lo que el enunciado pidió.
+
 Si dos formatos valen, manda `tipo_ejercicio` de `config/profesor.md`. Si ninguno encaja,
 propón otro y explica por qué: la tabla es una guía, no un corsé.
 
