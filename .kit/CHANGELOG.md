@@ -20,7 +20,8 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - **El recuadro que conecta cada concepto con lo tuyo** (tu trabajo, un proyecto, una afición) ahora te lo
   enseña antes de ofrecértelo: ves cómo queda, qué ganas y qué cuesta, y decides. Tu hoja *Cómo usar tu
   profesor* dice cómo ponerlo o quitarlo cuando quieras.
-- Si ya tienes tu curso configurado, no notas nada.
+- **Si ya tenías tu curso:** tu profesor te ofrece las tres preguntas sobre ti (puedes decir que no) y pone al
+  día tu hoja *Cómo usar tu profesor*.
 
 ## 0.17.0
 - **La guía de instalación empieza explicando cómo funciona esto**: qué es cada pieza (tu profesor, la terminal,

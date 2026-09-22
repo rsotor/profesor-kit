@@ -88,3 +88,14 @@ test('las propiedades de frontmatter que citan las skills y AGENTS.md las lee al
     .filter(p => !new RegExp(`\\.${p}\\b`).test(codigoHerramientas));
   assert.deepEqual(sinLeer, [], `ninguna herramienta lee: ${sinLeer.join(', ')}`);
 });
+
+// Las mejoras que un curso ya configurado no recibe solo llegan como ofertas: /actualizar busca esta etiqueta
+// en el CHANGELOG. Si una de las dos cambia, las ofertas dejan de llegar sin que nadie se entere.
+test('las ofertas "Si ya tenías tu curso" del CHANGELOG usan la etiqueta que busca /actualizar', () => {
+  const ETIQUETA = '**Si ya tenías tu curso:**';
+  const skill = fs.readFileSync(path.join(RAIZ, '.kit', 'skills', 'actualizar', 'SKILL.md'), 'utf8');
+  assert.ok(skill.includes(ETIQUETA), '/actualizar no busca la etiqueta');
+  const changelog = fs.readFileSync(path.join(RAIZ, '.kit', 'CHANGELOG.md'), 'utf8');
+  const malas = changelog.split(/\r?\n/).filter(l => /si ya ten[ií]as tu curso/i.test(l) && !l.startsWith(`- ${ETIQUETA} `));
+  assert.deepEqual(malas, []);
+});
