@@ -13,6 +13,20 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.16.0
+- **Tu curso tiene una página de inicio.** En Obsidian, la nota **inicio** enseña el temario entero por
+  módulos, por dónde vas (👉 *Sigue por aquí*), lo que tienes que repasar y la nota de cada examen. Cada sesión
+  acaba con *← anterior · 🏠 Inicio · siguiente →*: puedes estudiar el curso de principio a fin sin buscar en
+  carpetas y sin abrir a tu profesor.
+- **Tú marcas lo que has estudiado**, con la casilla *estudiada* de cada sesión; tu profesor marca lo que tienes
+  demostrado. Puedes pedirle "hazme un test de lo que me falta" para completar huecos.
+- **Los exámenes se contestan en la propia nota**, debajo de cada pregunta. Al corregirlos, tu profesor guarda tus
+  respuestas y tu nota aparte y deja el examen limpio para que puedas repetirlo y comparar; si quieres uno nuevo,
+  pídele otra versión.
+- **Hay que hacer una cosa al actualizar** (por eso esta versión toca tus notas): tu profesor añade la casilla a
+  tus sesiones, completa el temario con todos tus módulos, adapta tus exámenes anteriores y te pide que abras
+  **inicio** en Obsidian y fijes su pestaña. Tu hoja *Cómo usar tu profesor* se renueva.
+
 ## 0.15.0
 - La portada de tu curso en GitHub muestra siempre por dónde vas: clases, bloques, conceptos y pendientes se
   actualizan solos cada vez que tu profesor guarda.

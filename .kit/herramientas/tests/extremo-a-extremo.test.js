@@ -66,12 +66,15 @@ test('4. guardar deja commit, diario y pendientes', () => {
 test('5. una sesión nueva se coloca en su unidad y comprobar la acepta', () => {
   fs.writeFileSync(path.join(curso, 'config', 'estructura.json'), JSON.stringify({ unidades: [{ prefijo: '01', carpeta: 'modulo-01' }] }));
   fs.writeFileSync(path.join(curso, 'estudio', 'sesiones', '01-01-intro.md'), '---\ntipo: sesion\nbloque: 1\n---\n# Intro\n\n**TODO:** revisar\n');
-  fs.appendFileSync(path.join(curso, 'estudio', 'mapa-del-curso.md'), '\n- [[01-01-intro]]\n');
   assert.match(herramienta('organizar').salida, /Colocados 1 fichero/);
   assert.ok(fs.existsSync(path.join(curso, 'estudio', 'sesiones', 'modulo-01', '01-01-intro.md')));
   assert.equal(herramienta('comprobar').codigo, 0);
   herramienta('guardar', 'sesion(01-01): intro');
   assert.match(leer('estudio/pendientes.md'), /Bloque 1 \(1\)[\s\S]*revisar/);
+  const inicio = leer('estudio/inicio.md');
+  assert.match(inicio, /👉 Sigue por aquí: \[\[01-01-intro\|Intro\]\]/);
+  assert.match(leer('estudio/sesiones/modulo-01/01-01-intro.md'), /\[\[inicio\|🏠 Inicio\]\]/);
+  assert.equal(ejecutar('git', ['status', '--porcelain']).salida, '');
 });
 
 test('6. un despiste se repara solo', () => {
