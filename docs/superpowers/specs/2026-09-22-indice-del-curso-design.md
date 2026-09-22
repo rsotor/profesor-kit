@@ -154,7 +154,7 @@ en este orden de prioridad:
 | `.kit/herramientas/lib/indice.js` (nuevo) | Función pura: lee estructura, sesiones (H1, `clases`, `orden`, `estudiada`, conceptos de `## Conceptos`), exámenes (`unidad`, `nota`, `fecha`, `parcial`) y estados de `progreso.md`; devuelve el texto de `inicio.md` y el pie de cada sesión. No escribe. |
 | `guardar.js` | **Genera primero y comprueba después:** escribe `estudio/inicio.md`, los pies de sesión, `pendientes.md` y `auditoria-del-material.md` (solo si cambian) y luego ejecuta `comprobar()`, que así valida también lo generado. Hoy comprueba antes de generar (`guardar.js:24`), y con `inicio.md` exigido eso sería un punto muerto. |
 | `lib/vault.js` | `leerFrontmatter` entiende listas en bloque (`- item`). Lectores tipados para lo nuevo: `estudiada` es cierta solo si vale `true`; `orden` y `nota` son números. `inicio.md` entra en `listarNotas` (se validan sus enlaces) pero **no** en `piezasAusentes` ni en `reparar.js`: se regenera, no se repara. |
-| `comprobar.js` | `comprobarMapa` deja de exigir que cada sesión esté en `mapa-del-curso.md` (hoy es **error** y bloquearía el guardado) y pasa a exigir que esté en `inicio.md`. Avisos nuevos: examen sin `nota:`/`fecha:` válidas · marcadores de navegación rotos (uno sin el otro) · `orden-ambiguo`. |
+| `comprobar.js` | Se quita `comprobarMapa`: hoy exige como **error** que cada sesión esté en `mapa-del-curso.md` y bloquearía el guardado. No se sustituye por "que esté en `inicio.md`": `inicio.md` se genera desde las sesiones y no puede faltar ninguna, y exigirlo haría que `actualizar.js` revirtiera la migración (tras migrar, `inicio.md` aún no existe hasta el guardado final). Avisos nuevos: examen sin `nota:`/`fecha:` válidas · marcadores de navegación rotos (uno sin el otro) · `orden-ambiguo`. |
 | `organizar.js` | Acepta `titulo` opcional en cada unidad de `estructura.json`. |
 | `.kit/motor.json` | `version_datos: 3` (lo exige `coherencia.test.js`). |
 
@@ -218,7 +218,8 @@ atasco es un cambio en la hoja antes de publicar la 1.0.0.
 - `guardar.js`: genera antes de comprobar (un curso sin `inicio.md` se guarda y sale con él); el pie se crea si no
   existe, se reescribe entre marcadores sin tocar el resto de la nota, conserva CRLF; un segundo guardado sin
   cambios no produce diferencias.
-- `comprobar.js`: una sesión que no está en `mapa-del-curso.md` ya no es error.
+- `comprobar.js`: una sesión que no está en `mapa-del-curso.md` ya no es error; los tres avisos nuevos salen
+  cuando toca y no salen en un curso sano.
 - Migración 003: añade `estudiada` sin duplicarla; es idempotente.
 - `extremo-a-extremo.test.js`: tras procesar sesiones de ejemplo, `inicio.md` existe y enlaza la primera.
 - `coherencia-skills.test.js`: las skills citan `inicio.md`, `nota:`, `fecha:` y `parcial:` como existen en las herramientas.
