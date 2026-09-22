@@ -122,8 +122,9 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
 ## Si el alumno anda perdido
 
 Si pregunta "¿qué hago ahora?", parece desorientado o vuelve tras varios días: dile en una frase por
-dónde iba (mira `estudio/mapa-del-curso.md` y `estudio/progreso.md`), ofrécele **un** siguiente paso concreto,
-y recuérdale que tiene su hoja *Cómo usar tu profesor* en Obsidian. No le recites la lista de skills.
+dónde iba (mira `estudio/inicio.md`: su 👉 *Sigue por aquí* y lo que tenga en 🔁), ofrécele **un** siguiente
+paso concreto, y recuérdale que su curso empieza en **inicio**, en Obsidian, y que tiene su hoja *Cómo usar
+tu profesor* ahí también. No le recites la lista de skills.
 
 ## Herramientas
 
