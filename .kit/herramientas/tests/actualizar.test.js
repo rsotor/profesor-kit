@@ -149,3 +149,20 @@ test('migración 002: un curso sin README gana su portada con nombre y atajo, y 
   m.migrar(raiz);
   assert.equal(leer(raiz, 'README.md'), 'mío');
 });
+
+test('migración 003: cada sesión gana estudiada: false, sin duplicar ni tocar el resto, y es idempotente', () => {
+  const m = require('../migraciones/003-casilla-estudiada');
+  const raiz = cursoTemporal({
+    'estudio/sesiones/m1/01-01-uno.md': '---\ntipo: sesion\nclases: [1.1]\n---\n# Uno\n',
+    'estudio/sesiones/m1/01-01-dos.md': '---\ntipo: sesion\nestudiada: true\n---\n# Dos\n',
+    'estudio/sesiones/m1/01-01-crlf.md': '---\r\ntipo: sesion\r\n---\r\n# Tres\r\n',
+    'estudio/sesiones/m1/01-01-sin-fm.md': '# Cuatro\n',
+  });
+  m.migrar(raiz);
+  m.migrar(raiz);
+  const s = rel => leer(raiz, `estudio/sesiones/m1/${rel}`);
+  assert.equal(s('01-01-uno.md'), '---\ntipo: sesion\nclases: [1.1]\nestudiada: false\n---\n# Uno\n');
+  assert.equal(s('01-01-dos.md'), '---\ntipo: sesion\nestudiada: true\n---\n# Dos\n');
+  assert.equal(s('01-01-crlf.md'), '---\r\ntipo: sesion\r\nestudiada: false\r\n---\r\n# Tres\r\n');
+  assert.equal(s('01-01-sin-fm.md'), '---\nestudiada: false\n---\n# Cuatro\n');
+});
