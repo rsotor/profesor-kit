@@ -23,6 +23,9 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - **Los exámenes se contestan en la propia nota**, debajo de cada pregunta. Al corregirlos, tu profesor guarda tus
   respuestas y tu nota aparte y deja el examen limpio para que puedas repetirlo y comparar; si quieres uno nuevo,
   pídele otra versión.
+- **Obsidian viene preparado.** Tu curso se abre ya configurado (ejercicios visibles, enlaces que se
+  actualizan solos) y con tres complementos instalados pero apagados —una terminal, un visor de código y Claude
+  en un panel—: tu hoja *Cómo usar tu profesor* explica qué hace cada uno y cómo encenderlo si quieres.
 - **Hay que hacer una cosa al actualizar** (por eso esta versión toca tus notas): tu profesor añade la casilla a
   tus sesiones, completa el temario con todos tus módulos, adapta tus exámenes anteriores y te pide que abras
   **inicio** en Obsidian y fijes su pestaña. Tu hoja *Cómo usar tu profesor* se renueva.

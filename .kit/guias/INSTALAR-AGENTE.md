@@ -154,6 +154,10 @@ Si algo falla y no sabes por qué, el diagnóstico es también lo que se pega en
 Obsidian es el programa donde el alumno **lee** todo lo que preparas. Es gratis y no pide cuenta.
 Explícaselo en una frase e instálalo tú, con su permiso, igual que el resto.
 
+**Antes de que la abra**, ejecuta `node .kit/herramientas/obsidian.js`: deja escritos los ajustes recomendados
+(ya los puso `preparar-curso.js`; no pisa nada) y descarga los complementos **Terminal**, **Code Files** y
+**Claudian** sin activarlos. Si no hay red, lo dice y sigue: se repite más tarde.
+
 No existe forma de abrirle la bóveda desde aquí (Obsidian no tiene ningún enlace ni comando para
 registrar una carpeta nueva como bóveda), así que **guíale, con las palabras exactas que va a ver**:
 
@@ -177,26 +181,17 @@ puerta a todo el curso. Que haga clic en ella para abrirla, luego clic derecho e
 **Fijar** (*Pin*). Así queda abierta siempre que abra Obsidian. No se puede hacer por él: Obsidian guarda sus
 pestañas mientras está abierto y pisaría cualquier cambio desde fuera.
 
-**Que vea también los ejercicios.** Obsidian oculta por defecto lo que no es una nota, y los ejercicios
-interactivos son páginas web (`.html`): sin este paso no los encontrará nunca. En cuanto exista
-`estudio/.obsidian/app.json`, añade (o pon a `true`) la clave `"showUnsupportedFiles": true` en ese JSON,
-sin tocar el resto, y dile que cierre y abra Obsidian. Equivale a *Ajustes → Archivos y enlaces →
-"Detectar todas las extensiones de archivo"*. `comprobar.js` avisará si se queda sin hacer.
+**Los ejercicios web ya se ven:** la configuración recomendada activa "Detectar todas las extensiones de
+archivo". Si `comprobar.js` avisa `obsidian-oculta-ejercicios`, es que el alumno lo desactivó: pregúntale antes
+de volver a activarlo.
 
-### Opcional — hablar contigo desde dentro de Obsidian
+### Extras de Obsidian — instalados, sin activar
 
-**Ofrécelo al final, cuando todo lo demás funcione, y solo si le apetece:** *"¿Quieres poder hablar
-conmigo desde dentro de Obsidian, sin abrir otra ventana?"*. Es un extra: el camino normal (terminal +
-su palabra) funciona siempre.
-
-Se hace con el complemento **Terminal**, de polyipseity (<https://github.com/polyipseity/obsidian-terminal>).
-Es de la comunidad, no de Obsidian ni de este kit: díselo. Requisitos según su guía oficial: **Python 3.9
-o superior**, y en Windows además los paquetes de Python que indica esa guía. Sigue **su** guía de
-instalación, no una memorizada. Lo que él verá en Obsidian: *Ajustes → Complementos de la comunidad →
-"Salir del modo restringido"*, buscar **Terminal**, *Instalar* y *Activar*.
-
-Comprobación: dentro de Obsidian abre un terminal, escribe su atajo, y te abres tú en su curso. Si algo
-no va, **no insistas**: déjalo con el camino normal y, si quiere, propón una issue.
+Los complementos **Terminal** (una terminal dentro de Obsidian, para hablar contigo sin cambiar de ventana;
+necesita Python 3.9 o superior), **Code Files** (ver y editar ficheros de código) y **Claudian** (Claude en un
+panel lateral) ya están instalados, pero **apagados**: son de terceros, no de Obsidian ni del kit, y activarlos
+es decisión suya. Díselo en una frase y que sepa que su hoja *Cómo usar tu profesor* explica cómo activarlos.
+No los actives tú.
 
 ## Si más adelante mueve el curso a otra carpeta
 

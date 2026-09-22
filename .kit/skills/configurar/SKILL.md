@@ -140,7 +140,7 @@ acuerde de nada: escríbela para alguien que no sabe qué es una terminal. Relle
 | `{{NOMBRE_DEL_CURSO}}` | `nombre_curso` de `config/ajustes.json` (o el nombre de `config/curso.md`) |
 | `{{ATAJO}}` | `atajo` de `config/ajustes.json`. Si está vacío, créalo ahora con `node .kit/herramientas/crear-atajo.js --nombre <palabra>` |
 | `{{MARCADOR}}` | `marcador_dudas` de `config/profesor.md` |
-| `{{TERMINAL_EN_OBSIDIAN}}` | Si tiene instalado el complemento Terminal en Obsidian (existe `estudio/.obsidian/plugins/terminal/`): un párrafo — "También puedes hablar con tu profesor sin salir de Obsidian: abre el terminal de Obsidian y escribe tu palabra." Si no lo tiene, **borra el hueco entero**, sin dejar línea en blanco de más |
+| `{{TERMINAL_EN_OBSIDIAN}}` | Si tiene **activado** el complemento Terminal (`estudio/.obsidian/community-plugins.json` incluye `"terminal"`): un párrafo — "También puedes hablar con tu profesor sin salir de Obsidian: abre el terminal de Obsidian y escribe tu palabra." Si no lo tiene, **borra el hueco entero**, sin dejar línea en blanco de más |
 | `{{COMO_ABRIR_LA_TERMINAL}}` | Según su ordenador. Mac: "Pulsa a la vez las teclas **Cmd** y **Espacio**, escribe **Terminal** y pulsa **Intro**." Windows: "Pulsa la tecla **Windows**, escribe **PowerShell** y pulsa **Intro**." |
 
 No añadas secciones ni comandos, sin jerga: está escrita para leerse de arriba abajo la primera vez y para

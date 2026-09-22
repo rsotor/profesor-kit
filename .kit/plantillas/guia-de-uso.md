@@ -102,7 +102,21 @@ sitio. Lo que queda por resolver está siempre en la nota **pendientes**.
 Escribe "hasta luego" y espera a que se despida: así guarda lo último. Si cierras la ventana sin más, no se
 pierde nada de lo terminado.
 
-## 10. Si algo no cuadra
+## 10. Extras de Obsidian (opcionales)
+
+Tu Obsidian trae tres complementos instalados pero **apagados**. Son de otras personas, no de Obsidian ni de tu
+profesor: actívalos solo si te interesan.
+
+| Complemento | Para qué sirve |
+|---|---|
+| **Terminal** | Hablar con tu profesor sin salir de Obsidian (necesita Python instalado; si no lo tienes, pídeselo a tu profesor) |
+| **Code Files** | Ver y editar ficheros de código dentro de Obsidian |
+| **Claudian** | Tener a Claude en un panel lateral de Obsidian |
+
+Para activar uno: rueda dentada (abajo a la izquierda) → **Complementos de la comunidad** → **Activar
+complementos de la comunidad** → en la lista, enciende el que quieras. Para apagarlo, lo mismo.
+
+## 11. Si algo no cuadra
 
 - **Marqué una sesión y en inicio sigue ⬜:** es normal. Inicio se pone al día cuando tu profesor guarda; abre
   a tu profesor y dile cualquier cosa, o espera a la próxima clase.
@@ -117,7 +131,7 @@ pierde nada de lo terminado.
 - **Algo de cómo trabaja tu profesor te molesta:** díselo tal cual, "esto es del kit". Él lo envía a quien lo
   mantiene.
 
-## 11. Otro curso u otro asistente
+## 12. Otro curso u otro asistente
 
 - **Añadir otro curso:** abre la terminal, entra en tu carpeta de cursos, abre a tu asistente y pégale otra vez
   el **texto de arranque** de la guía de instalación.

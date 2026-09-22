@@ -23,7 +23,12 @@ y si algo falla vuelve exactamente a ese punto.
 
     node .kit/herramientas/actualizar.js --aplicar
 
-## 3. Contar el resultado
+## 3. Complementos de Obsidian
+
+Ejecuta `node .kit/herramientas/obsidian.js` (descarga los complementos que falten; los ajustes ya los añadió la
+migración). Si el alumno tenía Obsidian abierto durante la actualización, que lo cierre y lo abra.
+
+## 4. Contar el resultado
 
 - **"Actualizado de X a Y"** → díselo en una frase. Si migró datos, añade: "he adaptado tus notas
   al formato nuevo; no se ha perdido nada".
