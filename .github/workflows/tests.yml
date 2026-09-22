@@ -4,13 +4,23 @@ on:
   push:
     branches: [main]
 
+# Un push nuevo a la misma rama cancela el run anterior: no se gastan minutos en resultados que nadie va a mirar.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   herramientas:
+    # Sin macOS a propósito: cuesta 10 minutos facturables por minuto, y los tests ya corren en el Mac de
+    # quien desarrolla antes de cada push (hook .githooks/pre-push). Windows (x2) se queda porque es el
+    # sistema que no tenemos a mano; Linux (x1) cubre las dos versiones de Node.
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        node: [22, 24]
+        include:
+          - { os: ubuntu-latest, node: 22 }
+          - { os: ubuntu-latest, node: 24 }
+          - { os: windows-latest, node: 24 }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
