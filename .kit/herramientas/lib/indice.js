@@ -2,6 +2,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./vault');
+const { leerEstructura, unidadDe } = require('../organizar');
+
+const INICIO = 'inicio.md';
+const APROBADO_POR_DEFECTO = 5;
+const OTRAS_HOJAS = ['mapa-del-curso', 'progreso', 'formulario', 'como-usar-tu-profesor'];
+const MARCA = { repasar: () => '🔁 repasar', superada: () => '✅ superada', faltan: e => `📝 faltan ${e.faltan}`, vacio: () => '' };
 
 // El índice del curso: estudio/inicio.md y el pie de navegación de cada sesión. Aquí solo se calcula; quien
 // escribe es guardar.js. Todo sale de lo que ya hay en disco: nadie rellena el índice a mano.
@@ -102,4 +108,111 @@ function estadoProfesor(conceptos, progreso) {
   return { marca: 'faltan', faltan: conceptos.length - probados };
 }
 
-module.exports = { leerSesiones, compararSesiones, ordenAmbiguo, leerProgreso, estadoProfesor };
+function leerExamenes(raiz) {
+  const base = v.baseAlumno(raiz);
+  return v.recorrer(path.join(base, 'examenes'), n => n.endsWith('.md') && !n.startsWith('_')).map(abs => {
+    const fm = v.leerFrontmatter(fs.readFileSync(abs, 'utf8')) || {};
+    const fecha = String(fm.fecha || '');
+    return {
+      rel: v.aPosix(path.relative(base, abs)),
+      unidades: (Array.isArray(fm.unidad) ? fm.unidad : [fm.unidad]).filter(Boolean).map(String),
+      fecha: /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : null,
+      nota: v.numero(fm.nota),
+      parcial: v.esCierto(fm.parcial),
+    };
+  });
+}
+
+// La nota de una unidad es la de su último examen completo: nunca la media, que castiga haber mejorado.
+function notaDeUnidad(prefijo, examenes) {
+  const validos = examenes
+    .filter(e => !e.parcial && e.nota !== null && e.fecha && e.unidades.includes(prefijo))
+    .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.rel.localeCompare(b.rel));
+  return validos.length ? validos[validos.length - 1] : null;
+}
+
+function leerAprobado(raiz) {
+  const f = path.join(raiz, 'config', 'curso.md');
+  const fm = fs.existsSync(f) ? v.leerFrontmatter(fs.readFileSync(f, 'utf8')) : null;
+  return v.numero(fm && fm.aprobado) ?? APROBADO_POR_DEFECTO;
+}
+
+const textoNota = (e, aprobado) =>
+  `📝 ${e.nota.toFixed(1).replace('.', ',')}${e.nota < aprobado ? ' suspenso' : ''} (${e.fecha})`;
+
+function enlace(s, enTabla = false) {
+  const alias = `${s.clases.length ? s.clases.join('-') + ' ' : ''}${s.titulo}`.replace(/[[\]|\\]/g, '').trim();
+  return `[[${s.id}${enTabla ? '\\|' : '|'}${alias}]]`;
+}
+
+function estructuraSegura(raiz) {
+  try { return leerEstructura(raiz); } catch { return null; }   // una estructura rota no puede impedir guardar
+}
+
+function markdownInicio(raiz, { pendientes = 0 } = {}) {
+  const base = v.baseAlumno(raiz);
+  const sesiones = leerSesiones(raiz).sort(compararSesiones);
+  const progreso = leerProgreso(raiz);
+  const examenes = leerExamenes(raiz);
+  const aprobado = leerAprobado(raiz);
+  const estado = new Map(sesiones.map(s => [s.id, estadoProfesor(s.conceptos, progreso)]));
+  const l = [`# ${v.leerAjustes(raiz).nombre_curso || 'Mi curso'}`, '',
+    '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Cuando estudies una sesión, marca la casilla',
+    '> **estudiada** arriba de su nota; aquí se verá la próxima vez que trabajes con tu profesor.', ''];
+
+  const repasar = sesiones.filter(s => estado.get(s.id).marca === 'repasar');
+  if (repasar.length) l.push('🔁 Para repasar:', ...repasar.map(s => `- ${enlace(s)}`), '');
+  if (sesiones.length) {
+    const siguiente = sesiones.find(s => !s.estudiada);
+    l.push(siguiente ? `👉 Sigue por aquí: ${enlace(siguiente)}` : '👉 Has estudiado todas las sesiones procesadas.', '');
+    l.push(`Estudiadas ${sesiones.filter(s => s.estudiada).length} de ${sesiones.length} · Pendientes abiertos: ${pendientes} → [[pendientes]]`, '');
+  } else {
+    l.push('Todavía no hay clases procesadas: deja el material de la primera en **inbox** y díselo a tu profesor.', '');
+  }
+
+  const tabla = lista => ['| Sesión | Estudiada (tú) | Profesor |', '|---|---|---|',
+    ...lista.map(s => `| ${enlace(s, true)} | ${s.estudiada ? '✅' : '⬜'} | ${MARCA[estado.get(s.id).marca](estado.get(s.id))} |`), ''];
+
+  const estructura = estructuraSegura(raiz);
+  if (!estructura) {
+    if (sesiones.length) l.push('## Sesiones', '', ...tabla(sesiones));
+  } else {
+    const unidades = estructura.unidades.map(u => ({ ...u, hijas: [], sesiones: [] }));
+    const porPrefijo = new Map(unidades.map(u => [u.prefijo, u]));
+    const raices = [];
+    for (const u of unidades) {
+      const padre = unidades.filter(o => u.prefijo.startsWith(o.prefijo + '-')).sort((a, b) => b.prefijo.length - a.prefijo.length)[0];
+      (padre ? padre.hijas : raices).push(u);
+    }
+    const sueltas = [];
+    for (const s of sesiones) {
+      const u = unidadDe(s.id, estructura);
+      (u ? porPrefijo.get(u.prefijo).sesiones : sueltas).push(s);
+    }
+    const todasBajo = u => [...u.sesiones, ...u.hijas.flatMap(todasBajo)];
+    const pintar = (u, nivel) => {
+      const todas = todasBajo(u);
+      const partes = [u.titulo || path.posix.basename(u.carpeta).replace(/-/g, ' ')];
+      partes.push(todas.length ? `${todas.filter(s => s.estudiada).length}/${todas.length} estudiadas` : 'aún sin sesiones');
+      const examen = notaDeUnidad(u.prefijo, examenes);
+      if (examen) partes.push(textoNota(examen, aprobado));
+      else if (nivel === 0 && todas.length) {
+        partes.push(todas.every(s => s.estudiada) ? 'listo para el examen del módulo: pídeselo a tu profesor' : 'sin examen de módulo');
+      }
+      l.push(`${'#'.repeat(Math.min(nivel + 2, 6))} ${partes.join(' · ')}`, '');
+      if (u.sesiones.length) l.push(...tabla(u.sesiones));
+      for (const h of u.hijas) pintar(h, nivel + 1);
+    };
+    for (const u of raices) pintar(u, 0);
+    if (sueltas.length) l.push('## Sin unidad', '', ...tabla(sueltas));
+  }
+
+  const hojas = OTRAS_HOJAS.filter(h => fs.existsSync(path.join(base, `${h}.md`)));
+  if (hojas.length) l.push(`Otras hojas: ${hojas.map(h => `[[${h}]]`).join(' · ')}`, '');
+  return l.join('\n');
+}
+
+module.exports = {
+  INICIO, leerSesiones, compararSesiones, ordenAmbiguo, leerProgreso, estadoProfesor,
+  leerExamenes, notaDeUnidad, leerAprobado, enlace, markdownInicio,
+};
