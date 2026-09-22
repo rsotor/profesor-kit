@@ -17,7 +17,7 @@ function comprobarEnlaces(raiz, notas, informe) {
   for (const nota of notas) {
     const texto = v.sinCodigo(leer(raiz, nota));
     for (const m of texto.matchAll(/\[\[([^\]]+)\]\]/g)) {
-      const destino = m[1].split('|')[0].split('#')[0].trim();
+      const destino = m[1].split(/\\?\|/)[0].split('#')[0].trim();
       if (!destino) continue;
       const ext = path.posix.extname(destino);
       const ok = ext && ext !== '.md'

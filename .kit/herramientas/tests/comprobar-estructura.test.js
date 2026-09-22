@@ -65,3 +65,8 @@ test('enlace a .html inexistente y ejercicio declarado sin fichero', () => {
   assert.ok(r.includes('html-roto'));
   assert.ok(r.includes('ejercicio'));
 });
+
+test('un enlace con alias escapado dentro de una tabla ([[nota\\|texto]]) no es un enlace roto', () => {
+  const raiz = cursoTemporal({ 'estudio/formulario.md': '# F\n\n| a | b |\n|---|---|\n| [[alfa\\|Alfa]] | x |\n' });
+  assert.ok(!comprobar(raiz).errores.some(e => e.regla === 'enlace-roto'), JSON.stringify(comprobar(raiz).errores));
+});
