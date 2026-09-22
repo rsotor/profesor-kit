@@ -9,7 +9,7 @@ const RAIZ = path.resolve(__dirname, '..', '..', '..');
 // Que el profesor escale al kit no puede depender de que "se dé cuenta": el hueco tiene que estar delante.
 test('cada skill de trabajo cierra con el hueco "Del kit", y cada herramienta arranca por lib/arranque.js', () => {
   for (const s of ['sesion', 'dudas', 'examen', 'configurar']) {
-    assert.match(fs.readFileSync(path.join(RAIZ, '.kit', 'skills', s, 'SKILL.md'), 'utf8'), /Del kit: nada/, s);
+    assert.match(fs.readFileSync(path.join(RAIZ, '.kit', 'skills', s, 'SKILL.md'), 'utf8'), /Del kit:\s+nada/, s);
   }
   for (const h of fs.readdirSync(path.join(RAIZ, '.kit', 'herramientas')).filter(n => n.endsWith('.js'))) {
     assert.match(fs.readFileSync(path.join(RAIZ, '.kit', 'herramientas', h), 'utf8'), /require\('\.\/lib\/arranque'\)\.arrancar\(/, h);
