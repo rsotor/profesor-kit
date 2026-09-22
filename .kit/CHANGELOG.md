@@ -13,6 +13,15 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.18.0
+- **En la primera sesión, tu profesor te pregunta por ti**: qué relación tienes con la materia, para qué la
+  quieres y cuánto tiempo tienes. Lo usa para que sus ejemplos se parezcan a tu mundo.
+- **Te explica cómo dejarle dudas** en tus notas, con un ejemplo, en vez de preguntarte qué símbolo quieres.
+- **El recuadro que conecta cada concepto con lo tuyo** (tu trabajo, un proyecto, una afición) ahora te lo
+  enseña antes de ofrecértelo: ves cómo queda, qué ganas y qué cuesta, y decides. Tu hoja *Cómo usar tu
+  profesor* dice cómo ponerlo o quitarlo cuando quieras.
+- Si ya tienes tu curso configurado, no notas nada.
+
 ## 0.17.0
 - **La guía de instalación empieza explicando cómo funciona esto**: qué es cada pieza (tu profesor, la terminal,
   Obsidian, GitHub), cómo es un día normal y por qué es normal que te pida permiso a menudo. Pensado para quien
