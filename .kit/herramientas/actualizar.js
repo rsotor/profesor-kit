@@ -71,7 +71,8 @@ function actualizar({ raiz, origen }) {
   if (!g.esRepo(raiz)) return { actualizado: false, motivo: 'sin-repo', de, a, migraciones: [] };
 
   const antes = contarErrores(origen, raiz);
-  guardar({ raiz, mensaje: `copia de seguridad antes de actualizar a ${a}`, permitirErrores: true });
+  // No es una copia aparte: es un commit de lo que hubiera sin guardar, para poder volver exactamente aquí.
+  guardar({ raiz, mensaje: `guardado antes de actualizar a ${a}`, permitirErrores: true });
   const sha = g.shaActual(raiz);
 
   const hechas = [];
