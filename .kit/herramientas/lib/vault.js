@@ -4,6 +4,8 @@ const path = require('node:path');
 
 const CARPETAS_NOTAS = ['conceptos', 'sesiones', 'ejercicios', 'examenes', 'flashcards'];
 const FICHEROS_VIVOS = ['progreso.md', 'formulario.md', 'mapa-del-curso.md'];
+// Generados por guardar.js que enlazan a otras notas: se comprueban sus enlaces, pero no se exigen ni se reparan.
+const GENERADOS_CON_ENLACES = ['inicio.md'];
 // Todo lo del alumno vive en una sola carpeta: es la que abre en Obsidian, y así no ve ni toca el motor.
 const CARPETA_ALUMNO = 'estudio';
 // Carpetas del alumno que no son notas: 'inbox' es su material en bruto y 'repasos' es HTML generado.
@@ -42,7 +44,7 @@ function listarNotas(raiz, { conInbox = false } = {}) {
   const carpetas = conInbox ? [...CARPETAS_NOTAS, 'inbox'] : CARPETAS_NOTAS;
   const esMd = n => n.endsWith('.md');
   const notas = carpetas.flatMap(c => recorrer(path.join(raiz, c), esMd));
-  for (const f of FICHEROS_VIVOS) {
+  for (const f of [...FICHEROS_VIVOS, ...GENERADOS_CON_ENLACES]) {
     if (fs.existsSync(path.join(raiz, f))) notas.push(path.join(raiz, f));
   }
   return notas.map(n => aPosix(path.relative(raiz, n))).sort();
@@ -74,18 +76,39 @@ function limpiarValor(valor) {
   return v.replace(/\s+#.*$/, '').trim();
 }
 
+// Obsidian guarda las casillas como `true`/`false`; leídas como texto, "false" sería verdadero.
+const esCierto = valor => valor === true || String(valor ?? '').trim().toLowerCase() === 'true';
+
+function numero(valor) {
+  if (valor === undefined || valor === null || Array.isArray(valor)) return null;
+  const texto = String(valor).trim().replace(',', '.');
+  if (texto === '') return null;
+  const n = Number(texto);
+  return Number.isFinite(n) ? n : null;
+}
+
 function leerFrontmatter(texto) {
   const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(texto);
   if (!m) return null;
   const datos = {};
+  let lista = null;   // clave cuyo valor vino vacío: puede seguir una lista en bloque (`- item`)
   for (const linea of m[1].split(/\r?\n/)) {
+    const item = lista && /^\s*-\s+(.*)$/.exec(linea);
+    if (item) {
+      if (!Array.isArray(datos[lista])) datos[lista] = [];
+      const valor = limpiarValor(item[1]);
+      if (valor !== '') datos[lista].push(valor);
+      continue;
+    }
+    lista = null;
     const par = /^([A-Za-z_][\w-]*):\s*(.*)$/.exec(linea);
     if (!par) continue;
     const bruto = par[2].trim();
-    const lista = /^\[(.*)\]/.exec(bruto);
-    datos[par[1]] = lista
-      ? lista[1].split(',').map(limpiarValor).filter(s => s !== '')
+    const enLinea = /^\[(.*)\]/.exec(bruto);
+    datos[par[1]] = enLinea
+      ? enLinea[1].split(',').map(limpiarValor).filter(s => s !== '')
       : limpiarValor(bruto);
+    if (datos[par[1]] === '') lista = par[1];
   }
   return datos;
 }
@@ -141,8 +164,8 @@ function leerVersion(dir) {
 }
 
 module.exports = {
-  CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
+  CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, GENERADOS_CON_ENLACES, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
   aPosix, baseAlumno,
-  recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter,
+  recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter, esCierto, numero,
   leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, piezasAusentes,
 };
