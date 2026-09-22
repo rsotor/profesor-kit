@@ -172,6 +172,11 @@ Comprueba que ha ido bien: tiene que existir `estudio/.obsidian/`, y él tiene q
 izquierda las carpetas **conceptos**, **inbox**, **sesiones**… Dile que su material de clase lo deja en
 **inbox**.
 
+**Que fije su página de inicio.** Tras el primer guardado existe **inicio**, en la columna izquierda: es la
+puerta a todo el curso. Que haga clic en ella para abrirla, luego clic derecho en su pestaña (arriba) →
+**Fijar** (*Pin*). Así queda abierta siempre que abra Obsidian. No se puede hacer por él: Obsidian guarda sus
+pestañas mientras está abierto y pisaría cualquier cambio desde fuera.
+
 **Que vea también los ejercicios.** Obsidian oculta por defecto lo que no es una nota, y los ejercicios
 interactivos son páginas web (`.html`): sin este paso no los encontrará nunca. En cuanto exista
 `estudio/.obsidian/app.json`, añade (o pon a `true`) la clave `"showUnsupportedFiles": true` en ese JSON,

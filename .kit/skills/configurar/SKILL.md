@@ -72,17 +72,23 @@ explicaciones y el otro se adapta a cada respuesta.
 
    ```json
    { "unidades": [
-     { "prefijo": "01",    "carpeta": "modulo-01-conceptos-esenciales" },
-     { "prefijo": "01-02", "carpeta": "modulo-01-conceptos-esenciales/1.2-medidores-basicos" }
+     { "prefijo": "01",    "carpeta": "modulo-01-conceptos-esenciales", "titulo": "Módulo 1 · Conceptos esenciales" },
+     { "prefijo": "01-02", "carpeta": "modulo-01-conceptos-esenciales/1.2-medidores-basicos", "titulo": "1.2 Medidores básicos" }
    ] }
    ```
 
    Un fichero pertenece a la unidad cuyo prefijo coincide con el principio de su nombre (gana el más largo).
+   **Escribe todas las unidades del temario**, tengan material o no, cada una con su `titulo` tal como la nombra el
+   centro (con tildes: es lo que el alumno lee en `estudio/inicio.md`). Así la página de inicio enseña el curso
+   entero desde el primer día, y el alumno ve lo que le queda.
+
    Si el curso **no tiene** una arquitectura clara (una lista plana de clases, o nada), **propón una** al
    alumno a partir del temario —por bloques— y escribe la que acepte. Si de verdad no hay nada que agrupar,
    no escribas el fichero: todo se queda plano. Con la estructura escrita, `node .kit/herramientas/organizar.js`
    coloca lo que ya hubiera.
-6. Cambia `estado: sin-configurar` por `estado: configurado`. Marca `configuracion.curso: true`.
+6. **El aprobado.** Pregunta sobre cuánto se aprueba (normalmente 5 sobre 10) y escríbelo en el frontmatter de
+   `config/curso.md` como `aprobado: 5`. Es lo que separa "📝 7,5" de "📝 4,0 suspenso" en `estudio/inicio.md`.
+7. Cambia `estado: sin-configurar` por `estado: configurado`. Marca `configuracion.curso: true`.
 
 ## Bloque B — Cómo aprende → `config/profesor.md`
 

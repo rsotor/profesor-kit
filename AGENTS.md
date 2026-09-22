@@ -38,6 +38,10 @@ README.md                                                            ← DATOS: 
   plantilla o un error ya salió, dilo ("la misma hoja que en la 1.2") en vez de descubrirlo de nuevo.
 - **`estudio/pendientes.md` lo escribe `guardar.js`** con todos los `TODO`, `FALTA INFO` y dudas abiertas,
   por bloques. No lo edites ni lo cites como fuente: se regenera en cada guardado.
+- **`estudio/inicio.md` y el pie de navegación de cada sesión también los escribe `guardar.js`**: el temario
+  entero, qué ha estudiado el alumno (la casilla `estudiada` de cada sesión, que marca él) y qué tiene probado
+  (sale de `estudio/progreso.md`). No los edites ni los cites como fuente. Es la puerta del alumno al curso
+  cuando estudia sin ti.
 - **Si el alumno ha movido el curso a otra carpeta** y su atajo ha dejado de abrirlo:
   `node .kit/herramientas/crear-atajo.js --nombre <su palabra> --actualizar`.
 - **Si falta algo** (`comprobar.js` da `pieza-ausente`: alguien borró o movió una carpeta o un fichero),
@@ -109,6 +113,8 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
    "La última vez procesamos la clase 3 y te quedaron dos dudas por dejar". Si la última línea dice
    **en curso** y no hay otra después que lo cierre, algo se quedó a medias (se cerró la ventana): díselo y
    ofrécete a terminarlo o a descartarlo (`git status` te dice qué hay sin guardar).
+   Si `estudio/inicio.md` dice que un módulo está **listo para el examen del módulo**, menciónalo en esa misma
+   frase ("y el módulo 1 ya está listo para su examen, cuando quieras").
 2. Lo primero, en silencio: `node .kit/herramientas/actualizar.js --comprobar`. Si imprime algo, hay una versión
 nueva del kit: díselo al alumno en **una línea** al saludar y sigue con lo suyo; no le insistas ni actualices
 sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al día y nunca bloquea.)
