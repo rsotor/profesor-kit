@@ -276,3 +276,53 @@ Complementos, todos en el directorio oficial de Obsidian (`obsidianmd/obsidian-r
 - **Hoja del alumno:** sección "Extras de Obsidian (opcionales)" con la tabla de 7.1 y los pasos para activarlos:
   rueda dentada → *Complementos de la comunidad* → *Activar complementos de la comunidad* → activar el que quiera.
   El hueco `{{TERMINAL_EN_OBSIDIAN}}` pasa a depender de que Terminal esté **activado** (en `community-plugins.json`).
+
+## 8. Ampliación (2026-09-22): el examen se contesta en la nota y se puede repetir
+
+Feedback de Roberto tras hacer el examen del módulo 1: contestaba en el chat, sin sitio en la nota; y quiere que un
+examen corregido quede **limpio y listo para repetirlo** días después, con los resultados guardados aparte.
+
+**Decisiones de Roberto:**
+- Debajo de cada pregunta, una línea `✍️ **Tu respuesta:**` vacía. Se escribe a continuación (en esa línea o en
+  las siguientes, hasta la siguiente pregunta).
+- Al repetirlo, el examen es **idéntico** (mismas cifras, mismo orden de opciones): así cada intento se compara con
+  el anterior. Con el tiempo y muchos exámenes, la memoria de "la 7 era la b" deja de pesar.
+
+### 8.1 Ciclo de un examen
+
+1. **Generar:** preguntas con su `✍️ **Tu respuesta:**` vacío; soluciones plegadas al final (como hoy);
+   frontmatter con `unidad`, `fecha`, `nota:` vacía (spec §3.3).
+2. **Contestar:** en la nota (lo normal) o en el chat (sigue valiendo). "He terminado el examen" → el profesor lee
+   las respuestas **de la nota**.
+3. **Corregir:** como hoy (pregunta a pregunta, por qué falla, veredicto, `progreso.md`, `config/alumno.md`).
+4. **Guardar el intento aparte**, en `## Histórico de intentos` al final de la nota:
+   - una fila en la tabla `| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |`;
+   - un bloque plegado `> [!example]- Intento N · <fecha> · tus respuestas y la corrección` con el veredicto y la
+     tabla `| # | Tu respuesta | Resultado | Por qué |` con sus respuestas **literales** (el formato que ya usa el
+     examen del módulo 1 de Roberto).
+5. **Actualizar el frontmatter:** `nota:` y `fecha:` = las de **este** intento (número sobre 10, nunca `2/10`);
+   `intentos: N`. Así `inicio.md` enseña siempre el último intento (§3.3: cuenta el último, nunca la media).
+6. **Limpiar:** cada `✍️ **Tu respuesta:**` vuelve a quedar vacío. Preguntas y soluciones no cambian. El examen
+   queda listo para repetir.
+
+### 8.2 Qué cambia
+
+Solo la skill `examen` (§3 Formato y §4 Corregir) — va en la Task 8. Ninguna herramienta cambia: `inicio.md` ya lee
+`nota` y `fecha` del frontmatter. El examen de módulo 1 que ya existe en el curso de Roberto (`nota: 2/10`,
+`alcance:` sin `unidad:`) lo adapta el profesor en la Task 11: `unidad: 01`, `nota: 2`, `intentos: 1`, y los
+`✍️ **Tu respuesta:**` vacíos bajo cada pregunta.
+
+### 8.3 Versión nueva de un examen
+
+Decisión de Roberto: el examen limpio se queda para repasar ("el de hace un mes"), y **cuando se considere** se hace
+una versión nueva para comparar.
+
+- **Cuándo:** si el alumno lo pide ("hazme otra versión del examen del módulo 1"), o si el profesor lo **propone**
+  porque el mismo examen ya lleva dos intentos y la nota puede deberse a la memoria. El alumno decide.
+- **Qué es:** un fichero nuevo, en la misma carpeta, con las mismas preguntas y los mismos conceptos (misma
+  estructura y mismo reparto), pero **otras cifras y otro orden de opciones**. Frontmatter: `version: 2` (3, 4…) y
+  `anterior:` con el enlace al fichero de la versión anterior. Su histórico de intentos empieza vacío.
+- **La anterior no se toca:** sigue limpia, lista para repasar.
+- **Comparar:** al corregir una versión nueva, el veredicto compara concepto a concepto con el último intento de la
+  versión anterior ("VAN: fallado en la v1, bien en la v2").
+- **Nota de la unidad:** sigue siendo la del último examen por `fecha:` (§3.3), sea de la versión que sea.

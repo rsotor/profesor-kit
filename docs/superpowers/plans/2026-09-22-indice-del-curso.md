@@ -1159,6 +1159,48 @@ En §4, antes del paso 6 (guardar), añadir:
 
 y renumerar el antiguo paso 6 (guardar) como 8.
 
+- [ ] **Step 3b: Skill `examen` — se contesta en la nota y se puede repetir (spec §8)**
+
+En §3 Formato, añadir tras el bloque del frontmatter:
+
+```markdown
+**Debajo de cada pregunta**, una línea vacía para contestar en la propia nota:
+
+    ✍️ **Tu respuesta:**
+
+El alumno escribe a continuación (en esa línea o en las siguientes, hasta la siguiente pregunta). También
+puede contestar en el chat; si dice "he terminado el examen", lee las respuestas **de la nota**.
+```
+
+En §4 Corregir, sustituir los pasos 6-8 (nota, estudiada, guardar) por:
+
+```markdown
+6. **Guarda el intento aparte**, en `## Histórico de intentos` al final de la nota (créala la primera vez):
+   - una fila en `| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |`;
+   - un bloque plegado `> [!example]- Intento N · <fecha> · tus respuestas y la corrección` con el veredicto y la
+     tabla `| # | Tu respuesta | Resultado | Por qué |`, con sus respuestas **literales**.
+7. **Frontmatter:** `nota:` y `fecha:` son las de **este** intento (`nota` sobre 10, un número: `2`, nunca
+   `2/10`); `intentos:` sube en uno. El aprobado es `aprobado:` del frontmatter de `config/curso.md` (5 si no está).
+8. **Limpia el examen:** cada `✍️ **Tu respuesta:**` vuelve a quedar vacío. Las preguntas, las cifras, el orden
+   de las opciones y las soluciones **no cambian**: al repetirlo, el alumno compara intento a intento.
+9. **Si aprueba** (y no es parcial), marca `estudiada: true` en las notas de sesión que cubría el examen: las de
+   su unidad y las de todas las unidades que cuelgan de ella. Es la única vez que el profesor marca esa casilla.
+10. Guarda.
+```
+
+(Esto sustituye los pasos 6 y 7 que añadía el Step 3; el antiguo paso de guardar queda como 10.)
+
+Y en §3 Formato, al final, añadir:
+
+```markdown
+**Versión nueva de un examen.** El examen limpio se queda para repasar. Si el alumno pide "otra versión", o si
+tú lo propones porque el mismo examen ya lleva dos intentos y la nota puede ser memoria (propónlo; decide él),
+crea un fichero nuevo en la misma carpeta: mismas preguntas y conceptos, mismo reparto, **otras cifras y otro
+orden de opciones**, soluciones rehechas, con `version: 2` (3, 4…) y `anterior:` con el enlace al fichero de la
+versión anterior en el frontmatter. Su histórico empieza vacío. La versión anterior no se toca. Al corregir la
+nueva, el veredicto compara concepto a concepto con el último intento de la anterior.
+```
+
 - [ ] **Step 4: Skill `configurar`** — en el bloque A:
 
 En el punto 5, sustituir el ejemplo JSON por:
@@ -1472,6 +1514,8 @@ Expected: "Actualizado de 0.11.0 a 1.0.0. Datos migrados: 3." (y las que falten 
     temario de `config/curso.md`.
   - `orden: 1` en `01-03-01-renta-variable.md` y `orden: 2` en `01-03-01-estilos-y-ciclos.md` (confirmar el orden
     con Roberto).
+  - Adaptar `estudio/examenes/2026-09-22-modulo-1.md` (spec §8.2): `unidad: 01`, `nota: 2`, `intentos: 1`, y un
+    `✍️ **Tu respuesta:**` vacío bajo cada pregunta.
   - Reescribir `estudio/como-usar-tu-profesor.md` desde la plantilla nueva, con los mismos huecos que usó
     `/configurar` (atajo, marcador, nombre, terminal).
   - `node .kit/herramientas/comprobar.js` → sin errores ni `orden-ambiguo`; luego
