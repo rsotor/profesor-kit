@@ -65,6 +65,6 @@ function cli(args, raiz) {
   return 0;
 }
 
-if (require.main === module) process.exit(cli(process.argv.slice(2), path.resolve(__dirname, '..', '..')));
+if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'guardar.js');
 
 module.exports = { guardar, anotarEnDiario, cli };

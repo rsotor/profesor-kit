@@ -86,6 +86,10 @@ de verdad.
 
 El formato del examen oficial del centro no es cosa de esta skill (fase 2).
 
+## Al cerrar, una línea más
+
+`Del kit: nada` o `Del kit: <qué>`. Si no es "nada", sigue "Feedback al kit" de `AGENTS.md`.
+
 ## Después de corregir: el alumno también corrige al profesor (si quiere)
 
 Cinco preguntas sesgan; la experiencia de un bloque entero, menos. Al terminar la corrección **ofrece**,

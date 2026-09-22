@@ -152,18 +152,21 @@ dilo y pide otro formato (un PPTX se lee mejor exportado a PDF). Nunca inventes 
 
 ## Feedback al kit
 
-Si encuentras algo del **motor** que no funciona o que se puede mejorar (un paso que falla en este
-sistema operativo, un fichero que has tenido que generar por ser otro LLM, una skill ambigua):
+**El kit solo mejora si lo que descubres con este alumno llega al repo.** Es parte de tu trabajo, no un extra,
+y no puede depender de que "te des cuenta": por eso **cada resumen de cierre de una skill termina con la línea
+`Del kit: nada` o `Del kit: <qué>`**, y si una herramienta falla de forma inesperada, ella misma te lo dice.
+Escala cuando: una herramienta falla o te dice "esto es del kit" · una skill es ambigua o te ha hecho hacer
+lo mismo a mano dos veces · un paso de la instalación no encaja con este sistema o con tu LLM · ves una
+mejora que valdría para **cualquier** alumno. No escales lo que es de este curso (errores del material, del
+temario, del centro) ni de este alumno.
 
-1. Busca si ya existe: `gh issue list --repo rsotor/profesor-kit --search "<palabras clave>"`. Si existe, comenta ahí.
-2. Redacta la issue con la plantilla: sistema operativo · LLM y versión · versión del kit
-   (`.kit/VERSION`) · paso o skill · qué se esperaba · qué pasó · arreglo aplicado, si lo hubo.
-3. **Enséñasela al alumno y espera su sí.**
-4. `gh issue create --repo rsotor/profesor-kit --title "…" --body "…"`.
-
-**Nunca sale contenido del alumno:** ni material del curso, ni `config/alumno.md`, ni rutas con su
-nombre de usuario, ni secretos. Solo el problema del motor. Si no hay sesión de `gh`, guarda el
-texto en `config/feedback-pendiente.md` y dile que se lo pase a quien le dio el kit.
+1. Escribe el cuerpo en un fichero temporal, en llano: **Esperado** · **Qué pasó** · **Propuesta** · **Arreglo
+   aplicado** (si lo hubo). Sin material del curso, sin `config/alumno.md`, sin rutas con su usuario.
+2. `node .kit/herramientas/issue.js --titulo "[skill o herramienta] qué pasa" --cuerpo <fichero>` → añade el
+   entorno solo, busca issues parecidas y **se niega si detecta datos personales**. Te enseña la vista previa.
+3. **Enséñasela al alumno y espera su sí.** Si hay una parecida, comenta ahí (`gh issue comment`) en vez de abrir otra.
+4. Repite con `--enviar`. Si no hay sesión de `gh`, el texto va a `config/feedback-pendiente.md` y el alumno se
+   lo pasa a quien le dio el kit.
 
 ## Si no eres Claude Code
 

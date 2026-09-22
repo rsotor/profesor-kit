@@ -87,3 +87,5 @@ de instalación. Te preguntará cómo se llama el curso nuevo y qué palabra qui
 - **Al abrirlo te pregunta si confías en la carpeta:** di que sí, es la tuya.
 - **No se abre al escribir `{{ATAJO}}`:** cierra la ventana de letras, ábrela otra vez y prueba de nuevo.
 - **Sigue sin ir:** cuéntaselo a quien te instaló esto.
+- **Algo de tu profesor te molesta o crees que se podría hacer mejor** (no del curso: de cómo trabaja él):
+  díselo tal cual, "esto es del kit". Él lo envía a quien lo mantiene, y así mejora para todos.

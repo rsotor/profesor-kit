@@ -151,5 +151,7 @@ Después:
 
     node .kit/herramientas/guardar.js "config: sesión 0"
 
-Dile dónde está su hoja (es lo primero que verá en Obsidian) y cuál es el siguiente paso: dejar el material de la primera clase en `estudio/inbox/` (dentro de
+Dile dónde está su hoja (es lo primero que verá en Obsidian) y cuál es el siguiente paso. Y para ti, una
+línea: `Del kit: nada` o `Del kit: <qué>` (un paso de la configuración que sobró, faltó o confundió; si no
+es "nada", "Feedback al kit" de `AGENTS.md`). Siguiente paso: dejar el material de la primera clase en `estudio/inbox/` (dentro de
 Obsidian la verá como la carpeta **inbox**) y pedir `/sesion`.
