@@ -1,5 +1,9 @@
 # Kit del profesor — Fase 1: kit base
 
+> **Documento histórico.** Es el diseño inicial / el plan de la fase 1 (septiembre de 2026) y no se actualiza
+> con cada cambio. La fuente viva de cómo funciona el kit es `AGENTS.md`, las skills y `.kit/CHANGELOG.md`;
+> la de cómo se cambia, `CONTRIBUTING.md`.
+
 Fecha: 2026-09-21 · Estado: pendiente de revisión por Roberto
 
 ## 1. Qué es y para qué

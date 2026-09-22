@@ -1,5 +1,9 @@
 # Kit del profesor — Fase 1 · Plan de implementación
 
+> **Documento histórico.** Es el diseño inicial / el plan de la fase 1 (septiembre de 2026) y no se actualiza
+> con cada cambio. La fuente viva de cómo funciona el kit es `AGENTS.md`, las skills y `.kit/CHANGELOG.md`;
+> la de cómo se cambia, `CONTRIBUTING.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Construir `rsotor/profesor-kit`: un repo plantilla que convierte un LLM de terminal en profesor personal de cualquier curso, generalizando el vault `inversion-multimercado`.

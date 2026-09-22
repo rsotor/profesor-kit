@@ -148,8 +148,8 @@ Los siete, sin saltarse ninguno:
 4. `estudio/ejercicios/_index.md` — fila por ejercicio nuevo, en las dos tablas
 5. `estudio/progreso.md` — una fila por concepto nuevo, todos en `⬜ sin evaluar`. **Nunca se marca nada
    como sólido aquí:** eso solo lo hacen `/examen` y `/ejercicio`, con respuestas del alumno delante
-6. `README.md` (raíz del curso) — sección **Estado**, tres líneas como mucho: bloques del temario
-   empezados / totales, sesiones procesadas, conceptos. Es lo que se ve en GitHub: que esté al día
+6. `README.md` (raíz del curso) — la sección **Estado** la escribe `guardar.js` sola; tú solo tocas "De qué va"
+   y "Temario" si el curso ha cambiado (y si siguen en `_Pendiente_`, rellénalos ahora desde `config/curso.md`)
 7. `config/alumno.md` — **solo si has aprendido algo de él en esta sesión** (una duda, un error
    repetido, una analogía que funcionó). Si no, no lo toques.
 

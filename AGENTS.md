@@ -130,6 +130,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 | Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |
+| Solo al instalar (ver `INSTALAR-AGENTE.md`) | `preparar-curso.js`, `instalar-skills.js`, `crear-atajo.js` |
 
 **Guardar es parte del trabajo, no un extra al final.** Cada cosa terminada y comprobada se guarda en el
 momento (una sesión procesada, una tanda de dudas, un examen corregido, un cambio en `config/`), aunque

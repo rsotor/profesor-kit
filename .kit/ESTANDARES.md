@@ -8,7 +8,9 @@ sin probar: este fichero te dice qué necesita el kit para que generes tus equiv
 | Reglas del profesor | `AGENTS.md` en la raíz. Si tú lees otro nombre, crea un fichero puente de una línea que remita a él | `CLAUDE.md` |
 | Skills | Formato `SKILL.md` (frontmatter `name` + `description`) en `.kit/skills/<nombre>/`. Se copian a la carpeta donde tú las buscas | `node .kit/herramientas/instalar-skills.js` → `.claude/skills/` |
 | Invocación | Por nombre o en lenguaje natural ("procesa la sesión"). La sintaxis corta es la tuya | `/sesion` |
-| Permisos | Poder ejecutar sin preguntar `node .kit/herramientas/*` | `.claude/settings.json` |
+| Permisos | Poder ejecutar sin preguntar `node .kit/herramientas/*` (y leer issues con `gh issue list/view`) | `.claude/settings.json` |
+| Atajo | El lanzador lo crea `crear-atajo.js` con el comando que diga `config/ajustes.json` → `llm` | `claude` |
+| Verificación | `diagnostico.js` acepta otro LLM si existe `config/adaptacion-llm.md` | — |
 
 ## Qué haces tú
 

@@ -3,7 +3,7 @@ const path = require('node:path');
 const g = require('./lib/git');
 const { leerAjustes } = require('./lib/vault');
 const fs = require('node:fs');
-const { comprobar, markdownPendientes, markdownAuditoria } = require('./comprobar');
+const { comprobar, markdownPendientes, markdownAuditoria, actualizarEstadoReadme } = require('./comprobar');
 const { CARPETA_ALUMNO } = require('./lib/vault');
 
 const DIARIO_CABECERA = `# Diario del curso
@@ -30,6 +30,8 @@ function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
     const texto = generar(raiz);
     if (!fs.existsSync(fichero) || fs.readFileSync(fichero, 'utf8') !== texto) fs.writeFileSync(fichero, texto);
   }
+  // La portada solo cambia de fecha si hay algo más que guardar: si no, un curso quieto parecería tener cambios.
+  if (g.hayCambios(raiz)) actualizarEstadoReadme(raiz, hoy);
   if (!g.hayCambios(raiz)) return { guardado: false, motivo: 'sin-cambios', subido: false, informe };
   if (!g.tieneIdentidad(raiz)) return { guardado: false, motivo: 'sin-identidad', subido: false, informe };
 
