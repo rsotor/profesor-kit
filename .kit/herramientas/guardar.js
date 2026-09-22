@@ -3,8 +3,9 @@ const path = require('node:path');
 const g = require('./lib/git');
 const { leerAjustes } = require('./lib/vault');
 const fs = require('node:fs');
-const { comprobar, markdownPendientes, markdownAuditoria, actualizarEstadoReadme } = require('./comprobar');
+const { comprobar, pendientes, markdownPendientes, markdownAuditoria, actualizarEstadoReadme } = require('./comprobar');
 const { CARPETA_ALUMNO } = require('./lib/vault');
+const indice = require('./lib/indice');
 
 const DIARIO_CABECERA = `# Diario del curso
 
@@ -20,16 +21,28 @@ function anotarEnDiario(raiz, mensaje, hoy = new Date().toISOString().slice(0, 1
   fs.writeFileSync(f, previo.replace(/\n*$/, '\n') + `- ${hoy} · ${mensaje}\n`);
 }
 
-function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
-  const informe = comprobar(raiz);
-  if (!g.esRepo(raiz)) return { guardado: false, motivo: 'sin-repo', subido: false, informe };
-  if (informe.errores.length && !permitirErrores) return { guardado: false, motivo: 'errores', subido: false, informe };
-  // Solo se reescribe si cambia: si no, un curso sin novedades parecería tener cambios.
-  for (const [nombre, generar] of [['pendientes.md', markdownPendientes], ['auditoria-del-material.md', markdownAuditoria]]) {
-    const fichero = path.join(raiz, CARPETA_ALUMNO, nombre);
-    const texto = generar(raiz);
+// Lo que se escribe solo en cada guardado. Va ANTES de comprobar: así un curso al que aún le falta inicio.md no se
+// queda sin poder guardar, y lo generado se comprueba en el mismo guardado. Solo se escribe lo que cambia: si no,
+// un curso quieto parecería tener cambios.
+function regenerarGenerados(raiz) {
+  const base = path.join(raiz, CARPETA_ALUMNO);
+  const escribirSiCambia = (fichero, texto) => {
     if (!fs.existsSync(fichero) || fs.readFileSync(fichero, 'utf8') !== texto) fs.writeFileSync(fichero, texto);
+  };
+  for (const [rel, pie] of indice.piesDeSesion(raiz)) {
+    const fichero = path.join(base, ...rel.split('/'));
+    escribirSiCambia(fichero, indice.ponerPie(fs.readFileSync(fichero, 'utf8'), pie));
   }
+  escribirSiCambia(path.join(base, indice.INICIO), indice.markdownInicio(raiz, { pendientes: pendientes(raiz).length }));
+  escribirSiCambia(path.join(base, 'pendientes.md'), markdownPendientes(raiz));
+  escribirSiCambia(path.join(base, 'auditoria-del-material.md'), markdownAuditoria(raiz));
+}
+
+function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
+  if (!g.esRepo(raiz)) return { guardado: false, motivo: 'sin-repo', subido: false, informe: comprobar(raiz) };
+  regenerarGenerados(raiz);
+  const informe = comprobar(raiz);
+  if (informe.errores.length && !permitirErrores) return { guardado: false, motivo: 'errores', subido: false, informe };
   // La portada solo cambia de fecha si hay algo más que guardar: si no, un curso quieto parecería tener cambios.
   if (g.hayCambios(raiz)) actualizarEstadoReadme(raiz, hoy);
   if (!g.hayCambios(raiz)) return { guardado: false, motivo: 'sin-cambios', subido: false, informe };
@@ -69,4 +82,4 @@ function cli(args, raiz) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'guardar.js');
 
-module.exports = { guardar, anotarEnDiario, cli };
+module.exports = { guardar, regenerarGenerados, anotarEnDiario, cli };
