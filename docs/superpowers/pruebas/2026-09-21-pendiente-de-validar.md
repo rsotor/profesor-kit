@@ -1,5 +1,8 @@
 # Pendiente de validar por Roberto
 
+> **Cerrado el 2026-09-22: 1.0.0.** Veredicto de Roberto: el kit suple al vault; el vault se archiva y el curso del
+> kit pasa a ser el de estudio. Queda abierto solo el feedback de Windows/Codex (instalación completa con curso).
+
 > **Veredicto de Roberto (2026-09-22):** las fichas de concepto le gustan mucho (callouts con color, limpio).
 > Largo, tono y bloque "Desde tu producto": bien de entrada; se irá viendo con el curso → **el profesor tiene
 > que evolucionar** con feedback tras cada examen y retro por bloque (hecho en 0.11.0). Granularidad: **depende**,

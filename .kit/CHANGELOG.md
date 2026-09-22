@@ -2,8 +2,8 @@
 
 Escrito para el alumno: qué nota él, no qué cambió por dentro. Es lo que `/actualizar` le resume.
 
-**Versiones.** Mientras el número empiece por `0.` el kit está en pruebas. La `1.0.0` se publica solo
-cuando el kit haya demostrado que puede sustituir al curso con el que nació. A partir de ahí:
+**Versiones.** La `1.0.0` se publicó cuando el kit demostró que sustituye al curso con el que nació. La regla
+es qué le pasa al alumno, no cuánto cambió por dentro:
 
 | Número | Qué significa para ti | Ejemplo |
 |---|---|---|
@@ -12,6 +12,13 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 | `X.0.0` (mayor) | Cambia la forma de tus datos o hay que **hacer algo** (una migración, una decisión tuya, reinstalar). Tu profesor te lo explica al actualizar y lo hace contigo | carpetas nuevas, campos nuevos en tus notas |
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
+
+## 1.0.0
+- **Primera versión estable.** El kit ha procesado un módulo entero de un curso real y ha sustituido al
+  material hecho a mano del que nació. Nada cambia respecto a la 0.15.0: es el punto a partir del cual las
+  versiones siguen la regla de arriba.
+- Probado a fondo en Mac con Claude Code. En Windows está probado el atajo y las herramientas; una
+  instalación completa con curso en Windows aún no. Con otros asistentes, compatible pero sin probar.
 
 ## 0.15.0
 - La portada de tu curso en GitHub muestra siempre por dónde vas: clases, bloques, conceptos y pendientes se

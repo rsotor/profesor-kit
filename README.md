@@ -7,8 +7,10 @@ configuración.
 
 - **¿Vas a usarlo?** Empieza por [`INSTALACION.md`](.kit/guias/INSTALACION.md). No hace falta perfil técnico.
 - **¿Ya lo tienes y hay versión nueva?** Dile a tu profesor "actualiza el kit". Él lo hace todo; tú no tocas nada.
-- **Probado** en Claude Code y en Mac. Con otros LLMs de terminal y en Windows es compatible pero
-  está sin probar: si algo falla, tu profesor te ayudará a contarlo con una issue en este repo.
+- **Versión 1.0.0.** Probado a fondo en Mac con Claude Code, con un curso real completo. En Windows están
+  probados las herramientas y el atajo; una instalación completa con curso, todavía no. Con otros
+  asistentes de terminal es compatible pero está sin probar. Si algo falla, tu profesor te ayuda a
+  contarlo con una issue en este repo.
 - **¿Vas a desarrollarlo?** El diseño y el plan están en `docs/superpowers/`. Tests:
   `node --test ".kit/herramientas/tests/*.test.js"`. `main` solo recibe cambios por PR, y el CI
   exige todos los tests en verde en Mac, Windows y Linux y una **cobertura mínima del 80 %** de

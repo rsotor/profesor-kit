@@ -11,8 +11,8 @@ propio profesor, que te irá explicando cada cosa y pidiéndote permiso.
 > - El programa **Obsidian**, también gratis, que es donde leerás tus apuntes. No hace falta que lo
 >   instales tú: lo hace tu profesor durante la instalación.
 > - Unos **30 minutos**.
-> - Probado en **Mac**. En **Windows** debería funcionar igual, pero todavía no lo ha probado
->   nadie: si algo falla, tu profesor te ayudará a contarlo para que se arregle.
+> - Probado en **Mac**. En **Windows** están probadas las piezas, pero no una instalación entera con curso:
+>   si algo falla, tu profesor te ayudará a contarlo para que se arregle.
 
 Elige tu ordenador: [Mac](#mac) · [Windows](#windows)
 
