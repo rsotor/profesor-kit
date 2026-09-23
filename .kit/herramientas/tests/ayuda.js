@@ -9,7 +9,12 @@ const BASE = {
   'config/ajustes.json': JSON.stringify({ subir_a_github: false, llm: 'claude-code', version_datos: 1 }, null, 2),
   'estudio/conceptos/_index.md': '# Índice\n\nslug | definición | bloques | dif | alias\n\n## Conceptos\n\n```\nalfa | La primera letra | B1 | 1 | alias: a, alpha\n```\n',
   'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: [a, alpha]\nrequiere: []\n---\n# Alfa\n\n## El ejemplo\n\nUno.\n',
-  'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n# Intro\n\n- [[alfa]] — nuevo\n',
+  // Las tres secciones son las que exige `sesion-incompleta` (lint pedagógico): esta base es "una sesión
+  // completa", no solo un mapa mínimo, para que el curso de pruebas siga saliendo sano por defecto.
+  'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n# Intro\n\n- [[alfa]] — nuevo\n\n'
+    + '## Cobertura del material\n\nToda la diapositiva quedó en [[alfa]].\n\n'
+    + '## Auditoría del material\n\nSin discrepancias.\n\n'
+    + '## Para pensarlo despacio\n\n¿Por qué alfa es la primera letra y no la última?\n',
   'estudio/progreso.md': '# Progreso\n\n| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[alfa]] | ⬜ | ⬜ |\n',
   'estudio/mapa-del-curso.md': '# Mapa\n\n- [[s01-intro]]\n',
   'README.md': '# Curso de prueba\n',

@@ -4,7 +4,7 @@
 // vive solo aquí, y `preparar-curso.js` borra este fichero (y `node_modules/`) al crear un curso.
 module.exports = [
   {
-    ignores: ['node_modules/**', 'pruebas-local/**', '.claude/skills/**', '.agents/skills/**', '.codex/skills/**', '.gemini/skills/**'],
+    ignores: ['node_modules/**', 'pruebas-local/**', '.claude/worktrees/**', '.claude/skills/**', '.agents/skills/**', '.codex/skills/**', '.gemini/skills/**'],
   },
   {
     files: ['**/*.js'],

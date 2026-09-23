@@ -263,6 +263,170 @@ function comprobarIndiceDelCurso(raiz, informe) {
   }
 }
 
+// --- Lint pedagógico: seis avisos que hacen que la calidad del material no dependa de que el modelo
+// siga la skill al pie de la letra. Todo se calcula desde disco (AGENTS.md, §5.3 de la auditoría).
+
+function leerProfesor(raiz) {
+  const f = path.join(raiz, 'config', 'profesor.md');
+  return fs.existsSync(f) ? (v.leerFrontmatter(fs.readFileSync(f, 'utf8')) || {}) : {};
+}
+
+// Sección con su cuerpo crudo (sin el pie de navegación, que no es contenido). null si la sección no existe.
+function capturarSeccion(texto, titulo) {
+  const re = new RegExp(`^## ${generados.escaparRegex(titulo)}\\s*\\n([\\s\\S]*?)(?=^## |(?![\\s\\S]))`, 'm');
+  const m = re.exec(indice.sinPie(texto));
+  return m ? m[1] : null;
+}
+
+// El cuerpo real de una sección: sin las líneas que son puro texto de plantilla (`*énfasis*`, `<hueco>`)
+// ni las que están en blanco. Mismo criterio que ya usaba `auditorias()` para no contar una plantilla sin tocar.
+function cuerpoReal(cuerpo) {
+  if (cuerpo === null) return '';
+  return cuerpo.split('\n').filter(l => l.trim() && !/^[*_<>].*[*_>]$/.test(l.trim())).join('\n').trim();
+}
+
+function seccionVacia(texto, titulo) {
+  const cuerpo = cuerpoReal(capturarSeccion(texto, titulo));
+  return !cuerpo || /^<.*>$/.test(cuerpo);
+}
+
+function comprobarConceptoSinEjemplo(raiz, informe) {
+  for (const slug of v.listarConceptos(raiz)) {
+    const fichero = `conceptos/${slug}.md`;
+    if (seccionVacia(leer(raiz, fichero), 'El ejemplo')) {
+      informe.avisos.push({ regla: 'concepto-sin-ejemplo', fichero, detalle: 'falta "## El ejemplo" (o está vacía, o tiene el texto de la plantilla) — "ejemplo antes que definición": sin él, la nota explica en el vacío' });
+    }
+  }
+}
+
+// "Lo que distingue una sesión trabajada de unos apuntes pasados a limpio" (skill /sesion): si falta o está
+// vacía, se dice por sección — cada una mide algo distinto (cobertura del material, calidad del material,
+// preguntas de fondo) y el motivo de arreglarla es distinto en cada caso.
+const SECCIONES_SESION_COMPLETA = ['Cobertura del material', 'Auditoría del material', 'Para pensarlo despacio'];
+function comprobarSesionIncompleta(raiz, informe) {
+  for (const abs of v.recorrer(path.join(v.baseAlumno(raiz), 'sesiones'), n => n.endsWith('.md') && !n.startsWith('_'))) {
+    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
+    const texto = fs.readFileSync(abs, 'utf8');
+    for (const titulo of SECCIONES_SESION_COMPLETA) {
+      if (seccionVacia(texto, titulo)) {
+        informe.avisos.push({ regla: 'sesion-incompleta', fichero: rel, detalle: `falta "## ${titulo}" (o está vacía, o tiene el texto de la plantilla)` });
+      }
+    }
+  }
+}
+
+// Un `> [!question]-` es un callout **plegado**: en Obsidian no se ve hasta que el alumno lo abre, así que no
+// cuenta para "cabe en una pantalla". El pie de navegación tampoco es contenido (ya lo quita `indice.sinPie`).
+function sinCalloutsDeDudaPlegados(texto) {
+  const salida = [];
+  let dentro = false;
+  for (const linea of texto.split(/\r?\n/)) {
+    if (/^>\s*\[!question\]-/.test(linea)) { dentro = true; continue; }
+    if (dentro && /^>/.test(linea)) continue;
+    dentro = false;
+    salida.push(linea);
+  }
+  return salida.join('\n');
+}
+
+function lineasDeContenido(texto) {
+  const sinFrontmatter = texto.replace(/^---\r?\n[\s\S]*?\r?\n---/, '');
+  const cuerpo = indice.sinPie(sinCalloutsDeDudaPlegados(sinFrontmatter));
+  return cuerpo.split(/\r?\n/).filter(l => l.trim() !== '').length;
+}
+
+// "Una nota cabe en una pantalla" (AGENTS.md). 60 líneas de contenido es el límite por defecto: la plantilla
+// de concepto.md, ya rellena con un ejemplo y una fórmula normales, ronda las 35-40 líneas; 60 deja margen
+// para un ejemplo algo más largo sin dejar pasar un concepto que en realidad son dos. `longitud_nota` en
+// `config/profesor.md` lo sustituye cuando es un número; el valor por palabras ("una pantalla") usa este.
+const LONGITUD_NOTA_POR_DEFECTO = 60;
+function limiteLongitudNota(raiz) {
+  const n = v.numero(leerProfesor(raiz).longitud_nota);
+  return n && n > 0 ? Math.round(n) : LONGITUD_NOTA_POR_DEFECTO;
+}
+
+function comprobarNotaLarga(raiz, informe) {
+  const limite = limiteLongitudNota(raiz);
+  for (const slug of v.listarConceptos(raiz)) {
+    const fichero = `conceptos/${slug}.md`;
+    const n = lineasDeContenido(leer(raiz, fichero));
+    if (n > limite) {
+      informe.avisos.push({ regla: 'nota-larga', fichero, detalle: `${n} líneas de contenido, más de las ${limite} de "longitud_nota" en config/profesor.md — no cabe en una pantalla: probablemente son dos conceptos pegados, o sobra desarrollo` });
+    }
+  }
+}
+
+// `flashcards_por_sesion` es "3-6" (rango) o un número suelto (exactamente ese número).
+const RANGO_FLASHCARDS_POR_DEFECTO = [3, 6];
+function rangoFlashcards(raiz) {
+  const bruto = String(leerProfesor(raiz).flashcards_por_sesion || '').trim();
+  const rango = /^(\d+)\s*-\s*(\d+)$/.exec(bruto);
+  if (rango) return [Number(rango[1]), Number(rango[2])];
+  const n = v.numero(bruto);
+  return n !== null ? [n, n] : RANGO_FLASHCARDS_POR_DEFECTO;
+}
+
+// Cuenta preguntas como las cuenta la plantilla `.kit/plantillas/flashcards.md`: cada pregunta va seguida de
+// un callout plegado `> [!success]- Respuesta`, uno por pregunta y ninguno más en el fichero.
+function comprobarFlashcardsFueraDeRango(raiz, informe) {
+  const [min, max] = rangoFlashcards(raiz);
+  for (const abs of v.recorrer(path.join(v.baseAlumno(raiz), 'flashcards'), n => n.endsWith('.md'))) {
+    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
+    const n = (v.sinCodigo(fs.readFileSync(abs, 'utf8')).match(/^>\s*\[!success\]-/gm) || []).length;
+    if (n < min || n > max) {
+      informe.avisos.push({ regla: 'flashcards-fuera-de-rango', fichero: rel, detalle: `${n} flashcard${n === 1 ? '' : 's'}, fuera del rango ${min}-${max} de "flashcards_por_sesion" en config/profesor.md` });
+    }
+  }
+}
+
+// "La duda revela un prerrequisito flojo" (skill /dudas): si de verdad cuesta (dificultad: 3) y no declara de
+// qué depende, casi siempre es que falta nombrar el prerrequisito, no que el concepto sea intrínsecamente duro.
+function comprobarRequiereVacio(raiz, informe) {
+  for (const slug of v.listarConceptos(raiz)) {
+    const fichero = `conceptos/${slug}.md`;
+    const fm = v.leerFrontmatter(leer(raiz, fichero)) || {};
+    const requiere = Array.isArray(fm.requiere) ? fm.requiere : [];
+    if (v.numero(fm.dificultad) === 3 && requiere.length === 0) {
+      informe.avisos.push({ regla: 'requiere-vacio', fichero, detalle: 'dificultad: 3 y "requiere:" vacío — si de verdad cuesta, revisa si depende de otro concepto que falta declarar' });
+    }
+  }
+}
+
+// Una "pregunta" es lo que la skill /examen numera (`1. `, `2. `…) hasta su línea `✍️ **Tu respuesta:**`: es el
+// formato que la propia skill exige, así que es la única forma fiable de saber dónde empieza y acaba una
+// pregunta sin adivinar. Sin ese cierre no se cuenta como pregunta (heurística conservadora: mejor no avisar
+// que avisar de un fichero que no sigue el formato). Las soluciones van después del cierre, así que quedan
+// fuera solas, sin necesidad de tratarlas aparte.
+function preguntasDeExamen(texto) {
+  const sinFrontmatter = texto.replace(/^---\r?\n[\s\S]*?\r?\n---/, '');
+  const lineas = indice.sinPie(v.sinCodigo(sinFrontmatter)).split(/\r?\n/);
+  const preguntas = [];
+  let actual = null;
+  for (const linea of lineas) {
+    if (/✍️\s*\*\*Tu respuesta:\*\*/.test(linea)) { if (actual) preguntas.push(actual.join('\n')); actual = null; continue; }
+    if (/^\d+\.\s/.test(linea)) { actual = [linea]; continue; }
+    if (actual) actual.push(linea);
+  }
+  return preguntas;
+}
+
+// "Una pregunta pregunta una cosa" (AGENTS.md): dos o más `?` en el mismo enunciado son casi siempre dos
+// preguntas pegadas. No se intenta detectar la unión con "y" sin un segundo `?` — da demasiados falsos
+// positivos en texto de dominio ("¿cuánto mide el lado de un cuadrado de 20 m² de área?" es una sola
+// pregunta, con una "y" perfectamente normal en el dato) y aquí conviene más callar que avisar de más.
+function comprobarPreguntaDoble(raiz, informe) {
+  for (const abs of v.recorrer(path.join(v.baseAlumno(raiz), 'examenes'), n => n.endsWith('.md'))) {
+    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
+    for (const pregunta of preguntasDeExamen(fs.readFileSync(abs, 'utf8'))) {
+      const signos = (pregunta.match(/\?/g) || []).length;
+      if (signos >= 2) {
+        const resumen = pregunta.replace(/\s+/g, ' ').trim().slice(0, 70);
+        informe.avisos.push({ regla: 'pregunta-doble', fichero: rel, detalle: `"${resumen}…" tiene ${signos} signos de interrogación — probablemente son dos preguntas pegadas: sepáralas` });
+      }
+    }
+  }
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -298,6 +462,12 @@ function comprobar(raiz) {
   comprobarAlias(raiz, informe);
   comprobarUnidades(raiz, informe);
   comprobarIndiceDelCurso(raiz, informe);
+  comprobarConceptoSinEjemplo(raiz, informe);
+  comprobarSesionIncompleta(raiz, informe);
+  comprobarNotaLarga(raiz, informe);
+  comprobarFlashcardsFueraDeRango(raiz, informe);
+  comprobarRequiereVacio(raiz, informe);
+  comprobarPreguntaDoble(raiz, informe);
   comprobarObsidianVeEjercicios(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;

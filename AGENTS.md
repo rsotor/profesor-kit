@@ -97,6 +97,20 @@ El alumno lee en Obsidian, y hay cosas que Obsidian no dibuja. No son reglas de 
 `comprobar.js` lo vigila con el aviso `no-se-vera-bien`. **Ese aviso lo arreglas siempre antes de
 guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 
+## Avisos pedagógicos de `comprobar.js`
+
+La calidad del material no puede depender solo de que sigas la skill al pie de la letra: `comprobar.js`
+también vigila seis señales de calidad pedagógica, calculadas desde disco. `nota-larga` (no cabe en una
+pantalla), `concepto-sin-ejemplo` (falta "## El ejemplo" o está sin rellenar), `sesion-incompleta` (falta
+"## Cobertura del material", "## Auditoría del material" o "## Para pensarlo despacio"),
+`flashcards-fuera-de-rango` (el número no cae en `flashcards_por_sesion`), `requiere-vacio` (dificultad: 3
+sin `requiere:`) y `pregunta-doble` (una pregunta de examen con dos signos de interrogación).
+
+**Se arreglan siempre antes de guardar**, igual que `no-se-vera-bien`, salvo que tengas un motivo concreto
+para dejarlos (un concepto que de verdad no se puede partir sin perder sentido, una sesión cuyo material no
+da para pensarlo despacio): entonces se queda el aviso, y se lo dices al alumno en una frase al cerrar — no
+se ignora en silencio.
+
 ## Cuando preguntas para medir
 
 Vale para todo lo que mide lo que sabe: el test inicial de `/configurar`, los exámenes, los tests de "lo que me
