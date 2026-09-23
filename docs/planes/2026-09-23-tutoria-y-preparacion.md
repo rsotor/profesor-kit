@@ -134,6 +134,18 @@ hoy. Windows: lanzar un `.cmd` necesita `shell: true` y comillas cuidadas; se pr
 4. **La prueba real incluye el caso en paralelo**: **ok**.
 5. **Carpeta de las copias `.preparacion/`**: **ok**.
 
+## 5b. Arreglos que salen de la primera prueba real (2026-09-23)
+
+1. **"FALTA INFO" usado de más.** Con la plantilla actual, cuando el material no trae un error típico para un
+   concepto, el profesor lo marca `⚠️ FALTA INFO`. Llena **pendientes** de cosas que el alumno no puede resolver
+   (tres en la clase 1 de la prueba). `FALTA INFO` es solo para lo que el curso tenía que entregar y no entregó.
+   Arreglo: la plantilla de concepto y `/sesion` dicen que, si el material no trae el error típico, el profesor
+   propone uno marcado `> [!info] Ampliación fuera de los apuntes` o quita la sección; nunca `FALTA INFO`. Valorar
+   un aviso en `comprobar.js` para `FALTA INFO` dentro de `## El error típico`.
+2. **Prueba real: la duda simulada se inserta al final del fichero**, debajo del pie de navegación, y la
+   respuesta queda ahí. Es del script (`pruebas/prueba-real.js`), no del profesor: insertarla dentro del
+   cuerpo de la nota, antes del pie.
+
 ## 6. Fuera de esta versión
 
 - Varias preparaciones en paralelo.
