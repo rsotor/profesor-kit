@@ -77,7 +77,9 @@ Reglas de `AGENTS.md`, en corto:
 - Cumple las reglas propias del dominio de `config/curso.md`.
 - Orden: problema → ejemplo → nombre → fórmula → error típico.
 - Rellena `requiere:` con los conceptos previos necesarios. Si un prerrequisito está marcado
-  `dificultad: 3` en su nota, refréscalo en dos líneas antes de seguir.
+  `dificultad: 3` en su nota, refréscalo en dos líneas antes de seguir. Ese `requiere:` es también de
+  donde sale el calentamiento (dos preguntas) del arranque de la sesión siguiente: si queda vacío, no
+  hay de qué calentar.
 - Lo que no venga en los apuntes: `**TODO:**` con la pregunta concreta. **Nunca inventes.**
 - Material que el curso no entregó: `⚠️ **FALTA INFO:**`. No es lo mismo que un TODO — eso solo
   lo puede resolver el alumno o el centro.

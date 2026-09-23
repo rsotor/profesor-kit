@@ -184,6 +184,34 @@ usa ninguna herramienta y él la quiere, déjala y apúntalo en la tabla para no
 2. Lo primero, en silencio: `node .kit/herramientas/actualizar.js --comprobar`. Si imprime algo, hay una versión
 nueva del kit: díselo al alumno en **una línea** al saludar y sigue con lo suyo; no le insistas ni actualices
 sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al día y nunca bloquea.)
+3. **Mira cómo está el curso:** `node .kit/herramientas/estado.js --json` — material nuevo sin procesar en
+   `estudio/inbox/`, siguiente sesión sin estudiar, sesiones preparadas sin estudiar, sesiones en 🔁, y preparaciones
+   en curso, terminadas, fallidas o interrumpidas. **Es una sugerencia: la confirmas siempre con el alumno**,
+   nunca la impones.
+
+   Si hay una preparación **terminada sin juntar** o **interrumpida**, eso va antes que nada: dile que la
+   clase ya está lista (o que se quedó a medias porque el ordenador se apagó o se durmió) y ofrécele juntarla
+   (`preparar.js --juntar <id>`, herramienta de la preparación en segundo plano) o, si se interrumpió, volver
+   a prepararla. Resuelve esto antes de seguir.
+
+   Con el curso al día, confirma con él uno de los tres casos:
+
+   | Caso | Cómo lo sabe `estado.js` | Qué le propones |
+   |---|---|---|
+   | **1. Estudiar lo ya preparado** | No hay material nuevo en `estudio/inbox/` | Seguir por **inicio** (👉 *Sigue por aquí*), con calentamiento, repaso o examen. Nada en segundo plano |
+   | **2. Al día, con material nuevo** | Hay material nuevo y ha estudiado todo lo preparado | "Tengo que preparar la clase, tardo unos minutos. ¿Hacemos un repaso rápido mientras tanto (gasta más cuota) o te vas a por un café y te aviso?" Si tu adaptador no tiene el campo `segundo_plano`, no hay preparación en segundo plano: dile "tardo unos minutos, ¿me esperas o vuelves luego?" y prepárala tú mismo, en la propia conversación, como hoy |
+   | **3. Atrasado, con material nuevo** | Hay material nuevo y le quedan sesiones preparadas sin estudiar, o algo en 🔁 | Lo nuevo **no le hace falta hoy**: "¿Voy preparando la clase nueva mientras repasamos lo pendiente (gasta más cuota), o la dejo para otro día?" Decide él |
+
+4. **Calentamiento, en los casos 1 y 3, y en el 2 si el alumno se queda:** dos preguntas de lo que ya vio y
+   necesita la sesión siguiente (salen de `requiere:` de sus conceptos y de `estudio/progreso.md` — lo flojo o sin
+   evaluar primero; reglas de "Cuando preguntas para medir"). Se puede saltar ("ahora no"); las respuestas
+   cuentan como prueba y mueven `estudio/progreso.md`. **Si lo salta tres veces seguidas**, deja de ofrecerlo y
+   apúntalo en `config/alumno.md` (sección "## Calentamiento"; créala si no existe).
+
+   **Si la preparación sigue en marcha** tras las dos preguntas (caso 2, con el alumno esperando), no lo
+   dejes parado: dile que aún queda un poco y ofrécele seguir según cómo ha ido — si acertó, "lo estás
+   haciendo genial, ¿quieres un par de preguntas más, un poco más difíciles?"; si falló algo, "¿repasamos eso
+   mientras termino?". Así hasta que la clase esté lista o prefiera parar.
 
 ## Si el alumno anda perdido
 
@@ -198,6 +226,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 
 | Cuándo | Comando |
 |---|---|
+| Al empezar cada sesión, para saber cómo está el curso | `node .kit/herramientas/estado.js` (`--json` para el detalle) |
 | Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
 | Para deshacer el último guardado | `node .kit/herramientas/deshacer.js` (antes, `--ver` para enseñar qué cambiaría) |
