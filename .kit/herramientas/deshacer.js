@@ -34,6 +34,8 @@ function deshacer({ raiz, ver = false, hoy }) {
   if (!g.esRepo(raiz)) return { deshecho: false, motivo: 'sin-repo' };
   if (!g.intentarGit(raiz, ['rev-parse', 'HEAD']).ok) return { deshecho: false, motivo: 'sin-commits' };
   if (g.hayCambios(raiz)) return { deshecho: false, motivo: 'cambios-sin-guardar' };
+  // Sin identidad, el commit final fallaría con el revert ya aplicado: se comprueba antes de tocar nada.
+  if (!ver && !g.tieneIdentidad(raiz)) return { deshecho: false, motivo: 'sin-identidad' };
 
   const { sha, mensaje } = ultimoCommit(raiz);
   // Deshacer un deshacer es rehacer: se permite, es un guardado del alumno como cualquier otro revert.
@@ -66,6 +68,8 @@ const EXPLICACION = {
     + 'deshace. Guárdalos primero (guardar.js) o descártalos, y decide con el alumno.',
   'no-es-guardado': 'Lo último no es un guardado del alumno, es del kit: para volver atrás una actualización '
     + 'hay que pedirlo aparte, "deshacer lo último" no es la herramienta.',
+  'sin-identidad': 'Git no sabe quién eres todavía: sin eso no se puede guardar el deshacer. Hay que configurar '
+    + 'user.name y user.email (ver INSTALAR-AGENTE.md, paso de identidad). No ha cambiado nada.',
   'conflicto': 'No se ha podido deshacer: al revertir hay un conflicto con cambios posteriores. No ha cambiado nada.',
 };
 

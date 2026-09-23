@@ -37,8 +37,8 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §6.1 `INSTALACION.md` habla de invitación al repo privado | — | ✅ 0.21.0 | Decisión de Roberto: el kit **se queda público** al menos hasta después de la 1.0.0. Quitados de `INSTALACION.md` (Mac y Windows, y el texto de arranque) los pasos de la invitación y la explicación del 404; `INSTALAR-AGENTE.md` paso 2 habla de "su cuenta"; el arreglo de `acceso-al-kit` en `diagnostico.js` habla de red y sesión. El repo de cada alumno sigue siendo privado siempre |
 | §6.1 La 1.0.0 | — | ⏳ decisión | Roberto: después de estos ajustes, no todavía. El mecanismo de release ya está |
 | §6.1 Fichero con datos de un curso real en `docs/superpowers/pruebas/` | 1 | ✅ 0.20.0 | `docs/superpowers/` borrado entero (specs, planes, pruebas, `comparar-con-vault.js`). Sigue en el historial de git |
-| §6.3 Documento de arquitectura vivo | 2 | ⏳ abierto | Más necesario ahora que `docs/superpowers/` no está |
-| §6.3 Regla "Deshacer" sin herramienta | 2 | ⏳ abierto | `deshacer.js` |
+| §6.3 Documento de arquitectura vivo | 2 | ✅ 0.21.0 | `docs/arquitectura.md`: qué es el kit, motor y datos, mapa de herramientas, qué genera `guardar.js` y en qué orden, reglas de `comprobar.js`, invariantes con dónde se hacen cumplir, los cuatro ciclos (instalación, clase, actualización, publicación), multi-LLM, tests y "dónde tocar para…". En la tabla de documentación viva de `CONTRIBUTING.md` y enlazado desde `README.md`. De paso: `INSTALAR-AGENTE.md` con los pasos en orden y secciones para los pasos 5 y 6 |
+| §6.3 Regla "Deshacer" sin herramienta | 2 | ✅ 0.21.0 | `deshacer.js`: `git revert` del último guardado (nunca `reset`), commit `deshacer: <mensaje>`, anotado en el diario; se niega con cambios sin guardar, sin identidad de git o si lo último es del kit (actualización); deshacer un deshacer = rehacer; `--ver` enseña qué vuelve sin tocar nada; sube como `guardar.js` (`subirSiProcede`, ahora compartida). Regla 6 de `AGENTS.md`: primero `--ver`, luego con el sí del alumno. Tests en `tests/deshacer.test.js` |
 | §7 Releases | 1 | ✅ 0.20.0 | Ver §2.2 |
 | §7 Curso de referencia en el CI | 2 | ⏳ abierto | Después de P1 |
 | §7 `.superpowers/sdd/` en el árbol de trabajo | — | ⏳ abierto | Ignorado por su propio `.gitignore`; sin decidir si se saca |
@@ -353,7 +353,9 @@ aplicarse (vuelve a ser el hook).
 - `AGENTS.md`: 196 líneas, denso pero ordenado; junto a las skills, 72 KB de instrucciones que el LLM lee
   por trozos, no de golpe. Aceptable.
 
-### 6.3 🟡 Lo que falta
+### 6.3 🟡 → ✅ Lo que falta
+
+> ✅ **Resuelto en 0.21.0.** `docs/arquitectura.md` es el documento vivo de arquitectura; `comparar-con-vault.js` se fue con `docs/superpowers/`; `deshacer.js` es la herramienta de "deshaz lo último". Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 - **Un documento de arquitectura vivo** (una página): motor/datos, qué genera quién (`guardar.js` →
   `inicio`, pies, `pendientes`, `auditoría`, `Estado`), invariantes (un concepto = una nota; `progreso`

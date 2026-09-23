@@ -166,3 +166,18 @@ test('cli: --ver no toca nada; sin --ver deshace, sube si procede y no deja nada
   assert.match(lineas.join('\n'), /No se ha subido: no hay remoto configurado/);
   assert.equal(git(raiz, 'status', '--porcelain'), '');
 });
+
+test('sin identidad de git no empieza: el revert no se queda a medias', () => {
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
+  guardar({ raiz, mensaje: 'sesion(s02): prueba' });
+  git(raiz, 'config', '--unset', 'user.name');
+  git(raiz, 'config', '--unset', 'user.email');
+  git(raiz, 'config', 'user.useConfigOnly', 'true');
+  const r = deshacer({ raiz });
+  assert.deepEqual([r.deshecho, r.motivo], [false, 'sin-identidad']);
+  assert.equal(git(raiz, 'status', '--porcelain'), '', 'no ha tocado nada');
+  assert.equal(fs.readFileSync(en(raiz, 'estudio/mapa-del-curso.md'), 'utf8'), '# Mapa\n\nnuevo\n');
+  assert.equal(deshacer({ raiz, ver: true }).motivo, 'vista-previa', 'enseñar qué se desharía sí se puede');
+});
