@@ -48,7 +48,9 @@ anotado — eso solo lo ve un LLM de verdad trabajando en un curso de verdad. Pa
 que cambie cómo trabaja el profesor, no cómo funciona una herramienta), tiene que traer
 `pruebas/curso-ejemplo/resultado/RESUMEN.md` actualizado tras ejecutarla. El CI lo exige
 (`.github/cambio-grande.js`, solo en `pull_request`): un PR que toque esas rutas sin ese fichero no
-pasa. Si tu cambio es solo de una herramienta (`.kit/herramientas/`), no hace falta.
+pasa. Tampoco pasa con un resumen de `--sin-llm`, ni con uno **anterior** al último commit que toca esas rutas:
+si cambias una skill después de la prueba, hay que repetirla. Si tu cambio es solo de una herramienta
+(`.kit/herramientas/`), no hace falta: lo cubren los tests y `npm run prueba-actualizar`.
 
 **Cómo se lanza.** En tu Mac, con tu suscripción — **nunca en el CI** (gasta cuota de verdad):
 
