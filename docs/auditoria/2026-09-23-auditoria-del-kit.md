@@ -34,7 +34,7 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §5.3 Claude-ismos · calidad dependiente del modelo | 2 | ✅ 0.21.0 | Restos quitados en `/sesion`, `/examen` y `/repaso` ("Sin Artifact", "Crea una tarea por cada punto", "sin cargar ninguna skill de diseño"). La dependencia del modelo se cubre con P1 (revisor pedagógico) y con el modelo recomendado (§5.2) |
 | §6.1 `CONTRIBUTING.md` decía privado y sin protección | 1 | ✅ 0.20.0 | Reescrito: flujo con releases, "Las dos barreras de `main`" neutro respecto a la visibilidad, tabla de fuentes de verdad con `docs/auditoria/` en vez de `docs/superpowers/` |
 | §6.1 `README.md` y plantilla de PR decían CI con Mac | 1 | ✅ 0.20.0 | Corregidos (Linux y Windows), `npm test`, releases, lista completa de lo que se borra al crear un curso |
-| §6.1 `INSTALACION.md` habla de invitación al repo privado | — | ⏳ decisión | Sin tocar hasta decidir público/privado. Si queda público: quitar el paso 1.3-1.4 y la frase del 404 |
+| §6.1 `INSTALACION.md` habla de invitación al repo privado | — | ✅ 0.21.0 | Decisión de Roberto: el kit **se queda público** al menos hasta después de la 1.0.0. Quitados de `INSTALACION.md` (Mac y Windows, y el texto de arranque) los pasos de la invitación y la explicación del 404; `INSTALAR-AGENTE.md` paso 2 habla de "su cuenta"; el arreglo de `acceso-al-kit` en `diagnostico.js` habla de red y sesión. El repo de cada alumno sigue siendo privado siempre |
 | §6.1 La 1.0.0 | — | ⏳ decisión | Roberto: después de estos ajustes, no todavía. El mecanismo de release ya está |
 | §6.1 Fichero con datos de un curso real en `docs/superpowers/pruebas/` | 1 | ✅ 0.20.0 | `docs/superpowers/` borrado entero (specs, planes, pruebas, `comparar-con-vault.js`). Sigue en el historial de git |
 | §6.3 Documento de arquitectura vivo | 2 | ⏳ abierto | Más necesario ahora que `docs/superpowers/` no está |
@@ -322,7 +322,9 @@ no una nota.
 
 ## 6. Documentación
 
-### 6.1 🔴 → ✅ parcial · Lo que ya no es verdad
+### 6.1 🔴 → ✅ Lo que ya no es verdad
+
+> ✅ **Completado en 0.21.0.** El kit se queda público (decisión de Roberto, hasta después de la 1.0.0): la guía ya no pide invitación. La 1.0.0 se prepara pero no se lanza todavía.
 
 > ✅ **Arreglado en 0.20.0 (PR #30).** Corregidos `CONTRIBUTING.md` (flujo con releases, barreras de `main` sin depender de la visibilidad) y `README.md` y la plantilla de PR (CI sin Mac). `docs/superpowers/` borrado entero, incluido el fichero con datos del curso real. **Siguen tal cual** la invitación en `INSTALACION.md` y la 1.0.0: dependen de tu decisión sobre público/privado. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 

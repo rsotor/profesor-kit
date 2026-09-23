@@ -13,7 +13,7 @@ tu adaptador y, al final de la instalación, cómo proponer devolverlo al kit.
 | # | Objetivo | Cómo se comprueba | Ejemplo |
 |---|---|---|---|
 | 1 | Node LTS (24 o superior), Git y `gh` instalados | `node --version` · `git --version` · `gh --version` | Mac: `brew install node git gh` · Windows: `winget install OpenJS.NodeJS.LTS Git.Git GitHub.cli` |
-| 2 | Sesión de GitHub iniciada, **con la cuenta a la que se invitó al alumno** | `gh auth status` en verde y `gh api repos/rsotor/profesor-kit --jq .name` responde | ver abajo. **Nunca un token.** |
+| 2 | Sesión de GitHub iniciada **con la cuenta del alumno** | `gh auth status` en verde y `gh api repos/rsotor/profesor-kit --jq .name` responde | ver abajo. **Nunca un token.** |
 | 3 | El curso tiene nombre, y está creado desde la plantilla dentro de la carpeta de cursos del alumno | existe `<carpeta>/.kit/VERSION` | ver abajo |
 | 4 | Git sabe quién es el alumno | `git config user.name` y `git config user.email` devuelven algo | ver abajo |
 | 5 | Curso limpio y ajustes creados | existe `config/ajustes.json`; no existen `docs/` ni `.github/` | `node .kit/herramientas/preparar-curso.js --subir si --nombre "<nombre del curso>"` (o `--subir no`) |
@@ -77,10 +77,10 @@ como un comando normal, el alumno no ve el código hasta que el comando termina,
 **Plan B**, si no puedes lanzar procesos en segundo plano o algo falla: que abra **otra ventana de
 terminal**, pegue ahí ese mismo comando, siga lo que le diga y vuelva a decirte "hecho".
 
-**Si ya tenía sesión iniciada** (`gh auth status` en verde antes de empezar): comprueba que es la cuenta a
-la que se invitó, leyendo el kit (`gh api repos/rsotor/profesor-kit --jq .name`). Un **404** aquí casi
-nunca es "falta la invitación": suele ser **otra cuenta activa**. Enséñale las cuentas que ve
-`gh auth status` y, si procede, `gh auth switch --user <la suya>`.
+**Si ya tenía sesión iniciada** (`gh auth status` en verde antes de empezar): comprueba que es **su** cuenta
+(si tiene varias, puede estar activa otra: enséñale las que ve `gh auth status` y, si procede,
+`gh auth switch --user <la suya>`). Su copia del curso se crea en la cuenta activa. El kit es público: leerlo
+(`gh api repos/rsotor/profesor-kit --jq .name`) solo falla por red o por sesión.
 
 ## Paso 3 — nombre y creación del curso
 

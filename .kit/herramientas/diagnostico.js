@@ -32,7 +32,7 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   const sesion = hayGh && ejecutar('gh', ['auth', 'status'], raiz).ok;
   anota('sesion-github', sesion, 'Sesión de GitHub iniciada', 'Inicia sesión: gh auth login --web -h github.com -p https (ver la guía: en segundo plano o en otra ventana).');
   anota('acceso-al-kit', sesion && ejecutar('gh', ['api', `repos/${motor.repo}`, '--jq', '.name'], raiz).ok, 'Acceso al kit (para recibir mejoras)',
-    'La cuenta de GitHub activa no ve el kit: o es otra cuenta (gh auth switch) o falta aceptar la invitación.');
+    'No se puede leer el kit en GitHub: comprueba la conexión a internet y la sesión (gh auth status).');
 
   anota('identidad-git', g.esRepo(raiz) && g.tieneIdentidad(raiz), 'Git sabe quién eres', 'Configura user.name y user.email en este curso (paso 4 de la guía).');
 

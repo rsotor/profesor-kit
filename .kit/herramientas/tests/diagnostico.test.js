@@ -45,11 +45,12 @@ test('dice exactamente qué falta, con su arreglo, y no da por bueno lo que no p
   assert.ok(lista.filter(c => !c.ok).every(c => c.arreglo.length > 10));
 });
 
-test('sesión iniciada con otra cuenta: hay sesión pero no acceso al kit', () => {
+test('sesión iniciada pero el kit no responde (red): lo dice sin hablar de invitaciones', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado();
   const lista = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador({ 'gh api repos/rsotor/profesor-kit': { ok: false, salida: 'HTTP 404' } }) });
   assert.deepEqual(fallos(lista), ['acceso-al-kit']);
-  assert.match(lista.find(c => c.id === 'acceso-al-kit').arreglo, /otra cuenta/);
+  assert.match(lista.find(c => c.id === 'acceso-al-kit').arreglo, /conexión/);
+  assert.doesNotMatch(lista.find(c => c.id === 'acceso-al-kit').arreglo, /invitaci/);
 });
 
 test('si se sube a GitHub, exige remoto propio y que sea PRIVADO de verdad', () => {
