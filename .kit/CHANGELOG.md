@@ -39,8 +39,8 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - **Si usas otro asistente** (Codex u otro), tu profesor deja su configuración escrita en tu curso, donde nunca se
   pisa al actualizar, y con tu sí la propone al kit para que al siguiente alumno le cueste menos. Gemini deja de
   estar soportado: no se podía probar.
-- **Si ya tenías tu curso** con otro asistente que no es Claude: dile a tu profesor "adáptate a mi asistente" y
-  pasa lo que montó al principio al formato nuevo.
+- **Si ya tenías tu curso:** si usas otro asistente que no es Claude, tu profesor te ofrece pasar lo que montó
+  al principio al formato nuevo.
 - **Si ya tenías tu curso:** si alguna de esas dos notas tenía algo escrito que tu profesor no habría
   generado, se conserva tal cual, con el nombre **formulario-anterior** o **ejercicios/_index-anterior**; la
   próxima vez que guardes, tu profesor deja ahí la versión generada.
