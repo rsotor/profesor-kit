@@ -1,0 +1,10 @@
+{
+  "comando": "claude",
+  "skills": ".claude/skills",
+  "puente": "CLAUDE.md",
+  "permisos": {
+    "fichero": ".claude/settings.json",
+    "formato": "JSON: cada herramienta entra en permissions.allow como \"Bash(node .kit/herramientas/<nombre>.js *)\""
+  },
+  "probado": "macOS · Claude Code CLI · 2026-09-23"
+}

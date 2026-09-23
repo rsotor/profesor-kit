@@ -10,8 +10,9 @@ const NOMBRE_VALIDO = /^[a-z][a-z0-9-]{1,19}$/;
 // La ruta del curso se escribe dentro del lanzador entre comillas: estos caracteres la romperían o
 // ejecutarían lo que hubiera dentro (`$(…)`, `%VAR%`). Ninguna carpeta de cursos los necesita.
 const RUTA_PELIGROSA = /["$`%\r\n]/;
-// Cómo se llama en la terminal cada LLM. Si el de `ajustes.json` no está aquí, se usa tal cual.
-const COMANDO_LLM = { 'claude-code': 'claude', 'codex-cli': 'codex', 'gemini-cli': 'gemini' };
+// Respaldo si no hay adaptador (`v.leerAdaptador`) para el LLM del curso: cómo se llama en la terminal.
+// Si el de `ajustes.json` no está ni en el adaptador ni aquí, se usa tal cual.
+const COMANDO_LLM = { 'claude-code': 'claude', 'codex-cli': 'codex' };
 
 // Un atajo es un lanzador en ~/.local/bin, donde el instalador de Claude Code ya deja su comando: entra en la
 // carpeta del curso y abre el LLM. Si esa carpeta no está en el PATH (otro LLM instalado por npm, por ejemplo),
@@ -103,7 +104,8 @@ function crearAtajo({ raiz, nombre, actualizar = false, carpetaBin = path.join(o
   if (existeComando(nombre, { entorno, plataforma, salvo: fichero })) return { creado: false, motivo: 'comando-existente' };
 
   const ajustes = v.leerAjustes(raiz);
-  const comando = COMANDO_LLM[ajustes.llm] || ajustes.llm;
+  const adaptador = v.leerAdaptador(raiz, ajustes.llm);
+  const comando = (adaptador && adaptador.comando) || COMANDO_LLM[ajustes.llm] || ajustes.llm;
   fs.mkdirSync(carpetaBin, { recursive: true });
   fs.writeFileSync(fichero, contenido({ raiz, comando, plataforma }));
   if (plataforma !== 'win32') fs.chmodSync(fichero, 0o755);

@@ -41,6 +41,19 @@ test('usa el comando del LLM que diga ajustes.json', () => {
   assert.match(fs.readFileSync(path.join(carpetaBin, 'derecho'), 'utf8'), /exec codex "\$@"/);
 });
 
+test('el comando del adaptador (config/adaptador-llm.json o .kit/adaptadores/<llm>.json) gana al respaldo COMANDO_LLM', () => {
+  const carpetaBin = bin();
+  const raiz = cursoTemporal({ 'config/ajustes.json': JSON.stringify({ llm: 'un-llm-raro' }),
+    '.kit/adaptadores/un-llm-raro.json': JSON.stringify({ comando: 'ese-llm' }) });
+  crearAtajo({ raiz, nombre: 'geo', carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) });
+  assert.match(fs.readFileSync(path.join(carpetaBin, 'geo'), 'utf8'), /exec ese-llm "\$@"/);
+
+  const raiz2 = cursoTemporal({ 'config/ajustes.json': JSON.stringify({ llm: 'codex-cli' }),
+    'config/adaptador-llm.json': JSON.stringify({ comando: 'codex-beta' }) });
+  crearAtajo({ raiz: raiz2, nombre: 'quimica', carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) });
+  assert.match(fs.readFileSync(path.join(carpetaBin, 'quimica'), 'utf8'), /exec codex-beta "\$@"/);
+});
+
 test('es idempotente para el mismo curso, y otro curso no puede quedarse con el mismo atajo', () => {
   const carpetaBin = bin();
   const opciones = { nombre: 'historia', carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) };

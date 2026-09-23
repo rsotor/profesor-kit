@@ -2,7 +2,6 @@
 .claude/skills/
 .agents/skills/
 .codex/skills/
-.gemini/skills/
 
 # Secretos: nunca entran en el repo
 .env

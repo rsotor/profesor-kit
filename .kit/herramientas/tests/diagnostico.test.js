@@ -17,8 +17,12 @@ const ordenador = (respuestas = {}) => (comando, args) => {
   return r ? r[1] : { ok: true, salida: '' };
 };
 
+const ADAPTADOR_CLAUDE = { comando: 'claude', skills: '.claude/skills', puente: 'CLAUDE.md',
+  permisos: { fichero: '.claude/settings.json', formato: 'Bash(node .kit/herramientas/<nombre>.js *)' }, probado: 'macOS · 2026-09-23' };
+
 function cursoInstalado({ subir = false, llm = 'claude-code' } = {}) {
   const raiz = cursoTemporal({ ...MOTOR, 'config/ajustes.json': JSON.stringify({ subir_a_github: subir, llm }),
+    '.kit/adaptadores/claude-code.json': JSON.stringify(ADAPTADOR_CLAUDE),
     '.claude/skills/sesion/SKILL.md': 'x', 'estudio/.obsidian/workspace.json': '{}' });
   iniciarGit(raiz);
   const carpetaBin = temporal('kit-bin-');
@@ -77,12 +81,21 @@ test('atajo: que exista, que sea de ESTE curso y que su carpeta esté en el PATH
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: carpetaBin }, ejecutar: ordenador() })), ['atajo']);
 });
 
-test('otro LLM: no exige la carpeta de skills de Claude, sino su adaptación anotada', () => {
+test('otro LLM sin adaptador del kit: no se puede verificar, es aviso, no bloquea', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado({ llm: 'codex-cli' });
   fs.rmSync(path.join(raiz, '.claude'), { recursive: true });
-  // el lanzador se creó con el llm del curso, así que sigue siendo válido
+  const lista = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() });
+  const skills = lista.find(c => c.id === 'skills');
+  assert.deepEqual([skills.ok, skills.obligatorio], [false, false]);
+  assert.match(skills.arreglo, /No hay un adaptador para codex-cli.*ESTANDARES\.md.*config\/adaptador-llm\.json/s);
+});
+
+test('otro LLM con adaptador propio del curso (config/adaptador-llm.json): comprueba su carpeta de skills de verdad', () => {
+  const { raiz, carpetaBin, entorno } = cursoInstalado({ llm: 'codex-cli' });
+  fs.rmSync(path.join(raiz, '.claude'), { recursive: true });
+  escribir(raiz, { 'config/adaptador-llm.json': JSON.stringify({ comando: 'codex', skills: '.codex/skills', puente: null, permisos: null, probado: 'Windows · 2026-09-23' }) });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), ['skills']);
-  escribir(raiz, { 'config/adaptacion-llm.md': '# Codex\n' });
+  escribir(raiz, { '.codex/skills/sesion/SKILL.md': 'x' });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), []);
 });
 

@@ -14,7 +14,7 @@ Las reglas propias del dominio de `config/curso.md` se cumplen siempre.
 ## Motor y datos
 
 ```
-AGENTS.md · CLAUDE.md · GEMINI.md · .claude/settings.json · .kit/   ← MOTOR: no se edita; lo reemplaza /actualizar
+AGENTS.md · CLAUDE.md · .claude/settings.json · .kit/                ← MOTOR: no se edita; lo reemplaza /actualizar
 config/                                                              ← DATOS: cómo es el curso, el profesor y el alumno
 estudio/                                                             ← DATOS: todo el material del alumno
 README.md                                                            ← DATOS: la portada del curso en GitHub; la mantienes tú (Estado y la tabla de Obsidian)
@@ -244,18 +244,26 @@ temario, del centro) ni de este alumno.
 
 ## Si el alumno cambia de asistente
 
-El curso no está atado a un LLM: el atajo abre el que diga `config/ajustes.json` (`"llm"`). Para cambiar
-(por ejemplo de Claude Code a Codex):
+El curso no está atado a un LLM: el atajo abre el que diga `config/ajustes.json` (`"llm"`), y las
+herramientas (`instalar-skills.js`, `crear-atajo.js`, `diagnostico.js`) leen su **adaptador**:
+`.kit/adaptadores/<llm>.json` si el kit ya lo trae (hoy, solo `claude-code`), o
+`config/adaptador-llm.json` si lo escribiste tú para este curso, que manda sobre el del kit. Para
+cambiar (por ejemplo de Claude Code a Codex):
 
 1. Que instale el asistente nuevo con su guía oficial e inicie sesión en él.
-2. `config/ajustes.json` → `"llm": "<nombre>"` (`claude-code`, `codex-cli`, `gemini-cli`, u otro: si no es
-   uno de esos, se usa tal cual como comando).
-3. `node .kit/herramientas/instalar-skills.js --destino <carpeta donde ese asistente busca sus skills>` y el
-   resto de `.kit/ESTANDARES.md` (fichero puente, permisos), anotándolo en `config/adaptacion-llm.md`.
-4. `node .kit/herramientas/crear-atajo.js --nombre <su palabra>`: vuelve a escribir el atajo con el comando
-   nuevo. Nada más cambia: su material, su configuración y su historial son los mismos.
-5. `node .kit/herramientas/diagnostico.js` hasta "Todo listo".
+2. `config/ajustes.json` → `"llm": "<id>"`.
+3. Si no existe `.kit/adaptadores/<id>.json`, sigue `.kit/ESTANDARES.md`: escribe
+   `config/adaptador-llm.json` con la forma que pide (comando, skills, puente, permisos, probado).
+4. `node .kit/herramientas/instalar-skills.js` (toma el destino del adaptador) y el resto de
+   `.kit/ESTANDARES.md` (fichero puente, permisos).
+5. `node .kit/herramientas/crear-atajo.js --nombre <su palabra>`: vuelve a escribir el atajo con el
+   comando nuevo. Nada más cambia: su material, su configuración y su historial son los mismos.
+6. `node .kit/herramientas/diagnostico.js` hasta "Todo listo".
+7. Propón devolver el adaptador al kit (ver "Si no eres Claude Code"): así el siguiente alumno con este
+   mismo LLM no tiene que montarlo de cero.
 
 ## Si no eres Claude Code
 
-Lee `.kit/ESTANDARES.md`: dice qué necesita el kit de ti y cómo generar tus equivalentes.
+Lee `.kit/ESTANDARES.md`: dice qué necesita el kit de ti, cómo escribir tu adaptador
+(`config/adaptador-llm.json`, en este curso) y cómo proponerlo al kit para el siguiente alumno con tu
+mismo LLM — una issue `[adaptador] <id>`, con el sí del alumno delante, como en "Feedback al kit".

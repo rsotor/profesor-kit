@@ -96,6 +96,17 @@ test('un curso que ya tenía errores se actualiza igual (no empeora)', () => {
   assert.equal(actualizar({ raiz, origen }).actualizado, true);
 });
 
+test('.kit/adaptadores/ viaja con el motor; config/adaptador-llm.json (local, del alumno) no se toca', () => {
+  const v = require('../lib/vault');
+  const local = JSON.stringify({ comando: 'codex-beta', skills: '.mi-carpeta/skills' });
+  const { raiz, origen } = montar({ extraCurso: { 'config/adaptador-llm.json': local } });
+  assert.ok(fs.existsSync(path.join(origen, '.kit', 'adaptadores', 'claude-code.json')), 'el kit real trae el adaptador de Claude Code');
+  assert.equal(actualizar({ raiz, origen }).actualizado, true);
+  assert.equal(leer(raiz, '.kit/adaptadores/claude-code.json'), leer(origen, '.kit/adaptadores/claude-code.json'));
+  assert.equal(leer(raiz, 'config/adaptador-llm.json'), local);
+  assert.deepEqual(v.leerAdaptador(raiz, 'claude-code'), JSON.parse(local), 'el local sigue mandando tras actualizar');
+});
+
 test('rechaza un motor que pretende tocar datos del alumno', () => {
   for (const mala of ['estudio', 'estudio/conceptos', 'estudio/progreso.md', 'config/alumno.md', '../fuera']) {
     const { raiz, origen } = montar({ motorNuevo: { ficheros: ['AGENTS.md', mala] } });

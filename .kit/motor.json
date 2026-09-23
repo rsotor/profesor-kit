@@ -4,7 +4,6 @@
   "ficheros": [
     "AGENTS.md",
     "CLAUDE.md",
-    "GEMINI.md",
     ".gitignore",
     ".claude/settings.json",
     ".kit"

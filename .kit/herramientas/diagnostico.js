@@ -51,10 +51,15 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
     }
   }
 
-  if (ajustes.llm === 'claude-code') {
-    anota('skills', existe('.claude/skills/sesion/SKILL.md'), 'Skills instaladas', 'Ejecuta instalar-skills.js (paso 6).');
+  // Con adaptador (el del kit, o el que el curso escribió en config/adaptador-llm.json), se comprueba
+  // que las skills existen de verdad en su carpeta. Sin adaptador para este LLM, no se puede verificar:
+  // es un aviso, no un ✗, y dice cómo resolverlo.
+  const adaptador = v.leerAdaptador(raiz, ajustes.llm);
+  if (adaptador && adaptador.skills) {
+    anota('skills', existe(`${adaptador.skills}/sesion/SKILL.md`), 'Skills instaladas', 'Ejecuta instalar-skills.js (paso 6).');
   } else {
-    anota('skills', existe('config/adaptacion-llm.md'), `Skills adaptadas a ${ajustes.llm}`, 'Sigue .kit/ESTANDARES.md y anota lo que hagas en config/adaptacion-llm.md.');
+    anota('skills', false, `Skills de ${ajustes.llm}: no se puede verificar`,
+      `No hay un adaptador para ${ajustes.llm}. Sigue .kit/ESTANDARES.md: escribe config/adaptador-llm.json en este curso y, al terminar, propón devolverlo al kit con una issue.`, false);
   }
 
   const lanzador = ajustes.atajo ? path.join(carpetaBin, plataforma === 'win32' ? `${ajustes.atajo}.cmd` : ajustes.atajo) : null;

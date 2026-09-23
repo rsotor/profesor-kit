@@ -24,6 +24,16 @@ test('monta el cuerpo con el entorno delante y busca parecidas', () => {
   assert.deepEqual(p.parecidas.map(i => i.number), [11]);
 });
 
+test('un cuerpo con el JSON de un adaptador (rutas relativas) no se rechaza como dato personal', () => {
+  const raiz = cursoTemporal(MOTOR);
+  const adaptador = JSON.stringify({ comando: 'codex', skills: '.codex/skills', puente: null,
+    permisos: { fichero: '.codex/config.toml', formato: '[permitidos]\nnode .kit/herramientas/*.js' }, probado: 'Windows · 2026-09-23' }, null, 2);
+  const cuerpo = `**Esperado:** un adaptador para Codex.\n\n**Arreglo aplicado:**\n\n\`\`\`json\n${adaptador}\n\`\`\`\n`;
+  assert.deepEqual(revisar(cuerpo), []);
+  const p = prepararIssue({ raiz, titulo: '[adaptador] codex-cli', cuerpo, ejecutar: gh() });
+  assert.equal(p.ok, true);
+});
+
 test('se niega si lleva rutas personales, correos o secretos; y exige el título con corchetes', () => {
   const raiz = cursoTemporal(MOTOR);
   assert.deepEqual(revisar('falla en /Users/ana/cursos/x'), ['una ruta con tu nombre de usuario']);

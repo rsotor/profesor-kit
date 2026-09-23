@@ -7,7 +7,8 @@ Cada paso es un **objetivo** y **cómo comprobarlo**. El comando lo eliges tú s
 operativo que detectes; los que aparecen aquí son ejemplos. Las herramientas del kit se ejecutan
 igual en todos los sistemas, siempre con `/`: `node .kit/herramientas/<nombre>.js`.
 
-Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso 3).
+Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso 3): dice cómo escribir
+tu adaptador y, al final de la instalación, cómo proponer devolverlo al kit.
 
 | # | Objetivo | Cómo se comprueba | Ejemplo |
 |---|---|---|---|

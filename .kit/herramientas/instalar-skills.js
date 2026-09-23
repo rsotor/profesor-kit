@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
+const v = require('./lib/vault');
 
 const MANIFIESTO = '.instaladas-por-kit.json';
 
@@ -23,9 +24,17 @@ function instalarSkills({ raiz, destino = '.claude/skills' }) {
   return { instaladas: actuales, retiradas };
 }
 
+// Sin --destino, se toma del adaptador del LLM que diga config/ajustes.json (config/adaptador-llm.json
+// si el curso tiene uno propio, si no el de .kit/adaptadores/<llm>.json). Sin ninguno de los dos, el
+// destino por defecto de instalarSkills() (Claude Code).
 function cli(args, raiz) {
   const i = args.indexOf('--destino');
-  const r = instalarSkills({ raiz, destino: i >= 0 ? args[i + 1] : undefined });
+  let destino = i >= 0 ? args[i + 1] : undefined;
+  if (!destino) {
+    const adaptador = v.leerAdaptador(raiz, v.leerAjustes(raiz).llm);
+    if (adaptador && adaptador.skills) destino = adaptador.skills;
+  }
+  const r = instalarSkills({ raiz, destino });
   console.log(`Skills instaladas: ${r.instaladas.join(', ') || 'ninguna'}${r.retiradas.length ? ` · retiradas: ${r.retiradas.join(', ')}` : ''}`);
   return 0;
 }
