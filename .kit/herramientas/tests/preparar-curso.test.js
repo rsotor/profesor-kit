@@ -17,10 +17,11 @@ function conObsidian(raiz) {
 
 test('borra docs y .github, y crea ajustes con la version_datos del motor', () => {
   const raiz = conObsidian(cursoTemporal({ ...MOTOR, 'docs/spec.md': 'x', '.github/ISSUE_TEMPLATE/f.md': 'x', 'README.md': '# profesor-kit\n\ndel kit', 'CONTRIBUTING.md': 'del kit', '.githooks/pre-push': 'del kit', 'package.json': '{}',
+    'pruebas/curso-ejemplo/README.md': 'x',
     '.kit/plantillas/readme-del-curso.md': '# {{NOMBRE_DEL_CURSO}}\n\n{{DE_QUE_VA}}\n\n{{TEMARIO}}\n\n{{ESTADO}}\n\n`{{ATAJO}}`\n' }));
   fs.rmSync(path.join(raiz, 'config', 'ajustes.json'));
   const r = prepararCurso({ raiz, subir: false });
-  assert.deepEqual(r.borrado.sort(), ['.githooks', '.github', 'CONTRIBUTING.md', 'docs', 'package.json'].sort());
+  assert.deepEqual(r.borrado.sort(), ['.githooks', '.github', 'CONTRIBUTING.md', 'docs', 'package.json', 'pruebas'].sort());
   assert.equal(r.readmeCreado, true);
   const readme = fs.readFileSync(path.join(raiz, 'README.md'), 'utf8');
   assert.match(readme, /^# Mi curso/);

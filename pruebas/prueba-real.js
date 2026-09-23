@@ -1,0 +1,309 @@
+'use strict';
+// La prueba real del profesor: monta un curso de verdad a partir de pruebas/curso-ejemplo/ y le hace
+// pasar, con el LLM de verdad (claude, en modo no interactivo), por las cinco skills de trabajo en
+// orden, como lo haría un alumno de principio a fin. Se ejecuta en el Mac del mantenedor, con su
+// suscripción — nunca en el CI. Ver CONTRIBUTING.md, "Prueba real del profesor".
+//
+//   node pruebas/prueba-real.js                 # de verdad, con claude
+//   node pruebas/prueba-real.js --sin-llm       # solo monta y prueba el propio ejecutor, sin gastar cuota
+//   node pruebas/prueba-real.js --modelo opus   # otro modelo que el recomendado del adaptador
+//
+// Guarda el resultado en pruebas/curso-ejemplo/resultado/ (sustituye el anterior entero) y borra
+// siempre la carpeta temporal, también si algo falla.
+const fs = require('node:fs');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+const { borrar, montarCurso, comprobarJson } = require('./lib/montaje');
+const p = require('./lib/pasos');
+
+const RAIZ_KIT = path.resolve(__dirname, '..');
+const EJEMPLO = path.join(__dirname, 'curso-ejemplo');
+const RESULTADO = path.join(EJEMPLO, 'resultado');
+const LIMITE_POR_DEFECTO_MS = 20 * 60 * 1000;   // 20 min por llamada a claude: una clase densa puede tardar
+
+function leerJson(f) { return JSON.parse(fs.readFileSync(f, 'utf8')); }
+
+function comando(comando_, args) {
+  const r = spawnSync(comando_, args, { encoding: 'utf8' });
+  return { ok: !r.error && r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+}
+
+// El modelo recomendado del adaptador del LLM que use el curso montado (hoy, siempre claude-code):
+// `config/adaptador-llm.json` si el curso lo escribió, si no `.kit/adaptadores/<llm>.json`.
+function modeloRecomendado(destino) {
+  const ajustes = leerJson(path.join(destino, 'config', 'ajustes.json'));
+  const llm = ajustes.llm || 'claude-code';
+  for (const ruta of [path.join(destino, 'config', 'adaptador-llm.json'), path.join(destino, '.kit', 'adaptadores', `${llm}.json`)]) {
+    if (fs.existsSync(ruta)) { const a = leerJson(ruta); if (a.modelo_recomendado) return a.modelo_recomendado.modelo; }
+  }
+  return 'sonnet';
+}
+
+function invocarClaude({ prompt, modelo, cwd, limiteMs }) {
+  const inicio = Date.now();
+  const r = spawnSync('claude', ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none'], {
+    cwd, encoding: 'utf8', timeout: limiteMs, maxBuffer: 64 * 1024 * 1024,
+  });
+  const duracionMs = Date.now() - inicio;
+  const agotado = !!(r.error && r.error.code === 'ETIMEDOUT');
+  return {
+    ok: !agotado && r.status === 0, duracionMs, codigo: r.status, agotado,
+    salida: ((r.stdout || '') + (r.stderr || '')).trim(),
+  };
+}
+
+// Envuelve cada paso: si algo revienta (el LLM no encontró lo que esperaba, un fichero no existe…), se
+// anota como fallo de ESE paso y la prueba sigue con los demás. Nunca deja de escribir el resumen.
+function ejecutarPaso(pasos, nombre, fn) {
+  const inicio = Date.now();
+  try {
+    const r = fn() || {};
+    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: r.ok === null ? null : r.ok !== false, detalle: r.detalle || 'ok', salidaLlm: r.salidaLlm });
+  } catch (error) {
+    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: false, detalle: `error: ${error.message}` });
+  }
+}
+
+const PROMPT_COMUN = 'No me preguntes nada: si dudas, toma la opción más conservadora y déjala como TODO o FALTA INFO. Al terminar, guarda.';
+
+function promptSesion(clase) {
+  const ficheros = clase.ficheros.map(f => `estudio/inbox/${f}`).join(' y ');
+  return `He dejado los apuntes de la clase en ${ficheros}. Procésalos siguiendo la skill /sesion (son la misma clase: ${clase.tema}). ${PROMPT_COMUN}`;
+}
+
+function pasoSesion(ctx, clase) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const r = invocarClaude({ prompt: promptSesion(clase), modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs });
+  return { ok: r.ok, detalle: r.ok ? `claude terminó (código ${r.codigo})` : `claude falló (código ${r.codigo}${r.agotado ? ', tiempo agotado' : ''})`, salidaLlm: r.salida };
+}
+
+function pasoDudas(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const fmProfesor = fs.readFileSync(path.join(ctx.destino, 'config', 'profesor.md'), 'utf8');
+  const m = /marcador_dudas:\s*"?([^"\n]+)"?/.exec(fmProfesor);
+  const marca = (m ? m[1] : '??').trim();
+  const tocado = p.simularAlumnoTrasSesiones(ctx.destino, marca);
+  if (!tocado) return { ok: false, detalle: 'no hay ninguna nota de concepto ni de sesión (el paso 1 no dejó nada): no se puede simular al alumno' };
+  const antes = comprobarJson(ctx.destino);
+  const hayDudaPendienteAntes = antes.avisos.some(a => a.regla === 'duda-pendiente');
+  const hayPropiedadAntes = antes.avisos.some(a => a.regla === 'propiedad-no-estandar');
+  const r = invocarClaude({
+    prompt: `Tengo dudas: he dejado un par de comentarios con el marcador de dudas en mis notas (en ${tocado.concepto || 'un concepto'} y en ${tocado.sesion || 'una sesión'}), y he marcado una casilla "estudiada" a mi manera. Resuélvelas siguiendo la skill /dudas. ${PROMPT_COMUN}`,
+    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+  });
+  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const quedaAlguno = p.quedaMarcador(ctx.destino, marca);
+  const despues = comprobarJson(ctx.destino);
+  const sigueLaPropiedad = tocado.casillaNoEstandar && despues.avisos.some(a => a.regla === 'propiedad-no-estandar' && a.fichero === tocado.sesion);
+  const ok = !quedaAlguno && !sigueLaPropiedad;
+  return {
+    ok,
+    detalle: ok
+      ? `dudas resueltas antes: pendientes ${hayDudaPendienteAntes}/propiedad no estándar ${hayPropiedadAntes} → ahora sin marcadores ni propiedad no estándar`
+      : `sigue habiendo algo pendiente: marcador en ${quedaAlguno || 'ninguno'}, propiedad no estándar sin resolver: ${sigueLaPropiedad}`,
+    salidaLlm: r.salida,
+  };
+}
+
+function pasoEjercicio(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const slug = p.conceptoConFormula(ctx.destino);
+  if (!slug) return { ok: false, detalle: 'no se encontró ningún concepto con la sección "## La fórmula" rellena: no hay sobre qué pedir el ejercicio' };
+  const r = invocarClaude({
+    prompt: `Ponme un ejercicio del concepto ${slug}, siguiendo la skill /ejercicio. ${PROMPT_COMUN}`,
+    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+  });
+  return { ok: r.ok, detalle: r.ok ? `ejercicio pedido sobre "${slug}" (código ${r.codigo})` : `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+}
+
+function pasoExamenGenerar(ctx, examenModulo) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const r = invocarClaude({
+    prompt: `Hazme el examen del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /examen. ${PROMPT_COMUN}`,
+    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+  });
+  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const fichero = p.examenMasReciente(ctx.destino);
+  if (!fichero) return { ok: false, detalle: 'claude terminó pero no hay ningún examen en estudio/examenes/', salidaLlm: r.salida };
+  ctx.ficheroExamen = fichero;
+  return { ok: true, detalle: `examen escrito: ${path.relative(ctx.destino, fichero)}`, salidaLlm: r.salida };
+}
+
+function pasoExamenCorregir(ctx, examenModulo) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: se omite la corrección' };
+  const tabla = fs.readFileSync(path.join(ctx.datosCurso, 'alumno', 'respuestas-examen.md'), 'utf8');
+  const contadas = p.rellenarRespuestasExamen(ctx.ficheroExamen, tabla);
+  const progresoAntes = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
+  const r = invocarClaude({
+    prompt: `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
+    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+  });
+  if (!r.ok) return { ok: false, detalle: `claude falló al corregir (código ${r.codigo})`, salidaLlm: r.salida };
+  const texto = fs.readFileSync(ctx.ficheroExamen, 'utf8');
+  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(texto);
+  const nota = fm && /^nota:\s*([\d.,]+)\s*$/m.exec(fm[1]);
+  const historico = /## Histórico de intentos/.test(texto);
+  const progresoDespues = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
+  const progresoMovido = progresoAntes !== progresoDespues;
+  const ok = !!nota && historico && progresoMovido;
+  return {
+    ok,
+    detalle: `respuestas preparadas: ${JSON.stringify(contadas)} · nota: ${nota ? nota[1] : 'no encontrada'} · `
+      + `histórico de intentos: ${historico ? 'sí' : 'no'} · progreso.md movido: ${progresoMovido ? 'sí' : 'no'}`,
+    salidaLlm: r.salida,
+  };
+}
+
+function pasoRepaso(ctx, examenModulo) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const antes = new Set(p.repasosGenerados(ctx.destino));
+  const r = invocarClaude({
+    prompt: `Hazme un repaso visual del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /repaso. ${PROMPT_COMUN}`,
+    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+  });
+  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const despues = p.repasosGenerados(ctx.destino).filter(f => !antes.has(f));
+  return {
+    ok: despues.length > 0,
+    detalle: despues.length ? `repaso generado: ${despues.map(f => path.relative(ctx.destino, f)).join(', ')}` : 'claude terminó pero no hay ningún .html nuevo en estudio/repasos/',
+    salidaLlm: r.salida,
+  };
+}
+
+function contarNotas(destino, carpeta, ext) {
+  const dir = path.join(destino, 'estudio', carpeta);
+  if (!fs.existsSync(dir)) return 0;
+  let n = 0;
+  const recorrer = d => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const abs = path.join(d, e.name); if (e.isDirectory()) recorrer(abs); else if (ext.some(x => e.name.endsWith(x)) && !e.name.startsWith('_')) n++; } };
+  recorrer(dir);
+  return n;
+}
+
+function agruparPorRegla(lista) {
+  const grupos = new Map();
+  for (const item of lista) grupos.set(item.regla, [...(grupos.get(item.regla) || []), item]);
+  return [...grupos.entries()].sort((a, b) => b[1].length - a[1].length);
+}
+
+function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos }) {
+  const l = [];
+  l.push('# Resultado de la prueba real del profesor', '');
+  if (sinLlm) l.push('> **Modo `--sin-llm`: no se ha ejecutado ningún LLM real.** Solo se ha montado el curso y probado', '> el propio ejecutor. Ejecuta `npm run prueba-real` (sin ese flag) para una prueba de verdad.', '');
+  l.push(`- **Fecha:** ${fecha}`, `- **Versión del kit:** ${version}`, `- **Modelo:** ${modelo}`, '');
+
+  l.push('## Pasos', '', '| Paso | Resultado | Duración | Qué se comprobó |', '|---|---|---|---|');
+  for (const paso of pasos) {
+    const resultado = paso.ok === null ? '⏭️ omitido' : paso.ok ? '✅ ok' : '❌ fallo';
+    l.push(`| ${paso.paso} | ${resultado} | ${(paso.duracionMs / 1000).toFixed(1)} s | ${paso.detalle} |`);
+  }
+  l.push('');
+
+  l.push('## `comprobar.js`', '', `- **${informe.errores.length} error(es)** · **${informe.avisos.length} aviso(s)**`, '');
+  if (informe.errores.length) {
+    l.push('### Errores', '');
+    for (const [regla, items] of agruparPorRegla(informe.errores)) l.push(`- **${regla}** (${items.length}): ${items[0].fichero} — ${items[0].detalle}${items.length > 1 ? ` (+${items.length - 1} más)` : ''}`);
+    l.push('');
+  }
+  if (informe.avisos.length) {
+    l.push('### Avisos, por regla', '');
+    for (const [regla, items] of agruparPorRegla(informe.avisos)) l.push(`- **${regla}** (${items.length})`);
+    l.push('');
+    const pedagogicos = ['nota-larga', 'concepto-sin-ejemplo', 'sesion-incompleta', 'flashcards-fuera-de-rango', 'requiere-vacio', 'pregunta-doble'];
+    const deObsidian = informe.avisos.filter(a => a.regla === 'no-se-vera-bien');
+    const deLosPedagogicos = informe.avisos.filter(a => pedagogicos.includes(a.regla));
+    l.push(`Atención especial: **no-se-vera-bien** (${deObsidian.length}) y **pedagógicos** (${deLosPedagogicos.length}).`, '');
+  }
+
+  l.push('## Material generado', '',
+    `- Conceptos: **${conteos.conceptos}**`, `- Sesiones: **${conteos.sesiones}**`, `- Flashcards: **${conteos.flashcards}**`,
+    `- Ejercicios: **${conteos.ejercicios}**`, `- Exámenes: **${conteos.examenes}**`, `- Repasos: **${conteos.repasos}**`,
+    `- TODO: **${conteos.todo}** · FALTA INFO: **${conteos.faltaInfo}** · Dudas sin responder: **${conteos.dudaPendiente}**`, '');
+  return l.join('\n');
+}
+
+function copiarSinExtras(origen, destino) {
+  fs.mkdirSync(destino, { recursive: true });
+  fs.cpSync(origen, destino, {
+    recursive: true,
+    filter: src => {
+      const rel = path.relative(origen, src);
+      const primero = rel.split(path.sep)[0];
+      return primero !== '.obsidian' && primero !== 'inbox';
+    },
+  });
+}
+
+function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, datosCurso = EJEMPLO, resultadoDir = RESULTADO }) {
+  const clases = leerJson(path.join(datosCurso, 'clases.json'));
+  const nombre = leerJson(path.join(datosCurso, 'config', 'ajustes.json')).nombre_curso;
+  const { destino, motor } = montarCurso({ trabajo, datosCurso, nombre });
+  try {
+    const modelo = (modeloArg || modeloRecomendado(destino)).toLowerCase();
+    const ctx = { destino, sinLlm, modelo, limiteMs, datosCurso };
+    const pasos = [];
+
+    for (const clase of clases.clases) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+    ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));
+    ejecutarPaso(pasos, '/ejercicio', () => pasoEjercicio(ctx));
+    ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
+    ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
+    ejecutarPaso(pasos, '/repaso', () => pasoRepaso(ctx, clases.examen_modulo));
+
+    const informe = comprobarJson(destino);
+    const conteos = {
+      conceptos: contarNotas(destino, 'conceptos', ['.md']),
+      sesiones: contarNotas(destino, 'sesiones', ['.md']),
+      flashcards: contarNotas(destino, 'flashcards', ['.md']),
+      ejercicios: contarNotas(destino, 'ejercicios', ['.md', '.html']),
+      examenes: contarNotas(destino, 'examenes', ['.md']),
+      repasos: p.repasosGenerados(destino).length,
+      todo: informe.avisos.filter(a => a.regla === 'todo').length,
+      faltaInfo: informe.avisos.filter(a => a.regla === 'falta-info').length,
+      dudaPendiente: informe.avisos.filter(a => a.regla === 'duda-pendiente').length,
+    };
+
+    borrar(resultadoDir);
+    copiarSinExtras(path.join(destino, 'estudio'), path.join(resultadoDir, 'estudio'));
+    fs.mkdirSync(path.join(resultadoDir, 'config'), { recursive: true });
+    fs.copyFileSync(path.join(destino, 'config', 'alumno.md'), path.join(resultadoDir, 'config', 'alumno.md'));
+    const resumen = markdownResumen({
+      fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
+      modelo, sinLlm, pasos, informe, conteos,
+    });
+    fs.writeFileSync(path.join(resultadoDir, 'RESUMEN.md'), resumen);
+
+    return { pasos, informe, motor, resultadoDir };
+  } finally {
+    borrar(destino);
+  }
+}
+
+function cli(args) {
+  const valor = nombre => { const i = args.indexOf(nombre); return i >= 0 ? args[i + 1] : undefined; };
+  const sinLlm = args.includes('--sin-llm');
+  const modelo = valor('--modelo') || null;
+  const limiteMs = Number(valor('--limite-ms')) || LIMITE_POR_DEFECTO_MS;
+
+  if (!sinLlm) {
+    const disponible = comando('claude', ['--version']);
+    if (!disponible.ok) { console.error('No se encuentra `claude` (o falló al arrancar). Instálalo o usa --sin-llm.\n' + disponible.salida); return 1; }
+  }
+
+  const { pasos, informe } = ejecutar({ sinLlm, modelo, limiteMs });
+  console.log(`Resultado en ${path.relative(RAIZ_KIT, RESULTADO)}/RESUMEN.md`);
+  for (const paso of pasos) console.log(`  ${paso.ok === null ? '⏭️ ' : paso.ok ? '✅' : '❌'} ${paso.paso} — ${paso.detalle}`);
+  const fallo = pasos.some(x => x.ok === false) || informe.errores.length > 0;
+  return fallo ? 1 : 0;
+}
+
+if (require.main === module) {
+  try {
+    process.exit(cli(process.argv.slice(2)));
+  } catch (error) {
+    console.error(`prueba-real.js: fallo inesperado: ${error.stack || error.message}`);
+    process.exit(1);
+  }
+}
+
+module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla };

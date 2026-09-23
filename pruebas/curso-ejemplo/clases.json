@@ -1,0 +1,21 @@
+{
+  "_comentario": "Manifiesto que lee pruebas/prueba-real.js: el orden en el que se procesan las clases del inbox (paso 1, skill /sesion) y qué examen de módulo se pide en el paso 4. No es config/ del curso (eso lo lee el profesor); es solo para el ejecutor de la prueba real.",
+  "clases": [
+    {
+      "id": "01-01",
+      "ficheros": ["clase-01-el-dinero-y-sus-funciones.md"],
+      "tema": "El dinero y sus funciones"
+    },
+    {
+      "id": "01-02",
+      "ficheros": ["clase-02-presupuesto-personal.md", "clase-02-plantilla-presupuesto.md"],
+      "tema": "Presupuesto personal (con una hoja de cálculo de apoyo con una cifra que no cuadra: es a propósito, para probar la auditoría del material)"
+    },
+    {
+      "id": "02-01",
+      "ficheros": ["clase-03-interes-simple-y-compuesto.md"],
+      "tema": "Interés simple y compuesto"
+    }
+  ],
+  "examen_modulo": { "modulo": "1", "prefijo": "01", "titulo": "Módulo 1 · Fundamentos del dinero" }
+}

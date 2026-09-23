@@ -22,7 +22,12 @@ jobs:
           - { os: windows-latest, node: 24 }
     runs-on: ${{ matrix.os }}
     steps:
+      # fetch-depth 0 (con sus etiquetas): lo necesitan cambio-grande.js (comparar con la rama base) y
+      # prueba-actualizar.js (reconstruir una versión antigua del kit con `git archive v<versión>`).
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
@@ -40,6 +45,13 @@ jobs:
           --test-coverage-lines=80 --test-coverage-functions=80 --test-coverage-branches=80
           ".kit/herramientas/tests/*.test.js"
       - run: node .kit/herramientas/comprobar.js
+      # Sin LLM: solo mecánica de ficheros y git. Por eso, a diferencia de prueba-real.js, sí corre aquí.
+      - if: matrix.os == 'ubuntu-latest' && matrix.node == 24
+        run: npm run prueba-actualizar
+      # Recuerda la prueba real cuando el PR toca cómo trabaja el profesor (solo en pull_request: en un
+      # push a main ya no hay "rama base" con la que comparar).
+      - if: github.event_name == 'pull_request' && matrix.os == 'ubuntu-latest' && matrix.node == 24
+        run: node .github/cambio-grande.js
 
   # Un único check que resume toda la matriz: es el que se marca como obligatorio en la regla de main.
   tests-ok:

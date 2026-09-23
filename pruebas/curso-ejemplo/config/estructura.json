@@ -1,0 +1,9 @@
+{
+  "unidades": [
+    { "prefijo": "01", "carpeta": "modulo-01-fundamentos-del-dinero", "titulo": "Módulo 1 · Fundamentos del dinero" },
+    { "prefijo": "01-01", "carpeta": "modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones", "titulo": "1.1 El dinero y sus funciones" },
+    { "prefijo": "01-02", "carpeta": "modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal", "titulo": "1.2 Presupuesto personal" },
+    { "prefijo": "02", "carpeta": "modulo-02-ahorro-e-interes", "titulo": "Módulo 2 · Ahorro e interés" },
+    { "prefijo": "02-01", "carpeta": "modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto", "titulo": "2.1 Interés simple y compuesto" }
+  ]
+}

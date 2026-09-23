@@ -4,7 +4,12 @@
 // vive solo aquí, y `preparar-curso.js` borra este fichero (y `node_modules/`) al crear un curso.
 module.exports = [
   {
-    ignores: ['node_modules/**', 'pruebas-local/**', '.claude/worktrees/**', '.claude/skills/**', '.agents/skills/**', '.codex/skills/**'],
+    ignores: [
+      'node_modules/**', 'pruebas-local/**', '.claude/worktrees/**', '.claude/skills/**', '.agents/skills/**', '.codex/skills/**',
+      // Lo que haya aquí es material generado por la prueba real (ejercicios .html con JS embebido, por
+      // ejemplo): no es código del kit, y su calidad la juzga comprobar.js, no el linter.
+      'pruebas/curso-ejemplo/resultado/**',
+    ],
   },
   {
     files: ['**/*.js'],
