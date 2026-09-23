@@ -41,7 +41,7 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §7 Releases | 1 | ✅ 0.20.0 | Ver §2.2 |
 | §7 Curso de referencia en el CI | 2 | ⏳ abierto | Después de P1 |
 | §7 `.superpowers/sdd/` en el árbol de trabajo | — | ⏳ abierto | Ignorado por su propio `.gitignore`; sin decidir si se saca |
-| §8.1 P2 Más ficheros vivos generados | 2 | ✅ 0.21.0 | `guardar.js` genera ahora `estudio/formulario.md` (fórmulas por bloque) y `estudio/ejercicios/_index.md` (qué practica cada ejercicio, desde `ejercicio:` y `## Practícalo`); `mapa-del-curso.md` se queda solo para la cobertura del material, como ya decía la skill. Migración `004-…` conserva con otro nombre lo que un curso ya tuviera escrito a mano y no coincida con lo generado. Ver `lib/generados.js`, `tests/generados.test.js` |
+| §8.1 P2 Más ficheros vivos generados | 2 | ✅ 0.21.0 | `guardar.js` genera ahora `estudio/formulario.md` (fórmulas por bloque) y `estudio/ejercicios/_index.md` (qué practica cada ejercicio, desde `ejercicio:` y `## Practícalo`); `mapa-del-curso.md` se queda solo para la cobertura del material, como ya decía la skill. Migración `004-…` conserva con otro nombre lo que un curso ya tuviera escrito a mano y no coincida con lo generado. Ver `lib/generados.js`, `tests/generados.test.js` Las notas `-anterior` se quedan como están, sin paso de revisión: decisión de Roberto (hay pocos cursos afectados) |
 | §8 Resto de propuestas P1, P3-P8 y E1-E9 | 2 y 3 | ⏳ abierto | Siguiente: P1 (lint pedagógico) y P3 (calentamiento), bloque 2 |
 
 Alcance: seguridad · calidad del código y de los tests · multiplataforma · multi-LLM · documentación ·
@@ -187,7 +187,7 @@ de test que evita que la prosa y el código se separen, y aquí es lo más valio
 
 ### 3.2 🟡 Hallazgos
 
-Siete puntos: **6 arreglados ✅** y **1 abierto ⏳**. Cada uno dice el suyo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+Siete puntos: **los 7 arreglados ✅** (0.20.0 y 0.21.0). Cada uno dice el suyo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 - ✅ **Sin `package.json`.** No hay `engines` (el mínimo Node 22 solo lo sabe `diagnostico.js`), no hay
   `npm test`, no hay linter. Uno mínimo, sin dependencias, con `scripts.test` y `engines`, deja el proyecto
