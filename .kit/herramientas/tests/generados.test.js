@@ -29,7 +29,7 @@ test('markdownFormulario: agrupa por bloque, enlaza el concepto, y avisa si no h
   assert.match(md, /no lo edites/);
   assert.match(md, /## Bloque 2\n\n### \[\[beta\|Beta\]\]\n\n\$\$ x = y \$\$/);
   assert.equal(gen.markdownFormulario(cursoTemporal()), gen.markdownFormulario(cursoTemporal()));
-  assert.match(gen.markdownFormulario(cursoTemporal()), /Ninguna fórmula todavía\./);
+  assert.match(gen.markdownFormulario(cursoTemporal()), /no tiene fórmulas/, 'sin fórmulas, las definiciones');
 });
 
 test('markdownFormulario: sin bloques: va a "Sin bloque"', () => {
@@ -84,4 +84,26 @@ test('guardar regenera formulario.md y ejercicios/_index.md, creando la carpeta 
   assert.match(fs.readFileSync(path.join(raiz, 'estudio', 'formulario.md'), 'utf8'), /Bloque 2/);
   const indiceEjercicios = fs.readFileSync(path.join(raiz, 'estudio', 'ejercicios', '_index.md'), 'utf8');
   assert.match(indiceEjercicios, /no se encuentra el fichero/);   // el .html ya no está: se avisa, no revienta
+});
+
+test('markdownFormulario: un curso sin fórmulas reúne la definición de cada concepto, de su nota o del índice', () => {
+  const raiz = cursoTemporal({
+    'estudio/conceptos/_index.md': '# Índice\n\n## Conceptos\n\n```\nalfa | La primera letra | B1 | 1 | alias: a\nromanico | Estilo del siglo XI | 1 | 2 | alias:\n```\n',
+    'estudio/conceptos/romanico.md': '---\ntipo: concepto\nbloques: [1]\nalias: []\n---\n# Románico\n\n> **En una frase:** El arte de los monasterios.\n',
+  });
+  const md = gen.markdownFormulario(raiz);
+  assert.match(md, /Tu curso no tiene fórmulas/);
+  assert.match(md, /## Bloque 1\n\n- \[\[romanico\|Románico\]\]: El arte de los monasterios\./, 'la de la nota manda');
+  assert.match(md, /- \[\[alfa\|Alfa\]\]: La primera letra/, 'si la nota no la trae, la del índice');
+  assert.doesNotMatch(md, /### /);
+});
+
+test('markdownFormulario: en cuanto hay una fórmula, el formulario es de fórmulas', () => {
+  const raiz = cursoTemporal({
+    'estudio/conceptos/beta.md': '---\ntipo: concepto\nbloques: [1]\nalias: []\n---\n# Beta\n\n> **En una frase:** La segunda.\n\n## La fórmula\n\n$$ b = 2 $$\n',
+  });
+  const md = gen.markdownFormulario(raiz);
+  assert.match(md, /Reúne la sección "La fórmula"/);
+  assert.match(md, /### \[\[beta\|Beta\]\]\n\n\$\$ b = 2 \$\$/);
+  assert.doesNotMatch(md, /La segunda/);
 });

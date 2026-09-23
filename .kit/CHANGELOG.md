@@ -18,6 +18,8 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
   **inicio** y **pendientes**. El formulario reúne la fórmula de cada concepto que la tiene, por bloque, con
   enlace a la nota; el índice de ejercicios reúne qué practica cada uno y qué se descubre fallándolo. Ya no
   hace falta mantenerlos a mano, y no pueden quedarse desactualizados.
+- **Si tu curso no tiene fórmulas** (historia, derecho…), el formulario no se queda vacío: reúne la definición
+  en una frase de cada concepto, por bloque, que es lo que ahí hay que saberse literal.
 - **Si escribes algo a tu manera en tus notas** (un *sí* en vez de marcar la casilla, una nota como *7/10*),
   tu profesor lo ve, te pregunta qué querías decir la primera vez y lo deja bien. Se apunta cómo escribes, así
   que no te vuelve a preguntar lo mismo; y si es una forma natural de escribirlo, avisa al kit para que la

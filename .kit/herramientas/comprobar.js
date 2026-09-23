@@ -136,9 +136,11 @@ function comprobarPatrones(raiz, notas, informe) {
 }
 
 function comprobarHuerfanos(raiz, notas, informe) {
-  const textos = notas.filter(n => n !== 'conceptos/_index.md').map(n => [n, leer(raiz, n)]);
+  // Los índices generados enlazan a todos (o casi): que un concepto salga en ellos no dice que alguien lo use.
+  const indices = new Set(['conceptos/_index.md', 'formulario.md', 'ejercicios/_index.md', 'progreso.md']);
+  const textos = notas.filter(n => !indices.has(n)).map(n => [n, leer(raiz, n)]);
   for (const slug of v.listarConceptos(raiz)) {
-    const enlazado = textos.some(([n, t]) => n !== `conceptos/${slug}.md` && n !== 'progreso.md'
+    const enlazado = textos.some(([n, t]) => n !== `conceptos/${slug}.md`
       && (t.includes(`[[${slug}]]`) || t.includes(`[[${slug}|`) || t.includes(`[[${slug}#`)));
     if (!enlazado) informe.avisos.push({ regla: 'huerfano', fichero: `conceptos/${slug}.md`, detalle: 'ninguna sesión ni concepto lo enlaza' });
   }

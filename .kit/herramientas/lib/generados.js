@@ -97,17 +97,46 @@ function formulas(raiz) {
   }
   return lista;
 }
-// estudio/formulario.md: todas las fórmulas del curso, agrupadas por bloque, con enlace a cada concepto.
+// La definición de una línea de cada concepto: la de su nota (`> **En una frase:**`) o, si no la tiene, la de
+// su línea en conceptos/_index.md, que siempre la lleva.
+function definiciones(raiz) {
+  const delIndice = new Map();
+  const ficheroIndice = path.join(v.baseAlumno(raiz), 'conceptos', '_index.md');
+  if (fs.existsSync(ficheroIndice)) {
+    for (const linea of fs.readFileSync(ficheroIndice, 'utf8').split(/\r?\n/)) {
+      const m = /^([a-z0-9][a-z0-9-]*) *\| *([^|]+?) *\|/.exec(linea);
+      if (m) delIndice.set(m[1], m[2]);
+    }
+  }
+  const lista = [];
+  for (const slug of v.listarConceptos(raiz)) {
+    const texto = leer(raiz, `conceptos/${slug}.md`);
+    const enNota = (/^>\s*\*\*En una frase:\*\*\s*(.+)$/m.exec(texto) || [])[1];
+    const cuerpo = (enNota && !/^<.*>$/.test(enNota.trim()) ? enNota.trim() : delIndice.get(slug)) || '';
+    if (!cuerpo) continue;
+    const fm = v.leerFrontmatter(texto) || {};
+    const bloque = Array.isArray(fm.bloques) && fm.bloques.length ? String(fm.bloques[0]) : null;
+    lista.push({ slug, bloque, titulo: indice.tituloDe(texto, slug), cuerpo });
+  }
+  return lista;
+}
+
+// estudio/formulario.md: todas las fórmulas del curso, agrupadas por bloque, con enlace a cada concepto. Un curso
+// sin ninguna fórmula (historia, derecho…) no se queda con la hoja vacía: reúne la definición de cada concepto,
+// que es lo que ahí hay que saberse literal.
 function markdownFormulario(raiz) {
-  const lista = formulas(raiz);
-  const lineas = ['# Formulario', '', '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Reúne la sección "La fórmula" de cada',
-    '> concepto que la tiene, agrupadas por bloque, para repasar antes del examen.', ''];
-  if (!lista.length) { lineas.push('Ninguna fórmula todavía.', ''); return lineas.join('\n'); }
+  const conFormulas = formulas(raiz);
+  const lista = conFormulas.length ? conFormulas : definiciones(raiz);
+  const lineas = ['# Formulario', '', conFormulas.length
+    ? '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Reúne la sección "La fórmula" de cada\n> concepto que la tiene, agrupadas por bloque, para repasar antes del examen.'
+    : '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Tu curso no tiene fórmulas: aquí está la\n> definición en una frase de cada concepto, por bloque, para repasar lo que hay que saberse literal.', ''];
+  if (!lista.length) { lineas.push('Nada todavía.', ''); return lineas.join('\n'); }
   const porBloque = new Map();
   for (const f of lista) { const k = f.bloque ? `Bloque ${f.bloque}` : 'Sin bloque'; if (!porBloque.has(k)) porBloque.set(k, []); porBloque.get(k).push(f); }
   for (const [bloque, items] of [...porBloque.entries()].sort()) {
     lineas.push(`## ${bloque}`, '');
-    for (const f of items) lineas.push(`### ${enlaceConcepto(f.slug, f.titulo)}`, '', f.cuerpo, '');
+    if (conFormulas.length) for (const f of items) lineas.push(`### ${enlaceConcepto(f.slug, f.titulo)}`, '', f.cuerpo, '');
+    else { for (const f of items) lineas.push(`- ${enlaceConcepto(f.slug, f.titulo)}: ${f.cuerpo}`); lineas.push(''); }
   }
   return lineas.join('\n');
 }
@@ -211,5 +240,5 @@ function markdownPendientes(raiz) {
 
 module.exports = {
   escaparRegex, pendientes, markdownPendientes, auditorias, markdownAuditoria, estadoDelCurso, actualizarEstadoReadme,
-  formulas, markdownFormulario, ejercicios, markdownEjercicios,
+  formulas, definiciones, markdownFormulario, ejercicios, markdownEjercicios,
 };
