@@ -112,15 +112,7 @@ ves tú."** Recomienda que sí.
 
 El repo del alumno es **privado siempre**: dentro hay material con derechos de autor y su perfil.
 
-## Paso 4 — identidad de git
-
-Si falta, configúrala **solo en este repo** (sin `--global`), con los datos de su cuenta de GitHub:
-
-    gh api user --jq '.login, .id'
-    git config user.name "<login>"
-    git config user.email "<id>+<login>@users.noreply.github.com"
-
-## Paso 3 (continuación) — dile dónde queda su copia
+### Dile dónde queda su copia
 
 Si eligió copia en GitHub, **en cuanto crees el repo** comprueba que es privado
 (`gh repo view --json visibility,url`) y díselo con el enlace:
@@ -129,6 +121,23 @@ Si eligió copia en GitHub, **en cuanto crees el repo** comprueba que es privado
 > quisieras cambiarlo, se hace en esa página, en *Settings → General → Danger Zone → Change repository
 > visibility*. No te lo recomiendo: dentro hay material del curso, que tiene derechos de autor, y lo que
 > tu profesor sabe de cómo aprendes."
+
+## Paso 4 — identidad de git
+
+Si falta, configúrala **solo en este repo** (sin `--global`), con los datos de su cuenta de GitHub:
+
+    gh api user --jq '.login, .id'
+    git config user.name "<login>"
+    git config user.email "<id>+<login>@users.noreply.github.com"
+
+## Pasos 5 y 6 — preparar el curso e instalar las skills
+
+    node .kit/herramientas/preparar-curso.js --subir si --nombre "<nombre del curso>"    (o --subir no)
+    node .kit/herramientas/instalar-skills.js
+
+`preparar-curso.js` borra lo que solo es del repo del kit (`docs/`, `.github/`…), crea `config/ajustes.json` y
+deja Obsidian configurado. `instalar-skills.js` copia las skills a la carpeta de tu asistente según su adaptador
+(`.kit/adaptadores/`); si tu asistente no tiene adaptador, sigue antes `.kit/ESTANDARES.md`.
 
 ## Paso 7 — el atajo
 
