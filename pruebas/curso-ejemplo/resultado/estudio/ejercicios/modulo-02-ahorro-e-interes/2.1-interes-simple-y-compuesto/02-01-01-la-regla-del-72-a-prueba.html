@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La regla del 72 a prueba · 02-01-01-interes-simple-y-compuesto</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --fg: #1f1c17;
+    --card: #ffffff;
+    --border: #dcd6c9;
+    --accent: #8a5a2b;
+    --ok: #2e6b3e;
+    --bad: #9c2b2b;
+    --muted: #6b6558;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191714;
+      --fg: #ece7dc;
+      --card: #232019;
+      --border: #3a352c;
+      --accent: #d99a5b;
+      --ok: #6fbf7f;
+      --bad: #e07a7a;
+      --muted: #a49c8a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 1.5rem 1rem 4rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  main { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.3rem; margin-bottom: 0.2rem; }
+  .subtitulo { color: var(--muted); margin-top: 0; margin-bottom: 1.5rem; font-size: 0.95rem; }
+  section { margin-bottom: 1.75rem; }
+  h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--accent); margin-bottom: 0.6rem; }
+  .caja {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+  }
+  .opciones { display: flex; flex-direction: column; gap: 0.4rem; margin: 1rem 0; }
+  label.opcion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+  }
+  label.opcion:hover { border-color: var(--accent); }
+  button {
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+  button.secundario { background: transparent; color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; margin-top: 0.6rem; font-size: 0.9rem; }
+  th, td { text-align: right; padding: 0.3rem 0.4rem; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  .explicacion {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.95rem;
+  }
+  .explicacion.vacia { color: var(--muted); font-style: italic; }
+  .veredicto { font-weight: 600; }
+  .veredicto.correcto { color: var(--ok); }
+  .veredicto.incorrecto { color: var(--bad); }
+</style>
+</head>
+<body>
+<main>
+  <h1>La regla del 72 a prueba</h1>
+  <p class="subtitulo">Ejercicio de <a href="../../../conceptos/regla-del-72.md">la regla del 72</a> ·
+  sesión 02-01-01-interes-simple-y-compuesto</p>
+
+  <section>
+    <h2>Condiciones</h2>
+    <div class="caja">
+      <p style="margin:0">Un tipo de interés anual, a interés compuesto. La regla del 72 (72 ÷ tipo)
+      da una cifra rápida de cuántos años tarda un capital en doblarse.</p>
+      <p style="margin:0.6rem 0 0"><strong id="tipoMostrado">—</strong> anual</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reto</h2>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:-0.4rem;">Antes de calcular el resultado
+    exacto: comparado con la aproximación de la regla del 72, ¿el tiempo real en doblarse será...?</p>
+    <div class="opciones">
+      <label class="opcion"><input type="radio" name="respuesta" value="mas"> Más que la aproximación (tarda más en doblarse)</label>
+      <label class="opcion"><input type="radio" name="respuesta" value="menos"> Menos que la aproximación (tarda menos en doblarse)</label>
+      <label class="opcion"><input type="radio" name="respuesta" value="igual"> Prácticamente lo mismo</label>
+    </div>
+    <button id="comprobar">Comprobar</button>
+    <button id="otra" class="secundario" type="button">Otra ronda</button>
+  </section>
+
+  <section>
+    <h2>Explicación</h2>
+    <div class="caja">
+      <p id="explicacion" class="explicacion vacia">Elige una opción y pulsa "Comprobar" para ver el
+      resultado exacto.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+function aleatorio(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+let tipoActual = 6;
+
+function nuevaRonda() {
+  tipoActual = Math.round(aleatorio(1, 30) * 10) / 10;
+  document.getElementById("tipoMostrado").textContent = tipoActual.toFixed(1) + "%";
+  document.querySelectorAll('input[name="respuesta"]').forEach(r => r.checked = false);
+  const explicacion = document.getElementById("explicacion");
+  explicacion.classList.add("vacia");
+  explicacion.textContent = 'Elige una opción y pulsa "Comprobar" para ver el resultado exacto.';
+}
+
+document.getElementById("comprobar").addEventListener("click", () => {
+  const elegido = document.querySelector('input[name="respuesta"]:checked');
+  const explicacion = document.getElementById("explicacion");
+  if (!elegido) {
+    explicacion.classList.add("vacia");
+    explicacion.textContent = "Elige primero una opción.";
+    return;
+  }
+  const i = tipoActual / 100;
+  const aproximado = 72 / tipoActual;
+  const exacto = Math.log(2) / Math.log(1 + i);
+  const diferencia = exacto - aproximado;
+
+  let respuestaCorrecta;
+  if (Math.abs(diferencia) < 0.05) respuestaCorrecta = "igual";
+  else respuestaCorrecta = diferencia > 0 ? "mas" : "menos";
+
+  const correcto = elegido.value === respuestaCorrecta;
+  explicacion.classList.remove("vacia");
+  explicacion.innerHTML = `<span class="veredicto ${correcto ? "correcto" : "incorrecto"}">${correcto ? "Correcto." : "No del todo."}</span>
+    <table>
+      <tr><th>Regla del 72</th><th>Resultado exacto</th></tr>
+      <tr><td>${aproximado.toFixed(2)} años</td><td>${exacto.toFixed(2)} años</td></tr>
+    </table>
+    <p style="margin-bottom:0">${
+      respuestaCorrecta === "igual"
+        ? `Al ${tipoActual.toFixed(1)}% anual, la aproximación y el resultado exacto casi coinciden: es un tipo cercano al 8% anual, donde la regla del 72 es más precisa.`
+        : respuestaCorrecta === "mas"
+        ? `Al ${tipoActual.toFixed(1)}% anual (por debajo del 8% aproximadamente), la regla del 72 se queda corta: el capital tarda más en doblarse de lo que decía la aproximación.`
+        : `Al ${tipoActual.toFixed(1)}% anual (por encima del 8% aproximadamente), la regla del 72 se pasa: el capital dobla antes de lo que decía la aproximación.`
+    } No se desvía siempre en el mismo sentido: depende de lo lejos que esté el tipo del entorno del 8%
+    anual, donde la aproximación funciona mejor.</p>`;
+});
+
+document.getElementById("otra").addEventListener("click", nuevaRonda);
+
+nuevaRonda();
+</script>
+</body>
+</html>

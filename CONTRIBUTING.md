@@ -73,8 +73,9 @@ para el tiempo máximo por llamada a `claude` (20 minutos por defecto). `--sin-l
 prueba el propio ejecutor sin llamar a `claude`: es lo que corre en los tests del repo (nunca cuesta
 cuota), y lo único que **tú** deberías ejecutar salvo que quieras de verdad una prueba real.
 
-**Cuánto tarda y cuánto gasta.** TBD — depende del modelo y de cuánto material salga; se irá anotando
-aquí según se vaya usando.
+**Cuánto tarda y cuánto gasta.** Primera ejecución (2026-09-23, kit 0.21.0, Sonnet): **unos 49 minutos** en total.
+Cada clase, entre 10 y 12 minutos; dudas, ejercicio, examen y repaso, entre 1,5 y 5 minutos cada uno. Son unas
+ocho sesiones seguidas del asistente con tu suscripción: lánzala cuando no vayas a necesitar la cuota.
 
 Aparte, `npm run prueba-actualizar` comprueba que un curso que se quedó en una versión antigua del kit
 (la que anota `pruebas/curso-ejemplo/resultado/RESUMEN.md`) se actualiza sin perder nada a la copia de

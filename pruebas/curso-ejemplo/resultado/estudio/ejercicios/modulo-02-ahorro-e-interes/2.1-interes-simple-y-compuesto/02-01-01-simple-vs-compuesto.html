@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple o compuesto: ¿cuánto se dispara la diferencia? · 02-01-01-interes-simple-y-compuesto</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --fg: #1f1c17;
+    --card: #ffffff;
+    --border: #dcd6c9;
+    --accent: #8a5a2b;
+    --ok: #2e6b3e;
+    --bad: #9c2b2b;
+    --muted: #6b6558;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191714;
+      --fg: #ece7dc;
+      --card: #232019;
+      --border: #3a352c;
+      --accent: #d99a5b;
+      --ok: #6fbf7f;
+      --bad: #e07a7a;
+      --muted: #a49c8a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 1.5rem 1rem 4rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  main { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.3rem; margin-bottom: 0.2rem; }
+  .subtitulo { color: var(--muted); margin-top: 0; margin-bottom: 1.5rem; font-size: 0.95rem; }
+  section { margin-bottom: 1.75rem; }
+  h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--accent); margin-bottom: 0.6rem; }
+  .caja {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+  }
+  .campo { display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.7rem; }
+  .campo label { font-size: 0.85rem; color: var(--muted); }
+  .campo input {
+    font-size: 1rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg);
+    width: 100%;
+    max-width: 220px;
+  }
+  .opciones { display: flex; flex-direction: column; gap: 0.4rem; margin: 1rem 0; }
+  label.opcion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+  }
+  label.opcion:hover { border-color: var(--accent); }
+  button {
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+  button.secundario { background: transparent; color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; margin-top: 0.6rem; font-size: 0.9rem; }
+  th, td { text-align: right; padding: 0.3rem 0.4rem; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  .explicacion {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.95rem;
+  }
+  .explicacion.vacia { color: var(--muted); font-style: italic; }
+  .veredicto { font-weight: 600; }
+  .veredicto.correcto { color: var(--ok); }
+  .veredicto.incorrecto { color: var(--bad); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Simple o compuesto: ¿cuánto se dispara la diferencia?</h1>
+  <p class="subtitulo">Ejercicio de <a href="../../../conceptos/interes-simple.md">interés simple</a> y
+  <a href="../../../conceptos/interes-compuesto.md">interés compuesto</a> · sesión
+  02-01-01-interes-simple-y-compuesto</p>
+
+  <section>
+    <h2>Condiciones</h2>
+    <div class="caja">
+      <p style="margin:0 0 0.8rem">Un capital, invertido al mismo tipo de interés anual, durante dos
+      horizontes: 3 años (corto plazo) y 25 años (largo plazo, tipo "ahorro para la jubilación").
+      Puedes cambiar las cifras:</p>
+      <div class="campo">
+        <label for="capital">Capital inicial (€)</label>
+        <input type="number" id="capital" min="100" max="20000" step="1">
+      </div>
+      <div class="campo">
+        <label for="tipo">Tipo de interés anual (%)</label>
+        <input type="number" id="tipo" min="2" max="15" step="0.1">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reto</h2>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:-0.4rem;">Antes de calcular: la diferencia
+    en euros entre interés compuesto y simple, a 25 años, comparada con la diferencia a 3 años... ¿cuántas
+    veces mayor crees que es?</p>
+    <div class="opciones">
+      <label class="opcion"><input type="radio" name="respuesta" value="menos-10"> Menos de 10 veces mayor</label>
+      <label class="opcion"><input type="radio" name="respuesta" value="entre-10-50"> Entre 10 y 50 veces mayor</label>
+      <label class="opcion"><input type="radio" name="respuesta" value="mas-50"> Más de 50 veces mayor</label>
+    </div>
+    <button id="comprobar">Comprobar</button>
+    <button id="otra" class="secundario" type="button">Otra ronda</button>
+  </section>
+
+  <section>
+    <h2>Explicación</h2>
+    <div class="caja">
+      <p id="explicacion" class="explicacion vacia">Elige una opción y pulsa "Comprobar" para ver la
+      diferencia real a 3 y a 25 años.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+function aleatorio(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function cfSimple(C, i, t) { return C * (1 + i * t); }
+function cfCompuesto(C, i, t) { return C * Math.pow(1 + i, t); }
+
+function nuevaRonda() {
+  const capital = Math.round(aleatorio(500, 5000));
+  const tipo = Math.round(aleatorio(2, 15) * 10) / 10;
+  document.getElementById("capital").value = capital;
+  document.getElementById("tipo").value = tipo;
+  document.querySelectorAll('input[name="respuesta"]').forEach(r => r.checked = false);
+  const explicacion = document.getElementById("explicacion");
+  explicacion.classList.add("vacia");
+  explicacion.textContent = 'Elige una opción y pulsa "Comprobar" para ver la diferencia real a 3 y a 25 años.';
+}
+
+document.getElementById("comprobar").addEventListener("click", () => {
+  const elegido = document.querySelector('input[name="respuesta"]:checked');
+  const explicacion = document.getElementById("explicacion");
+  if (!elegido) {
+    explicacion.classList.add("vacia");
+    explicacion.textContent = "Elige primero una opción.";
+    return;
+  }
+  const capital = Number(document.getElementById("capital").value);
+  const tipoPct = Number(document.getElementById("tipo").value);
+  const i = tipoPct / 100;
+
+  const simple3 = cfSimple(capital, i, 3);
+  const compuesto3 = cfCompuesto(capital, i, 3);
+  const gap3 = compuesto3 - simple3;
+
+  const simple25 = cfSimple(capital, i, 25);
+  const compuesto25 = cfCompuesto(capital, i, 25);
+  const gap25 = compuesto25 - simple25;
+
+  const ratio = gap25 / gap3;
+
+  let respuestaCorrecta;
+  if (ratio < 10) respuestaCorrecta = "menos-10";
+  else if (ratio < 50) respuestaCorrecta = "entre-10-50";
+  else respuestaCorrecta = "mas-50";
+
+  const correcto = elegido.value === respuestaCorrecta;
+  explicacion.classList.remove("vacia");
+  explicacion.innerHTML = `<span class="veredicto ${correcto ? "correcto" : "incorrecto"}">${correcto ? "Correcto." : "No del todo."}</span>
+    <table>
+      <tr><th></th><th>Simple</th><th>Compuesto</th><th>Diferencia</th></tr>
+      <tr><td>A 3 años</td><td>${simple3.toFixed(2)} €</td><td>${compuesto3.toFixed(2)} €</td><td>${gap3.toFixed(2)} €</td></tr>
+      <tr><td>A 25 años</td><td>${simple25.toFixed(2)} €</td><td>${compuesto25.toFixed(2)} €</td><td>${gap25.toFixed(2)} €</td></tr>
+    </table>
+    <p style="margin-bottom:0">La diferencia a 25 años es ${ratio.toFixed(0)} veces la diferencia a 3 años.
+    Con el mismo tipo de interés, el capital inicial y los años son los mismos en las dos columnas de
+    "Compuesto" que en las de "Simple" — la única diferencia es que el compuesto reinvierte lo ganado.
+    Al principio (3 años) eso apenas se nota; a 25 años, se ha comido la escala.</p>`;
+});
+
+document.getElementById("otra").addEventListener("click", nuevaRonda);
+
+nuevaRonda();
+</script>
+</body>
+</html>

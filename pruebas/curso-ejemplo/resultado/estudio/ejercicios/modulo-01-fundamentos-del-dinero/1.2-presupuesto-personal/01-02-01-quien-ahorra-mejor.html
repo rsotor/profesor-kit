@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Quién ahorra mejor? · 01-02-01-presupuesto-personal</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --fg: #1f1c17;
+    --card: #ffffff;
+    --border: #dcd6c9;
+    --accent: #8a5a2b;
+    --ok: #2e6b3e;
+    --bad: #9c2b2b;
+    --muted: #6b6558;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191714;
+      --fg: #ece7dc;
+      --card: #232019;
+      --border: #3a352c;
+      --accent: #d99a5b;
+      --ok: #6fbf7f;
+      --bad: #e07a7a;
+      --muted: #a49c8a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 1.5rem 1rem 4rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  main { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.3rem; margin-bottom: 0.2rem; }
+  .subtitulo { color: var(--muted); margin-top: 0; margin-bottom: 1.5rem; font-size: 0.95rem; }
+  section { margin-bottom: 1.75rem; }
+  h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--accent); margin-bottom: 0.6rem; }
+  .caja {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+  }
+  .meses { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .mes { flex: 1 1 200px; }
+  .mes h3 { margin: 0 0 0.5rem; font-size: 0.95rem; }
+  .campo { display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.6rem; }
+  .campo label { font-size: 0.85rem; color: var(--muted); }
+  .campo input {
+    font-size: 1rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg);
+    width: 100%;
+  }
+  .opciones { display: flex; flex-direction: column; gap: 0.4rem; margin: 1rem 0; }
+  label.opcion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+  }
+  label.opcion:hover { border-color: var(--accent); }
+  button {
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+  button.secundario { background: transparent; color: var(--accent); }
+  .explicacion {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.95rem;
+  }
+  .explicacion.vacia { color: var(--muted); font-style: italic; }
+  .veredicto { font-weight: 600; }
+  .veredicto.correcto { color: var(--ok); }
+  .veredicto.incorrecto { color: var(--bad); }
+</style>
+</head>
+<body>
+<main>
+  <h1>¿Quién ahorra mejor?</h1>
+  <p class="subtitulo">Ejercicio de <a href="../../../conceptos/tasa-de-ahorro.md">tasa de ahorro</a> · sesión 01-02-01-presupuesto-personal</p>
+
+  <section>
+    <h2>Condiciones</h2>
+    <div class="caja">
+      <p style="margin:0 0 0.8rem">Estos son tus ingresos y tu ahorro en dos meses distintos (puedes
+      cambiar las cifras):</p>
+      <div class="meses">
+        <div class="mes">
+          <h3>Mes A</h3>
+          <div class="campo">
+            <label for="ingresosA">Ingresos (€)</label>
+            <input type="number" id="ingresosA" min="1" step="1">
+          </div>
+          <div class="campo">
+            <label for="ahorroA">Ahorro (€)</label>
+            <input type="number" id="ahorroA" min="0" step="1">
+          </div>
+        </div>
+        <div class="mes">
+          <h3>Mes B</h3>
+          <div class="campo">
+            <label for="ingresosB">Ingresos (€)</label>
+            <input type="number" id="ingresosB" min="1" step="1">
+          </div>
+          <div class="campo">
+            <label for="ahorroB">Ahorro (€)</label>
+            <input type="number" id="ahorroB" min="0" step="1">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reto</h2>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:-0.4rem;">Sin calcular el porcentaje: ¿en
+    qué mes te queda, en proporción, una parte mayor de lo que ingresas?</p>
+    <div class="opciones">
+      <label class="opcion"><input type="radio" name="respuesta" value="A"> En el Mes A</label>
+      <label class="opcion"><input type="radio" name="respuesta" value="B"> En el Mes B</label>
+      <label class="opcion"><input type="radio" name="respuesta" value="igual"> Ahorras igual de bien en los dos</label>
+    </div>
+    <button id="comprobar">Comprobar</button>
+    <button id="otra" class="secundario" type="button">Otra ronda</button>
+  </section>
+
+  <section>
+    <h2>Explicación</h2>
+    <div class="caja">
+      <p id="explicacion" class="explicacion vacia">Elige una opción y pulsa "Comprobar" para ver las dos
+      tasas de ahorro.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+function aleatorio(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function nuevaRonda() {
+  const ingresosA = aleatorio(1200, 2800);
+  let ingresosB = aleatorio(1200, 2800);
+  while (Math.abs(ingresosB - ingresosA) < 300) {
+    ingresosB = aleatorio(1200, 2800);
+  }
+  const ahorroA = Math.round(ingresosA * (aleatorio(8, 45) / 100));
+  const ahorroB = Math.round(ingresosB * (aleatorio(8, 45) / 100));
+
+  document.getElementById("ingresosA").value = ingresosA;
+  document.getElementById("ahorroA").value = ahorroA;
+  document.getElementById("ingresosB").value = ingresosB;
+  document.getElementById("ahorroB").value = ahorroB;
+
+  document.querySelectorAll('input[name="respuesta"]').forEach(r => r.checked = false);
+  const explicacion = document.getElementById("explicacion");
+  explicacion.classList.add("vacia");
+  explicacion.textContent = 'Elige una opción y pulsa "Comprobar" para ver las dos tasas de ahorro.';
+}
+
+document.getElementById("comprobar").addEventListener("click", () => {
+  const elegido = document.querySelector('input[name="respuesta"]:checked');
+  const explicacion = document.getElementById("explicacion");
+  if (!elegido) {
+    explicacion.classList.add("vacia");
+    explicacion.textContent = "Elige primero una opción.";
+    return;
+  }
+  const ingresosA = Number(document.getElementById("ingresosA").value);
+  const ahorroA = Number(document.getElementById("ahorroA").value);
+  const ingresosB = Number(document.getElementById("ingresosB").value);
+  const ahorroB = Number(document.getElementById("ahorroB").value);
+
+  const tasaA = (ahorroA / ingresosA) * 100;
+  const tasaB = (ahorroB / ingresosB) * 100;
+  const dif = Math.abs(tasaA - tasaB);
+
+  let respuestaCorrecta;
+  if (dif < 0.05) respuestaCorrecta = "igual";
+  else respuestaCorrecta = tasaA > tasaB ? "A" : "B";
+
+  const correcto = elegido.value === respuestaCorrecta;
+  explicacion.classList.remove("vacia");
+  explicacion.innerHTML = `<span class="veredicto ${correcto ? "correcto" : "incorrecto"}">${correcto ? "Correcto." : "No del todo."}</span><br>
+    Mes A: ${ahorroA.toFixed(2)} € de ${ingresosA.toFixed(2)} € → ${tasaA.toFixed(1)}% mensual.<br>
+    Mes B: ${ahorroB.toFixed(2)} € de ${ingresosB.toFixed(2)} € → ${tasaB.toFixed(1)}% mensual.<br>
+    ${dif < 0.05
+      ? "Las dos tasas salen prácticamente iguales."
+      : `Ahorras mejor en proporción en el ${respuestaCorrecta === "A" ? "Mes A" : "Mes B"}, aunque el ahorro en euros de ese mes ${(respuestaCorrecta === "A" ? ahorroA < ahorroB : ahorroB < ahorroA) ? "sea menor" : "también sea mayor"}: lo que importa es qué parte de los ingresos de cada mes te queda, no la cifra en euros.`}`;
+});
+
+document.getElementById("otra").addEventListener("click", nuevaRonda);
+
+nuevaRonda();
+</script>
+</body>
+</html>
