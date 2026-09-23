@@ -21,37 +21,24 @@ Estado al cerrar la sesión del 2026-09-23. Rama `mi-perfil-y-evolucion` (**solo
 
 Todo está también en la sección 0 de `docs/auditoria/2026-09-23-auditoria-del-kit.md`.
 
-## Siguiente paso: Claudian como profesor (antes que P4+E4)
+## Siguiente paso: confirmar Claudian en el curso de Windows
 
-**El problema.** En el curso de Windows con Codex, Claudian usa la bóveda (`estudio/`) como carpeta de trabajo, así
-que no ve `AGENTS.md`, `config/` ni las skills: no es el profesor. Por diseño, `estudio/` es la bóveda para que
-el alumno no pueda borrar el motor sin querer.
+**Resuelto el 2026-09-23 (issue #36, release 0.22.1):**
 
-**Lo que ya se sabe** (del `main.js` de Claudian 2.3.3, la versión que fija el kit):
+- Claudian abre el asistente en `estudio/`. **Con Claude Code funciona**: busca `CLAUDE.md` y las skills en las
+  carpetas superiores. Así lo usa Roberto en su curso, y de ahí salió la issue #35.
+- **Codex busca `AGENTS.md` y `.agents/skills` solo hasta la raíz del git.** Sin git en el curso, o con un git propio
+  en `estudio/`, no ve ni al profesor ni las skills. Probado con `codex debug prompt-input`.
+- Las pruebas A (`systemPrompt`) y B (mover la bóveda) **sobran**: la estructura del kit sirve con los dos.
+- En la 0.22.1, `diagnostico.js` avisa si la raíz del git no es la del curso. En la misma versión, la #35:
+  `actualizar.js` ya no se corta en cursos grandes. Probado con una copia del curso de Roberto (0.18.0 → 0.22.1).
 
-- La carpeta de trabajo es fija (la bóveda). No hay ningún ajuste para cambiarla.
-- Hay tres ajustes que sirven: `systemPrompt` (un prompt propio), `allowExternalAccess` y
-  `persistentExternalContextPaths` (carpetas de fuera de la bóveda que el asistente ve siempre).
-- Según su README usa el asistente ya instalado (Claude Code o Codex) con la suscripción. La clave de API es
-  solo una alternativa. Sin probar en la 2.3.3.
+**Pendiente:**
 
-**Prueba A (primero, barata).** Sin mover la bóveda, en una copia de un curso:
-
-1. Escribir a mano los ajustes de Claudian (`estudio/.obsidian/plugins/<id>/data.json`): acceso externo a la
-   carpeta del curso y un prompt que diga "eres el profesor de este curso: lee `<ruta>/AGENTS.md` y síguelo;
-   ejecuta las herramientas desde `<ruta>`".
-2. Probar con Claude Code y con Codex: ¿saluda como el profesor?, ¿encuentra las skills?, ¿`guardar.js` funciona?,
-   ¿procesa una clase?
-3. Si funciona: `obsidian.js` escribe esos ajustes al instalar y al actualizar, Claudian viene activado y la guía
-   del alumno lo explica.
-
-**Prueba B (solo si A no basta).** La bóveda pasa a ser el curso entero. Funciona seguro, pero es una versión
-mayor con migración (ajustes de Obsidian, reglas de "rutas relativas a `estudio/`", enlaces con carpeta) y deja
-`config/` y `AGENTS.md` a la vista. Esa pérdida la decide Roberto, con la prueba delante.
-
-**Mientras tanto**, en el curso de Windows: abrir el profesor con la palabra del atajo, en una terminal o en el
-Terminal de Obsidian. El atajo hace `cd` a la carpeta del curso. Obsidian tiene que abrirse después de instalar
-el atajo.
+1. En el curso de Windows: actualizar a la 0.22.1, pasar `diagnostico.js` y arreglar lo que diga. Lo más
+   probable es que el curso no tenga git en la raíz. Después, probar Claudian con Codex: ¿saluda como el profesor?,
+   ¿encuentra las skills?, ¿`guardar.js` funciona? Cerrar la #36 con lo que salga.
+2. Actualizar el curso de Roberto a la 0.22.1 (con su profesor: `/actualizar`).
 
 ## Después: P4 + E4 y alumno simulado
 
