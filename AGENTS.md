@@ -101,11 +101,13 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 ## Avisos pedagógicos de `comprobar.js`
 
 La calidad del material no puede depender solo de que sigas la skill al pie de la letra: `comprobar.js`
-también vigila seis señales de calidad pedagógica, calculadas desde disco. `nota-larga` (no cabe en una
+también vigila siete señales de calidad pedagógica, calculadas desde disco. `nota-larga` (no cabe en una
 pantalla), `concepto-sin-ejemplo` (falta "## El ejemplo" o está sin rellenar), `sesion-incompleta` (falta
 "## Cobertura del material", "## Auditoría del material" o "## Para pensarlo despacio"),
 `flashcards-fuera-de-rango` (el número no cae en `flashcards_por_sesion`), `requiere-vacio` (dificultad: 3
-sin `requiere:`) y `pregunta-doble` (una pregunta de examen con dos signos de interrogación).
+sin `requiere:`), `pregunta-doble` (una pregunta de examen con dos signos de interrogación) y
+`falta-info-mal-usado` ("## El error típico" con `FALTA INFO`, cuando lo que toca es proponer uno como
+ampliación o borrar la sección).
 
 **Se arreglan siempre antes de guardar**, igual que `no-se-vera-bien`, salvo que tengas un motivo concreto
 para dejarlos (un concepto que de verdad no se puede partir sin perder sentido, una sesión cuyo material no

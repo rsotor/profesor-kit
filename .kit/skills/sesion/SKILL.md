@@ -82,7 +82,9 @@ Reglas de `AGENTS.md`, en corto:
   hay de qué calentar.
 - Lo que no venga en los apuntes: `**TODO:**` con la pregunta concreta. **Nunca inventes.**
 - Material que el curso no entregó: `⚠️ **FALTA INFO:**`. No es lo mismo que un TODO — eso solo
-  lo puede resolver el alumno o el centro.
+  lo puede resolver el alumno o el centro. **"El error típico" nunca lleva `FALTA INFO`:** si el
+  material no trae uno para ese concepto, propón tú uno marcado `> [!info] Ampliación fuera de los
+  apuntes`, o borra la sección. Un error típico no es algo que el curso "tuviera que entregar".
 - Ampliaciones tuyas fuera de los apuntes: `> [!info] Ampliación fuera de los apuntes`.
 - Dato con fuente externa: `💬 *Conocimiento general, no del curso.*` + la fuente.
 - Si `lente` está activada en `config/profesor.md`, añade al final la lectura desde ese punto de

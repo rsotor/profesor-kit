@@ -128,3 +128,32 @@ test('pregunta-doble: sin la línea "✍️ **Tu respuesta:**" no sigue el forma
   });
   assert.equal(avisos(raiz, 'pregunta-doble').length, 0);
 });
+
+// --- falta-info-mal-usado (plan 0.22, arreglo 5b.1) ------------------------------------------------
+
+test('falta-info-mal-usado: FALTA INFO dentro de "## El error típico", aviso', () => {
+  const raiz = cursoTemporal({
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# Alfa\n\n'
+      + '## El ejemplo\n\nUno.\n\n## El error típico\n\n⚠️ **FALTA INFO:** el material no trae ninguno.\n',
+  });
+  const a = avisos(raiz, 'falta-info-mal-usado');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /El error típico/);
+});
+
+test('falta-info-mal-usado: FALTA INFO en otra sección no avisa (esa sí es del curso, no de esta regla)', () => {
+  const raiz = cursoTemporal({
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# Alfa\n\n'
+      + '## El problema\n\n⚠️ **FALTA INFO:** el material no lo explica.\n\n## El ejemplo\n\nUno.\n',
+  });
+  assert.equal(avisos(raiz, 'falta-info-mal-usado').length, 0);
+});
+
+test('falta-info-mal-usado: sin "## El error típico" no avisa; con una ampliación tampoco', () => {
+  assert.equal(avisos(cursoTemporal(), 'falta-info-mal-usado').length, 0);
+  const raiz = cursoTemporal({
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# Alfa\n\n'
+      + '## El ejemplo\n\nUno.\n\n## El error típico\n\n> [!info] Ampliación fuera de los apuntes\n> Confundir alfa con beta.\n',
+  });
+  assert.equal(avisos(raiz, 'falta-info-mal-usado').length, 0);
+});
