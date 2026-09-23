@@ -24,10 +24,11 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §3.2 Ficheros vivos mantenidos a mano | 2 | ✅ 0.21.0 | = P2, ver más abajo. **Añadido después:** `formulario.md` recoge de cada concepto su fórmula si la tiene y, si no, su definición en una frase (de su nota o, si falta, de `_index.md`); se mezclan en el mismo curso. Los índices generados no cuentan para decidir si un concepto es huérfano (si no, ninguno lo sería) |
 | §3.2 Temporal de la descarga sin limpiar | 1 (adelantado) | ✅ 0.20.0 | `cli()` de `actualizar.js` borra el clon temporal en un `finally` (solo si no vino por `--origen`) |
 | §3.2 Test que faltaba (§2.1) | 1 | ✅ 0.20.0 | Ver §2.1 |
-| §4.2 Linux sin documentar | — | ⏳ decisión | Roberto: son dos proyectos; pendiente decidir si se documenta o se declara no soportado |
-| §4.2 Atajo depende de `~/.local/bin` en el PATH | 2 (multi-LLM) | ⏳ abierto | Junto con §5.2 |
-| §4.2 Windows solo con Node 24 y sin instalación completa | — | ⏳ abierto | Sigue pendiente el feedback de Windows |
-| §4.2 `diario.md` con `\n` fijo | 3+ | ⏳ abierto | Menor |
+| §4.2 Linux sin documentar | — | ✅ 0.21.0 | Decisión de Roberto: **no se soporta** (no se puede probar). `README.md` lo dice; la guía para el LLM ya no habla de Linux. El CI sigue en Linux porque es el runner barato y hace de Mac. Si alguien lo pide, se hace entonces |
+| §4.2 Atajo depende de `~/.local/bin` en el PATH | 1 (adelantado) | ✅ 0.21.0 | `crear-atajo.js` → `anadirAlPath()`: si la carpeta no está en el PATH, la añade para siempre. Mac/Linux: una línea marcada al final del perfil de su shell (`.zshrc`, `.bash_profile`, `.bashrc` o `.profile` según `SHELL`). Windows: la variable `Path` del usuario con PowerShell (sin administrador). Una sola vez; si falla, lo dice. `diagnostico.js` da por bueno el PATH ya guardado aunque la ventana actual no lo vea. Tests en `tests/crear-atajo.test.js` y `tests/diagnostico.test.js` |
+| §4.2 Windows solo con Node 24 y sin instalación completa | — | ✅ 0.21.0 | Instalación completa en Windows con Codex hecha por Roberto el 2026-09-22: funciona. Documentado como probado. Mínimo subido a **Node 24** (`diagnostico.js`, `package.json`, guía); el CI deja de probar Node 22 |
+| §4.2 `diario.md` con `\n` fijo | 1 (adelantado) | ✅ 0.21.0 | `anotarEnDiario()` en `guardar.js` usa el fin de línea que ya tenga el fichero. Test en `tests/guardar.test.js` |
+| **Nuevo** Los tests dejaban sus cursos de prueba en la carpeta temporal | — | ✅ 0.21.0 | ~29.600 carpetas (5,3 GB). `tests/ayuda.js` → `temporal()` registra cada carpeta y la borra al acabar el proceso, también las renombradas. Todos los tests la usan; regla en `CONTRIBUTING.md`. Las antiguas se borraron a mano |
 | §5.1 `.gitignore` en el motor se reemplazaba | 1 | ✅ 0.20.0 | `.gitignore` sigue en `motor.json` (si saliera, el `actualizar.js` viejo de los cursos lo borraría), pero `actualizar.js` lo trata como `SE_FUSIONAN`: `fusionarGitignore()` añade al final las reglas del kit que falten bajo `# Reglas del kit añadidas al actualizar a la X`, sin tocar las del alumno ni el fin de línea. **Ojo:** la actualización 0.19→0.20 la hace el código viejo y lo sustituye entero una última vez (avisado en el CHANGELOG). Test en `tests/actualizar.test.js` |
 | §5.2 `ESTANDARES.md` es un encargo, no un adaptador | 2 | ⏳ abierto | Rutas de Codex/Gemini: TBD, confirmar en su documentación |
 | §5.3 Claude-ismos · calidad dependiente del modelo | 2 | ⏳ abierto | = P1 |
@@ -241,7 +242,9 @@ Siete puntos: **los 7 arreglados ✅** (0.20.0 y 0.21.0). Cada uno dice el suyo.
 - Guía de instalación con las palabras exactas de cada sistema (Terminal/PowerShell, Finder/Explorador),
   aviso de OneDrive/iCloud, y el detalle del PATH de Windows que no se actualiza en la ventana abierta.
 
-### 4.2 🟡 Hallazgos
+### 4.2 🟡 → ✅ Hallazgos
+
+> ✅ **Los cuatro resueltos en 0.21.0.** Linux: **no soportado** (decisión de Roberto; el CI sigue ahí como Mac barato). Atajo: `crear-atajo.js` añade la carpeta al PATH él solo, en Mac y en Windows. Windows: probado con Codex; mínimo **Node 24**. Diario: respeta el fin de línea del fichero. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 - **Linux no existe en la documentación.** El CI corre en Ubuntu y las herramientas funcionan, pero
   `INSTALACION.md` solo tiene Mac y Windows, las skills dicen `open` (Mac) y `start` (Windows) sin

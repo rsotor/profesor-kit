@@ -19,7 +19,10 @@ const DIARIO_CABECERA = `# Diario del curso
 function anotarEnDiario(raiz, mensaje, hoy = new Date().toISOString().slice(0, 10)) {
   const f = path.join(raiz, 'config', 'diario.md');
   const previo = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : DIARIO_CABECERA;
-  fs.writeFileSync(f, previo.replace(/\n*$/, '\n') + `- ${hoy} · ${mensaje}\n`);
+  // Respeta el fin de línea que ya tenga el fichero: en Windows (\r\n), mezclar los dos lo estropea y git lo da
+  // entero por cambiado en cada guardado.
+  const eol = previo.includes('\r\n') ? '\r\n' : '\n';
+  fs.writeFileSync(f, previo.replace(/(\r?\n)*$/, eol) + `- ${hoy} · ${mensaje}${eol}`);
 }
 
 // Lo que se escribe solo en cada guardado. Va ANTES de comprobar: así un curso al que aún le falta inicio.md no se

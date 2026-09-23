@@ -6,9 +6,9 @@ const { spawnSync } = require('node:child_process');
 const v = require('./lib/vault');
 const g = require('./lib/git');
 const { comprobar } = require('./comprobar');
-const { MARCA } = require('./crear-atajo');
+const { MARCA, pathGuardado } = require('./crear-atajo');
 
-const NODE_MINIMO = 22;
+const NODE_MINIMO = 24;
 
 function ejecutarReal(comando, args, cwd) {
   const r = spawnSync(comando, args, { cwd, encoding: 'utf8' });
@@ -18,7 +18,7 @@ function ejecutarReal(comando, args, cwd) {
 // Repasa la instalación entera y devuelve una lista de comprobaciones. Es la respuesta objetiva a
 // "¿está todo instalado?": no depende del criterio del LLM que esté instalando.
 function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.versions.node, plataforma = process.platform,
-  entorno = process.env, carpetaBin = path.join(os.homedir(), '.local', 'bin') }) {
+  entorno = process.env, carpetaBin = path.join(os.homedir(), '.local', 'bin'), casa = os.homedir(), ejecutarPs }) {
   const lista = [];
   const anota = (id, ok, texto, arreglo, obligatorio = true) => lista.push({ id, ok: Boolean(ok), texto, arreglo: ok ? '' : arreglo, obligatorio });
   const existe = rel => fs.existsSync(path.join(raiz, ...rel.split('/')));
@@ -62,8 +62,10 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
     && fs.readFileSync(lanzador, 'utf8').includes(`curso: ${raiz}`);
   anota('atajo', lanzadorBueno, ajustes.atajo ? `Atajo "${ajustes.atajo}"` : 'Atajo para abrir el curso', 'Crea el atajo con crear-atajo.js --nombre <palabra> (paso 7). Si has movido el curso, añade --actualizar.');
   if (lanzadorBueno) {
-    const enPath = (entorno.PATH || entorno.Path || '').split(path.delimiter).some(d => d && path.resolve(d) === path.resolve(carpetaBin));
-    anota('atajo-en-path', enPath, 'El atajo se puede escribir desde cualquier sitio', `La carpeta ${carpetaBin} no está en el PATH de esta ventana: abre una nueva; si sigue igual, hay que añadirla al PATH.`);
+    // Vale si esta ventana ya lo ve, o si ya está guardado para las ventanas nuevas (crear-atajo.js lo añade).
+    const enPath = (entorno.PATH || entorno.Path || '').split(path.delimiter).some(d => d && path.resolve(d) === path.resolve(carpetaBin))
+      || pathGuardado({ carpetaBin, plataforma, entorno, casa, ...(ejecutarPs ? { ejecutarPs } : {}) });
+    anota('atajo-en-path', enPath, 'El atajo se puede escribir desde cualquier sitio', `La carpeta ${carpetaBin} no está en el PATH: repite crear-atajo.js, que la añade sola, y abre una ventana nueva.`);
   }
 
   anota('obsidian', existe(`${v.CARPETA_ALUMNO}/.obsidian/workspace.json`), 'La carpeta estudio está abierta en Obsidian', 'Falta abrir la carpeta estudio como bóveda en Obsidian (paso 9).', false);

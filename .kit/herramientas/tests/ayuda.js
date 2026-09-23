@@ -17,6 +17,25 @@ const BASE = {
   'estudio/flashcards/.gitkeep': '', 'estudio/repasos/.gitkeep': '',
 };
 
+// Toda carpeta temporal de los tests nace aquí y se borra al terminar el proceso (cada fichero de tests es un
+// proceso): los cursos de prueba son de usar y tirar, y antes se quedaban para siempre en la carpeta temporal.
+const TEMPORALES = [];
+function temporal(prefijo = 'kit-') {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), prefijo));
+  TEMPORALES.push(dir);
+  return dir;
+}
+// También se borra lo que un test renombró a partir de ella (`<carpeta>-movido`): si no, se escaparía.
+process.on('exit', () => {
+  const hermanas = TEMPORALES.length ? fs.readdirSync(os.tmpdir()) : [];
+  for (const dir of TEMPORALES) {
+    const base = path.basename(dir);
+    for (const n of [base, ...hermanas.filter(h => h.startsWith(`${base}-`))]) {
+      try { fs.rmSync(path.join(os.tmpdir(), n), { recursive: true, force: true, maxRetries: 3 }); } catch { /* Windows: fichero abierto */ }
+    }
+  }
+});
+
 function escribir(raiz, ficheros) {
   for (const [ruta, contenido] of Object.entries(ficheros)) {
     const destino = path.join(raiz, ...ruta.split('/'));
@@ -26,7 +45,7 @@ function escribir(raiz, ficheros) {
 }
 
 function cursoTemporal(ficheros = {}) {
-  const raiz = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-'));
+  const raiz = temporal('kit-');
   escribir(raiz, BASE);
   require('../guardar').regenerarGenerados(raiz);   // como la dejaría un guardado: inicio, pies, pendientes
   escribir(raiz, ficheros);
@@ -46,4 +65,4 @@ function iniciarGit(raiz) {
   git(raiz, 'commit', '-q', '-m', 'inicio');
 }
 
-module.exports = { cursoTemporal, escribir, iniciarGit, git };
+module.exports = { cursoTemporal, escribir, iniciarGit, git, temporal };

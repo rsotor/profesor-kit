@@ -6,7 +6,7 @@ forma, y de `main` solo sale lo que se publica como release:
 1. **Rama** desde `main` (`git checkout -b <tema>`).
 2. **Tests en local** antes de subir: `npm test` (o `node --test ".kit/herramientas/tests/*.test.js"`). El hook
    de pre-push los lanza solo; se activa una vez por copia del repo: `git config core.hooksPath .githooks`.
-3. **Pull request.** Cada PR lanza el CI: todos los tests en Linux (Node 22 y 24) y Windows (Node 24), y una
+3. **Pull request.** Cada PR lanza el CI: todos los tests en Linux (hace de Mac; Linux no se soporta) y Windows, con Node 24, y una
    **cobertura mínima del 80 %** de las herramientas. Mac no está en el CI a propósito (cuesta 10 minutos
    facturables por minuto): los tests corren en tu Mac en el hook de pre-push. Un push nuevo cancela el run
    anterior de la misma rama.
@@ -30,6 +30,13 @@ forma, y de `main` solo sale lo que se publica como release:
    configurar…), la entrada del CHANGELOG lleva una línea `- **Si ya tenías tu curso:** <qué te ofrece tu
    profesor>`. `/actualizar` la lee y se lo ofrece al alumno tras actualizar; él puede decir que no. Si no
    se le puede ofrecer (porque hace falta cambiar sus datos sí o sí), no es una oferta: es una migración.
+
+## Tests: nada se queda en el disco
+
+Toda carpeta temporal de un test se crea con `temporal()` o `cursoTemporal()` de `tests/ayuda.js`, que la borran
+al terminar (también si el test la renombra a `<carpeta>-algo`). Nunca `fs.mkdtempSync` directo. Un test tampoco
+escribe en la carpeta personal real: si toca el perfil de la shell o el PATH, recibe una `casa` temporal o una
+función falsa (`ejecutarPs`).
 
 ## Las dos barreras de `main`
 

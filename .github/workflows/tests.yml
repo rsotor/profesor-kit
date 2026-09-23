@@ -12,13 +12,12 @@ concurrency:
 jobs:
   herramientas:
     # Sin macOS a propósito: cuesta 10 minutos facturables por minuto, y los tests ya corren en el Mac de
-    # quien desarrolla antes de cada push (hook .githooks/pre-push). Windows (x2) se queda porque es el
-    # sistema que no tenemos a mano; Linux (x1) cubre las dos versiones de Node.
+    # quien desarrolla antes de cada push (hook .githooks/pre-push). Linux no es un sistema soportado: está aquí
+    # porque es el runner barato y hace de Mac (mismo tipo de sistema). Windows sí se soporta y no está a mano.
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest, node: 22 }
           - { os: ubuntu-latest, node: 24 }
           - { os: windows-latest, node: 24 }
     runs-on: ${{ matrix.os }}

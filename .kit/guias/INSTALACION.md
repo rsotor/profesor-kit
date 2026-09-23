@@ -43,8 +43,8 @@ tu curso. Por eso guarda cada cosa que termina, y por eso al saludarte te dice p
 > - El programa **Obsidian**, también gratis, que es donde leerás tus apuntes. No hace falta que lo
 >   instales tú: lo hace tu profesor durante la instalación.
 > - Unos **30 minutos**.
-> - Probado en **Mac**. En **Windows** debería funcionar igual, pero todavía no lo ha probado
->   nadie: si algo falla, tu profesor te ayudará a contarlo para que se arregle.
+> - Probado en **Mac** y en **Windows**. Si algo falla, tu profesor te ayudará a contarlo para que se
+>   arregle.
 
 Elige tu ordenador: [Mac](#mac) · [Windows](#windows)
 
@@ -121,8 +121,6 @@ invitación del paso 1 no está aceptada.
 ---
 
 ## Windows
-
-> Sin probar todavía. Los pasos son los oficiales de cada programa.
 
 ### Paso 1 — Tener las dos cuentas y el acceso al kit
 
@@ -233,8 +231,8 @@ quieras.
 
 ## Si usas otro asistente que no sea Claude
 
-El kit está escrito en un formato abierto y debería funcionar con otros asistentes de terminal,
-pero **está sin probar**. Instálalo con su guía oficial, ábrelo en una carpeta vacía y pégale el
+El kit está escrito en un formato abierto y funciona con otros asistentes de terminal: está probado
+con **Codex** en Windows; con los demás, sin probar. Instálalo con su guía oficial, ábrelo en una carpeta vacía y pégale el
 mismo texto de arranque: el kit le explica qué tiene que adaptar.
 
 ## Cómo cambiar tus preferencias

@@ -5,9 +5,9 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { crearAtajo, cli } = require('../crear-atajo');
-const { cursoTemporal } = require('./ayuda');
+const { cursoTemporal, temporal } = require('./ayuda');
 
-const bin = () => fs.mkdtempSync(path.join(os.tmpdir(), 'kit-bin-'));
+const bin = () => temporal('kit-bin-');
 const entornoCon = dir => ({ PATH: [dir, os.tmpdir()].join(path.delimiter) });
 
 test('en Mac y Linux crea un lanzador ejecutable que entra en el curso y abre el LLM', () => {
@@ -70,14 +70,16 @@ test('se niega si la palabra ya es un programa del ordenador, y si no es una pal
   }
 });
 
-test('cli: lo cuenta en llano, avisa si la carpeta no está en el PATH y sale con 1 si no puede', t => {
+test('cli: lo cuenta en llano, añade la carpeta al PATH si hace falta y sale con 1 si no puede', t => {
   const lineas = [];
   t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
   const carpetaBin = bin();
   const raiz = cursoTemporal();
-  assert.equal(cli(['--nombre', 'historia'], raiz, { carpetaBin, plataforma: 'darwin', entorno: { PATH: '/usr/bin' } }), 0);
+  const casa = temporal('kit-casa-');
+  assert.equal(cli(['--nombre', 'historia'], raiz, { carpetaBin, casa, plataforma: 'darwin', entorno: { PATH: '/usr/bin', SHELL: '/bin/zsh' } }), 0);
   assert.match(lineas.join('\n'), /escribir "historia" en la terminal abre este curso/);
-  assert.match(lineas.join('\n'), /no está en el PATH/);
+  assert.match(lineas.join('\n'), /cierra esta ventana de terminal y abre una nueva/);
+  assert.match(lineas.join('\n'), /He añadido la carpeta de los atajos/);
   assert.equal(cli(['--nombre', 'Mal Nombre'], raiz, { carpetaBin }), 1);
   assert.match(lineas.join('\n'), /una sola palabra corta/);
   assert.equal(cli([], raiz, { carpetaBin }), 1);
@@ -141,4 +143,51 @@ test('una carpeta de curso con comillas, $ o % no cabe en el lanzador: se rechaz
   t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
   assert.equal(cli(['--nombre', 'historia'], path.join(os.tmpdir(), 'cursos$x'), { carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) }), 1);
   assert.match(lineas.join('\n'), /carácter que el atajo no puede llevar/);
+});
+
+test('PATH en Mac y Linux: una línea marcada al final del perfil de su shell, una sola vez, sin tocar lo que había', () => {
+  const { anadirAlPath, pathGuardado, perfilDeShell } = require('../crear-atajo');
+  const casa = temporal('kit-casa-');
+  const carpetaBin = path.join(casa, '.local', 'bin');
+  const entorno = { SHELL: '/bin/zsh' };
+  fs.writeFileSync(path.join(casa, '.zshrc'), 'alias ll="ls -l"');   // sin salto de línea final
+  assert.deepEqual(anadirAlPath({ carpetaBin, plataforma: 'darwin', entorno, casa }), { anadido: true, donde: path.join(casa, '.zshrc') });
+  const texto = fs.readFileSync(path.join(casa, '.zshrc'), 'utf8');
+  assert.ok(texto.startsWith('alias ll="ls -l"\n'));
+  assert.ok(texto.endsWith(`export PATH="${carpetaBin}:$PATH"\n`));
+  assert.ok(pathGuardado({ carpetaBin, plataforma: 'darwin', entorno, casa }));
+  assert.deepEqual(anadirAlPath({ carpetaBin, plataforma: 'darwin', entorno, casa }), { anadido: false, yaEstaba: true });
+  assert.equal(fs.readFileSync(path.join(casa, '.zshrc'), 'utf8'), texto, 'la segunda vez no toca nada');
+  assert.equal(perfilDeShell({ plataforma: 'darwin', entorno: { SHELL: '/bin/bash' }, casa }), path.join(casa, '.bash_profile'));
+  assert.equal(perfilDeShell({ plataforma: 'linux', entorno: { SHELL: '/bin/bash' }, casa }), path.join(casa, '.bashrc'));
+  assert.equal(perfilDeShell({ plataforma: 'darwin', entorno: {}, casa }), path.join(casa, '.zshrc'), 'Mac sin SHELL: zsh');
+  assert.equal(perfilDeShell({ plataforma: 'linux', entorno: { SHELL: '/usr/bin/fish' }, casa }), path.join(casa, '.profile'));
+});
+
+test('PATH en Windows: se añade a la variable Path del usuario, con PowerShell, y solo si falta', () => {
+  const { anadirAlPath } = require('../crear-atajo');
+  const carpetaBin = 'C:\\Users\\ana\\.local\\bin';
+  const guiones = [];
+  let pathUsuario = 'C:\\Programas\\git';
+  const ps = script => {
+    guiones.push(script);
+    if (script.startsWith('[Environment]::GetEnvironmentVariable')) return { ok: true, salida: pathUsuario };
+    pathUsuario += `;${carpetaBin}`;
+    return { ok: true, salida: '' };
+  };
+  assert.equal(anadirAlPath({ carpetaBin, plataforma: 'win32', entorno: {}, casa: 'C:\\Users\\ana', ejecutarPs: ps }).anadido, true);
+  assert.match(guiones[1], /SetEnvironmentVariable\('Path'.*'User'\)/);
+  assert.ok(guiones[1].includes(`'${carpetaBin}'`));
+  assert.deepEqual(anadirAlPath({ carpetaBin, plataforma: 'win32', entorno: {}, casa: 'C:\\Users\\ana', ejecutarPs: ps }), { anadido: false, yaEstaba: true });
+  const falla = s => s.startsWith('[Environment]::Get') ? { ok: true, salida: '' } : { ok: false, salida: 'acceso denegado' };
+  assert.deepEqual(anadirAlPath({ carpetaBin, plataforma: 'win32', entorno: {}, casa: 'C:\\', ejecutarPs: falla }), { anadido: false, fallo: 'acceso denegado' });
+});
+
+test('cli: si no puede añadir la carpeta al PATH, lo dice claro', t => {
+  const lineas = [];
+  t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
+  const carpetaBin = bin();
+  const falla = s => s.startsWith('[Environment]::Get') ? { ok: true, salida: '' } : { ok: false, salida: 'acceso denegado' };
+  assert.equal(cli(['--nombre', 'historia'], cursoTemporal(), { carpetaBin, plataforma: 'win32', entorno: { Path: 'C:\\x' }, ejecutarPs: falla }), 0);
+  assert.match(lineas.join('\n'), /no he podido añadir la carpeta.*acceso denegado/);
 });

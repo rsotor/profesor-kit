@@ -6,7 +6,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { diagnostico, cli } = require('../diagnostico');
 const { crearAtajo } = require('../crear-atajo');
-const { cursoTemporal, escribir, iniciarGit, git } = require('./ayuda');
+const { cursoTemporal, escribir, iniciarGit, git, temporal } = require('./ayuda');
 
 const MOTOR = { '.kit/motor.json': JSON.stringify({ repo: 'rsotor/profesor-kit', version_datos: 1, ficheros: ['AGENTS.md', '.kit'] }), 'AGENTS.md': 'reglas' };
 
@@ -21,7 +21,7 @@ function cursoInstalado({ subir = false, llm = 'claude-code' } = {}) {
   const raiz = cursoTemporal({ ...MOTOR, 'config/ajustes.json': JSON.stringify({ subir_a_github: subir, llm }),
     '.claude/skills/sesion/SKILL.md': 'x', 'estudio/.obsidian/workspace.json': '{}' });
   iniciarGit(raiz);
-  const carpetaBin = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-bin-'));
+  const carpetaBin = temporal('kit-bin-');
   const entorno = { PATH: [carpetaBin, os.tmpdir()].join(path.delimiter) };
   crearAtajo({ raiz, nombre: 'historia', carpetaBin, entorno });
   return { raiz, carpetaBin, entorno };
@@ -66,7 +66,13 @@ test('si se sube a GitHub, exige remoto propio y que sea PRIVADO de verdad', () 
 
 test('atajo: que exista, que sea de ESTE curso y que su carpeta esté en el PATH', () => {
   const { raiz, carpetaBin } = cursoInstalado();
-  assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: os.tmpdir() }, ejecutar: ordenador() })), ['atajo-en-path']);
+  const casa = temporal('kit-casa-');
+  const sinNada = { casa, ejecutarPs: () => ({ ok: true, salida: '' }) };
+  assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: os.tmpdir() }, ejecutar: ordenador(), ...sinNada })), ['atajo-en-path']);
+  // Ya guardado para las ventanas nuevas (lo hizo crear-atajo.js), aunque esta ventana aún no lo vea: vale.
+  const guardado = { casa, ejecutarPs: () => ({ ok: true, salida: carpetaBin }) };
+  fs.writeFileSync(path.join(casa, process.platform === 'darwin' ? '.zshrc' : '.profile'), `export PATH="${carpetaBin}:$PATH"\n`);
+  assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: os.tmpdir() }, ejecutar: ordenador(), ...guardado })), []);
   fs.rmSync(path.join(carpetaBin, process.platform === 'win32' ? 'historia.cmd' : 'historia'));
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: carpetaBin }, ejecutar: ordenador() })), ['atajo']);
 });

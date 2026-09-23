@@ -2,9 +2,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
-const { cursoTemporal, escribir, iniciarGit, git } = require('./ayuda');
+const { cursoTemporal, escribir, iniciarGit, git, temporal } = require('./ayuda');
 
 const KIT_REAL = path.resolve(__dirname, '..', '..');
 const MOTOR = ficheros => JSON.stringify({ repo: 'rsotor/profesor-kit', version_datos: 1, ficheros });
@@ -115,7 +114,7 @@ function cursoYOrigen({ versionOrigen = '2.0.0', migracion } = {}) {
   fs.cpSync(KIT_REAL, path.join(raiz, '.kit'), { recursive: true });
   escribir(raiz, { '.kit/VERSION': '1.0.0', '.kit/motor.json': MOTOR(['AGENTS.md', '.kit']), '.gitignore': '.claude/skills/\n' });
   iniciarGit(raiz);
-  const origen = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-origen-'));
+  const origen = temporal('kit-origen-');
   fs.cpSync(KIT_REAL, path.join(origen, '.kit'), { recursive: true });
   for (const r of [raiz, origen]) fs.rmSync(path.join(r, '.kit', 'herramientas', 'migraciones'), { recursive: true, force: true });
   escribir(origen, {

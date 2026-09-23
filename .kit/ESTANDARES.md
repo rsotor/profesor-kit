@@ -1,7 +1,7 @@
 # Qué necesita el kit de un LLM
 
-El kit está probado en **Claude Code**. Con cualquier otro LLM de terminal es compatible pero está
-sin probar: este fichero te dice qué necesita el kit para que generes tus equivalentes.
+El kit está probado en **Claude Code** (Mac) y en **Codex** (Windows). Con cualquier otro LLM de terminal es
+compatible pero está sin probar: este fichero te dice qué necesita el kit para que generes tus equivalentes.
 
 | Necesidad | Estándar del kit | Ya resuelto para Claude Code |
 |---|---|---|

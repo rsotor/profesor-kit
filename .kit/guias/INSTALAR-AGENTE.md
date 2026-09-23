@@ -11,7 +11,7 @@ Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso
 
 | # | Objetivo | Cómo se comprueba | Ejemplo |
 |---|---|---|---|
-| 1 | Node LTS (22 o superior), Git y `gh` instalados | `node --version` · `git --version` · `gh --version` | Mac: `brew install node git gh` · Windows: `winget install OpenJS.NodeJS.LTS Git.Git GitHub.cli` |
+| 1 | Node LTS (24 o superior), Git y `gh` instalados | `node --version` · `git --version` · `gh --version` | Mac: `brew install node git gh` · Windows: `winget install OpenJS.NodeJS.LTS Git.Git GitHub.cli` |
 | 2 | Sesión de GitHub iniciada, **con la cuenta a la que se invitó al alumno** | `gh auth status` en verde y `gh api repos/rsotor/profesor-kit --jq .name` responde | ver abajo. **Nunca un token.** |
 | 3 | El curso tiene nombre, y está creado desde la plantilla dentro de la carpeta de cursos del alumno | existe `<carpeta>/.kit/VERSION` | ver abajo |
 | 4 | Git sabe quién es el alumno | `git config user.name` y `git config user.email` devuelven algo | ver abajo |
@@ -48,13 +48,14 @@ siempre significa que el programa no esté instalado:
 
 **Cómo comprobarlo bien** (no te fíes de un solo intento):
 
-| | Mac / Linux | Windows (PowerShell) |
+| | Mac | Windows (PowerShell) |
 |---|---|---|
 | ¿Responde el comando? | `node --version; git --version; gh --version` | `node --version; git --version; gh --version` |
 | ¿Está instalado aunque no responda? | `brew list --versions node git gh` | `winget list --id OpenJS.NodeJS.LTS -e; winget list --id Git.Git -e; winget list --id GitHub.cli -e` |
 | Hacer que esta ventana lo vea sin cerrarla | `hash -r` (o abrir ventana nueva) | `$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')` — **en la misma línea** que el comando que quieras probar, porque cada comando que lanzas nace con el PATH viejo |
 
-Node tiene que ser **22 o superior**: mira el número, no solo que responda.
+Node tiene que ser **24 o superior**: mira el número, no solo que responda. Si tiene uno más viejo, actualízalo
+(`brew upgrade node` · `winget upgrade OpenJS.NodeJS.LTS`).
 - Si la instalación se interrumpió a medias (por lo que sea), **no empieces de cero**: repasa la tabla de
   arriba abajo comprobando cada objetivo y continúa por el primero que no se cumpla.
 
@@ -133,8 +134,10 @@ Si eligió copia en GitHub, **en cuanto crees el repo** comprueba que es privado
     node .kit/herramientas/crear-atajo.js --nombre <palabra>
 
 Si la herramienta dice que esa palabra no vale (ya es un programa, o ya abre otro curso suyo), propón
-otra y repite. Si avisa de que la carpeta no está en el PATH, lo normal es que baste con abrir una
-terminal nueva; si no, añádela al PATH explicándoselo en una frase. **Compruébalo de verdad** antes de
+otra y repite. Si la carpeta de los atajos no estaba en el PATH, la herramienta la añade sola (en Mac, al
+perfil de su terminal; en Windows, a la variable Path de su usuario, sin pedir administrador) y le pide abrir
+una ventana nueva: díselo en una frase. Si dice que no ha podido, explícale el motivo y añádela tú con su
+permiso. **Compruébalo de verdad** antes de
 seguir: en una terminal nueva, la palabra tiene que abrir el LLM dentro del curso.
 
 ## Paso 8 — verificar la instalación, no darla por buena

@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 const v = require('./lib/vault');
 
 const MARCA = 'profesor-kit: lanzador de curso';
@@ -12,8 +13,9 @@ const RUTA_PELIGROSA = /["$`%\r\n]/;
 // Cómo se llama en la terminal cada LLM. Si el de `ajustes.json` no está aquí, se usa tal cual.
 const COMANDO_LLM = { 'claude-code': 'claude', 'codex-cli': 'codex', 'gemini-cli': 'gemini' };
 
-// Un atajo es un lanzador en la carpeta donde ya vive el comando del LLM (está en el PATH en Mac y en
-// Windows): entra en la carpeta del curso y abre el LLM. No se toca el perfil de la shell del alumno.
+// Un atajo es un lanzador en ~/.local/bin, donde el instalador de Claude Code ya deja su comando: entra en la
+// carpeta del curso y abre el LLM. Si esa carpeta no está en el PATH (otro LLM instalado por npm, por ejemplo),
+// se añade sola: quien instala no sabe hacerlo, y sin eso la palabra no abre nada.
 function contenido({ raiz, comando, plataforma }) {
   if (plataforma === 'win32') {
     return ['@echo off', `rem ${MARCA} (no editar)`, `rem curso: ${raiz}`,
@@ -38,7 +40,52 @@ function existeComando(nombre, { entorno, plataforma, salvo }) {
   return false;
 }
 
-function crearAtajo({ raiz, nombre, actualizar = false, carpetaBin = path.join(os.homedir(), '.local', 'bin'), plataforma = process.platform, entorno = process.env }) {
+// ── El PATH, para siempre (no solo en esta ventana) ─────────────────────────────────────────────────────────
+const MARCA_PATH = '# profesor-kit: la carpeta de los atajos de tus cursos';
+
+// El fichero que lee la terminal del alumno al abrirse. En Mac es zsh salvo que haya cambiado de shell.
+function perfilDeShell({ plataforma, entorno, casa }) {
+  const shell = path.basename(entorno.SHELL || (plataforma === 'darwin' ? 'zsh' : 'sh'));
+  if (shell === 'zsh') return path.join(casa, '.zshrc');
+  if (shell === 'bash') return path.join(casa, plataforma === 'darwin' ? '.bash_profile' : '.bashrc');
+  return path.join(casa, '.profile');
+}
+
+function powershell(script) {
+  const r = spawnSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', script], { encoding: 'utf8' });
+  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+}
+const comillasPs = t => `'${t.replace(/'/g, "''")}'`;
+
+// ¿Queda en el PATH de las ventanas que se abran a partir de ahora? (La ventana actual no cambia nunca.)
+function pathGuardado({ carpetaBin, plataforma, entorno, casa, ejecutarPs = powershell }) {
+  if (plataforma === 'win32') {
+    const r = ejecutarPs("[Environment]::GetEnvironmentVariable('Path','User')");
+    return r.ok && r.salida.split(';').some(d => d && path.win32.resolve(d).toLowerCase() === path.win32.resolve(carpetaBin).toLowerCase());
+  }
+  const perfil = perfilDeShell({ plataforma, entorno, casa });
+  return fs.existsSync(perfil) && fs.readFileSync(perfil, 'utf8').includes(carpetaBin);
+}
+
+// Añade la carpeta al PATH del usuario, una sola vez. En Mac y Linux, una línea marcada al final de su perfil
+// de shell; en Windows, en la variable Path del usuario (no la del sistema: no pide administrador).
+function anadirAlPath({ carpetaBin, plataforma, entorno, casa, ejecutarPs = powershell }) {
+  if (pathGuardado({ carpetaBin, plataforma, entorno, casa, ejecutarPs })) return { anadido: false, yaEstaba: true };
+  if (plataforma === 'win32') {
+    const script = `$p = [Environment]::GetEnvironmentVariable('Path','User'); if (-not $p) { $p = '' }; `
+      + `[Environment]::SetEnvironmentVariable('Path', (($p.TrimEnd(';') + ';' + ${comillasPs(carpetaBin)}).TrimStart(';')), 'User')`;
+    const r = ejecutarPs(script);
+    return r.ok ? { anadido: true, donde: 'la variable Path de tu usuario' } : { anadido: false, fallo: r.salida };
+  }
+  const perfil = perfilDeShell({ plataforma, entorno, casa });
+  const previo = fs.existsSync(perfil) ? fs.readFileSync(perfil, 'utf8') : '';
+  const separador = previo === '' || previo.endsWith('\n') ? '' : '\n';
+  fs.writeFileSync(perfil, `${previo}${separador}\n${MARCA_PATH}\nexport PATH="${carpetaBin}:$PATH"\n`);
+  return { anadido: true, donde: perfil };
+}
+
+function crearAtajo({ raiz, nombre, actualizar = false, carpetaBin = path.join(os.homedir(), '.local', 'bin'), plataforma = process.platform,
+  entorno = process.env, casa = os.homedir(), ejecutarPs = powershell }) {
   if (!NOMBRE_VALIDO.test(nombre || '')) return { creado: false, motivo: 'nombre-no-valido' };
   if (RUTA_PELIGROSA.test(raiz)) return { creado: false, motivo: 'ruta-no-valida' };
 
@@ -63,7 +110,8 @@ function crearAtajo({ raiz, nombre, actualizar = false, carpetaBin = path.join(o
   v.escribirAjustes(raiz, { ...ajustes, atajo: nombre });
 
   const enPath = carpetasDelPath(entorno).some(dir => path.resolve(dir) === path.resolve(carpetaBin));
-  return { creado: true, fichero, enPath };
+  const alPath = enPath ? null : anadirAlPath({ carpetaBin, plataforma, entorno, casa, ejecutarPs });
+  return { creado: true, fichero, enPath, alPath };
 }
 
 const EXPLICACION = {
@@ -79,10 +127,15 @@ function cli(args, raiz, opciones = {}) {
   const r = crearAtajo({ raiz, nombre: i >= 0 ? args[i + 1] : undefined, actualizar: args.includes('--actualizar'), ...opciones });
   if (!r.creado) { console.log(EXPLICACION[r.motivo]); return 1; }
   console.log(`Atajo creado: a partir de ahora, escribir "${args[i + 1]}" en la terminal abre este curso.`);
-  if (!r.enPath) console.log(`Aviso: la carpeta ${path.dirname(r.fichero)} no está en el PATH de esta terminal. Cierra y vuelve a abrir la terminal; si sigue sin funcionar, hay que añadirla.`);
+  if (!r.enPath && r.alPath && (r.alPath.anadido || r.alPath.yaEstaba)) {
+    console.log('Para que funcione, cierra esta ventana de terminal y abre una nueva: las ventanas que ya estaban abiertas no lo ven.');
+    if (r.alPath.anadido) console.log(`(He añadido la carpeta de los atajos en ${r.alPath.donde}; solo hacía falta una vez.)`);
+  } else if (!r.enPath) {
+    console.log(`Aviso: no he podido añadir la carpeta ${path.dirname(r.fichero)} al PATH (${r.alPath.fallo || 'motivo desconocido'}). Sin eso, la palabra no abre el curso: hay que añadirla a mano.`);
+  }
   return 0;
 }
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'crear-atajo.js');
 
-module.exports = { crearAtajo, cli, MARCA };
+module.exports = { crearAtajo, cli, MARCA, anadirAlPath, pathGuardado, perfilDeShell };

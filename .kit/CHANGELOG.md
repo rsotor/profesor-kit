@@ -24,6 +24,11 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
   tu profesor lo ve, te pregunta qué querías decir la primera vez y lo deja bien. Se apunta cómo escribes, así
   que no te vuelve a preguntar lo mismo; y si es una forma natural de escribirlo, avisa al kit para que la
   entienda para todos.
+- **El atajo funciona a la primera.** Si tu ordenador no sabía dónde buscar la palabra de tu curso, tu profesor
+  lo configura solo; basta con abrir una ventana de terminal nueva.
+- **Hace falta Node 24 o superior** (es el que se instala hoy por defecto). Si tienes uno más viejo, tu profesor
+  te lo dice al comprobar la instalación y lo actualiza contigo.
+- Windows ya está probado (con Codex). Linux no está soportado.
 - **Si ya tenías tu curso:** si alguna de esas dos notas tenía algo escrito que tu profesor no habría
   generado, se conserva tal cual, con el nombre **formulario-anterior** o **ejercicios/_index-anterior**; la
   próxima vez que guardes, tu profesor deja ahí la versión generada.

@@ -1,17 +1,17 @@
 'use strict';
+const { temporal } = require('./ayuda');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 // Una instalación entera como la haría el profesor, pero lanzando cada herramienta como proceso real y, al
-// final, ejecutando el atajo de verdad. En el CI corre en Mac, Windows y Linux: es lo único que prueba el
+// final, ejecutando el atajo de verdad. En el CI corre en Linux y Windows, y en local en el Mac (hook de pre-push): es lo único que prueba el
 // lanzador .cmd en un Windows real.
 const KIT = path.resolve(__dirname, '..', '..', '..');
 const WIN = process.platform === 'win32';
-const casa = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-e2e-'));
+const casa = temporal('kit-e2e-');
 const bin = path.join(casa, '.local', 'bin');
 const curso = path.join(casa, 'cursos', 'curso-e2e');
 fs.mkdirSync(bin, { recursive: true });

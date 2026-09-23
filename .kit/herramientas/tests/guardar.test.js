@@ -2,13 +2,12 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
 const { guardar } = require('../guardar');
-const { cursoTemporal, escribir, iniciarGit, git } = require('./ayuda');
+const { cursoTemporal, escribir, iniciarGit, git, temporal } = require('./ayuda');
 
 function conOrigen(raiz) {
-  const remoto = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-remoto-'));
+  const remoto = temporal('kit-remoto-');
   git(remoto, 'init', '-q', '--bare', '-b', 'main');
   git(raiz, 'remote', 'add', 'origin', remoto);
   git(raiz, 'push', '-q', '-u', 'origin', 'main');
@@ -177,4 +176,13 @@ test('la sección Estado de la portada se calcula sola al guardar, y no toca el 
   assert.match(readme, /## De qué va\n\nTexto mío\./);
   assert.equal(git(raiz, 'status', '--porcelain'), '');
   assert.equal(guardar({ raiz, mensaje: 'nada', hoy: '2026-03-02' }).motivo, 'sin-cambios', 'un curso quieto no cambia de fecha');
+});
+
+test('el diario respeta el fin de línea de Windows: no mezcla \\n y \\r\\n', () => {
+  const { anotarEnDiario } = require('../guardar');
+  const raiz = cursoTemporal({ 'config/diario.md': '# Diario\r\n\r\n- 2026-01-01 · uno\r\n' });
+  anotarEnDiario(raiz, 'dos', '2026-01-02');
+  const texto = require('node:fs').readFileSync(require('node:path').join(raiz, 'config', 'diario.md'), 'utf8');
+  assert.equal(texto, '# Diario\r\n\r\n- 2026-01-01 · uno\r\n- 2026-01-02 · dos\r\n');
+  assert.doesNotMatch(texto.replace(/\r\n/g, ''), /\n/, 'ningún \\n suelto');
 });
