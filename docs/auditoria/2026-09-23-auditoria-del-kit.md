@@ -2,10 +2,46 @@
 
 Sobre `main` en `53e3c83` (kit **0.19.0**). Solo informe: no se ha cambiado nada del repo.
 
-> **Seguimiento.** Bloque 1 ("que no se rompa", §8.3) aplicado en la **0.20.0**: §2.1, §2.2 (releases por
-> etiqueta, workflow `release.yml`), §2.3, §2.4, §5.1, `package.json`, `docs/superpowers/` retirado y
-> `CONTRIBUTING.md`/`README.md` con la verdad. Además, un fallo encontrado al probarlo: `tieneIdentidad`
-> daba por buena una identidad de git vacía. Sigue abierto: público/privado (§6.1), Linux (§4.2), 1.0.0.
+## 0. Seguimiento (se actualiza en cada bloque)
+
+Estado a **2026-09-23**, tras mezclar el PR #30 (release `v0.20.0`). Los hallazgos de abajo no se editan: aquí
+se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
+
+| Hallazgo | Bloque | Estado | Cómo se resolvió · dónde revisarlo |
+|---|---|---|---|
+| §2.1 Vuelta atrás que borraba lo no guardado | 1 | ✅ 0.20.0 | `actualizar.js` mira el resultado de `guardar` antes de tocar nada: si no pudo guardar (y no es `sin-cambios`) devuelve `sin-guardar` y no empieza. Test: "si no puede guardar antes de actualizar, no toca nada…" en `tests/actualizar.test.js` |
+| §2.1 (menor) Commit previo con secreto que luego se sube | 1 | ⏳ abierto | No tocado. Opción: que `guardar` con `permitirErrores` siga sin hacer commit si el único error es `secreto` |
+| **Nuevo** `tieneIdentidad` daba por buena una identidad vacía | 1 | ✅ 0.20.0 | Salió al probar §2.1: con `user.name=` en el git global, `git config` responde pero el commit falla. `lib/git.js` usa ahora `git var GIT_AUTHOR_IDENT` / `GIT_COMMITTER_IDENT`, que decide como `git commit` |
+| §2.2 Motor desde `main`, sin etiquetas | 1 | ✅ 0.20.0 | `actualizar.js`: `etiquetaPublicada()` lee la última release (`gh api …/releases/latest`), `descargar()` clona con `--branch vX.Y.Z`, `versionPublicada()` (aviso diario) sale de ahí. `.github/workflows/release.yml` crea la release en cada merge que sube `.kit/VERSION`, con las notas de `.github/release-notas.js` (sección del CHANGELOG). Flujo y paso manual en `CONTRIBUTING.md` (paso 6). Comprobado: `v0.20.0` creada sola al mezclar #30 |
+| §2.2 `enforce_admins` desactivado · sin firma del motor | 1 | ⏳ decisión | `enforce_admins` es un clic en GitHub (decide Roberto). Firmar releases: no vale la pena mientras el repo tenga un solo mantenedor |
+| §2.3 Complementos de Obsidian sin fijar | 1 (adelantado) | ✅ 0.20.0 | `lib/obsidian.js`: cada complemento lleva `version` y sha256 por fichero (terminal 3.27.2, code-files 1.1.9, claudian 2.3.3); `descargarDeGitHub` baja esa versión, verifica el hash y rechaza lo que no coincide; `AbortSignal.timeout(120 s)`. Subir de versión: `CONTRIBUTING.md`, último apartado. Tests nuevos en `tests/obsidian.test.js` |
+| §2.3 (TBD) Claudian y la clave de API | — | ⏳ abierto | Sin comprobar. Toca a la hoja del alumno si pide clave |
+| §2.4 Inyección por la ruta del curso en el atajo | 1 (adelantado) | ✅ 0.20.0 | `crear-atajo.js`: `RUTA_PELIGROSA` rechaza `"`, `$`, `%`, acento grave y saltos de línea con motivo `ruta-no-valida` y explicación en llano. Test en `tests/crear-atajo.test.js` |
+| §3.2 Sin `package.json` | 1 (adelantado) | ✅ 0.20.0 | `package.json` mínimo: `private`, `engines >=22`, `npm test`, `npm run test:cobertura`, `npm run comprobar`. `preparar-curso.js` lo borra en los cursos (`SOLO_DEL_KIT`) |
+| §3.2 Sin linter · líneas largas | 3+ | ⏳ abierto | |
+| §3.2 `comprobar.js` mezcla comprobar y generar | 2 | ⏳ abierto | Encaja con P2 (ficheros vivos generados) |
+| §3.2 Parser de frontmatter propio | 3 | ⏳ abierto | Antes de E5 (`me-lo-se:`) |
+| §3.2 Ficheros vivos mantenidos a mano | 2 | ⏳ abierto | = P2 |
+| §3.2 Temporal de la descarga sin limpiar | 1 (adelantado) | ✅ 0.20.0 | `cli()` de `actualizar.js` borra el clon temporal en un `finally` (solo si no vino por `--origen`) |
+| §3.2 Test que faltaba (§2.1) | 1 | ✅ 0.20.0 | Ver §2.1 |
+| §4.2 Linux sin documentar | — | ⏳ decisión | Roberto: son dos proyectos; pendiente decidir si se documenta o se declara no soportado |
+| §4.2 Atajo depende de `~/.local/bin` en el PATH | 2 (multi-LLM) | ⏳ abierto | Junto con §5.2 |
+| §4.2 Windows solo con Node 24 y sin instalación completa | — | ⏳ abierto | Sigue pendiente el feedback de Windows |
+| §4.2 `diario.md` con `\n` fijo | 3+ | ⏳ abierto | Menor |
+| §5.1 `.gitignore` en el motor se reemplazaba | 1 | ✅ 0.20.0 | `.gitignore` sigue en `motor.json` (si saliera, el `actualizar.js` viejo de los cursos lo borraría), pero `actualizar.js` lo trata como `SE_FUSIONAN`: `fusionarGitignore()` añade al final las reglas del kit que falten bajo `# Reglas del kit añadidas al actualizar a la X`, sin tocar las del alumno ni el fin de línea. **Ojo:** la actualización 0.19→0.20 la hace el código viejo y lo sustituye entero una última vez (avisado en el CHANGELOG). Test en `tests/actualizar.test.js` |
+| §5.2 `ESTANDARES.md` es un encargo, no un adaptador | 2 | ⏳ abierto | Rutas de Codex/Gemini: TBD, confirmar en su documentación |
+| §5.3 Claude-ismos · calidad dependiente del modelo | 2 | ⏳ abierto | = P1 |
+| §6.1 `CONTRIBUTING.md` decía privado y sin protección | 1 | ✅ 0.20.0 | Reescrito: flujo con releases, "Las dos barreras de `main`" neutro respecto a la visibilidad, tabla de fuentes de verdad con `docs/auditoria/` en vez de `docs/superpowers/` |
+| §6.1 `README.md` y plantilla de PR decían CI con Mac | 1 | ✅ 0.20.0 | Corregidos (Linux y Windows), `npm test`, releases, lista completa de lo que se borra al crear un curso |
+| §6.1 `INSTALACION.md` habla de invitación al repo privado | — | ⏳ decisión | Sin tocar hasta decidir público/privado. Si queda público: quitar el paso 1.3-1.4 y la frase del 404 |
+| §6.1 La 1.0.0 | — | ⏳ decisión | Roberto: después de estos ajustes, no todavía. El mecanismo de release ya está |
+| §6.1 Fichero con datos de un curso real en `docs/superpowers/pruebas/` | 1 | ✅ 0.20.0 | `docs/superpowers/` borrado entero (specs, planes, pruebas, `comparar-con-vault.js`). Sigue en el historial de git |
+| §6.3 Documento de arquitectura vivo | 2 | ⏳ abierto | Más necesario ahora que `docs/superpowers/` no está |
+| §6.3 Regla "Deshacer" sin herramienta | 2 | ⏳ abierto | `deshacer.js` |
+| §7 Releases | 1 | ✅ 0.20.0 | Ver §2.2 |
+| §7 Curso de referencia en el CI | 2 | ⏳ abierto | Después de P1 |
+| §7 `.superpowers/sdd/` en el árbol de trabajo | — | ⏳ abierto | Ignorado por su propio `.gitignore`; sin decidir si se saca |
+| §8 Propuestas P1-P8 y E1-E9 | 2 y 3 | ⏳ abierto | Siguiente: bloque 2, "que no dependa del modelo" |
 
 Alcance: seguridad · calidad del código y de los tests · multiplataforma · multi-LLM · documentación ·
 agilidad del proceso · y, sobre todo, **qué le vendría bien al kit en las próximas iteraciones**, para el
@@ -26,7 +62,7 @@ Linux y Windows, `main` protegida, actualizaciones con vuelta atrás, migracione
 secretos, y una documentación por audiencias poco habitual en un proyecto de una persona. Las decisiones
 de diseño (motor/datos, `estudio/` como bóveda, todo lo generado sale de disco) son las correctas.
 
-**Lo que hay que arreglar (🔴), por orden:**
+**Lo que hay que arreglar (🔴), por orden** (los cuatro resueltos en 0.20.0; el 4 a falta de tu decisión sobre la visibilidad):
 
 1. **La actualización puede borrar trabajo del alumno** en un caso concreto: si git no tiene identidad
    configurada y la actualización falla, la vuelta atrás hace `git clean -fd` sobre ficheros que nunca se
@@ -49,7 +85,9 @@ que hoy no tiene: repaso espaciado, un plan con calendario y ver lo que el profe
 
 ## 2. Seguridad
 
-### 2.1 🔴 Vuelta atrás que puede destruir trabajo sin guardar
+### 2.1 🔴 → ✅ Vuelta atrás que puede destruir trabajo sin guardar
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** `actualizar.js` comprueba el resultado de `guardar` y, si no pudo guardar, devuelve `sin-guardar` sin tocar nada. Con test. De paso salió y se arregló un fallo en `lib/git.js`: una identidad de git vacía pasaba por buena. El caso menor del secreto en el commit previo sigue abierto. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `actualizar.js:75-77` guarda "lo que hubiera sin guardar" con `guardar({ permitirErrores: true })` y toma
 el SHA. Pero **no mira el resultado**: si `guardar` no hizo commit por `sin-identidad` (git sin
@@ -66,7 +104,9 @@ Relacionado, menor: en ese mismo camino, si el curso tiene un posible secreto, e
 **sí se crea** (permitirErrores) y solo se bloquea el push; el siguiente `guardar` limpio empuja toda la
 historia, secreto incluido. Es un caso de esquina, pero el escaneo de secretos deja de proteger justo ahí.
 
-### 2.2 🔴 Cadena de suministro del motor
+### 2.2 🔴 → ✅ Cadena de suministro del motor
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** `actualizar.js` descarga la **última release** (`vX.Y.Z`), nunca `main`; el aviso diario también mira la release. El workflow `release.yml` publica la release en cada merge que sube `.kit/VERSION`, con las notas del CHANGELOG. Comprobado con la `v0.20.0`. Siguen abiertos `enforce_admins` (decisión) y la firma del motor (no compensa). Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `actualizar.js:113-118` clona **`main`** del repo del kit y luego `require()` de las migraciones descargadas
 (`actualizar.js:95`) y copia skills y `AGENTS.md`, que gobiernan al LLM. Todo lo que llegue a `main` se
@@ -86,7 +126,9 @@ que etiquete al mezclar cuando `VERSION` cambia) y que `actualizar.js` clone **l
 `main`. Gana tres cosas: los alumnos reciben solo lo que se ha decidido publicar, se puede volver a una
 versión concreta, y `CHANGELOG` y etiqueta quedan atados. Coste: pequeño.
 
-### 2.3 🟡 Complementos de Obsidian sin fijar versión
+### 2.3 🟡 → ✅ Complementos de Obsidian sin fijar versión
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** Adelantado del bloque 1: cada complemento lleva versión y sha256 por fichero en `lib/obsidian.js`; lo que no coincide no se instala; descarga con tiempo límite. El TBD de la clave de Claudian sigue sin comprobar. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `lib/obsidian.js:40-45` descarga `releases/latest` de tres repos de terceros (`polyipseity/obsidian-terminal`,
 `lukasbach/obsidian-code-files`, `yishentu/claudian`) sin versión ni hash. Se instalan **apagados** y
@@ -99,7 +141,9 @@ llega al disco del alumno igualmente.
 - **TBD:** Claudian pide una clave de API o usa la sesión de Claude Code. Si pide clave, choca con la regla
   "nunca un token" de `AGENTS.md`, y la hoja del alumno debería avisarlo.
 
-### 2.4 🟡 Inyección en el atajo por la ruta del curso
+### 2.4 🟡 → ✅ Inyección en el atajo por la ruta del curso
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** Adelantado del bloque 1: `crear-atajo.js` rechaza rutas con `"`, `$`, `%`, acento grave o saltos de línea (`ruta-no-valida`), con explicación en llano. Con test. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `crear-atajo.js:14-21` escribe `cd "${raiz}"` en un script de shell. Una ruta con `"`, `$` o acento grave
 rompe el lanzador o ejecuta lo que haya dentro. La ruta la elige el propio alumno, así que el riesgo es
@@ -126,6 +170,8 @@ atajo (`nombre-no-valido` ya existe como patrón de respuesta).
 
 ### 3.1 🟢 Estado
 
+> Cifras del 2026-09-23, antes de la 0.20.0. Tras ella: **197 tests**, 99 % de líneas.
+
 | | |
 |---|---|
 | Herramientas + librerías | 1 848 líneas, sin dependencias externas, Node ≥ 22 |
@@ -140,26 +186,38 @@ de test que evita que la prosa y el código se separen, y aquí es lo más valio
 
 ### 3.2 🟡 Hallazgos
 
-- **Sin `package.json`.** No hay `engines` (el mínimo Node 22 solo lo sabe `diagnostico.js`), no hay
+Siete puntos: **3 arreglados ✅** y **4 abiertos ⏳**. Cada uno dice el suyo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+
+- ✅ **Sin `package.json`.** No hay `engines` (el mínimo Node 22 solo lo sabe `diagnostico.js`), no hay
   `npm test`, no hay linter. Uno mínimo, sin dependencias, con `scripts.test` y `engines`, deja el proyecto
   reconocible para cualquier herramienta y para quien lo abra por primera vez.
-- **Sin linter.** 40 líneas de más de 160 caracteres en las herramientas; funciones de una línea con tres
+  → **Arreglado en 0.20.0:** `package.json` con `engines >=22`, `npm test`, `npm run test:cobertura` y
+  `npm run comprobar`. `preparar-curso.js` lo borra al crear un curso. El linter no: va en el punto siguiente.
+- ⏳ **Sin linter.** 40 líneas de más de 160 caracteres en las herramientas; funciones de una línea con tres
   ternarios (`comprobar.js:291`, `indice.js:10`). Es consistente y está comentado, así que se lee, pero
   crece a base de compactar. Un ESLint con reglas mínimas (o al menos `max-len`) costaría poco.
-- **`comprobar.js` hace dos cosas:** comprobar y generar markdown (`pendientes`, `auditoría`, `Estado` del
+  → **Abierto.** Sin bloque asignado; cuando haya hueco.
+- ⏳ **`comprobar.js` hace dos cosas:** comprobar y generar markdown (`pendientes`, `auditoría`, `Estado` del
   README, `comprobar.js:220-327`). La generación del índice ya vive en `lib/indice.js`; el resto de
   generadores debería vivir en `lib/` también. Refactor pequeño, sin urgencia.
-- **Parser de frontmatter propio** (`vault.js:90-114`): escalares, listas en línea y en bloque. No entiende
+  → **Abierto.** Se hará en el bloque 2, junto con P2 (ficheros vivos generados).
+- ⏳ **Parser de frontmatter propio** (`vault.js:90-114`): escalares, listas en línea y en bloque. No entiende
   mapas anidados, cadenas multilínea ni valores con `:` sin comillas. Obsidian escribe frontmatter cuando
   el alumno marca casillas o edita propiedades; hoy solo hace `estudiada`, y está cubierto. Si el kit va a
   apoyarse más en propiedades que toca el alumno (§8), conviene tests de esquina o un parser YAML mínimo
   de verdad.
-- **Ficheros vivos que mantiene el LLM a mano:** `progreso.md`, `conceptos/_index.md`, `mapa-del-curso.md`,
+  → **Abierto.** Hace falta antes de E5 (bloque 3), que añade propiedades que marca el alumno.
+- ⏳ **Ficheros vivos que mantiene el LLM a mano:** `progreso.md`, `conceptos/_index.md`, `mapa-del-curso.md`,
   `formulario.md`, `ejercicios/_index.md`. `comprobar.js` sincroniza los dos primeros; los otros tres
   pueden desviarse sin que nadie avise. Y `mapa-del-curso.md` se solapa con `inicio.md` desde la 0.16.0 (la
   propia skill dice "no listes ahí las sesiones"). Ver §8.1 (P2).
-- **Carpeta temporal sin limpiar:** `actualizar.js:115` clona en `os.tmpdir()` y nunca la borra.
-- **Test que falta:** el caso de §2.1 (actualizar sin identidad y con fallo).
+  → **Abierto.** Es P2, bloque 2.
+- ✅ **Carpeta temporal sin limpiar:** `actualizar.js:115` clona en `os.tmpdir()` y nunca la borra.
+  → **Arreglado en 0.20.0:** `cli()` de `actualizar.js` borra el clon al terminar (en un `finally`), salvo si
+  vino por `--origen`.
+- ✅ **Test que falta:** el caso de §2.1 (actualizar sin identidad y con fallo).
+  → **Arreglado en 0.20.0:** test "si no puede guardar antes de actualizar, no toca nada…" en
+  `tests/actualizar.test.js`.
 
 ---
 
@@ -200,7 +258,9 @@ El kit está diseñado para no atarse a Claude (`AGENTS.md` como fuente, `SKILL.
 arquitectura lo permite. Lo que falla es que **el trabajo de adaptación se le delega al propio LLM en
 tiempo de instalación**, y ese es el momento y el actor menos fiables.
 
-### 5.1 🔴 `.gitignore` en el motor
+### 5.1 🔴 → ✅ `.gitignore` en el motor
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** `.gitignore` sigue en `motor.json` (sacarlo haría que el `actualizar.js` viejo lo borrase), pero ahora se **fusiona**: se añaden al final las reglas del kit que falten y no se toca ninguna del alumno. La actualización 0.19→0.20 la hace el código viejo y lo sustituye entero por última vez (avisado en el CHANGELOG). Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `motor.json` incluye `.gitignore` entre los ficheros que `/actualizar` reemplaza. `ESTANDARES.md` paso 1
 pide al LLM "añade esa carpeta a `.gitignore`". La siguiente actualización la borra. Hoy el fichero ya
@@ -244,7 +304,9 @@ no una nota.
 
 ## 6. Documentación
 
-### 6.1 🔴 Lo que ya no es verdad
+### 6.1 🔴 → ✅ parcial · Lo que ya no es verdad
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** Corregidos `CONTRIBUTING.md` (flujo con releases, barreras de `main` sin depender de la visibilidad) y `README.md` y la plantilla de PR (CI sin Mac). `docs/superpowers/` borrado entero, incluido el fichero con datos del curso real. **Siguen tal cual** la invitación en `INSTALACION.md` y la 1.0.0: dependen de tu decisión sobre público/privado. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 | Dónde | Dice | Realidad |
 |---|---|---|
@@ -286,7 +348,9 @@ aplicarse (vuelve a ser el hook).
 
 ---
 
-## 7. Agilidad del proceso
+## 7. Agilidad del proceso (releases resueltas en 0.20.0)
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** Releases automáticas por etiqueta (ver §2.2). El curso de referencia en CI, `.superpowers/sdd/` y el documento de arquitectura siguen abiertos. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 🟢 **Funciona.** Rama → tests en local (hook) → PR → `tests-ok` → merge → CHANGELOG → migración si toca.
 Versiones con criterio ("qué nota el alumno"), CI barato y con cancelación, 15 PRs mezclados en dos días
