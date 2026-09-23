@@ -78,3 +78,24 @@ test('los complementos son los del directorio oficial de Obsidian', () => {
     ['realclaudian', 'yishentu/claudian'],
   ]);
 });
+
+test('descargarDeGitHub: pide la versión fijada, comprueba el hash y rechaza lo que no coincide', async () => {
+  const datos = Buffer.from('main de mentira');
+  const urls = [];
+  const traer = respuesta => async (url, opciones) => { urls.push(url); assert.ok(opciones.signal, 'con tiempo límite'); return respuesta; };
+  const ok = { status: 200, ok: true, arrayBuffer: async () => datos };
+  const esperado = { version: '1.2.3', sha256: ob.sha256(datos) };
+  assert.deepEqual(await ob.descargarDeGitHub('a/b', 'main.js', esperado, traer(ok)), datos);
+  assert.equal(urls[0], 'https://github.com/a/b/releases/download/1.2.3/main.js');
+  await assert.rejects(ob.descargarDeGitHub('a/b', 'main.js', { version: '1.2.3', sha256: 'otro' }, traer(ok)), /hash distinto/);
+  assert.equal(await ob.descargarDeGitHub('a/b', 'styles.css', esperado, traer({ status: 404, ok: false })), null);
+  await assert.rejects(ob.descargarDeGitHub('a/b', 'main.js', esperado, traer({ status: 500, ok: false })), /HTTP 500/);
+});
+
+test('cada complemento lleva versión y un sha256 por fichero, y main.js y manifest.json siempre están', () => {
+  for (const c of ob.COMPLEMENTOS) {
+    assert.match(c.version, /^\d+\.\d+\.\d+$/);
+    for (const f of ['main.js', 'manifest.json']) assert.ok(f in c.ficheros, `${c.id} sin ${f}`);
+    for (const hash of Object.values(c.ficheros)) assert.match(hash, /^[0-9a-f]{64}$/);
+  }
+});

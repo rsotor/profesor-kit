@@ -128,3 +128,17 @@ test('cambiar de asistente: con otro llm en ajustes.json, volver a crear el ataj
   assert.match(fs.readFileSync(path.join(carpetaBin, 'historia'), 'utf8'), /exec codex "\$@"/);
   assert.doesNotMatch(fs.readFileSync(path.join(carpetaBin, 'historia'), 'utf8'), /claude/);
 });
+
+test('una carpeta de curso con comillas, $ o % no cabe en el lanzador: se rechaza y se explica', t => {
+  const carpetaBin = bin();
+  for (const mala of ['cursos"raros', 'cursos$2026', 'cursos%x', 'cursos`x']) {
+    const raiz = path.join(os.tmpdir(), mala);
+    const r = crearAtajo({ raiz, nombre: 'historia', carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) });
+    assert.deepEqual([r.creado, r.motivo], [false, 'ruta-no-valida'], mala);
+  }
+  assert.ok(!fs.existsSync(path.join(carpetaBin, 'historia')));
+  const lineas = [];
+  t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
+  assert.equal(cli(['--nombre', 'historia'], path.join(os.tmpdir(), 'cursos$x'), { carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) }), 1);
+  assert.match(lineas.join('\n'), /carácter que el atajo no puede llevar/);
+});

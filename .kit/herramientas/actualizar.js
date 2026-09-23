@@ -60,6 +60,19 @@ function restaurar(raiz, sha) {
   g.git(raiz, ['clean', '-q', '-fd']);
 }
 
+// Ficheros del motor que el alumno también puede haber tocado: no se sustituyen, se les añade lo que falte.
+// `.gitignore` es el caso: las reglas del kit son unas y las suyas (o las de otro LLM) son otras.
+const SE_FUSIONAN = ['.gitignore'];
+const patronesDe = texto => new Set(texto.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#')));
+
+function fusionarGitignore(actual, nuevo, version) {
+  const tiene = patronesDe(actual);
+  const faltan = [...patronesDe(nuevo)].filter(p => !tiene.has(p));
+  if (!faltan.length) return actual;
+  const eol = actual.includes('\r\n') ? '\r\n' : '\n';
+  return actual.replace(/(\r?\n)*$/, '') + eol + eol + `# Reglas del kit añadidas al actualizar a la ${version}` + eol + faltan.join(eol) + eol;
+}
+
 function actualizar({ raiz, origen }) {
   const motorViejo = v.leerMotor(raiz);
   const motorNuevo = v.leerMotor(origen);
@@ -72,7 +85,12 @@ function actualizar({ raiz, origen }) {
 
   const antes = contarErrores(origen, raiz);
   // No es una copia aparte: es un commit de lo que hubiera sin guardar, para poder volver exactamente aquí.
-  guardar({ raiz, mensaje: `guardado antes de actualizar a ${a}`, permitirErrores: true });
+  // Si no se pudo guardar (git sin identidad, por ejemplo), no se sigue: la vuelta atrás borraría lo que no
+  // llegó a guardarse, y eso es lo único que la actualización promete no tocar nunca.
+  const previo = guardar({ raiz, mensaje: `guardado antes de actualizar a ${a}`, permitirErrores: true });
+  if (!previo.guardado && previo.motivo !== 'sin-cambios') {
+    return { actualizado: false, motivo: 'sin-guardar', de, a, migraciones: [], detalle: `no se pudo guardar tu trabajo antes de actualizar (${previo.motivo}); no se toca nada` };
+  }
   const sha = g.shaActual(raiz);
 
   const hechas = [];
@@ -84,6 +102,10 @@ function actualizar({ raiz, origen }) {
       const desde = path.join(origen, ...f.split('/'));
       const hasta = path.join(raiz, ...f.split('/'));
       if (!fs.existsSync(desde)) continue;
+      if (SE_FUSIONAN.includes(f) && fs.existsSync(hasta)) {
+        fs.writeFileSync(hasta, fusionarGitignore(fs.readFileSync(hasta, 'utf8'), fs.readFileSync(desde, 'utf8'), a));
+        continue;
+      }
       fs.rmSync(hasta, { recursive: true, force: true, maxRetries: 3 });
       fs.mkdirSync(path.dirname(hasta), { recursive: true });
       fs.cpSync(desde, hasta, { recursive: true });
@@ -110,10 +132,24 @@ function actualizar({ raiz, origen }) {
   return { actualizado: true, de, a, migraciones: hechas };
 }
 
-function descargar(repo) {
+function gh(args) {
+  const r = spawnSync('gh', args, { encoding: 'utf8' });
+  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+}
+
+// La versión publicada es la última **release** del kit (etiqueta `vX.Y.Z`), nunca lo que haya en `main`:
+// así a los cursos solo les llega lo que se ha decidido publicar, y se puede volver a una versión concreta.
+function etiquetaPublicada(repo, ejecutar = gh) {
+  const r = ejecutar(['api', `repos/${repo}/releases/latest`, '--jq', '.tag_name']);
+  return r.ok && /^v\d+\.\d+\.\d+$/.test(r.salida) ? r.salida : null;
+}
+
+function descargar(repo, ejecutar = gh) {
+  const etiqueta = etiquetaPublicada(repo, ejecutar);
+  if (!etiqueta) throw new Error('No se pudo saber cuál es la última versión publicada del kit (¿sesión de gh iniciada? ¿hay alguna release?)');
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'profesor-kit-'));
-  const r = spawnSync('gh', ['repo', 'clone', repo, tmp, '--', '--depth', '1', '-q'], { encoding: 'utf8' });
-  if (r.status !== 0) throw new Error(`No se pudo descargar el kit (¿sesión de gh iniciada?): ${r.stderr}`);
+  const r = ejecutar(['repo', 'clone', repo, tmp, '--', '--depth', '1', '--branch', etiqueta, '-q']);
+  if (!r.ok) throw new Error(`No se pudo descargar el kit ${etiqueta}: ${r.salida}`);
   return tmp;
 }
 
@@ -124,10 +160,10 @@ function novedades(origen, versionActual) {
   return lineas.slice(inicio < 0 ? 0 : inicio, fin < 0 ? lineas.length : fin).join('\n').trim();
 }
 
-// Consulta ligera (sin clonar): ¿qué versión hay publicada? Devuelve null si no hay red o sesión.
-function versionPublicada(repo) {
-  const r = spawnSync('gh', ['api', `repos/${repo}/contents/.kit/VERSION`, '-H', 'Accept: application/vnd.github.raw'], { encoding: 'utf8' });
-  return r.status === 0 ? r.stdout.trim() : null;
+// Consulta ligera (sin clonar): ¿qué versión hay publicada? Devuelve null si no hay red, sesión ni releases.
+function versionPublicada(repo, ejecutar = gh) {
+  const etiqueta = etiquetaPublicada(repo, ejecutar);
+  return etiqueta ? etiqueta.slice(1) : null;
 }
 
 // Compara versiones número a número: '0.10.0' es más nueva que '0.9.1', aunque como texto no lo parezca.
@@ -154,23 +190,28 @@ function cli(args, raiz, descargarKit = descargar, consultar = versionPublicada)
   if (args.includes('--comprobar')) { const aviso = comprobarNovedades(raiz, undefined, consultar); if (aviso) console.log(aviso); return 0; }
   const i = args.indexOf('--origen');
   const origen = i >= 0 ? path.resolve(args[i + 1]) : descargarKit(v.leerMotor(raiz).repo);
-  const de = v.leerVersion(raiz);
-  const a = v.leerVersion(origen);
+  try {
+    const de = v.leerVersion(raiz);
+    const a = v.leerVersion(origen);
 
-  if (de === a) { console.log(`Ya tienes la última versión (${de}).`); return 0; }
-  if (!args.includes('--aplicar')) {
-    console.log(`Tienes la ${de}; hay una ${a}.\n\n${novedades(origen, de)}\n\nPara aplicarla: node .kit/herramientas/actualizar.js --aplicar`);
-    return 0;
+    if (de === a) { console.log(`Ya tienes la última versión (${de}).`); return 0; }
+    if (!args.includes('--aplicar')) {
+      console.log(`Tienes la ${de}; hay una ${a}.\n\n${novedades(origen, de)}\n\nPara aplicarla: node .kit/herramientas/actualizar.js --aplicar`);
+      return 0;
+    }
+    const r = actualizar({ raiz, origen });
+    if (r.actualizado) {
+      console.log(`Actualizado de ${r.de} a ${r.a}.${r.migraciones.length ? ` Datos migrados: ${r.migraciones.join(', ')}.` : ''}`);
+      return 0;
+    }
+    console.log(`No se ha actualizado: todo sigue como estaba, en la ${r.de}. Motivo: ${r.detalle || r.motivo}`);
+    return 1;
+  } finally {
+    // Lo descargado es temporal: no se deja una copia del kit por cada actualización.
+    if (i < 0) fs.rmSync(origen, { recursive: true, force: true, maxRetries: 3 });
   }
-  const r = actualizar({ raiz, origen });
-  if (r.actualizado) {
-    console.log(`Actualizado de ${r.de} a ${r.a}.${r.migraciones.length ? ` Datos migrados: ${r.migraciones.join(', ')}.` : ''}`);
-    return 0;
-  }
-  console.log(`No se ha actualizado: todo sigue como estaba, en la ${r.de}. Motivo: ${r.detalle || r.motivo}`);
-  return 1;
 }
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'actualizar.js');
 
-module.exports = { actualizar, restaurar, validarMotor, novedades, comprobarNovedades, cli };
+module.exports = { actualizar, restaurar, validarMotor, novedades, comprobarNovedades, fusionarGitignore, etiquetaPublicada, versionPublicada, descargar, cli };

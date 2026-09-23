@@ -15,8 +15,10 @@ function git(raiz, args) {
 const esRepo = raiz => intentarGit(raiz, ['rev-parse', '--is-inside-work-tree']).ok;
 const hayCambios = raiz => git(raiz, ['status', '--porcelain']) !== '';
 const shaActual = raiz => git(raiz, ['rev-parse', 'HEAD']);
+// `git var` decide como decide `git commit`: una identidad vacía (user.name= en el global de una máquina con
+// varias cuentas) hace que `git config` responda pero el commit falle.
 const tieneIdentidad = raiz =>
-  intentarGit(raiz, ['config', 'user.name']).ok && intentarGit(raiz, ['config', 'user.email']).ok;
+  intentarGit(raiz, ['var', 'GIT_AUTHOR_IDENT']).ok && intentarGit(raiz, ['var', 'GIT_COMMITTER_IDENT']).ok;
 
 function urlOrigen(raiz) {
   const r = intentarGit(raiz, ['remote', 'get-url', 'origin']);
