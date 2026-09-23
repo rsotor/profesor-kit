@@ -119,6 +119,10 @@ function actualizar({ raiz, origen }) {
       tocar(hasta);
     }
 
+    // Lo que había en memoria de las herramientas es de la versión vieja: se olvida antes de migrar, para que
+    // las migraciones (nuevas) carguen las piezas nuevas. Las migraciones también lo hacen por su cuenta.
+    const herramientas = path.join(raiz, '.kit', 'herramientas') + path.sep;
+    for (const k of Object.keys(require.cache)) if (k.startsWith(herramientas)) delete require.cache[k];
     const ajustes = v.leerAjustes(raiz);
     for (const m of migracionesPendientes(raiz, ajustes.version_datos)) {
       require(m.fichero).migrar(raiz);

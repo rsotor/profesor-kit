@@ -1,8 +1,16 @@
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
-const v = require('../lib/vault');
-const generados = require('../lib/generados');
+
+// Una migración la ejecuta el `actualizar.js` de la versión VIEJA, que ya tiene en memoria sus propias piezas
+// (`lib/indice.js`, `lib/vault.js`…). Un `require` normal devolvería esas piezas viejas aunque en disco ya estén
+// las nuevas, y la migración fallaría (pasó de la 0.20 a la 0.21: "indice.tituloDe is not a function"). Por eso
+// se olvida lo cargado de las herramientas y se carga de nuevo, desde disco, dentro de `migrar`.
+function cargarFresco(rel) {
+  const herramientas = path.dirname(__dirname) + path.sep;
+  for (const k of Object.keys(require.cache)) if (k.startsWith(herramientas)) delete require.cache[k];
+  return require(path.join(path.dirname(__dirname), ...rel.split('/')));
+}
 
 // Formato v4: estudio/formulario.md y estudio/ejercicios/_index.md pasan a generarlos guardar.js (como ya
 // pasaba con inicio.md, pendientes.md y auditoria-del-material.md), a partir de las notas de concepto. Un
@@ -22,6 +30,8 @@ function conservarSiNoCoincide(raiz, relActual, generar, relAnterior) {
 module.exports = {
   descripcion: 'estudio/formulario.md y estudio/ejercicios/_index.md pasan a generarlos guardar.js',
   migrar(raiz) {
+    const v = cargarFresco('lib/vault.js');
+    const generados = cargarFresco('lib/generados.js');
     conservarSiNoCoincide(raiz, `${v.CARPETA_ALUMNO}/formulario.md`, generados.markdownFormulario, `${v.CARPETA_ALUMNO}/formulario-anterior.md`);
     conservarSiNoCoincide(raiz, `${v.CARPETA_ALUMNO}/ejercicios/_index.md`, generados.markdownEjercicios, `${v.CARPETA_ALUMNO}/ejercicios/_index-anterior.md`);
   },

@@ -278,3 +278,19 @@ test('con un posible secreto en el curso no actualiza ni hace el commit previo: 
   assert.equal(git(raiz, 'rev-list', '--count', 'HEAD'), commits, 'no hay commit previo');
   assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
 });
+
+// Regresión encontrada por `npm run prueba-actualizar` (0.20 → 0.21): la migración la ejecuta el actualizar.js
+// viejo, con sus piezas viejas en memoria; un require normal recibía el lib/indice.js viejo, sin `tituloDe`.
+test('migración 004: funciona aunque en memoria estén las piezas de la versión vieja', () => {
+  const rutaIndice = require.resolve('../lib/indice');
+  const antes = require.cache[rutaIndice];
+  require.cache[rutaIndice] = { id: rutaIndice, filename: rutaIndice, loaded: true, exports: {} };   // un indice.js "viejo", sin tituloDe
+  try {
+    const raiz = cursoTemporal({ 'estudio/formulario.md': '# Formulario a mano\n\nalgo mío\n' });
+    const m = require('../migraciones/004-formulario-y-ejercicios-generados');
+    assert.doesNotThrow(() => m.migrar(raiz));
+    assert.ok(fs.existsSync(path.join(raiz, 'estudio', 'formulario-anterior.md')));
+  } finally {
+    if (antes) require.cache[rutaIndice] = antes; else delete require.cache[rutaIndice];
+  }
+});
