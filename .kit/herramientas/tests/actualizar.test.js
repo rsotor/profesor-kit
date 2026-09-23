@@ -265,3 +265,16 @@ test('la versión publicada es la última release (etiqueta vX.Y.Z), y se descar
   assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: true, salida: 'main' }))), null, 'solo vale una etiqueta de versión');
   assert.throws(() => descargar('x/y', gh(() => ({ ok: false, salida: '' }))), /última versión publicada/);
 });
+
+test('con un posible secreto en el curso no actualiza ni hace el commit previo: primero hay que quitarlo', () => {
+  const { raiz, origen } = montar();
+  const token = 'ghp_' + 'a1B2'.repeat(9);
+  escribir(raiz, { 'estudio/inbox/notas.txt': `mi token es ${token}\n` });
+  const commits = git(raiz, 'rev-list', '--count', 'HEAD');
+  const r = actualizar({ raiz, origen });
+  assert.deepEqual([r.actualizado, r.motivo], [false, 'secreto']);
+  assert.match(r.detalle, /estudio\/inbox\/notas\.txt/);
+  assert.doesNotMatch(r.detalle, /ghp_/, 'nunca enseña el secreto');
+  assert.equal(git(raiz, 'rev-list', '--count', 'HEAD'), commits, 'no hay commit previo');
+  assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
+});

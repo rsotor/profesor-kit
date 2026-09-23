@@ -42,6 +42,8 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - **"Deshaz lo último" es más seguro.** Tu profesor te enseña primero qué volvería a como estaba y solo lo hace
   con tu sí. Nunca borra tu historia: añade un guardado que deshace el anterior, así que también se puede
   rehacer. Si tienes algo sin guardar, o lo último fue una actualización del kit, no lo hace y te explica por qué.
+- Si tu curso tiene algo que parece una contraseña o un token, tu profesor no actualiza el kit hasta que lo
+  quites: así nunca acaba subido a GitHub.
 - La instalación ya no pide invitación al kit: es público. Tu curso sigue siendo privado.
 - **Si ya tenías tu curso:** si usas otro asistente que no es Claude, tu profesor te ofrece pasar lo que montó
   al principio al formato nuevo.

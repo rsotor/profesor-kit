@@ -10,10 +10,10 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | Hallazgo | Bloque | Estado | Cómo se resolvió · dónde revisarlo |
 |---|---|---|---|
 | §2.1 Vuelta atrás que borraba lo no guardado | 1 | ✅ 0.20.0 | `actualizar.js` mira el resultado de `guardar` antes de tocar nada: si no pudo guardar (y no es `sin-cambios`) devuelve `sin-guardar` y no empieza. Test: "si no puede guardar antes de actualizar, no toca nada…" en `tests/actualizar.test.js` |
-| §2.1 (menor) Commit previo con secreto que luego se sube | 1 | ⏳ abierto | No tocado. Opción: que `guardar` con `permitirErrores` siga sin hacer commit si el único error es `secreto` |
+| §2.1 (menor) Commit previo con secreto que luego se sube | — | ✅ 0.21.0 | `actualizar.js` escanea secretos antes de nada: si hay uno, no hace el commit previo ni actualiza, y dice en qué fichero (sin enseñarlo). Test en `tests/actualizar.test.js` |
 | **Nuevo** `tieneIdentidad` daba por buena una identidad vacía | 1 | ✅ 0.20.0 | Salió al probar §2.1: con `user.name=` en el git global, `git config` responde pero el commit falla. `lib/git.js` usa ahora `git var GIT_AUTHOR_IDENT` / `GIT_COMMITTER_IDENT`, que decide como `git commit` |
 | §2.2 Motor desde `main`, sin etiquetas | 1 | ✅ 0.20.0 | `actualizar.js`: `etiquetaPublicada()` lee la última release (`gh api …/releases/latest`), `descargar()` clona con `--branch vX.Y.Z`, `versionPublicada()` (aviso diario) sale de ahí. `.github/workflows/release.yml` crea la release en cada merge que sube `.kit/VERSION`, con las notas de `.github/release-notas.js` (sección del CHANGELOG). Flujo y paso manual en `CONTRIBUTING.md` (paso 6). Comprobado: `v0.20.0` creada sola al mezclar #30 |
-| §2.2 `enforce_admins` desactivado · sin firma del motor | 1 | ⏳ decisión | `enforce_admins` es un clic en GitHub (decide Roberto). Firmar releases: no vale la pena mientras el repo tenga un solo mantenedor |
+| §2.2 `enforce_admins` desactivado · sin firma del motor | — | ✅ 2026-09-23 | Con el sí de Roberto, `enforce_admins` activado: `main` exige `tests-ok` también al dueño. Firmar releases: no vale la pena mientras el repo tenga un solo mantenedor |
 | §2.3 Complementos de Obsidian sin fijar | 1 (adelantado) | ✅ 0.20.0 | `lib/obsidian.js`: cada complemento lleva `version` y sha256 por fichero (terminal 3.27.2, code-files 1.1.9, claudian 2.3.3); `descargarDeGitHub` baja esa versión, verifica el hash y rechaza lo que no coincide; `AbortSignal.timeout(120 s)`. Subir de versión: `CONTRIBUTING.md`, último apartado. Tests nuevos en `tests/obsidian.test.js` |
 | §2.3 (TBD) Claudian y la clave de API | — | ⏳ abierto | Sin comprobar. Toca a la hoja del alumno si pide clave |
 | §2.4 Inyección por la ruta del curso en el atajo | 1 (adelantado) | ✅ 0.20.0 | `crear-atajo.js`: `RUTA_PELIGROSA` rechaza `"`, `$`, `%`, acento grave y saltos de línea con motivo `ruta-no-valida` y explicación en llano. Test en `tests/crear-atajo.test.js` |
@@ -81,7 +81,7 @@ de diseño (motor/datos, `estudio/` como bóveda, todo lo generado sale de disco
    público es intencionado, hay un fichero en `docs/superpowers/pruebas/` con referencias a un curso real
    de Roberto que conviene limpiar.
 
-**Lo que más valor añadiría (§8):** hacer que la calidad pedagógica dependa menos del modelo (un "lint
+**Lo que más valor añadiría (§8)** (el lint pedagógico y los ficheros generados ya están en 0.21.0): hacer que la calidad pedagógica dependa menos del modelo (un "lint
 pedagógico" en `comprobar.js` y más ficheros vivos generados desde datos), y darle al alumno tres cosas
 que hoy no tiene: repaso espaciado, un plan con calendario y ver lo que el profesor sabe de él.
 
@@ -91,7 +91,7 @@ que hoy no tiene: repaso espaciado, un plan con calendario y ver lo que el profe
 
 ### 2.1 🔴 → ✅ Vuelta atrás que puede destruir trabajo sin guardar
 
-> ✅ **Arreglado en 0.20.0 (PR #30).** `actualizar.js` comprueba el resultado de `guardar` y, si no pudo guardar, devuelve `sin-guardar` sin tocar nada. Con test. De paso salió y se arregló un fallo en `lib/git.js`: una identidad de git vacía pasaba por buena. El caso menor del secreto en el commit previo sigue abierto. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+> ✅ **Arreglado en 0.20.0 (PR #30).** `actualizar.js` comprueba el resultado de `guardar` y, si no pudo guardar, devuelve `sin-guardar` sin tocar nada. Con test. De paso salió y se arregló un fallo en `lib/git.js`: una identidad de git vacía pasaba por buena. El caso menor del secreto en el commit previo se arregló en la 0.21.0. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `actualizar.js:75-77` guarda "lo que hubiera sin guardar" con `guardar({ permitirErrores: true })` y toma
 el SHA. Pero **no mira el resultado**: si `guardar` no hizo commit por `sin-identidad` (git sin
@@ -110,7 +110,7 @@ historia, secreto incluido. Es un caso de esquina, pero el escaneo de secretos d
 
 ### 2.2 🔴 → ✅ Cadena de suministro del motor
 
-> ✅ **Arreglado en 0.20.0 (PR #30).** `actualizar.js` descarga la **última release** (`vX.Y.Z`), nunca `main`; el aviso diario también mira la release. El workflow `release.yml` publica la release en cada merge que sube `.kit/VERSION`, con las notas del CHANGELOG. Comprobado con la `v0.20.0`. Siguen abiertos `enforce_admins` (decisión) y la firma del motor (no compensa). Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+> ✅ **Arreglado en 0.20.0 (PR #30).** `actualizar.js` descarga la **última release** (`vX.Y.Z`), nunca `main`; el aviso diario también mira la release. El workflow `release.yml` publica la release en cada merge que sube `.kit/VERSION`, con las notas del CHANGELOG. Comprobado con la `v0.20.0`. `enforce_admins` activado el 2026-09-23; la firma del motor no compensa. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `actualizar.js:113-118` clona **`main`** del repo del kit y luego `require()` de las migraciones descargadas
 (`actualizar.js:95`) y copia skills y `AGENTS.md`, que gobiernan al LLM. Todo lo que llegue a `main` se
@@ -402,7 +402,11 @@ mejor al profesor; después las que hacen mejor al alumno. Al final, el orden qu
 
 ### 8.1 Para el profesor: calidad del material, facilidad al enseñar, evolución con el curso
 
-**P1 · Lint pedagógico en `comprobar.js` (S-M).** Hoy `comprobar.js` vigila enlaces, índices, frontmatter y
+> Estado: **P1 y P2 hechos** en 0.21.0 · P3 a P8 **pendientes** de revisar con Roberto.
+
+> ✅ **P1 hecho en 0.21.0.** Seis avisos en `comprobar.js`: `nota-larga`, `concepto-sin-ejemplo`, `sesion-incompleta`, `flashcards-fuera-de-rango`, `requiere-vacio` y `pregunta-doble`. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+
+**P1 · ✅ Lint pedagógico en `comprobar.js` (S-M).** Hoy `comprobar.js` vigila enlaces, índices, frontmatter y
 lo que Obsidian no dibuja. No vigila **nada de la calidad pedagógica**, que hoy depende de que el modelo
 lea 196 líneas de skill y no se salte pasos. Avisos nuevos, todos calculables desde disco:
 
@@ -419,7 +423,9 @@ lea 196 líneas de skill y no se salte pasos. Avisos nuevos, todos calculables d
 Por qué primero: es lo que hace al kit **robusto frente al modelo** (§5.3) y lo que permite un curso de
 referencia en CI (§7). Y da al profesor un espejo objetivo de su propio trabajo antes de guardar.
 
-**P2 · Más ficheros vivos generados, menos mantenidos a mano (M).** `inicio.md` demostró el patrón: lo que
+> ✅ **P2 hecho en 0.21.0.** `formulario.md` (fórmula o definición de cada concepto) y `ejercicios/_index.md` se generan al guardar; `mapa-del-curso.md` se queda solo para la cobertura del material. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+
+**P2 · ✅ Más ficheros vivos generados, menos mantenidos a mano (M).** `inicio.md` demostró el patrón: lo que
 se puede calcular, se calcula en `guardar.js`. Candidatos: `ejercicios/_index.md` (de los `ejercicio:` de
 cada concepto y un frontmatter en cada ejercicio con `practica:` y `se-descubre:`), `formulario.md` (de las
 secciones `## La fórmula`, agrupadas por `bloques:`), y **retirar `mapa-del-curso.md`** o reducirlo a la
@@ -468,6 +474,8 @@ conversión que use lo que haya instalado (LibreOffice para PPTX). No lo dimensi
 traiga el material de los cursos reales.
 
 ### 8.2 Para el alumno: aprender mejor, entender mejor, seguir motivado
+
+> Estado: E1 a E9 **pendientes** de revisar con Roberto.
 
 **E1 · Repaso espaciado (M).** Las flashcards existen y se leen una vez. Lo que fija el conocimiento es
 volver a ellas a intervalos crecientes. Dos formas:
@@ -525,6 +533,8 @@ tropiezo.
 
 ### 8.3 Orden recomendado
 
+> Estado: la **iteración 1** salió en la 0.20.0. La **iteración 2** va en la 0.21.0 (PR #31) con P1, P2 y además las secciones 3 a 7 de este informe; P3 y P5 no entraron. La **iteración 3** y el orden final se deciden al revisar esta sección.
+
 Tres iteraciones, cada una un objetivo, cada una publicable sola:
 
 1. **"Que no se rompa" (0.20.0):** §2.1 (vuelta atrás segura), §2.2 (etiquetas y actualizar desde
@@ -545,7 +555,9 @@ un módulo y a la fecha del examen del centro, que es cuando se sabrá qué nece
 
 ---
 
-## 9. Decisiones que necesitan a Roberto
+## 9. Decisiones que necesitan a Roberto (cerrada)
+
+> ✅ **Cerrada.** 1: público hasta después de la 1.0.0. 2: la 1.0.0 se prepara, no se lanza todavía. 3: Linux no soportado. 4: Codex (probado en Windows; falta su issue de adaptador); Gemini retirado. 5: se decide al revisar la sección 8.
 
 1. **¿El repo del kit es público a propósito?** Cambia la guía de instalación, `CONTRIBUTING.md` y obliga a
    limpiar `docs/superpowers/pruebas/`.
