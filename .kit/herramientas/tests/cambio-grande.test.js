@@ -8,17 +8,17 @@ const { evaluar, cli, ficherosCambiados, TOCA_COMPORTAMIENTO, RESUMEN } = requir
 
 test('evaluar: PR que no toca skills/AGENTS.md/plantillas no necesita el resumen', () => {
   const r = evaluar(['.kit/herramientas/comprobar.js', 'docs/arquitectura.md']);
-  assert.deepEqual(r, { ok: true, tocaComportamiento: false, tocaResumen: false });
+  assert.deepEqual(r, { ok: true, tocaComportamiento: false, tocaResumen: false, resumenReal: false });
 });
 
 test('evaluar: toca una skill y NO trae el resumen → falla', () => {
   const r = evaluar(['.kit/skills/sesion/SKILL.md']);
-  assert.deepEqual(r, { ok: false, tocaComportamiento: true, tocaResumen: false });
+  assert.deepEqual(r, { ok: false, tocaComportamiento: true, tocaResumen: false, resumenReal: false });
 });
 
 test('evaluar: toca AGENTS.md pero SÍ trae el resumen → pasa', () => {
-  const r = evaluar(['AGENTS.md', RESUMEN]);
-  assert.deepEqual(r, { ok: true, tocaComportamiento: true, tocaResumen: true });
+  const r = evaluar(['AGENTS.md', RESUMEN], '# Prueba real\n\nModelo: sonnet\n');
+  assert.deepEqual(r, { ok: true, tocaComportamiento: true, tocaResumen: true, resumenReal: true });
 });
 
 test('evaluar: toca una plantilla, sin resumen → falla', () => {
@@ -52,4 +52,11 @@ test('ficherosCambiados: contra main (si hay un origin/main local) da una lista,
   const hayRef = ref => { try { execFileSync('git', ['rev-parse', '--verify', ref], { cwd: raiz, encoding: 'utf8' }); return true; } catch { return false; } };
   if (!hayRef('origin/main')) return;   // entorno sin ese remoto local: lo prueba igual cli() más arriba, contra un ref inexistente
   assert.ok(Array.isArray(ficherosCambiados('main', raiz)));
+});
+
+test('evaluar: un RESUMEN.md hecho con --sin-llm no cuenta como prueba real', () => {
+  const deMentira = '# Prueba real\n\n> **Modo `--sin-llm`: no se ha ejecutado ningún LLM real.**\n';
+  const r = evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], deMentira);
+  assert.deepEqual([r.ok, r.tocaResumen, r.resumenReal], [false, true, false]);
+  assert.equal(evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], '# Prueba real\n\nModelo: sonnet\n').ok, true);
 });

@@ -16,10 +16,14 @@ const RESUMEN = 'pruebas/curso-ejemplo/resultado/RESUMEN.md';
 
 // `ficheros`: rutas cambiadas en el PR, relativas a la raíz, con /. Pura función de la lista: sin git
 // real, se puede probar con cualquier lista inyectada.
-function evaluar(ficheros) {
+// `resumen`: el texto del RESUMEN.md que trae el PR. Uno hecho con `--sin-llm` no cuenta: solo prueba el
+// montaje, no al profesor, y con él cualquiera pasaría el check sin haber probado nada.
+const DE_PRUEBA = /Modo `--sin-llm`/;
+function evaluar(ficheros, resumen = '') {
   const tocaComportamiento = ficheros.some(TOCA_COMPORTAMIENTO);
   const tocaResumen = ficheros.includes(RESUMEN);
-  return { ok: !tocaComportamiento || tocaResumen, tocaComportamiento, tocaResumen };
+  const resumenReal = tocaResumen && !DE_PRUEBA.test(resumen);
+  return { ok: !tocaComportamiento || resumenReal, tocaComportamiento, tocaResumen, resumenReal };
 }
 
 function ficherosCambiados(ramaBase, raiz = RAIZ) {
@@ -35,11 +39,12 @@ function cli(args) {
   let ficheros;
   try { ficheros = ficherosCambiados(ramaBase); } catch (error) { console.error(error.message); return 1; }
 
-  const r = evaluar(ficheros);
+  const f = path.join(RAIZ, ...RESUMEN.split('/'));
+  const r = evaluar(ficheros, require('node:fs').existsSync(f) ? require('node:fs').readFileSync(f, 'utf8') : '');
   if (!r.ok) {
     console.error(
       'Este PR cambia cómo trabaja el profesor (toca .kit/skills/, AGENTS.md o .kit/plantillas/) pero no '
-      + `trae ${RESUMEN} actualizado.\n\n`
+      + `trae ${RESUMEN} de una prueba real${r.tocaResumen ? ' (el que trae es de --sin-llm)' : ''}.\n\n`
       + 'Ejecuta `npm run prueba-real` en tu Mac, revisa el resumen y súbelo con este PR.',
     );
     return 1;
