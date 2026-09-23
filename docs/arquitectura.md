@@ -57,6 +57,7 @@ el alumno/instalador a través del LLM.
 
 | Fichero | Qué hace | Quién la llama |
 |---|---|---|
+| `estado.js` | La foto del curso al abrir (plan 0.22, §3.1): material nuevo en `inbox/` sin procesar, siguiente sesión y sesiones preparadas sin estudiar, sesiones en 🔁, preparaciones en segundo plano (en curso, terminadas sin juntar, fallidas o interrumpidas si el proceso ya no existe) y el caso sugerido (1/2/3) | `AGENTS.md`, "Al empezar cada sesión" |
 | `comprobar.js` | Valida el curso entero (estructura, enlaces, secretos, "se verá bien", lint pedagógico, propiedades no estándar) y devuelve `{ errores, avisos }` | Todas las skills de trabajo antes de guardar; internamente `guardar.js`, `actualizar.js` y `diagnostico.js` |
 | `guardar.js` | Regenera los ficheros derivados, comprueba, hace `commit` (y `push` si procede) | Toda skill de trabajo al terminar (`sesion`, `dudas`, `examen`, `ejercicio`, `repaso`, `configurar`, `actualizar`) |
 | `actualizar.js` | Descarga la última release publicada, sustituye el motor, aplica migraciones pendientes y reinstala skills; vuelve atrás si algo empeora | Skill `/actualizar`; `--comprobar` lo lanza AGENTS.md al empezar cada sesión (silencioso, una vez al día) |
@@ -133,7 +134,8 @@ tabla) · `obsidian-oculta-ejercicios` (falta activar "Detectar todas las extens
 (no cabe en una pantalla) · `concepto-sin-ejemplo` (falta o está vacía "## El ejemplo") ·
 `sesion-incompleta` (falta "Cobertura", "Auditoría" o "Para pensarlo despacio") ·
 `flashcards-fuera-de-rango` · `requiere-vacio` (dificultad 3 sin prerrequisito declarado) ·
-`pregunta-doble` (≥2 signos `?` en una pregunta de examen).
+`pregunta-doble` (≥2 signos `?` en una pregunta de examen) · `falta-info-mal-usado` (`FALTA INFO` dentro de
+"## El error típico" de un concepto: eso no es material que el curso tuviera que entregar).
 
 **Propiedades no estándar (aviso)**: `propiedad-no-estandar` — el alumno escribió una propiedad conocida
 (`estudiada`, `nota`, `dificultad`…) de una forma que el kit no sabe interpretar (`vault.js#ESPERADO`).
@@ -164,6 +166,13 @@ tabla) · `obsidian-oculta-ejercicios` (falta activar "Detectar todas las extens
 5) `preparar-curso.js` (curso limpio + `ajustes.json`) · 6) `instalar-skills.js` · 7) `crear-atajo.js` ·
 8) `diagnostico.js` hasta "Todo listo" (repasa 1-7 de un tirón) · 9) `obsidian.js` + abrir `estudio/` como
 bóveda · 10) cerrar, reabrir con el atajo y decir "empezamos" (skill `/configurar`).
+
+**Arranque de sesión** (plan 0.22, tutoría y preparación; `AGENTS.md`, "Al empezar cada sesión"): saludo desde
+`config/diario.md` → `actualizar.js --comprobar` en silencio → `estado.js --json` da el caso sugerido (1
+estudiar lo ya preparado, 2 al día con material nuevo, 3 atrasado con material nuevo) y, si la hay, una
+preparación en segundo plano terminada sin juntar o interrumpida, que se resuelve primero → el profesor lo
+confirma con el alumno, nunca lo impone, y ofrece el calentamiento (dos preguntas) en los casos 1 y 3, y en
+el 2 si el alumno se queda mientras se prepara la clase.
 
 **Una clase**: el alumno deja material en `estudio/inbox/` → skill `/sesion` escribe las notas →
 `organizar.js` si hay `config/estructura.json` → `comprobar.js` → `guardar.js` (regenera, comprueba de

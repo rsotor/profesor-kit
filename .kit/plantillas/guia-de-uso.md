@@ -52,7 +52,28 @@ Se abre una ventana con letras. Escribe esta palabra y pulsa **Intro**:
 Tu profesor te saluda y espera a que le escribas. Se le habla con frases normales, como a una persona.
 {{TERMINAL_EN_OBSIDIAN}}
 
-## 5. Qué pedirle y cuándo
+## 5. Cuando llega una clase nueva
+
+Cada vez que abres a tu profesor, mira cómo está tu curso y te lo cuenta en una frase, con una de estas
+tres situaciones:
+
+1. **No hay clase nueva por preparar.** Sigues estudiando lo que ya tienes, con **inicio** como siempre.
+2. **Hay clase nueva y ya has estudiado todo lo demás.** Tu profesor tiene que prepararla, y tarda unos
+   minutos. Te da a elegir: un repaso rápido mientras tanto, o te vas a por un café y te avisa en cuanto
+   esté lista.
+3. **Hay clase nueva, pero todavía te queda algo por estudiar** (una sesión sin marcar, o algo en 🔁).
+   Lo nuevo no te hace falta todavía, así que te pregunta si prefieres que vaya preparándolo mientras
+   repasáis lo pendiente, o dejarlo para otro día. Decides tú.
+
+**Sobre la cuota:** preparar una clase mientras sigues hablando con tu profesor (el repaso, las preguntas
+de calentamiento) gasta más cuota de tu suscripción que esperar sin hacer nada. Si te da igual esperar, esa
+es la opción más barata. Si tu profesor no puede trabajar "en segundo plano" (depende del asistente que
+uses), simplemente tarda esos minutos con la conversación parada y seguís en cuanto termina.
+
+**El calentamiento:** antes de una clase nueva o al repasar, tu profesor puede hacerte dos preguntas rápidas
+de lo que ya viste. Puedes saltarlas ("ahora no") sin problema.
+
+## 6. Qué pedirle y cuándo
 
 | Cuando… | Escríbele algo así |
 |---|---|
@@ -70,7 +91,7 @@ Tu profesor te saluda y espera a que le escribas. Se le habla con frases normale
 
 No hace falta acertar con las palabras. Si no te entiende, te pregunta.
 
-## 6. Hacer un examen
+## 7. Hacer un examen
 
 1. Tu profesor te dice qué nota es el examen: está en la carpeta **examenes**.
 2. **Contesta en la propia nota.** Debajo de cada pregunta hay una línea ✍️ **Tu respuesta:**; escribe detrás
@@ -84,12 +105,12 @@ No hace falta acertar con las palabras. Si no te entiende, te pregunta.
 6. Si ya lo has hecho varias veces y quieres uno nuevo, pídele **"hazme otra versión del examen del módulo 1"**:
    las mismas preguntas con otras cifras. El de antes se queda para repasar.
 
-## 7. Dónde dejas el material de clase
+## 8. Dónde dejas el material de clase
 
 En la carpeta **inbox**. Arrastra ahí el PDF, las fotos o el documento y dile a tu profesor que lo has dejado.
 Lo mejor es PDF; si tienes una presentación, guárdala como PDF.
 
-## 8. Cómo dejar una duda mientras lees
+## 9. Cómo dejar una duda mientras lees
 
 Escribe `{{MARCADOR}}` en la nota, justo donde te pierdes, y a continuación tu pregunta:
 
@@ -98,12 +119,12 @@ Escribe `{{MARCADOR}}` en la nota, justo donde te pierdes, y a continuación tu 
 Deja todas las que quieras. La próxima vez que abras a tu profesor, dile "tengo dudas": contesta cada una en su
 sitio. Lo que queda por resolver está siempre en la nota **pendientes**.
 
-## 9. Para terminar
+## 10. Para terminar
 
 Escribe "hasta luego" y espera a que se despida: así guarda lo último. Si cierras la ventana sin más, no se
 pierde nada de lo terminado.
 
-## 10. Extras de Obsidian (opcionales)
+## 11. Extras de Obsidian (opcionales)
 
 Tu Obsidian trae tres complementos instalados pero **apagados**. Son de otras personas, no de Obsidian ni de tu
 profesor: actívalos solo si te interesan.
@@ -117,7 +138,7 @@ profesor: actívalos solo si te interesan.
 Para activar uno: rueda dentada (abajo a la izquierda) → **Complementos de la comunidad** → **Activar
 complementos de la comunidad** → en la lista, enciende el que quieras. Para apagarlo, lo mismo.
 
-## 11. Si algo no cuadra
+## 12. Si algo no cuadra
 
 - **Marqué una sesión y en inicio sigue ⬜:** es normal. Inicio se pone al día cuando tu profesor guarda; abre
   a tu profesor y dile cualquier cosa, o espera a la próxima clase.
@@ -132,7 +153,7 @@ complementos de la comunidad** → en la lista, enciende el que quieras. Para ap
 - **Algo de cómo trabaja tu profesor te molesta:** díselo tal cual, "esto es del kit". Él lo envía a quien lo
   mantiene.
 
-## 12. Otro curso u otro asistente
+## 13. Otro curso u otro asistente
 
 - **Añadir otro curso:** abre la terminal, entra en tu carpeta de cursos, abre a tu asistente y pégale otra vez
   el **texto de arranque** de la guía de instalación.
