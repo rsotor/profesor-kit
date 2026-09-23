@@ -45,6 +45,21 @@ test('dice exactamente qué falta, con su arreglo, y no da por bueno lo que no p
   assert.ok(lista.filter(c => !c.ok).every(c => c.arreglo.length > 10));
 });
 
+// issue #36: Claudian abre el asistente en estudio/, y Codex solo busca AGENTS.md y las skills hacia arriba hasta
+// la raíz del git. Si esa raíz no es la del curso, dentro de Obsidian el asistente no es el profesor.
+test('la raíz del git tiene que ser la del curso, vista desde estudio/ (issue #36)', () => {
+  const sinGit = cursoTemporal({ ...MOTOR, 'config/ajustes.json': JSON.stringify({ llm: 'claude-code' }), 'estudio/inicio.md': 'x' });
+  const lista = diagnostico({ raiz: sinGit, ejecutar: ordenador() });
+  assert.ok(fallos(lista).includes('raiz-del-git'));
+  assert.match(lista.find(c => c.id === 'raiz-del-git').arreglo, /git init/);
+
+  const { raiz, carpetaBin, entorno } = cursoInstalado();
+  iniciarGit(path.join(raiz, 'estudio'));
+  const conGitEnEstudio = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() });
+  assert.deepEqual(fallos(conGitEnEstudio), ['raiz-del-git']);
+  assert.match(conGitEnEstudio.find(c => c.id === 'raiz-del-git').arreglo, /estudio[\\/]\.git/);
+});
+
 test('sesión iniciada pero el kit no responde (red): lo dice sin hablar de invitaciones', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado();
   const lista = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador({ 'gh api repos/rsotor/profesor-kit': { ok: false, salida: 'HTTP 404' } }) });

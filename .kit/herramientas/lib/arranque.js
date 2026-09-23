@@ -21,10 +21,13 @@ function arrancar(cli, raiz, nombre) {
     console.error('Esto es del kit, no del curso: abre una issue con node .kit/herramientas/issue.js (ver "Feedback al kit" en AGENTS.md).');
     process.exit(3);
   };
+  // El final normal fija process.exitCode en vez de llamar a process.exit: con stdout en una tubería la
+  // escritura es asíncrona y process.exit la cortaría a medias (issue #35). Los fallos sí salen con
+  // process.exit: lo que queda por escribir es un mensaje corto a stderr.
   try {
     const codigo = cli(process.argv.slice(2), raiz);
-    if (codigo && typeof codigo.then === 'function') codigo.then(c => process.exit(c), fallo);
-    else process.exit(codigo);
+    if (codigo && typeof codigo.then === 'function') codigo.then(c => { process.exitCode = c; }, fallo);
+    else process.exitCode = codigo;
   } catch (error) {
     fallo(error);
   }
