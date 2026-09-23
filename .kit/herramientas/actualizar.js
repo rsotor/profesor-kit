@@ -6,6 +6,7 @@ const { spawnSync } = require('node:child_process');
 const v = require('./lib/vault');
 const g = require('./lib/git');
 const { guardar } = require('./guardar');
+const { escanearSecretos } = require('./lib/secretos');
 
 function validarMotor(ficheros) {
   for (const f of ficheros) {
@@ -83,6 +84,12 @@ function actualizar({ raiz, origen }) {
   if (de === a) return { actualizado: false, motivo: 'al-dia', de, a, migraciones: [] };
   if (!g.esRepo(raiz)) return { actualizado: false, motivo: 'sin-repo', de, a, migraciones: [] };
 
+  // Un posible secreto sin guardar no puede entrar en el commit previo: ese commit no se sube, pero el siguiente
+  // guardado limpio subiría toda la historia, secreto incluido. Primero se quita; después se actualiza.
+  const secretos = escanearSecretos(raiz);
+  if (secretos.length) {
+    return { actualizado: false, motivo: 'secreto', de, a, migraciones: [], detalle: `hay un posible secreto en ${[...new Set(secretos.map(x => x.fichero))].join(', ')}: quítalo antes de actualizar; no se toca nada` };
+  }
   const antes = contarErrores(origen, raiz);
   // No es una copia aparte: es un commit de lo que hubiera sin guardar, para poder volver exactamente aquí.
   // Si no se pudo guardar (git sin identidad, por ejemplo), no se sigue: la vuelta atrás borraría lo que no
@@ -112,6 +119,10 @@ function actualizar({ raiz, origen }) {
       tocar(hasta);
     }
 
+    // Lo que había en memoria de las herramientas es de la versión vieja: se olvida antes de migrar, para que
+    // las migraciones (nuevas) carguen las piezas nuevas. Las migraciones también lo hacen por su cuenta.
+    const herramientas = path.join(raiz, '.kit', 'herramientas') + path.sep;
+    for (const k of Object.keys(require.cache)) if (k.startsWith(herramientas)) delete require.cache[k];
     const ajustes = v.leerAjustes(raiz);
     for (const m of migracionesPendientes(raiz, ajustes.version_datos)) {
       require(m.fichero).migrar(raiz);

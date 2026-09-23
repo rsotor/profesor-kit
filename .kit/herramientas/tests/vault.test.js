@@ -74,3 +74,23 @@ test('listarNotas incluye inicio.md si existe, para comprobar sus enlaces', () =
   const raiz = cursoTemporal({ 'estudio/inicio.md': '# Inicio\n' });
   assert.ok(v.listarNotas(raiz).includes('inicio.md'));
 });
+
+test('leerAdaptador: sin ninguno de los dos, null; el del kit si solo está ese', () => {
+  assert.equal(v.leerAdaptador(cursoTemporal(), 'claude-code'), null);
+  const raiz = cursoTemporal({ '.kit/adaptadores/claude-code.json': JSON.stringify({ comando: 'claude', skills: '.claude/skills' }) });
+  assert.deepEqual(v.leerAdaptador(raiz, 'claude-code'), { comando: 'claude', skills: '.claude/skills' });
+  assert.equal(v.leerAdaptador(raiz, 'codex-cli'), null, 'un LLM sin adaptador del kit sigue sin nada');
+});
+
+test('leerAdaptador: el que escribe el curso en config/adaptador-llm.json manda sobre el del kit', () => {
+  const raiz = cursoTemporal({
+    '.kit/adaptadores/codex-cli.json': JSON.stringify({ comando: 'codex', skills: '.codex/skills' }),
+    'config/adaptador-llm.json': JSON.stringify({ comando: 'codex', skills: '.agents/skills' }),
+  });
+  assert.deepEqual(v.leerAdaptador(raiz, 'codex-cli'), { comando: 'codex', skills: '.agents/skills' });
+});
+
+test('leerAdaptador: un JSON roto no revienta, se trata como si no hubiera adaptador', () => {
+  const raiz = cursoTemporal({ 'config/adaptador-llm.json': '{ no es json' });
+  assert.equal(v.leerAdaptador(raiz, 'claude-code'), null);
+});

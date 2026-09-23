@@ -1,10 +1,9 @@
 {
   "repo": "rsotor/profesor-kit",
-  "version_datos": 3,
+  "version_datos": 4,
   "ficheros": [
     "AGENTS.md",
     "CLAUDE.md",
-    "GEMINI.md",
     ".gitignore",
     ".claude/settings.json",
     ".kit"

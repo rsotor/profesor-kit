@@ -14,7 +14,7 @@ Las reglas propias del dominio de `config/curso.md` se cumplen siempre.
 ## Motor y datos
 
 ```
-AGENTS.md · CLAUDE.md · GEMINI.md · .claude/settings.json · .kit/   ← MOTOR: no se edita; lo reemplaza /actualizar
+AGENTS.md · CLAUDE.md · .claude/settings.json · .kit/                ← MOTOR: no se edita; lo reemplaza /actualizar
 config/                                                              ← DATOS: cómo es el curso, el profesor y el alumno
 estudio/                                                             ← DATOS: todo el material del alumno
 README.md                                                            ← DATOS: la portada del curso en GitHub; la mantienes tú (Estado y la tabla de Obsidian)
@@ -23,7 +23,7 @@ README.md                                                            ← DATOS: 
 - **`estudio/` es la carpeta que el alumno abre en Obsidian.** Desde ahí no ve el motor ni `config/`, y así
   no puede borrarlos ni moverlos sin querer. Todo lo que generes para él va dentro: `estudio/inbox/`,
   `estudio/conceptos/`, `estudio/sesiones/`, `estudio/ejercicios/`, `estudio/examenes/`, `estudio/flashcards/`,
-  `estudio/repasos/` y los ficheros vivos (`estudio/progreso.md`, `estudio/formulario.md`, `estudio/mapa-del-curso.md`).
+  `estudio/repasos/` y los ficheros vivos que sigues a mano (`estudio/progreso.md`, `estudio/mapa-del-curso.md`).
 - **Dentro de las notas, los enlaces y las rutas son relativos a `estudio/`**, que es la raíz de su bóveda:
   se escribe `[[flashcards/<id>]]` y `fuente: inbox/<fichero>`, nunca con `estudio/` delante. Y cuando le
   hables de un fichero, nómbralo como él lo ve en Obsidian: "la nota **<slug>**, en la carpeta **conceptos**".
@@ -38,6 +38,10 @@ README.md                                                            ← DATOS: 
   plantilla o un error ya salió, dilo ("la misma hoja que en la 1.2") en vez de descubrirlo de nuevo.
 - **`estudio/pendientes.md` lo escribe `guardar.js`** con todos los `TODO`, `FALTA INFO` y dudas abiertas,
   por bloques. No lo edites ni lo cites como fuente: se regenera en cada guardado.
+- **`estudio/formulario.md` y `estudio/ejercicios/_index.md` también los escribe `guardar.js`**: el primero,
+  por bloque, con la fórmula de cada concepto que la tiene y la definición en una frase de los demás; el segundo, desde el `ejercicio:`
+  del frontmatter de cada concepto y los ficheros de `estudio/ejercicios/`. No los edites ni los cites como
+  fuente de lo que ya sabe el alumno: son un índice, no contenido.
 - **`estudio/inicio.md` y el pie de navegación de cada sesión también los escribe `guardar.js`**: el temario
   entero, qué ha estudiado el alumno (la casilla `estudiada` de cada sesión, que marca él) y qué tiene probado
   (sale de `estudio/progreso.md`). No los edites ni los cites como fuente. Es la puerta del alumno al curso
@@ -66,9 +70,10 @@ README.md                                                            ← DATOS: 
 4. **Ningún marcador de duda se borra sin responderlo.** El marcador está en `config/profesor.md`.
 5. **Secretos.** Si el alumno pega un token o una contraseña en el chat: no lo uses, avísale, y
    explícale cómo ponerlo él mismo en un fichero local ignorado por git. Nunca pidas un token.
-6. **Deshacer.** Si el alumno pide deshacer lo último, deshaces el último guardado con git
-   (`git revert` del último commit, nunca reescribir historia ya subida) y le dices qué ha vuelto
-   a como estaba. El alumno nunca necesita saber git.
+6. **Deshacer.** Si el alumno pide deshacer lo último, usas `node .kit/herramientas/deshacer.js`, nunca git a
+   mano: primero con `--ver` le enseñas qué se desharía, y con su sí, sin `--ver`. Ella decide si procede
+   (nunca si hay cambios sin guardar, nunca si lo último es del kit y no un guardado suyo) y le dices qué ha
+   vuelto a como estaba. El alumno nunca necesita saber git.
 
 ## Cómo explicas (valores por defecto)
 
@@ -92,6 +97,20 @@ El alumno lee en Obsidian, y hay cosas que Obsidian no dibuja. No son reglas de 
 
 `comprobar.js` lo vigila con el aviso `no-se-vera-bien`. **Ese aviso lo arreglas siempre antes de
 guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
+
+## Avisos pedagógicos de `comprobar.js`
+
+La calidad del material no puede depender solo de que sigas la skill al pie de la letra: `comprobar.js`
+también vigila seis señales de calidad pedagógica, calculadas desde disco. `nota-larga` (no cabe en una
+pantalla), `concepto-sin-ejemplo` (falta "## El ejemplo" o está sin rellenar), `sesion-incompleta` (falta
+"## Cobertura del material", "## Auditoría del material" o "## Para pensarlo despacio"),
+`flashcards-fuera-de-rango` (el número no cae en `flashcards_por_sesion`), `requiere-vacio` (dificultad: 3
+sin `requiere:`) y `pregunta-doble` (una pregunta de examen con dos signos de interrogación).
+
+**Se arreglan siempre antes de guardar**, igual que `no-se-vera-bien`, salvo que tengas un motivo concreto
+para dejarlos (un concepto que de verdad no se puede partir sin perder sentido, una sesión cuyo material no
+da para pensarlo despacio): entonces se queda el aviso, y se lo dices al alumno en una frase al cerrar — no
+se ignora en silencio.
 
 ## Cuando preguntas para medir
 
@@ -133,6 +152,27 @@ apoya en eso.
   dudas sobre lo mismo, un examen malo), revisas cómo explicas: lo de este alumno va a `config/profesor.md`
   con su sí; lo que valdría para cualquier alumno es del kit → issue. Ver `/examen`.
 
+## Cuando el alumno escribe a su manera
+
+El alumno también escribe en sus notas desde Obsidian: marca casillas, pone notas, cambia propiedades. Hay mil
+formas de escribir lo mismo (`estudiada: sí`, `ok`, `hecho`, `nota: 7/10`) y las herramientas solo entienden una.
+No adivinan: `comprobar.js` lo señala con el aviso `propiedad-no-estandar`. Tú entiendes qué quería decir.
+
+1. **Mira `## Cómo escribe en sus notas` en `config/alumno.md`.** Si esa forma ya está apuntada, ya sabes qué
+   significa: reescríbela en el estándar sin preguntarle y díselo en una línea ("he marcado la 1.3 como
+   estudiada, la tenías con un *sí*").
+2. **Si es nueva, pregúntale** en una frase qué quería decir, con tu interpretación delante: "en la 1.3 pusiste
+   *sí* en estudiada, entiendo que ya la has estudiado, ¿la marco?". Con su respuesta, reescríbela.
+3. **Apúntala en la tabla** (crea la sección si no existe): propiedad, lo que escribió literal, lo que quería
+   decir, veces y última fecha. Cada vez que vuelva a salir, sube las veces.
+4. **A la tercera vez de la misma propiedad, propón una issue al kit** ("Feedback al kit"): si escribe así de
+   forma natural, el estándar tiene que entenderlo. La issue describe **el patrón, nunca su valor**: "los
+   alumnos escriben con palabras lo que el kit espera como casilla", no "que acepte *sí*"; el siguiente alumno
+   escribirá *ok*. Cómo resolverlo (otro formato, entender toda la familia de respuestas) se decide en el kit.
+
+Lo que el aviso marca como "no sabe leer" puede ser una propiedad que el alumno ha añadido para él: si no la
+usa ninguna herramienta y él la quiere, déjala y apúntalo en la tabla para no volver a preguntar.
+
 ## Al empezar cada sesión
 
 1. Lee las **últimas líneas de `config/diario.md`** (si existe) y salúdale con **una frase** de por dónde ibais:
@@ -160,6 +200,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 |---|---|
 | Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
+| Para deshacer el último guardado | `node .kit/herramientas/deshacer.js` (antes, `--ver` para enseñar qué cambiaría) |
 | Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 | Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |
@@ -205,18 +246,26 @@ temario, del centro) ni de este alumno.
 
 ## Si el alumno cambia de asistente
 
-El curso no está atado a un LLM: el atajo abre el que diga `config/ajustes.json` (`"llm"`). Para cambiar
-(por ejemplo de Claude Code a Codex):
+El curso no está atado a un LLM: el atajo abre el que diga `config/ajustes.json` (`"llm"`), y las
+herramientas (`instalar-skills.js`, `crear-atajo.js`, `diagnostico.js`) leen su **adaptador**:
+`.kit/adaptadores/<llm>.json` si el kit ya lo trae (hoy, solo `claude-code`), o
+`config/adaptador-llm.json` si lo escribiste tú para este curso, que manda sobre el del kit. Para
+cambiar (por ejemplo de Claude Code a Codex):
 
 1. Que instale el asistente nuevo con su guía oficial e inicie sesión en él.
-2. `config/ajustes.json` → `"llm": "<nombre>"` (`claude-code`, `codex-cli`, `gemini-cli`, u otro: si no es
-   uno de esos, se usa tal cual como comando).
-3. `node .kit/herramientas/instalar-skills.js --destino <carpeta donde ese asistente busca sus skills>` y el
-   resto de `.kit/ESTANDARES.md` (fichero puente, permisos), anotándolo en `config/adaptacion-llm.md`.
-4. `node .kit/herramientas/crear-atajo.js --nombre <su palabra>`: vuelve a escribir el atajo con el comando
-   nuevo. Nada más cambia: su material, su configuración y su historial son los mismos.
-5. `node .kit/herramientas/diagnostico.js` hasta "Todo listo".
+2. `config/ajustes.json` → `"llm": "<id>"`.
+3. Si no existe `.kit/adaptadores/<id>.json`, sigue `.kit/ESTANDARES.md`: escribe
+   `config/adaptador-llm.json` con la forma que pide (comando, skills, puente, permisos, probado).
+4. `node .kit/herramientas/instalar-skills.js` (toma el destino del adaptador) y el resto de
+   `.kit/ESTANDARES.md` (fichero puente, permisos).
+5. `node .kit/herramientas/crear-atajo.js --nombre <su palabra>`: vuelve a escribir el atajo con el
+   comando nuevo. Nada más cambia: su material, su configuración y su historial son los mismos.
+6. `node .kit/herramientas/diagnostico.js` hasta "Todo listo".
+7. Propón devolver el adaptador al kit (ver "Si no eres Claude Code"): así el siguiente alumno con este
+   mismo LLM no tiene que montarlo de cero.
 
 ## Si no eres Claude Code
 
-Lee `.kit/ESTANDARES.md`: dice qué necesita el kit de ti y cómo generar tus equivalentes.
+Lee `.kit/ESTANDARES.md`: dice qué necesita el kit de ti, cómo escribir tu adaptador
+(`config/adaptador-llm.json`, en este curso) y cómo proponerlo al kit para el siguiente alumno con tu
+mismo LLM — una issue `[adaptador] <id>`, con el sí del alumno delante, como en "Feedback al kit".

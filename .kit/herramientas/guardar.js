@@ -3,7 +3,8 @@ const path = require('node:path');
 const g = require('./lib/git');
 const { leerAjustes } = require('./lib/vault');
 const fs = require('node:fs');
-const { comprobar, pendientes, markdownPendientes, markdownAuditoria, actualizarEstadoReadme } = require('./comprobar');
+const { comprobar } = require('./comprobar');
+const { pendientes, markdownPendientes, markdownAuditoria, markdownFormulario, markdownEjercicios, actualizarEstadoReadme } = require('./lib/generados');
 const { CARPETA_ALUMNO } = require('./lib/vault');
 const indice = require('./lib/indice');
 
@@ -18,7 +19,10 @@ const DIARIO_CABECERA = `# Diario del curso
 function anotarEnDiario(raiz, mensaje, hoy = new Date().toISOString().slice(0, 10)) {
   const f = path.join(raiz, 'config', 'diario.md');
   const previo = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : DIARIO_CABECERA;
-  fs.writeFileSync(f, previo.replace(/\n*$/, '\n') + `- ${hoy} · ${mensaje}\n`);
+  // Respeta el fin de línea que ya tenga el fichero: en Windows (\r\n), mezclar los dos lo estropea y git lo da
+  // entero por cambiado en cada guardado.
+  const eol = previo.includes('\r\n') ? '\r\n' : '\n';
+  fs.writeFileSync(f, previo.replace(/(\r?\n)*$/, eol) + `- ${hoy} · ${mensaje}${eol}`);
 }
 
 // Lo que se escribe solo en cada guardado. Va ANTES de comprobar: así un curso al que aún le falta inicio.md no se
@@ -27,15 +31,37 @@ function anotarEnDiario(raiz, mensaje, hoy = new Date().toISOString().slice(0, 1
 function regenerarGenerados(raiz) {
   const base = path.join(raiz, CARPETA_ALUMNO);
   const escribirSiCambia = (fichero, texto) => {
-    if (!fs.existsSync(fichero) || fs.readFileSync(fichero, 'utf8') !== texto) fs.writeFileSync(fichero, texto);
+    if (!fs.existsSync(fichero) || fs.readFileSync(fichero, 'utf8') !== texto) {
+      fs.mkdirSync(path.dirname(fichero), { recursive: true });
+      fs.writeFileSync(fichero, texto);
+    }
   };
   for (const [rel, pie] of indice.piesDeSesion(raiz)) {
     const fichero = path.join(base, ...rel.split('/'));
     escribirSiCambia(fichero, indice.ponerPie(fs.readFileSync(fichero, 'utf8'), pie));
   }
+  // Antes que inicio.md: "Otras hojas" mira si formulario.md existe en disco, y tiene que verlo ya escrito
+  // la primera vez que se genera (si no, la próxima vez que se guarde cambiaría solo por eso).
+  escribirSiCambia(path.join(base, 'formulario.md'), markdownFormulario(raiz));
+  escribirSiCambia(path.join(base, 'ejercicios', '_index.md'), markdownEjercicios(raiz));
   escribirSiCambia(path.join(base, indice.INICIO), indice.markdownInicio(raiz, { pendientes: pendientes(raiz).length }));
   escribirSiCambia(path.join(base, 'pendientes.md'), markdownPendientes(raiz));
   escribirSiCambia(path.join(base, 'auditoria-del-material.md'), markdownAuditoria(raiz));
+}
+
+// Decide si lo que hay en HEAD se sube, y lo sube si procede. Mismo criterio para un guardado que para
+// un deshacer (deshacer.js la reutiliza): sin subir_a_github, con un secreto o sin remoto, se queda en local.
+function subirSiProcede(raiz, informe) {
+  const resultado = { subido: false };
+  if (!leerAjustes(raiz).subir_a_github) resultado.motivoSubida = 'subir_a_github está desactivado';
+  else if (informe.errores.some(e => e.regla === 'secreto')) resultado.motivoSubida = 'hay un posible secreto: no se sube hasta quitarlo';
+  else if (!g.urlOrigen(raiz)) resultado.motivoSubida = 'no hay remoto configurado';
+  else {
+    const push = g.intentarGit(raiz, ['push', '-q', 'origin', 'HEAD']);
+    if (push.ok) resultado.subido = true;
+    else resultado.motivoSubida = `el push falló (el trabajo está guardado en local): ${push.salida}`;
+  }
+  return resultado;
 }
 
 function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
@@ -52,16 +78,7 @@ function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
   g.git(raiz, ['add', '-A']);
   g.git(raiz, ['commit', '-q', '-m', mensaje]);
 
-  const resultado = { guardado: true, subido: false, informe };
-  if (!leerAjustes(raiz).subir_a_github) resultado.motivoSubida = 'subir_a_github está desactivado';
-  else if (informe.errores.some(e => e.regla === 'secreto')) resultado.motivoSubida = 'hay un posible secreto: no se sube hasta quitarlo';
-  else if (!g.urlOrigen(raiz)) resultado.motivoSubida = 'no hay remoto configurado';
-  else {
-    const push = g.intentarGit(raiz, ['push', '-q', 'origin', 'HEAD']);
-    if (push.ok) resultado.subido = true;
-    else resultado.motivoSubida = `el push falló (el trabajo está guardado en local): ${push.salida}`;
-  }
-  return resultado;
+  return { guardado: true, informe, ...subirSiProcede(raiz, informe) };
 }
 
 const EXPLICACION = {
@@ -82,4 +99,4 @@ function cli(args, raiz) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'guardar.js');
 
-module.exports = { guardar, regenerarGenerados, anotarEnDiario, cli };
+module.exports = { guardar, regenerarGenerados, anotarEnDiario, subirSiProcede, cli };

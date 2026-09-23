@@ -3,9 +3,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const CARPETAS_NOTAS = ['conceptos', 'sesiones', 'ejercicios', 'examenes', 'flashcards'];
-const FICHEROS_VIVOS = ['progreso.md', 'formulario.md', 'mapa-del-curso.md'];
-// Generados por guardar.js que enlazan a otras notas: se comprueban sus enlaces, pero no se exigen ni se reparan.
-const GENERADOS_CON_ENLACES = ['inicio.md'];
+// mapa-del-curso.md es el único fichero vivo que sigue a mano (solo la cobertura del material: lo único
+// que inicio.md no cubre). progreso.md también, porque solo lo cambian las respuestas del alumno.
+const FICHEROS_VIVOS = ['progreso.md', 'mapa-del-curso.md'];
+// Generados por guardar.js que enlazan a otras notas: se comprueban sus enlaces, pero no se exigen ni se reparan
+// (antes de que exista el primer guardado, un enlace a uno de ellos no es un enlace roto).
+const GENERADOS_CON_ENLACES = ['inicio.md', 'formulario.md'];
 // Todo lo del alumno vive en una sola carpeta: es la que abre en Obsidian, y así no ve ni toca el motor.
 const CARPETA_ALUMNO = 'estudio';
 // Carpetas del alumno que no son notas: 'inbox' es su material en bruto y 'repasos' es HTML generado.
@@ -113,6 +116,51 @@ function leerFrontmatter(texto) {
   return datos;
 }
 
+// Lo que el alumno escribe a su manera. Las propiedades de una nota las escribe el profesor, pero también el
+// alumno desde Obsidian, y hay mil formas de escribir lo mismo. Aquí NO se adivina qué quiso decir: se señala
+// lo que el kit no sabe leer, o lee pero no le sirve, para que el profesor lo entienda, lo pregunte si hace
+// falta y lo reescriba en el estándar (AGENTS.md, "Cuando el alumno escribe a su manera").
+// Solo las propiedades que alguna herramienta lee: las demás son texto libre y no se vigilan.
+const esFecha = t => /^\d{4}-\d{2}-\d{2}$/.test(t) && !Number.isNaN(Date.parse(`${t}T00:00:00Z`))
+  && new Date(`${t}T00:00:00Z`).toISOString().startsWith(t);
+const ESPERADO = {
+  'si-no': { vale: t => /^(true|false)$/i.test(t), dice: 'el kit espera true o false (la casilla de Obsidian)' },
+  numero: { vale: t => numero(t) !== null, dice: 'el kit espera un número' },
+  entero: { vale: t => Number.isInteger(numero(t)), dice: 'el kit espera un número entero' },
+  nota: { vale: t => numero(t) !== null && numero(t) >= 0 && numero(t) <= 10, dice: 'el kit espera un número de 0 a 10 (por ejemplo 7,5; nunca 7/10)' },
+  dificultad: { vale: t => [1, 2, 3].includes(numero(t)), dice: 'el kit espera 1, 2 o 3' },
+  fecha: { vale: esFecha, dice: 'el kit espera una fecha AAAA-MM-DD' },
+};
+const PROPIEDADES = {
+  estudiada: 'si-no', parcial: 'si-no',
+  nota: 'nota', dificultad: 'dificultad', orden: 'numero', intentos: 'entero', version: 'entero',
+  fecha: 'fecha', trabajada: 'fecha',
+};
+
+// Devuelve [{ linea, texto, motivo }]; `linea` es la del fichero (la 1 es el primer `---`).
+function revisarPropiedades(texto) {
+  const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(texto);
+  if (!m) return [];
+  const problemas = [];
+  let lista = null;
+  m[1].split(/\r?\n/).forEach((linea, i) => {
+    const n = i + 2;
+    if (lista && /^\s*-\s+/.test(linea)) return;
+    lista = null;
+    if (linea.trim() === '' || /^\s*#/.test(linea)) return;
+    const par = /^([A-Za-z_][\w-]*):\s*(.*)$/.exec(linea);
+    if (!par) { problemas.push({ linea: n, texto: linea.trim(), motivo: 'el kit no sabe leer esta línea' }); return; }
+    const bruto = par[2].trim();
+    if (bruto === '') { lista = par[1]; return; }
+    const tipo = PROPIEDADES[par[1]];
+    if (!tipo) return;
+    const valor = /^\[.*\]$/.test(bruto) ? null : limpiarValor(bruto);
+    if (valor === '') return;   // vacía a propósito (la nota de un examen sin corregir)
+    if (valor === null || !ESPERADO[tipo].vale(valor)) problemas.push({ linea: n, texto: linea.trim(), motivo: ESPERADO[tipo].dice });
+  });
+  return problemas;
+}
+
 function leerAjustes(raiz) {
   const fichero = path.join(raiz, 'config', 'ajustes.json');
   if (!fs.existsSync(fichero)) return structuredClone(AJUSTES_POR_DEFECTO);
@@ -159,6 +207,19 @@ function leerMotor(dir) {
   return JSON.parse(fs.readFileSync(path.join(dir, '.kit', 'motor.json'), 'utf8'));
 }
 
+// El adaptador dice, para un LLM, dónde busca sus skills, qué comando lo abre, si necesita un fichero
+// puente hacia AGENTS.md y cómo se le dan permisos. `config/adaptador-llm.json` es el que ha escrito el
+// propio curso (vive en config/: /actualizar nunca lo toca) y manda sobre el que trae el kit en
+// `.kit/adaptadores/<llm>.json`, que solo existe para los LLMs ya verificados. Sin ninguno de los dos,
+// null: quien llama decide cómo avisar (ver .kit/ESTANDARES.md).
+function leerAdaptador(raiz, llm) {
+  for (const ruta of [path.join(raiz, 'config', 'adaptador-llm.json'), path.join(raiz, '.kit', 'adaptadores', `${llm}.json`)]) {
+    if (!fs.existsSync(ruta)) continue;
+    try { return JSON.parse(fs.readFileSync(ruta, 'utf8')); } catch { return null; }
+  }
+  return null;
+}
+
 function leerVersion(dir) {
   return fs.readFileSync(path.join(dir, '.kit', 'VERSION'), 'utf8').trim();
 }
@@ -166,6 +227,6 @@ function leerVersion(dir) {
 module.exports = {
   CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, GENERADOS_CON_ENLACES, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
   aPosix, baseAlumno,
-  recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter, esCierto, numero,
-  leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, piezasAusentes,
+  recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter, revisarPropiedades, PROPIEDADES, esCierto, numero,
+  leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, leerAdaptador, piezasAusentes,
 };

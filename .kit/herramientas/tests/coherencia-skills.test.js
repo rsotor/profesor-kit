@@ -30,7 +30,7 @@ test('toda plantilla, guía y fichero de config que nombran existe', () => {
     for (const m of texto.matchAll(/`(\.kit\/(?:plantillas|guias)\/[\w./-]+|config\/[\w-]+\.(?:md|json))`/g)) {
       const rel = m[1];
       // Los que crea el curso en marcha no están en la plantilla del kit.
-      if (/^config\/(ajustes\.json|estructura\.json|diario\.md|adaptacion-llm\.md|feedback-pendiente\.md)$/.test(rel)) continue;
+      if (/^config\/(ajustes\.json|estructura\.json|diario\.md|adaptador-llm\.json|feedback-pendiente\.md)$/.test(rel)) continue;
       if (!existe(rel)) fallos.push(`${doc} → ${rel}`);
     }
   }

@@ -10,7 +10,7 @@ const PROHIBIDO = /roberto|inversi[oó]n|multimercado|financ|€|\beuros?\b|lent
 const SKILLS = ['sesion', 'dudas', 'ejercicio', 'examen', 'repaso', 'configurar', 'actualizar'];
 
 function ficherosDelMotor() {
-  const sueltos = ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md'].map(f => path.join(RAIZ, f)).filter(fs.existsSync);
+  const sueltos = ['AGENTS.md', 'CLAUDE.md'].map(f => path.join(RAIZ, f)).filter(fs.existsSync);
   const kit = v.recorrer(path.join(RAIZ, '.kit'), n => /\.(md|js|html|css|json)$/.test(n), new Set(['tests']));
   return [...sueltos, ...kit];
 }

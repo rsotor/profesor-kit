@@ -2,10 +2,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const os = require('node:os');
 const path = require('node:path');
 const { actualizar } = require('../actualizar');
-const { cursoTemporal, escribir, iniciarGit, git } = require('./ayuda');
+const { cursoTemporal, escribir, iniciarGit, git, temporal } = require('./ayuda');
 
 const KIT_REAL = path.resolve(__dirname, '..', '..');   // la carpeta .kit de este repo
 
@@ -17,7 +16,7 @@ function montar({ extraCurso = {}, extraOrigen = {}, motorNuevo = {} } = {}) {
   escribir(raiz, { '.kit/VERSION': '1.0.0', '.kit/motor.json': motor(1, ['AGENTS.md', 'VIEJO.md', '.kit']), '.gitignore': '.claude/skills/\n' });
   iniciarGit(raiz);
 
-  const origen = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-origen-'));
+  const origen = temporal('kit-origen-');
   fs.cpSync(KIT_REAL, path.join(origen, '.kit'), { recursive: true });
   for (const r of [raiz, origen]) fs.rmSync(path.join(r, '.kit', 'herramientas', 'migraciones'), { recursive: true, force: true });
   escribir(origen, {
@@ -53,7 +52,7 @@ test('misma versión: no hace nada', () => {
 
 test('ejecuta las migraciones pendientes en orden y sube version_datos', () => {
   const migracion = n => `module.exports = { descripcion: 'm${n}', migrar(raiz) {
-    const f = require('node:path').join(raiz, 'estudio/formulario.md');
+    const f = require('node:path').join(raiz, 'estudio/mapa-del-curso.md');
     require('node:fs').appendFileSync(f, 'migrado-${n}\\n');
   } };`;
   const { raiz, origen } = montar({
@@ -62,7 +61,7 @@ test('ejecuta las migraciones pendientes en orden y sube version_datos', () => {
   });
   const r = actualizar({ raiz, origen });
   assert.deepEqual(r.migraciones, [2, 3]);
-  assert.match(leer(raiz, 'estudio/formulario.md'), /migrado-2\nmigrado-3\n$/);
+  assert.match(leer(raiz, 'estudio/mapa-del-curso.md'), /migrado-2\nmigrado-3\n$/);
   assert.equal(JSON.parse(leer(raiz, 'config/ajustes.json')).version_datos, 3);
 });
 
@@ -95,6 +94,17 @@ test('un curso que ya tenía errores se actualiza igual (no empeora)', () => {
   const { raiz, origen } = montar();
   escribir(raiz, { 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
   assert.equal(actualizar({ raiz, origen }).actualizado, true);
+});
+
+test('.kit/adaptadores/ viaja con el motor; config/adaptador-llm.json (local, del alumno) no se toca', () => {
+  const v = require('../lib/vault');
+  const local = JSON.stringify({ comando: 'codex-beta', skills: '.mi-carpeta/skills' });
+  const { raiz, origen } = montar({ extraCurso: { 'config/adaptador-llm.json': local } });
+  assert.ok(fs.existsSync(path.join(origen, '.kit', 'adaptadores', 'claude-code.json')), 'el kit real trae el adaptador de Claude Code');
+  assert.equal(actualizar({ raiz, origen }).actualizado, true);
+  assert.equal(leer(raiz, '.kit/adaptadores/claude-code.json'), leer(origen, '.kit/adaptadores/claude-code.json'));
+  assert.equal(leer(raiz, 'config/adaptador-llm.json'), local);
+  assert.deepEqual(v.leerAdaptador(raiz, 'claude-code'), JSON.parse(local), 'el local sigue mandando tras actualizar');
 });
 
 test('rechaza un motor que pretende tocar datos del alumno', () => {
@@ -181,6 +191,28 @@ test('migración 003: un app.json previo con promptDelete lo conserva y añade l
   assert.equal(app.alwaysUpdateLinks, true);
 });
 
+test('migración 004: un formulario.md o un ejercicios/_index.md escritos a mano se conservan con otro nombre; y es idempotente', () => {
+  const m = require('../migraciones/004-formulario-y-ejercicios-generados');
+  const raiz = cursoTemporal({
+    'estudio/formulario.md': '# Formulario\n\n> Todas las fórmulas del curso, por bloque.\n',
+    'estudio/ejercicios/_index.md': '# Índice de ejercicios\n\n| Ejercicio | Practica | De | Lo que se descubre |\n|---|---|---|---|\n',
+  });
+  m.migrar(raiz);
+  m.migrar(raiz);   // idempotente: la segunda vuelta no encuentra nada que conservar (ya se conservó)
+  assert.equal(leer(raiz, 'estudio/formulario-anterior.md'), '# Formulario\n\n> Todas las fórmulas del curso, por bloque.\n');
+  assert.equal(leer(raiz, 'estudio/ejercicios/_index-anterior.md'), '# Índice de ejercicios\n\n| Ejercicio | Practica | De | Lo que se descubre |\n|---|---|---|---|\n');
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'formulario.md')), 'guardar.js lo escribirá de nuevo, generado');
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'ejercicios', '_index.md')));
+});
+
+test('migración 004: si el contenido ya es justo el que generaría el kit, no conserva nada', () => {
+  const m = require('../migraciones/004-formulario-y-ejercicios-generados');
+  const raiz = cursoTemporal();   // cursoTemporal ya deja formulario.md y ejercicios/_index.md recién generados
+  m.migrar(raiz);
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'formulario-anterior.md')));
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'ejercicios', '_index-anterior.md')));
+});
+
 // Lo único que la actualización promete es no tocar nunca lo del alumno. Si no puede guardar antes (git sin
 // identidad), no puede prometer la vuelta atrás: entonces no empieza. Antes, `git clean -fd` borraba lo que
 // nunca llegó a guardarse.
@@ -232,4 +264,33 @@ test('la versión publicada es la última release (etiqueta vX.Y.Z), y se descar
   assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: false, salida: 'HTTP 404' }))), null, 'sin release o sin red: null');
   assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: true, salida: 'main' }))), null, 'solo vale una etiqueta de versión');
   assert.throws(() => descargar('x/y', gh(() => ({ ok: false, salida: '' }))), /última versión publicada/);
+});
+
+test('con un posible secreto en el curso no actualiza ni hace el commit previo: primero hay que quitarlo', () => {
+  const { raiz, origen } = montar();
+  const token = 'ghp_' + 'a1B2'.repeat(9);
+  escribir(raiz, { 'estudio/inbox/notas.txt': `mi token es ${token}\n` });
+  const commits = git(raiz, 'rev-list', '--count', 'HEAD');
+  const r = actualizar({ raiz, origen });
+  assert.deepEqual([r.actualizado, r.motivo], [false, 'secreto']);
+  assert.match(r.detalle, /estudio\/inbox\/notas\.txt/);
+  assert.doesNotMatch(r.detalle, /ghp_/, 'nunca enseña el secreto');
+  assert.equal(git(raiz, 'rev-list', '--count', 'HEAD'), commits, 'no hay commit previo');
+  assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
+});
+
+// Regresión encontrada por `npm run prueba-actualizar` (0.20 → 0.21): la migración la ejecuta el actualizar.js
+// viejo, con sus piezas viejas en memoria; un require normal recibía el lib/indice.js viejo, sin `tituloDe`.
+test('migración 004: funciona aunque en memoria estén las piezas de la versión vieja', () => {
+  const rutaIndice = require.resolve('../lib/indice');
+  const antes = require.cache[rutaIndice];
+  require.cache[rutaIndice] = { id: rutaIndice, filename: rutaIndice, loaded: true, exports: {} };   // un indice.js "viejo", sin tituloDe
+  try {
+    const raiz = cursoTemporal({ 'estudio/formulario.md': '# Formulario a mano\n\nalgo mío\n' });
+    const m = require('../migraciones/004-formulario-y-ejercicios-generados');
+    assert.doesNotThrow(() => m.migrar(raiz));
+    assert.ok(fs.existsSync(path.join(raiz, 'estudio', 'formulario-anterior.md')));
+  } finally {
+    if (antes) require.cache[rutaIndice] = antes; else delete require.cache[rutaIndice];
+  }
 });

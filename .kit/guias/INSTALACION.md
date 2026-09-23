@@ -43,8 +43,10 @@ tu curso. Por eso guarda cada cosa que termina, y por eso al saludarte te dice p
 > - El programa **Obsidian**, también gratis, que es donde leerás tus apuntes. No hace falta que lo
 >   instales tú: lo hace tu profesor durante la instalación.
 > - Unos **30 minutos**.
-> - Probado en **Mac**. En **Windows** debería funcionar igual, pero todavía no lo ha probado
->   nadie: si algo falla, tu profesor te ayudará a contarlo para que se arregle.
+> - Si tu asistente deja elegir modelo, usa el **[modelo recomendado](../adaptadores/LEEME.md)** (con
+>   Claude, Sonnet): hace bien el trabajo sin gastarte la cuota.
+> - Probado en **Mac** y en **Windows**. Si algo falla, tu profesor te ayudará a contarlo para que se
+>   arregle.
 
 Elige tu ordenador: [Mac](#mac) · [Windows](#windows)
 
@@ -52,18 +54,12 @@ Elige tu ordenador: [Mac](#mac) · [Windows](#windows)
 
 ## Mac
 
-### Paso 1 — Tener las dos cuentas y el acceso al kit
+### Paso 1 — Tener las dos cuentas
 
 1. Crea tu cuenta de Claude en <https://claude.ai> y contrata el plan Pro.
 2. Crea tu cuenta de GitHub en <https://github.com>.
-3. Envía tu **nombre de usuario de GitHub** a quien te ha dado este kit.
-4. Te llegará un correo de GitHub con una invitación. **Ábrelo y acepta.**
 
-**Lo que vas a ver:** tras aceptar, entras en la página del kit en GitHub (es donde estás leyendo
-esto).
-
-**Si ves otra cosa:** si no llega el correo, mira en <https://github.com/notifications>. Sin
-aceptar la invitación, el paso 3 no funcionará.
+Nada más: el kit es público y no hace falta invitación.
 
 ### Paso 2 — Instalar Claude en la terminal
 
@@ -115,25 +111,19 @@ la tuya.
 palabra** que vas a elegir tú durante la instalación, y tu profesor se abrirá en tu curso. Y te dejará
 una hoja, *Cómo usar tu profesor*, con todo lo que necesitas recordar.
 
-**Si ves otra cosa:** si Claude dice que no encuentra el kit o ve un error 404, es que la
-invitación del paso 1 no está aceptada.
+**Si ves otra cosa:** si Claude dice que no encuentra el kit, casi siempre es la conexión a internet o la
+sesión de GitHub: dile que lo compruebe con `gh auth status` y que lo intente otra vez.
 
 ---
 
 ## Windows
 
-> Sin probar todavía. Los pasos son los oficiales de cada programa.
-
-### Paso 1 — Tener las dos cuentas y el acceso al kit
+### Paso 1 — Tener las dos cuentas
 
 1. Crea tu cuenta de Claude en <https://claude.ai> y contrata el plan Pro.
 2. Crea tu cuenta de GitHub en <https://github.com>.
-3. Envía tu **nombre de usuario de GitHub** a quien te ha dado este kit.
-4. Te llegará un correo de GitHub con una invitación. **Ábrelo y acepta.**
 
-**Lo que vas a ver:** tras aceptar, entras en la página del kit en GitHub.
-
-**Si ves otra cosa:** si no llega el correo, mira en <https://github.com/notifications>.
+Nada más: el kit es público y no hace falta invitación.
 
 ### Paso 2 — Instalar Claude en la terminal
 
@@ -187,8 +177,8 @@ en la carpeta de tu curso te preguntará **si confías en esa carpeta**: di que 
 palabra** que vas a elegir tú durante la instalación, y tu profesor se abrirá en tu curso. Y te dejará
 una hoja, *Cómo usar tu profesor*, con todo lo que necesitas recordar.
 
-**Si ves otra cosa:** si Claude dice que no encuentra el kit o ve un error 404, es que la
-invitación del paso 1 no está aceptada.
+**Si ves otra cosa:** si Claude dice que no encuentra el kit, casi siempre es la conexión a internet o la
+sesión de GitHub: dile que lo compruebe con `gh auth status` y que lo intente otra vez.
 
 ---
 
@@ -212,13 +202,11 @@ frase y pídeme permiso antes de instalar nada.
    https://github.com/login/device en el navegador y espera a que yo lo confirme. Si no puedes lanzar
    comandos en segundo plano, pídeme que abra otra ventana de terminal y pegue ahí ese mismo comando.
    Nunca me pidas un token ni una contraseña, y si te pego uno, no lo uses y avísame.
-3. Cuando "gh auth status" esté en verde, lee la guía de instalación del repositorio privado
-   rsotor/profesor-kit con este comando y sigue sus pasos uno a uno:
+3. Cuando "gh auth status" esté en verde, lee la guía de instalación del kit (rsotor/profesor-kit)
+   con este comando y sigue sus pasos uno a uno:
    gh api repos/rsotor/profesor-kit/contents/.kit/guias/INSTALAR-AGENTE.md -H "Accept: application/vnd.github.raw"
-4. Si ese comando da un error 404, no sigas. Mira primero con "gh auth status" con qué cuenta de GitHub
-   he iniciado sesión y dímelo: si tengo varias, puede que esté activa otra (se cambia con
-   "gh auth switch"). Si la cuenta es la correcta, es que no he aceptado la invitación que me llegó por
-   correo.
+4. Si ese comando falla, no sigas: dime el error en una frase y comprueba mi conexión y "gh auth status"
+   antes de reintentar.
 ```
 
 ---
@@ -233,8 +221,8 @@ quieras.
 
 ## Si usas otro asistente que no sea Claude
 
-El kit está escrito en un formato abierto y debería funcionar con otros asistentes de terminal,
-pero **está sin probar**. Instálalo con su guía oficial, ábrelo en una carpeta vacía y pégale el
+El kit está escrito en un formato abierto y funciona con otros asistentes de terminal: está probado
+con **Codex** en Windows; con los demás, sin probar. Instálalo con su guía oficial, ábrelo en una carpeta vacía y pégale el
 mismo texto de arranque: el kit le explica qué tiene que adaptar.
 
 ## Cómo cambiar tus preferencias

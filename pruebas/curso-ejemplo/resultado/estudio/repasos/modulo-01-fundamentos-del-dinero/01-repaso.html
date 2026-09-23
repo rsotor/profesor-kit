@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repaso visual · Módulo 1 · Fundamentos del dinero</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --fg: #1f1c17;
+    --card: #ffffff;
+    --border: #dcd6c9;
+    --accent: #8a5a2b;
+    --accent-soft: #f1e6d8;
+    --ok: #2e6b3e;
+    --bad: #9c2b2b;
+    --muted: #6b6558;
+    --dif3: #9c4b2b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191714;
+      --fg: #ece7dc;
+      --card: #232019;
+      --border: #3a352c;
+      --accent: #d99a5b;
+      --accent-soft: #2c2117;
+      --ok: #6fbf7f;
+      --bad: #e07a7a;
+      --muted: #a49c8a;
+      --dif3: #e0955f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem 5rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+  }
+  main { max-width: 920px; margin: 0 auto; }
+  header.portada { margin-bottom: 2.5rem; }
+  header.portada h1 { font-size: 1.7rem; margin: 0 0 0.3rem; }
+  header.portada p { color: var(--muted); margin: 0; font-size: 1rem; }
+  h2.titulo-seccion {
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+    margin: 3rem 0 1.3rem;
+  }
+  section:first-of-type h2.titulo-seccion { margin-top: 0; }
+
+  /* Mapa del alcance */
+  .mapa { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 640px) { .mapa { grid-template-columns: 1fr; } }
+  .rama { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.3rem; }
+  .rama .unidad { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin: 0 0 0.6rem; }
+  .rama .raiz {
+    display: inline-block;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+  }
+  .rama ul.hijos { list-style: none; margin: 0; padding: 0 0 0 0.9rem; border-left: 2px solid var(--border); }
+  .rama ul.hijos li { position: relative; padding: 0.35rem 0 0.35rem 0.9rem; font-size: 0.92rem; }
+  .rama ul.hijos li::before {
+    content: "";
+    position: absolute;
+    left: -2px; top: 1rem;
+    width: 0.8rem; height: 1px;
+    background: var(--border);
+  }
+
+  /* Tarjetas de concepto */
+  .tarjeta {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.3rem 1.4rem;
+    margin-bottom: 1.1rem;
+  }
+  .tarjeta.prioridad { border-left: 4px solid var(--dif3); padding-left: 1.3rem; }
+  .tarjeta .cabecera { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+  .tarjeta h3 { margin: 0; font-size: 1.15rem; }
+  .tarjeta.prioridad h3 { font-size: 1.3rem; }
+  .etiquetas { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .etiqueta {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .etiqueta.dif3 { border-color: var(--dif3); color: var(--dif3); }
+  .tarjeta .definicion { font-size: 1rem; margin: 0.2rem 0 0.9rem; }
+  .tarjeta .bloque-ejemplo, .tarjeta .bloque-formula { margin-top: 0.8rem; }
+  .tarjeta .etiqueta-bloque { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); margin: 0 0 0.3rem; }
+  .tarjeta .formula {
+    font-size: 1.05rem;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    display: inline-block;
+    font-weight: 600;
+  }
+  .ampliacion {
+    font-size: 0.85rem;
+    color: var(--muted);
+    border-left: 3px solid var(--border);
+    padding-left: 0.6rem;
+    margin-bottom: 0.4rem;
+    font-style: italic;
+  }
+  .rejilla-dif2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .rejilla-dif2 { grid-template-columns: 1fr; } }
+
+  /* Formulario */
+  table.formulario { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  table.formulario th, table.formulario td { text-align: left; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+  table.formulario th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  table.formulario tr:last-child td { border-bottom: none; }
+  table.formulario td.formula-celda { font-weight: 600; }
+
+  /* Flashcards */
+  .rejilla-flash { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .rejilla-flash { grid-template-columns: 1fr; } }
+  .flash { perspective: 1200px; height: 170px; cursor: pointer; }
+  .flash-interior {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+  .flash.volteada .flash-interior { transform: rotateY(180deg); }
+  .flash-cara {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 1rem 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; font-size: 0.92rem;
+    overflow-y: auto;
+  }
+  .flash-cara.frente { background: var(--card); }
+  .flash-cara.dorso { background: var(--accent-soft); transform: rotateY(180deg); color: var(--fg); }
+  .flash-pista { font-size: 0.72rem; color: var(--muted); text-align: center; margin-top: 1.5rem; }
+
+  /* Ejercicios */
+  .ejercicio-bloque { margin-bottom: 2rem; }
+  .ejercicio-bloque h3 { margin: 0 0 0.2rem; font-size: 1.05rem; }
+  .ejercicio-bloque p.desc { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.7rem; }
+  .ejercicio-bloque iframe {
+    width: 100%; height: 640px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+  }
+
+  /* Lente */
+  .lente {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.9rem;
+  }
+  .lente h4 { margin: 0 0 0.4rem; font-size: 0.95rem; color: var(--accent); }
+  .lente p { margin: 0; font-size: 0.93rem; }
+</style>
+</head>
+<body>
+<main>
+
+<header class="portada">
+  <h1>Repaso visual · Módulo 1 · Fundamentos del dinero</h1>
+  <p>1.1 El dinero y sus funciones · 1.2 Presupuesto personal — 9 conceptos, 5 ejercicios, 8 flashcards.</p>
+</header>
+
+<section>
+  <h2 class="titulo-seccion">Mapa del alcance</h2>
+  <div class="mapa">
+    <div class="rama">
+      <p class="unidad">1.1 El dinero y sus funciones</p>
+      <span class="raiz">Las tres funciones del dinero</span>
+      <ul class="hijos">
+        <li>La inflación</li>
+        <li>La liquidez</li>
+        <li>La masa monetaria (M1)</li>
+      </ul>
+    </div>
+    <div class="rama">
+      <p class="unidad">1.2 Presupuesto personal</p>
+      <span class="raiz">El presupuesto</span>
+      <ul class="hijos">
+        <li>El ingreso medio</li>
+        <li>Gastos fijos y variables</li>
+        <li>La tasa de ahorro</li>
+        <li>El colchón financiero</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="titulo-seccion">Conceptos</h2>
+
+  <article class="tarjeta prioridad">
+    <div class="cabecera">
+      <h3>Las tres funciones del dinero</h3>
+      <div class="etiquetas"><span class="etiqueta">1.1</span><span class="etiqueta dif3">Te costó más</span></div>
+    </div>
+    <p class="definicion">El dinero resuelve el trueque siendo medio de cambio, unidad de cuenta y depósito de valor.</p>
+    <div class="bloque-ejemplo">
+      <p class="etiqueta-bloque">El ejemplo</p>
+      <p>Un pescador vende su pescado por dinero: no necesita que el comprador tenga algo que a él le interese (medio de cambio). Sabe que una caja de pescado vale 40,00&nbsp;€, sin tener que decir a cuántas gallinas equivale (unidad de cuenta). Y guarda parte de esos 40,00&nbsp;€ para el mes que no salga a pescar (depósito de valor).</p>
+    </div>
+  </article>
+
+  <article class="tarjeta prioridad">
+    <div class="cabecera">
+      <h3>La liquidez</h3>
+      <div class="etiquetas"><span class="etiqueta">1.1</span><span class="etiqueta dif3">Te costó más</span></div>
+    </div>
+    <p class="definicion">Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.</p>
+    <div class="bloque-ejemplo">
+      <p class="etiqueta-bloque">El ejemplo</p>
+      <p>El dinero en la cartera es totalmente líquido: se gasta al instante. Un piso es muy poco líquido: venderlo bien lleva meses. Si te surge un gasto urgente de 400,00&nbsp;€, el efectivo te sirve; el piso, aunque valga 150.000,00&nbsp;€, no.</p>
+    </div>
+  </article>
+
+  <article class="tarjeta prioridad">
+    <div class="cabecera">
+      <h3>El presupuesto</h3>
+      <div class="etiquetas"><span class="etiqueta">1.2</span><span class="etiqueta dif3">Te costó más</span></div>
+    </div>
+    <p class="definicion">Apuntar, cada mes, lo que entra y lo que sale, para saber si te sobra o te falta.</p>
+    <div class="bloque-ejemplo">
+      <p class="etiqueta-bloque">El ejemplo</p>
+      <p>Eres freelance y este mes has ingresado 1.850,00&nbsp;€. Apuntas todo lo que gastas: 650,00&nbsp;€ de alquiler, 40,00&nbsp;€ de seguro y 25,00&nbsp;€ de suscripciones (715,00&nbsp;€ en total), más 300,00&nbsp;€ de comida, 60,00&nbsp;€ de transporte y 120,00&nbsp;€ de ocio (480,00&nbsp;€ en total). En total gastas 1.195,00&nbsp;€. Te sobran <strong>655,00&nbsp;€</strong>.</p>
+    </div>
+    <div class="bloque-formula">
+      <p class="etiqueta-bloque">La fórmula</p>
+      <span class="formula">ahorro = ingresos − gastos</span>
+    </div>
+  </article>
+
+  <article class="tarjeta prioridad">
+    <div class="cabecera">
+      <h3>La tasa de ahorro</h3>
+      <div class="etiquetas"><span class="etiqueta">1.2</span><span class="etiqueta dif3">Te costó más</span></div>
+    </div>
+    <p class="definicion">Qué parte de tus ingresos te queda, en porcentaje, así puedes comparar meses (o personas) con ingresos distintos.</p>
+    <div class="bloque-ejemplo">
+      <p class="etiqueta-bloque">El ejemplo</p>
+      <p>Con el ejemplo del presupuesto: ahorras 655,00&nbsp;€ de unos ingresos de 1.850,00&nbsp;€. 655 ÷ 1.850 × 100 ≈ <strong>35,4%</strong> mensual: te queda algo más de un tercio de lo que ingresas ese mes.</p>
+    </div>
+    <div class="bloque-formula">
+      <p class="etiqueta-bloque">La fórmula</p>
+      <span class="formula">tasa de ahorro = (ahorro ÷ ingresos) × 100</span>
+    </div>
+  </article>
+
+  <article class="tarjeta prioridad">
+    <div class="cabecera">
+      <h3>El colchón financiero</h3>
+      <div class="etiquetas"><span class="etiqueta">1.2</span><span class="etiqueta dif3">Te costó más</span></div>
+    </div>
+    <p class="definicion">Dinero líquido guardado aparte, medido en meses de gastos cubiertos, para los meses en que factures poco o tengas un imprevisto.</p>
+    <div class="bloque-ejemplo">
+      <p class="etiqueta-bloque">El ejemplo</p>
+      <p>Con el ejemplo del presupuesto: gastas 1.195,00&nbsp;€ al mes. Un colchón de 3 meses son 3.585,00&nbsp;€. Como facturas por tu cuenta, con ingresos irregulares, conviene apuntar a 5-6 meses en vez de 3: entre <strong>5.975,00&nbsp;€ y 7.170,00&nbsp;€</strong>.</p>
+    </div>
+    <div class="bloque-formula">
+      <p class="etiqueta-bloque">La fórmula</p>
+      <span class="formula">meses de colchón = ahorro líquido ÷ gastos totales de un mes</span>
+    </div>
+  </article>
+
+  <div class="rejilla-dif2">
+    <article class="tarjeta">
+      <div class="cabecera">
+        <h3>La inflación</h3>
+        <div class="etiquetas"><span class="etiqueta">1.1</span></div>
+      </div>
+      <p class="definicion">Subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.</p>
+      <div class="bloque-ejemplo">
+        <p class="etiqueta-bloque">El ejemplo</p>
+        <p>Si los precios suben un 3% anual, 100,00&nbsp;€ de hoy valdrán, en compra real, como unos 97,00&nbsp;€ del año que viene: la cifra sigue siendo 100,00&nbsp;€, pero compra menos.</p>
+      </div>
+    </article>
+
+    <article class="tarjeta">
+      <div class="cabecera">
+        <h3>La masa monetaria (M1)</h3>
+        <div class="etiquetas"><span class="etiqueta">1.1</span></div>
+      </div>
+      <p class="definicion">El M1 mide la cantidad de dinero en manos del público; un indicador que sale en las noticias económicas.</p>
+      <div class="bloque-ejemplo">
+        <p class="etiqueta-bloque">El ejemplo</p>
+        <p class="ampliacion">🔎 Ampliación fuera de los apuntes</p>
+        <p>Imagina que pudieras sumar todo el efectivo que tiene la gente en la cartera, más todo el saldo de sus cuentas corrientes, en un país y en un día concreto. Esa suma sería una foto de "cuánto dinero hay ahí fuera" en ese momento: eso es, a grandes rasgos, lo que mide el M1.</p>
+      </div>
+    </article>
+
+    <article class="tarjeta">
+      <div class="cabecera">
+        <h3>El ingreso medio</h3>
+        <div class="etiquetas"><span class="etiqueta">1.2</span></div>
+      </div>
+      <p class="definicion">Si tus ingresos cambian cada mes, presupuestas con la media de los últimos 6-12 meses, no con el mejor mes.</p>
+      <div class="bloque-ejemplo">
+        <p class="etiqueta-bloque">El ejemplo</p>
+        <p>En los últimos seis meses has facturado 2.400,00&nbsp;€, 1.300,00&nbsp;€, 1.900,00&nbsp;€, 1.600,00&nbsp;€, 2.100,00&nbsp;€ y 1.800,00&nbsp;€. Tu media es <strong>1.850,00&nbsp;€</strong>: la cifra que se usa como ingresos en el ejemplo del presupuesto.</p>
+      </div>
+      <div class="bloque-formula">
+        <p class="etiqueta-bloque">La fórmula</p>
+        <span class="formula">ingreso medio = suma de ingresos (6-12 meses) ÷ nº de meses</span>
+      </div>
+    </article>
+
+    <article class="tarjeta">
+      <div class="cabecera">
+        <h3>Gastos fijos y variables</h3>
+        <div class="etiquetas"><span class="etiqueta">1.2</span></div>
+      </div>
+      <p class="definicion">Un gasto es fijo si tú no decides su cifra cada mes, y variable si sí la decides, aunque lo pagues todos los meses.</p>
+      <div class="bloque-ejemplo">
+        <p class="etiqueta-bloque">El ejemplo</p>
+        <p>Este mes tienes 650,00&nbsp;€ de alquiler y 40,00&nbsp;€ de seguro: no decides tú esas cifras (fijos). Y tienes 300,00&nbsp;€ de comida y 120,00&nbsp;€ de ocio: la cifra depende de lo que decidas gastar ese mes (variables).</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2 class="titulo-seccion">Formulario del alcance</h2>
+  <table class="formulario">
+    <thead><tr><th>Concepto</th><th>Fórmula</th></tr></thead>
+    <tbody>
+      <tr><td>Presupuesto</td><td class="formula-celda">ahorro = ingresos − gastos</td></tr>
+      <tr><td>Ingreso medio</td><td class="formula-celda">ingreso medio = suma de ingresos (6-12 meses) ÷ nº de meses</td></tr>
+      <tr><td>Tasa de ahorro</td><td class="formula-celda">tasa de ahorro = (ahorro ÷ ingresos) × 100</td></tr>
+      <tr><td>Colchón financiero</td><td class="formula-celda">meses de colchón = ahorro líquido ÷ gastos totales de un mes</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2 class="titulo-seccion">Flashcards</h2>
+  <div class="rejilla-flash" id="rejilla-flash"></div>
+</section>
+
+<section>
+  <h2 class="titulo-seccion">Ejercicios</h2>
+
+  <div class="ejercicio-bloque">
+    <h3>¿Es inflación o no?</h3>
+    <p class="desc">La inflación — cinco casos de subidas y bajadas de precio.</p>
+    <iframe src="data:text/html;charset=utf-8,%3C!DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22es%22%3E%0A%3Chead%3E%0A%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1%22%3E%0A%3Ctitle%3E%C2%BFEs%20inflaci%C3%B3n%20o%20no%3F%20%C2%B7%2001-01-01-el-dinero-y-sus-funciones%3C%2Ftitle%3E%0A%3Cstyle%3E%0A%20%20%3Aroot%20%7B%0A%20%20%20%20--bg%3A%20%23f7f5f0%3B%0A%20%20%20%20--fg%3A%20%231f1c17%3B%0A%20%20%20%20--card%3A%20%23ffffff%3B%0A%20%20%20%20--border%3A%20%23dcd6c9%3B%0A%20%20%20%20--accent%3A%20%238a5a2b%3B%0A%20%20%20%20--ok%3A%20%232e6b3e%3B%0A%20%20%20%20--bad%3A%20%239c2b2b%3B%0A%20%20%20%20--muted%3A%20%236b6558%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%3Aroot%20%7B%0A%20%20%20%20%20%20--bg%3A%20%23191714%3B%0A%20%20%20%20%20%20--fg%3A%20%23ece7dc%3B%0A%20%20%20%20%20%20--card%3A%20%23232019%3B%0A%20%20%20%20%20%20--border%3A%20%233a352c%3B%0A%20%20%20%20%20%20--accent%3A%20%23d99a5b%3B%0A%20%20%20%20%20%20--ok%3A%20%236fbf7f%3B%0A%20%20%20%20%20%20--bad%3A%20%23e07a7a%3B%0A%20%20%20%20%20%20--muted%3A%20%23a49c8a%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%20%20*%20%7B%20box-sizing%3A%20border-box%3B%20%7D%0A%20%20body%20%7B%0A%20%20%20%20margin%3A%200%3B%0A%20%20%20%20padding%3A%201.5rem%201rem%204rem%3B%0A%20%20%20%20background%3A%20var(--bg)%3B%0A%20%20%20%20color%3A%20var(--fg)%3B%0A%20%20%20%20font-family%3A%20-apple-system%2C%20BlinkMacSystemFont%2C%20%22Segoe%20UI%22%2C%20Roboto%2C%20sans-serif%3B%0A%20%20%20%20line-height%3A%201.5%3B%0A%20%20%7D%0A%20%20main%20%7B%20max-width%3A%20620px%3B%20margin%3A%200%20auto%3B%20%7D%0A%20%20h1%20%7B%20font-size%3A%201.3rem%3B%20margin-bottom%3A%200.2rem%3B%20%7D%0A%20%20.subtitulo%20%7B%20color%3A%20var(--muted)%3B%20margin-top%3A%200%3B%20margin-bottom%3A%201.5rem%3B%20font-size%3A%200.95rem%3B%20%7D%0A%20%20section%20%7B%20margin-bottom%3A%201.75rem%3B%20%7D%0A%20%20h2%20%7B%20font-size%3A%201rem%3B%20text-transform%3A%20uppercase%3B%20letter-spacing%3A%200.03em%3B%20color%3A%20var(--accent)%3B%20margin-bottom%3A%200.6rem%3B%20%7D%0A%20%20.caja%20%7B%0A%20%20%20%20background%3A%20var(--card)%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%2010px%3B%0A%20%20%20%20padding%3A%201rem%201.1rem%3B%0A%20%20%7D%0A%20%20.caso%20%7B%0A%20%20%20%20background%3A%20var(--card)%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%2010px%3B%0A%20%20%20%20padding%3A%201rem%201.1rem%3B%0A%20%20%20%20margin-bottom%3A%201rem%3B%0A%20%20%7D%0A%20%20.caso%20p.enunciado%20%7B%20margin%3A%200%200%200.8rem%3B%20%7D%0A%20%20.botones%20%7B%20display%3A%20flex%3B%20gap%3A%200.6rem%3B%20flex-wrap%3A%20wrap%3B%20%7D%0A%20%20button%20%7B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%20%20padding%3A%200.5rem%201rem%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20background%3A%20var(--bg)%3B%0A%20%20%20%20color%3A%20var(--fg)%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%7D%0A%20%20button%3Ahover%20%7B%20border-color%3A%20var(--accent)%3B%20%7D%0A%20%20button.elegido-si%20%7B%20border-color%3A%20var(--accent)%3B%20background%3A%20var(--accent)%3B%20color%3A%20%23fff%3B%20%7D%0A%20%20button.elegido-no%20%7B%20border-color%3A%20var(--accent)%3B%20background%3A%20var(--accent)%3B%20color%3A%20%23fff%3B%20%7D%0A%20%20.explicacion%20%7B%0A%20%20%20%20margin-top%3A%200.8rem%3B%0A%20%20%20%20padding-top%3A%200.8rem%3B%0A%20%20%20%20border-top%3A%201px%20dashed%20var(--border)%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%7D%0A%20%20.explicacion.vacia%20%7B%20color%3A%20var(--muted)%3B%20font-style%3A%20italic%3B%20%7D%0A%20%20.veredicto%20%7B%20font-weight%3A%20600%3B%20%7D%0A%20%20.veredicto.correcto%20%7B%20color%3A%20var(--ok)%3B%20%7D%0A%20%20.veredicto.incorrecto%20%7B%20color%3A%20var(--bad)%3B%20%7D%0A%20%20.resumen%20%7B%20margin-top%3A%201rem%3B%20font-size%3A%200.9rem%3B%20color%3A%20var(--muted)%3B%20%7D%0A%3C%2Fstyle%3E%0A%3C%2Fhead%3E%0A%3Cbody%3E%0A%3Cmain%3E%0A%20%20%3Ch1%3E%C2%BFEs%20inflaci%C3%B3n%20o%20no%3F%3C%2Fh1%3E%0A%20%20%3Cp%20class%3D%22subtitulo%22%3EEjercicio%20de%20%3Ca%20href%3D%22..%2F..%2F..%2Fconceptos%2Finflacion.md%22%3Einflaci%C3%B3n%3C%2Fa%3E%20%C2%B7%20sesi%C3%B3n%2001-01-01-el-dinero-y-sus-funciones%3C%2Fp%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3ECondiciones%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20style%3D%22margin%3A0%22%3ELa%20inflaci%C3%B3n%20es%20la%20subida%20%3Cstrong%3Egeneral%3C%2Fstrong%3E%20(de%20casi%20todos%20los%20precios%20a%0A%20%20%20%20%20%20la%20vez)%20y%20%3Cstrong%3Esostenida%3C%2Fstrong%3E%20(no%20un%20pico%20puntual)%20del%20nivel%20de%20precios.%20Que%20suba%20el%20precio%20de%0A%20%20%20%20%20%20%3Cem%3Euna%20cosa%3C%2Fem%3E%20por%20un%20motivo%20concreto%20%E2%80%94una%20mala%20cosecha%2C%20un%20modelo%20nuevo%2C%20poca%20vivienda%20en%20una%0A%20%20%20%20%20%20ciudad%E2%80%94%20no%20es%2C%20por%20s%C3%AD%20solo%2C%20inflaci%C3%B3n.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EReto%3C%2Fh2%3E%0A%20%20%20%20%3Cp%20style%3D%22color%3Avar(--muted)%3B%20font-size%3A0.9rem%3B%20margin-top%3A-0.4rem%3B%22%3EPara%20cada%20caso%2C%20decide%20si%20es%0A%20%20%20%20inflaci%C3%B3n%20o%20no%20antes%20de%20ver%20la%20explicaci%C3%B3n.%3C%2Fp%3E%0A%20%20%20%20%3Cdiv%20id%3D%22casos%22%3E%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EExplicaci%C3%B3n%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20id%3D%22resumen-final%22%20class%3D%22explicacion%20vacia%22%3EResponde%20los%20cinco%20casos%20de%20arriba%20y%20aqu%C3%AD%20ver%C3%A1s%20el%0A%20%20%20%20%20%20resumen%20de%20aciertos%20y%20qu%C3%A9%20se%20te%20habr%C3%ADa%20escapado%20en%20cada%20uno.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%3C%2Fmain%3E%0A%0A%3Cscript%3E%0Aconst%20casos%20%3D%20%5B%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22El%20precio%20del%20aceite%20de%20oliva%20sube%20un%2030%25%20anual%20por%20una%20mala%20cosecha%20de%20aceituna%2C%20y%20el%20resto%20de%20la%20cesta%20de%20la%20compra%20no%20cambia.%22%2C%0A%20%20%20%20esInflacion%3A%20false%2C%0A%20%20%20%20porque%3A%20%22No%3A%20es%20la%20subida%20de%20un%20bien%20concreto%2C%20por%20un%20motivo%20concreto%20(la%20cosecha).%20No%20es%20general%20%E2%80%94%20el%20resto%20de%20precios%20no%20se%20mueve.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Durante%20el%20%C3%BAltimo%20a%C3%B1o%2C%20casi%20todos%20los%20precios%20del%20supermercado%20han%20subido%20un%20poco%20cada%20mes%3A%20la%20leche%2C%20el%20pan%2C%20la%20carne%2C%20la%20fruta%E2%80%A6%22%2C%0A%20%20%20%20esInflacion%3A%20true%2C%0A%20%20%20%20porque%3A%20%22S%C3%AD%3A%20sube%20casi%20todo%2C%20no%20un%20producto%20suelto%2C%20y%20lo%20hace%20de%20forma%20sostenida%20mes%20a%20mes.%20Es%20justo%20la%20definici%C3%B3n%3A%20general%20y%20sostenida.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22El%20alquiler%20en%20tu%20ciudad%20sube%20mucho%20porque%20hay%20poca%20vivienda%20disponible%2C%20pero%20en%20el%20resto%20del%20pa%C3%ADs%20los%20precios%20est%C3%A1n%20estables.%22%2C%0A%20%20%20%20esInflacion%3A%20false%2C%0A%20%20%20%20porque%3A%20%22No%2C%20seg%C3%BAn%20la%20definici%C3%B3n%20de%20esta%20clase%3A%20la%20inflaci%C3%B3n%20es%20un%20fen%C3%B3meno%20general%20del%20nivel%20de%20precios%2C%20no%20de%20un%20bien%20o%20una%20ciudad%20concretos%2C%20aunque%20a%20ti%20te%20afecte%20igual%20en%20el%20bolsillo.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22El%20IPC%20general%20sube%20un%204%25%20anual%2C%20con%20casi%20todos%20los%20precios%20al%20alza.%22%2C%0A%20%20%20%20esInflacion%3A%20true%2C%0A%20%20%20%20porque%3A%20%22S%C3%AD%3A%20es%20exactamente%20la%20definici%C3%B3n%20%E2%80%94%20subida%20general%20y%20sostenida%20del%20nivel%20de%20precios.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22El%20precio%20de%20un%20modelo%20concreto%20de%20m%C3%B3vil%20baja%20bastante%20porque%20sacan%20el%20modelo%20nuevo%2C%20mientras%20el%20resto%20de%20precios%20sigue%20igual.%22%2C%0A%20%20%20%20esInflacion%3A%20false%2C%0A%20%20%20%20porque%3A%20%22No%3A%20ni%20siquiera%20sube%20(baja)%2C%20y%20aunque%20subiera%20ser%C3%ADa%20un%20solo%20producto%2C%20no%20algo%20general.%22%0A%20%20%7D%0A%5D%3B%0A%0Aconst%20contenedor%20%3D%20document.getElementById(%22casos%22)%3B%0Aconst%20respuestas%20%3D%20new%20Array(casos.length).fill(null)%3B%0A%0Acasos.forEach((caso%2C%20i)%20%3D%3E%20%7B%0A%20%20const%20div%20%3D%20document.createElement(%22div%22)%3B%0A%20%20div.className%20%3D%20%22caso%22%3B%0A%20%20div.innerHTML%20%3D%20%60%0A%20%20%20%20%3Cp%20class%3D%22enunciado%22%3E%3Cstrong%3ECaso%20%24%7Bi%20%2B%201%7D.%3C%2Fstrong%3E%20%24%7Bcaso.enunciado%7D%3C%2Fp%3E%0A%20%20%20%20%3Cdiv%20class%3D%22botones%22%3E%0A%20%20%20%20%20%20%3Cbutton%20data-val%3D%22si%22%3ES%C3%AD%2C%20es%20inflaci%C3%B3n%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3Cbutton%20data-val%3D%22no%22%3ENo%2C%20no%20es%20inflaci%C3%B3n%3C%2Fbutton%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22explicacion%20vacia%22%3EElige%20una%20respuesta%20y%20aqu%C3%AD%20ver%C3%A1s%20por%20qu%C3%A9.%3C%2Fdiv%3E%0A%20%20%60%3B%0A%20%20const%20botones%20%3D%20div.querySelectorAll(%22button%22)%3B%0A%20%20const%20explicacion%20%3D%20div.querySelector(%22.explicacion%22)%3B%0A%20%20botones.forEach(btn%20%3D%3E%20%7B%0A%20%20%20%20btn.addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20botones.forEach(b%20%3D%3E%20b.classList.remove(%22elegido-si%22%2C%20%22elegido-no%22))%3B%0A%20%20%20%20%20%20btn.classList.add(btn.dataset.val%20%3D%3D%3D%20%22si%22%20%3F%20%22elegido-si%22%20%3A%20%22elegido-no%22)%3B%0A%20%20%20%20%20%20const%20elegidoSi%20%3D%20btn.dataset.val%20%3D%3D%3D%20%22si%22%3B%0A%20%20%20%20%20%20const%20acierto%20%3D%20elegidoSi%20%3D%3D%3D%20caso.esInflacion%3B%0A%20%20%20%20%20%20respuestas%5Bi%5D%20%3D%20acierto%3B%0A%20%20%20%20%20%20explicacion.classList.remove(%22vacia%22)%3B%0A%20%20%20%20%20%20explicacion.innerHTML%20%3D%20%60%3Cspan%20class%3D%22veredicto%20%24%7Bacierto%20%3F%20%22correcto%22%20%3A%20%22incorrecto%22%7D%22%3E%24%7Bacierto%20%3F%20%22Correcto.%22%20%3A%20%22No.%22%7D%3C%2Fspan%3E%20%24%7Bcaso.porque%7D%60%3B%0A%20%20%20%20%20%20actualizarResumen()%3B%0A%20%20%20%20%7D)%3B%0A%20%20%7D)%3B%0A%20%20contenedor.appendChild(div)%3B%0A%7D)%3B%0A%0Afunction%20actualizarResumen()%20%7B%0A%20%20const%20respondidos%20%3D%20respuestas.filter(r%20%3D%3E%20r%20!%3D%3D%20null).length%3B%0A%20%20const%20resumen%20%3D%20document.getElementById(%22resumen-final%22)%3B%0A%20%20if%20(respondidos%20%3C%20casos.length)%20%7B%0A%20%20%20%20resumen.classList.add(%22vacia%22)%3B%0A%20%20%20%20resumen.textContent%20%3D%20%60Llevas%20%24%7Brespondidos%7D%20de%20%24%7Bcasos.length%7D%20casos%20respondidos.%60%3B%0A%20%20%20%20return%3B%0A%20%20%7D%0A%20%20const%20aciertos%20%3D%20respuestas.filter(Boolean).length%3B%0A%20%20resumen.classList.remove(%22vacia%22)%3B%0A%20%20resumen.innerHTML%20%3D%20%60Aciertos%3A%20%3Cstrong%3E%24%7Baciertos%7D%20de%20%24%7Bcasos.length%7D%3C%2Fstrong%3E.%20La%20idea%20que%20separa%20los%0A%20%20casos%3A%20no%20importa%20cu%C3%A1nto%20suba%20un%20precio%20ni%20si%20suena%20a%20mucho%20dinero%20%E2%80%94%20importa%20si%20sube%20%3Cem%3Ecasi%20todo%3C%2Fem%3E%20y%0A%20%20de%20forma%20%3Cem%3Esostenida%3C%2Fem%3E%2C%20o%20si%20es%20un%20bien%20suelto%20por%20un%20motivo%20suelto.%60%3B%0A%7D%0A%3C%2Fscript%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E%0A" loading="lazy"></iframe>
+  </div>
+
+  <div class="ejercicio-bloque">
+    <h3>Liquidez en una urgencia</h3>
+    <p class="desc">La liquidez — tres urgencias con distinto plazo y los mismos activos disponibles.</p>
+    <iframe src="data:text/html;charset=utf-8,%3C!DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22es%22%3E%0A%3Chead%3E%0A%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1%22%3E%0A%3Ctitle%3ELiquidez%20en%20una%20urgencia%20%C2%B7%2001-01-01-el-dinero-y-sus-funciones%3C%2Ftitle%3E%0A%3Cstyle%3E%0A%20%20%3Aroot%20%7B%0A%20%20%20%20--bg%3A%20%23f7f5f0%3B%0A%20%20%20%20--fg%3A%20%231f1c17%3B%0A%20%20%20%20--card%3A%20%23ffffff%3B%0A%20%20%20%20--border%3A%20%23dcd6c9%3B%0A%20%20%20%20--accent%3A%20%238a5a2b%3B%0A%20%20%20%20--ok%3A%20%232e6b3e%3B%0A%20%20%20%20--bad%3A%20%239c2b2b%3B%0A%20%20%20%20--muted%3A%20%236b6558%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%3Aroot%20%7B%0A%20%20%20%20%20%20--bg%3A%20%23191714%3B%0A%20%20%20%20%20%20--fg%3A%20%23ece7dc%3B%0A%20%20%20%20%20%20--card%3A%20%23232019%3B%0A%20%20%20%20%20%20--border%3A%20%233a352c%3B%0A%20%20%20%20%20%20--accent%3A%20%23d99a5b%3B%0A%20%20%20%20%20%20--ok%3A%20%236fbf7f%3B%0A%20%20%20%20%20%20--bad%3A%20%23e07a7a%3B%0A%20%20%20%20%20%20--muted%3A%20%23a49c8a%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%20%20*%20%7B%20box-sizing%3A%20border-box%3B%20%7D%0A%20%20body%20%7B%0A%20%20%20%20margin%3A%200%3B%0A%20%20%20%20padding%3A%201.5rem%201rem%204rem%3B%0A%20%20%20%20background%3A%20var(--bg)%3B%0A%20%20%20%20color%3A%20var(--fg)%3B%0A%20%20%20%20font-family%3A%20-apple-system%2C%20BlinkMacSystemFont%2C%20%22Segoe%20UI%22%2C%20Roboto%2C%20sans-serif%3B%0A%20%20%20%20line-height%3A%201.5%3B%0A%20%20%7D%0A%20%20main%20%7B%20max-width%3A%20640px%3B%20margin%3A%200%20auto%3B%20%7D%0A%20%20h1%20%7B%20font-size%3A%201.3rem%3B%20margin-bottom%3A%200.2rem%3B%20%7D%0A%20%20.subtitulo%20%7B%20color%3A%20var(--muted)%3B%20margin-top%3A%200%3B%20margin-bottom%3A%201.5rem%3B%20font-size%3A%200.95rem%3B%20%7D%0A%20%20section%20%7B%20margin-bottom%3A%201.75rem%3B%20%7D%0A%20%20h2%20%7B%20font-size%3A%201rem%3B%20text-transform%3A%20uppercase%3B%20letter-spacing%3A%200.03em%3B%20color%3A%20var(--accent)%3B%20margin-bottom%3A%200.6rem%3B%20%7D%0A%20%20.caja%20%7B%0A%20%20%20%20background%3A%20var(--card)%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%2010px%3B%0A%20%20%20%20padding%3A%201rem%201.1rem%3B%0A%20%20%7D%0A%20%20.activos%20%7B%20margin%3A%200.6rem%200%200%3B%20padding-left%3A%201.2rem%3B%20%7D%0A%20%20.activos%20li%20%7B%20margin-bottom%3A%200.3rem%3B%20%7D%0A%20%20.caso%20%7B%0A%20%20%20%20background%3A%20var(--card)%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%2010px%3B%0A%20%20%20%20padding%3A%201rem%201.1rem%3B%0A%20%20%20%20margin-bottom%3A%201rem%3B%0A%20%20%7D%0A%20%20.caso%20p.enunciado%20%7B%20margin%3A%200%200%200.7rem%3B%20%7D%0A%20%20.opciones%20%7B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20gap%3A%200.4rem%3B%20margin-bottom%3A%200.8rem%3B%20%7D%0A%20%20label.opcion%20%7B%0A%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20gap%3A%200.5rem%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20padding%3A%200.5rem%200.7rem%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%7D%0A%20%20label.opcion%3Ahover%20%7B%20border-color%3A%20var(--accent)%3B%20%7D%0A%20%20button.comprobar%20%7B%0A%20%20%20%20font-size%3A%200.9rem%3B%0A%20%20%20%20padding%3A%200.45rem%200.9rem%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--accent)%3B%0A%20%20%20%20background%3A%20var(--accent)%3B%0A%20%20%20%20color%3A%20%23fff%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%7D%0A%20%20.explicacion%20%7B%0A%20%20%20%20margin-top%3A%200.8rem%3B%0A%20%20%20%20padding-top%3A%200.8rem%3B%0A%20%20%20%20border-top%3A%201px%20dashed%20var(--border)%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%7D%0A%20%20.explicacion.vacia%20%7B%20color%3A%20var(--muted)%3B%20font-style%3A%20italic%3B%20%7D%0A%20%20.veredicto%20%7B%20font-weight%3A%20600%3B%20%7D%0A%20%20.veredicto.correcto%20%7B%20color%3A%20var(--ok)%3B%20%7D%0A%20%20.veredicto.incorrecto%20%7B%20color%3A%20var(--bad)%3B%20%7D%0A%20%20.resumen%20%7B%20margin-top%3A%201rem%3B%20font-size%3A%200.9rem%3B%20color%3A%20var(--muted)%3B%20%7D%0A%3C%2Fstyle%3E%0A%3C%2Fhead%3E%0A%3Cbody%3E%0A%3Cmain%3E%0A%20%20%3Ch1%3ELiquidez%20en%20una%20urgencia%3C%2Fh1%3E%0A%20%20%3Cp%20class%3D%22subtitulo%22%3EEjercicio%20de%20%3Ca%20href%3D%22..%2F..%2F..%2Fconceptos%2Fliquidez.md%22%3Eliquidez%3C%2Fa%3E%20%C2%B7%20sesi%C3%B3n%2001-01-01-el-dinero-y-sus-funciones%3C%2Fp%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3ECondiciones%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20style%3D%22margin%3A0%200%200.6rem%22%3ETienes%20estos%20cuatro%20activos%2C%20siempre%20los%20mismos%20en%20los%20tres%20casos%3A%3C%2Fp%3E%0A%20%20%20%20%20%20%3Cul%20class%3D%22activos%22%3E%0A%20%20%20%20%20%20%20%20%3Cli%3E%3Cstrong%3EA.%3C%2Fstrong%3E%20300%2C00%20%E2%82%AC%20en%20efectivo%2C%20en%20casa.%3C%2Fli%3E%0A%20%20%20%20%20%20%20%20%3Cli%3E%3Cstrong%3EB.%3C%2Fstrong%3E%202.000%2C00%20%E2%82%AC%20en%20la%20cuenta%20corriente.%3C%2Fli%3E%0A%20%20%20%20%20%20%20%20%3Cli%3E%3Cstrong%3EC.%3C%2Fstrong%3E%20Un%20piso%20heredado%2C%20valorado%20en%20150.000%2C00%20%E2%82%AC%2C%20que%20tardar%C3%ADas%20varios%20meses%20en%0A%20%20%20%20%20%20%20%20vender%20bien.%3C%2Fli%3E%0A%20%20%20%20%20%20%20%20%3Cli%3E%3Cstrong%3ED.%3C%2Fstrong%3E%201.000%2C00%20%E2%82%AC%20en%20un%20plan%20que%20penaliza%20si%20sacas%20el%20dinero%20antes%20de%20un%20a%C3%B1o.%3C%2Fli%3E%0A%20%20%20%20%20%20%3C%2Ful%3E%0A%20%20%20%20%20%20%3Cp%20style%3D%22margin%3A0.6rem%200%200%22%3ELa%20liquidez%20no%20depende%20de%20cu%C3%A1nto%20vale%20un%20activo%2C%20sino%20de%20cu%C3%A1nto%20tardas%0A%20%20%20%20%20%20en%20convertirlo%20en%20dinero%20disponible%20sin%20perder%20valor.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EReto%3C%2Fh2%3E%0A%20%20%20%20%3Cp%20style%3D%22color%3Avar(--muted)%3B%20font-size%3A0.9rem%3B%20margin-top%3A-0.4rem%3B%22%3EPara%20cada%20urgencia%2C%20marca%20qu%C3%A9%0A%20%20%20%20activo(s)%20usar%C3%ADas%20y%20pulsa%20%22Comprobar%22.%3C%2Fp%3E%0A%20%20%20%20%3Cdiv%20id%3D%22casos%22%3E%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EExplicaci%C3%B3n%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20id%3D%22resumen-final%22%20class%3D%22explicacion%20vacia%22%3EResponde%20los%20tres%20casos%20de%20arriba%20y%20aqu%C3%AD%20ver%C3%A1s%20el%0A%20%20%20%20%20%20resumen.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%3C%2Fmain%3E%0A%0A%3Cscript%3E%0Aconst%20casos%20%3D%20%5B%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Se%20rompe%20tu%20furgoneta%20de%20reparto%20y%20necesitas%20400%2C00%20%E2%82%AC%20en%202%20d%C3%ADas%20para%20arreglarla%20y%20poder%20seguir%20trabajando.%22%2C%0A%20%20%20%20correctos%3A%20%5B%22A%22%2C%20%22B%22%5D%2C%0A%20%20%20%20porque%3A%20%7B%0A%20%20%20%20%20%20A%3A%20%22s%C3%AD%3A%20efectivo%2C%20disponible%20al%20instante.%22%2C%0A%20%20%20%20%20%20B%3A%20%22s%C3%AD%3A%20retirar%20de%20la%20cuenta%20corriente%20es%20inmediato.%22%2C%0A%20%20%20%20%20%20C%3A%20%22no%3A%20venderlo%20bien%20lleva%20meses%2C%20muy%20lejos%20de%20los%202%20d%C3%ADas%20que%20tienes.%22%2C%0A%20%20%20%20%20%20D%3A%20%22no%3A%20sacarlo%20antes%20de%20un%20a%C3%B1o%20tiene%20penalizaci%C3%B3n%2C%20pierdes%20valor%20por%20las%20prisas.%22%0A%20%20%20%20%7D%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Quieres%20cambiar%20de%20furgoneta%20dentro%20de%208%20meses%20y%20necesitas%20juntar%203.000%2C00%20%E2%82%AC.%22%2C%0A%20%20%20%20correctos%3A%20%5B%22B%22%2C%20%22D%22%5D%2C%0A%20%20%20%20porque%3A%20%7B%0A%20%20%20%20%20%20A%3A%20%22no%20hace%20falta%20por%20s%C3%AD%20solo%2C%20pero%20no%20estorba%3A%20puede%20sumarse%20a%20la%20cuenta%20corriente.%22%2C%0A%20%20%20%20%20%20B%3A%20%22s%C3%AD%3A%20siempre%20disponible%2C%20y%20con%208%20meses%20de%20margen%20puedes%20ir%20ahorrando%20en%20ella.%22%2C%0A%20%20%20%20%20%20D%3A%20%22s%C3%AD%3A%20con%208%20meses%20de%20margen%2C%20si%20esperas%20a%20que%20cumpla%20el%20a%C3%B1o%20evitas%20la%20penalizaci%C3%B3n%20%E2%80%94%20aqu%C3%AD%20el%20plazo%20largo%20lo%20convierte%20en%20una%20opci%C3%B3n%20v%C3%A1lida.%22%2C%0A%20%20%20%20%20%20C%3A%20%22no%3A%208%20meses%20puede%20no%20ser%20tiempo%20suficiente%20para%20vender%20bien%20un%20piso%2C%20sigue%20siendo%20demasiado%20incierto%20para%20contar%20con%20%C3%A9l%20seguro.%22%0A%20%20%20%20%7D%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Mes%20flojo%2C%20apenas%20facturas%2C%20y%20necesitas%20250%2C00%20%E2%82%AC%20ya%20para%20el%20alquiler.%22%2C%0A%20%20%20%20correctos%3A%20%5B%22A%22%2C%20%22B%22%5D%2C%0A%20%20%20%20porque%3A%20%7B%0A%20%20%20%20%20%20A%3A%20%22s%C3%AD%3A%20efectivo%2C%20disponible%20ya.%22%2C%0A%20%20%20%20%20%20B%3A%20%22s%C3%AD%3A%20disponible%20ya%2C%20sin%20penalizaci%C3%B3n.%22%2C%0A%20%20%20%20%20%20C%3A%20%22no%3A%20no%20lo%20conviertes%20en%20dinero%20disponible%20ya%2C%20por%20mucho%20que%20valga.%22%2C%0A%20%20%20%20%20%20D%3A%20%22no%3A%20sacarlo%20ahora%20tiene%20penalizaci%C3%B3n%2C%20y%20la%20urgencia%20es%20inmediata.%22%0A%20%20%20%20%7D%0A%20%20%7D%0A%5D%3B%0A%0Aconst%20letras%20%3D%20%5B%22A%22%2C%20%22B%22%2C%20%22C%22%2C%20%22D%22%5D%3B%0Aconst%20contenedor%20%3D%20document.getElementById(%22casos%22)%3B%0Aconst%20resultados%20%3D%20new%20Array(casos.length).fill(null)%3B%0A%0Acasos.forEach((caso%2C%20i)%20%3D%3E%20%7B%0A%20%20const%20div%20%3D%20document.createElement(%22div%22)%3B%0A%20%20div.className%20%3D%20%22caso%22%3B%0A%20%20const%20opciones%20%3D%20letras.map(l%20%3D%3E%20%60%0A%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%0A%20%20%20%20%20%20%3Cinput%20type%3D%22checkbox%22%20name%3D%22caso%24%7Bi%7D%22%20value%3D%22%24%7Bl%7D%22%3E%0A%20%20%20%20%20%20%24%7Bl%7D%0A%20%20%20%20%3C%2Flabel%3E%0A%20%20%60).join(%22%22)%3B%0A%20%20div.innerHTML%20%3D%20%60%0A%20%20%20%20%3Cp%20class%3D%22enunciado%22%3E%3Cstrong%3ECaso%20%24%7Bi%20%2B%201%7D.%3C%2Fstrong%3E%20%24%7Bcaso.enunciado%7D%3C%2Fp%3E%0A%20%20%20%20%3Cdiv%20class%3D%22opciones%22%3E%24%7Bopciones%7D%3C%2Fdiv%3E%0A%20%20%20%20%3Cbutton%20class%3D%22comprobar%22%3EComprobar%3C%2Fbutton%3E%0A%20%20%20%20%3Cdiv%20class%3D%22explicacion%20vacia%22%3EMarca%20los%20activos%20que%20usar%C3%ADas%20y%20pulsa%20%22Comprobar%22.%3C%2Fdiv%3E%0A%20%20%60%3B%0A%20%20const%20boton%20%3D%20div.querySelector(%22button.comprobar%22)%3B%0A%20%20const%20explicacion%20%3D%20div.querySelector(%22.explicacion%22)%3B%0A%20%20boton.addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20elegidos%20%3D%20Array.from(div.querySelectorAll(%22input%3Achecked%22)).map(el%20%3D%3E%20el.value)%3B%0A%20%20%20%20const%20correcto%20%3D%20elegidos.length%20%3D%3D%3D%20caso.correctos.length%20%26%26%0A%20%20%20%20%20%20elegidos.every(l%20%3D%3E%20caso.correctos.includes(l))%3B%0A%20%20%20%20resultados%5Bi%5D%20%3D%20correcto%3B%0A%20%20%20%20explicacion.classList.remove(%22vacia%22)%3B%0A%20%20%20%20const%20detalle%20%3D%20letras.map(l%20%3D%3E%20%60%3Cstrong%3E%24%7Bl%7D%3C%2Fstrong%3E%3A%20%24%7Bcaso.porque%5Bl%5D%7D%60).join(%22%3Cbr%3E%22)%3B%0A%20%20%20%20explicacion.innerHTML%20%3D%20%60%3Cspan%20class%3D%22veredicto%20%24%7Bcorrecto%20%3F%20%22correcto%22%20%3A%20%22incorrecto%22%7D%22%3E%24%7Bcorrecto%20%3F%20%22Correcto.%22%20%3A%20%22No%20del%20todo.%22%7D%3C%2Fspan%3E%3Cbr%3E%24%7Bdetalle%7D%60%3B%0A%20%20%20%20actualizarResumen()%3B%0A%20%20%7D)%3B%0A%20%20contenedor.appendChild(div)%3B%0A%7D)%3B%0A%0Afunction%20actualizarResumen()%20%7B%0A%20%20const%20respondidos%20%3D%20resultados.filter(r%20%3D%3E%20r%20!%3D%3D%20null).length%3B%0A%20%20const%20resumen%20%3D%20document.getElementById(%22resumen-final%22)%3B%0A%20%20if%20(respondidos%20%3C%20casos.length)%20%7B%0A%20%20%20%20resumen.classList.add(%22vacia%22)%3B%0A%20%20%20%20resumen.textContent%20%3D%20%60Llevas%20%24%7Brespondidos%7D%20de%20%24%7Bcasos.length%7D%20casos%20comprobados.%60%3B%0A%20%20%20%20return%3B%0A%20%20%7D%0A%20%20const%20aciertos%20%3D%20resultados.filter(Boolean).length%3B%0A%20%20resumen.classList.remove(%22vacia%22)%3B%0A%20%20resumen.innerHTML%20%3D%20%60Aciertos%3A%20%3Cstrong%3E%24%7Baciertos%7D%20de%20%24%7Bcasos.length%7D%3C%2Fstrong%3E.%20La%20idea%20que%20se%20repite%3A%20el%0A%20%20piso%20(activo%20C)%20es%20el%20m%C3%A1s%20valioso%20de%20los%20cuatro%20y%20aun%20as%C3%AD%20es%20casi%20siempre%20el%20que%20menos%20sirve%20%E2%80%94%20la%0A%20%20liquidez%2C%20no%20el%20valor%2C%20decide%20qu%C3%A9%20activo%20salva%20una%20urgencia.%60%3B%0A%7D%0A%3C%2Fscript%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E%0A" loading="lazy"></iframe>
+  </div>
+
+  <div class="ejercicio-bloque">
+    <h3>Fijo o variable</h3>
+    <p class="desc">Gastos fijos y variables — seis gastos que clasificar, dos de ellos frontera.</p>
+    <iframe src="data:text/html;charset=utf-8,%3C!DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22es%22%3E%0A%3Chead%3E%0A%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1%22%3E%0A%3Ctitle%3EFijo%20o%20variable%20%C2%B7%2001-02-01-presupuesto-personal%3C%2Ftitle%3E%0A%3Cstyle%3E%0A%20%20%3Aroot%20%7B%0A%20%20%20%20--bg%3A%20%23f7f5f0%3B%0A%20%20%20%20--fg%3A%20%231f1c17%3B%0A%20%20%20%20--card%3A%20%23ffffff%3B%0A%20%20%20%20--border%3A%20%23dcd6c9%3B%0A%20%20%20%20--accent%3A%20%238a5a2b%3B%0A%20%20%20%20--ok%3A%20%232e6b3e%3B%0A%20%20%20%20--bad%3A%20%239c2b2b%3B%0A%20%20%20%20--muted%3A%20%236b6558%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%3Aroot%20%7B%0A%20%20%20%20%20%20--bg%3A%20%23191714%3B%0A%20%20%20%20%20%20--fg%3A%20%23ece7dc%3B%0A%20%20%20%20%20%20--card%3A%20%23232019%3B%0A%20%20%20%20%20%20--border%3A%20%233a352c%3B%0A%20%20%20%20%20%20--accent%3A%20%23d99a5b%3B%0A%20%20%20%20%20%20--ok%3A%20%236fbf7f%3B%0A%20%20%20%20%20%20--bad%3A%20%23e07a7a%3B%0A%20%20%20%20%20%20--muted%3A%20%23a49c8a%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%20%20*%20%7B%20box-sizing%3A%20border-box%3B%20%7D%0A%20%20body%20%7B%0A%20%20%20%20margin%3A%200%3B%0A%20%20%20%20padding%3A%201.5rem%201rem%204rem%3B%0A%20%20%20%20background%3A%20var(--bg)%3B%0A%20%20%20%20color%3A%20var(--fg)%3B%0A%20%20%20%20font-family%3A%20-apple-system%2C%20BlinkMacSystemFont%2C%20%22Segoe%20UI%22%2C%20Roboto%2C%20sans-serif%3B%0A%20%20%20%20line-height%3A%201.5%3B%0A%20%20%7D%0A%20%20main%20%7B%20max-width%3A%20640px%3B%20margin%3A%200%20auto%3B%20%7D%0A%20%20h1%20%7B%20font-size%3A%201.3rem%3B%20margin-bottom%3A%200.2rem%3B%20%7D%0A%20%20.subtitulo%20%7B%20color%3A%20var(--muted)%3B%20margin-top%3A%200%3B%20margin-bottom%3A%201.5rem%3B%20font-size%3A%200.95rem%3B%20%7D%0A%20%20section%20%7B%20margin-bottom%3A%201.75rem%3B%20%7D%0A%20%20h2%20%7B%20font-size%3A%201rem%3B%20text-transform%3A%20uppercase%3B%20letter-spacing%3A%200.03em%3B%20color%3A%20var(--accent)%3B%20margin-bottom%3A%200.6rem%3B%20%7D%0A%20%20.caja%20%7B%0A%20%20%20%20background%3A%20var(--card)%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%2010px%3B%0A%20%20%20%20padding%3A%201rem%201.1rem%3B%0A%20%20%7D%0A%20%20.caso%20%7B%0A%20%20%20%20background%3A%20var(--card)%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%2010px%3B%0A%20%20%20%20padding%3A%201rem%201.1rem%3B%0A%20%20%20%20margin-bottom%3A%201rem%3B%0A%20%20%7D%0A%20%20.caso%20p.enunciado%20%7B%20margin%3A%200%200%200.7rem%3B%20%7D%0A%20%20.opciones%20%7B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20gap%3A%200.4rem%3B%20margin-bottom%3A%200.8rem%3B%20%7D%0A%20%20label.opcion%20%7B%0A%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20gap%3A%200.5rem%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20padding%3A%200.5rem%200.7rem%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%7D%0A%20%20label.opcion%3Ahover%20%7B%20border-color%3A%20var(--accent)%3B%20%7D%0A%20%20button.comprobar%20%7B%0A%20%20%20%20font-size%3A%200.9rem%3B%0A%20%20%20%20padding%3A%200.45rem%200.9rem%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--accent)%3B%0A%20%20%20%20background%3A%20var(--accent)%3B%0A%20%20%20%20color%3A%20%23fff%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%7D%0A%20%20.explicacion%20%7B%0A%20%20%20%20margin-top%3A%200.8rem%3B%0A%20%20%20%20padding-top%3A%200.8rem%3B%0A%20%20%20%20border-top%3A%201px%20dashed%20var(--border)%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%7D%0A%20%20.explicacion.vacia%20%7B%20color%3A%20var(--muted)%3B%20font-style%3A%20italic%3B%20%7D%0A%20%20.veredicto%20%7B%20font-weight%3A%20600%3B%20%7D%0A%20%20.veredicto.correcto%20%7B%20color%3A%20var(--ok)%3B%20%7D%0A%20%20.veredicto.incorrecto%20%7B%20color%3A%20var(--bad)%3B%20%7D%0A%20%20.resumen%20%7B%20margin-top%3A%201rem%3B%20font-size%3A%200.9rem%3B%20color%3A%20var(--muted)%3B%20%7D%0A%3C%2Fstyle%3E%0A%3C%2Fhead%3E%0A%3Cbody%3E%0A%3Cmain%3E%0A%20%20%3Ch1%3EFijo%20o%20variable%3C%2Fh1%3E%0A%20%20%3Cp%20class%3D%22subtitulo%22%3EEjercicio%20de%20%3Ca%20href%3D%22..%2F..%2F..%2Fconceptos%2Fgastos-fijos-y-variables.md%22%3Egastos%20fijos%20y%20variables%3C%2Fa%3E%20%C2%B7%20sesi%C3%B3n%2001-02-01-presupuesto-personal%3C%2Fp%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3ECondiciones%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20style%3D%22margin%3A0%22%3ELa%20regla%3A%20un%20gasto%20es%20%3Cstrong%3Efijo%3C%2Fstrong%3E%20si%20t%C3%BA%20no%20decides%20su%20cifra%20cada%20mes%0A%20%20%20%20%20%20(viene%20dada)%2C%20y%20%3Cstrong%3Evariable%3C%2Fstrong%3E%20si%20s%C3%AD%20la%20decides%2C%20aunque%20lo%20pagues%20todos%20los%20meses.%20Que%20se%0A%20%20%20%20%20%20repita%20no%20lo%20hace%20fijo.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EReto%3C%2Fh2%3E%0A%20%20%20%20%3Cp%20style%3D%22color%3Avar(--muted)%3B%20font-size%3A0.9rem%3B%20margin-top%3A-0.4rem%3B%22%3EPara%20cada%20gasto%2C%20marca%20si%20es%20fijo%0A%20%20%20%20o%20variable%20y%20pulsa%20%22Comprobar%22.%3C%2Fp%3E%0A%20%20%20%20%3Cdiv%20id%3D%22casos%22%3E%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EExplicaci%C3%B3n%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20id%3D%22resumen-final%22%20class%3D%22explicacion%20vacia%22%3EResponde%20los%20seis%20casos%20de%20arriba%20y%20aqu%C3%AD%20ver%C3%A1s%20el%0A%20%20%20%20%20%20resumen.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%3C%2Fmain%3E%0A%0A%3Cscript%3E%0Aconst%20casos%20%3D%20%5B%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Alquiler%3A%20650%2C00%20%E2%82%AC%20cada%20mes%2C%20misma%20cifra%20en%20el%20contrato.%22%2C%0A%20%20%20%20correcto%3A%20%22fijo%22%2C%0A%20%20%20%20porque%3A%20%22no%20decides%20t%C3%BA%20la%20cifra%3A%20la%20marca%20el%20contrato%2C%20cada%20mes%20la%20misma.%20Fijo.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Ocio%3A%20sales%20algunos%20fines%20de%20semana%2C%20gastas%20lo%20que%20decides%20cada%20mes.%22%2C%0A%20%20%20%20correcto%3A%20%22variable%22%2C%0A%20%20%20%20porque%3A%20%22que%20salgas%20casi%20todos%20los%20meses%20no%20lo%20hace%20fijo%3A%20la%20cifra%20exacta%20la%20decides%20t%C3%BA%20cada%20vez.%20Variable%20%E2%80%94%20es%20justo%20el%20error%20t%C3%ADpico%20de%20esta%20clase.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Factura%20de%20la%20luz%3A%20cambia%20cada%20mes%20seg%C3%BAn%20lo%20que%20hayas%20consumido.%22%2C%0A%20%20%20%20correcto%3A%20%22variable%22%2C%0A%20%20%20%20porque%3A%20%22no%20la%20%5C%22decides%5C%22%20tan%20a%20prop%C3%B3sito%20como%20el%20ocio%2C%20pero%20la%20cifra%20depende%20de%20tu%20consumo%20(calefacci%C3%B3n%2C%20aire%2C%20cu%C3%A1nto%20est%C3%A1s%20en%20casa)%20y%20cambia%20mes%20a%20mes.%20Variable.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Cuota%20del%20gimnasio%3A%2035%2C00%20%E2%82%AC%20cada%20mes%20mientras%20sigas%20apuntado.%20Podr%C3%ADas%20cancelarla%20cuando%20quieras.%22%2C%0A%20%20%20%20correcto%3A%20%22fijo%22%2C%0A%20%20%20%20porque%3A%20%22que%20puedas%20cancelarla%20no%20la%20hace%20variable%3A%20mientras%20est%C3%A9%20activa%2C%20la%20cifra%20no%20cambia%20mes%20a%20mes%2C%20no%20la%20decides%20t%C3%BA%20cada%20vez.%20Fijo.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Comida%20del%20s%C3%BAper%3A%20compras%20lo%20que%20te%20hace%20falta%20cada%20semana.%22%2C%0A%20%20%20%20correcto%3A%20%22variable%22%2C%0A%20%20%20%20porque%3A%20%22la%20cifra%20depende%20de%20lo%20que%20decidas%20comprar%20cada%20vez.%20Variable.%22%0A%20%20%7D%2C%0A%20%20%7B%0A%20%20%20%20enunciado%3A%20%22Seguro%20del%20coche%3A%20300%2C00%20%E2%82%AC%20al%20a%C3%B1o%2C%20que%20divides%20mentalmente%20en%2025%2C00%20%E2%82%AC%20al%20mes%20para%20presupuestar.%22%2C%0A%20%20%20%20correcto%3A%20%22fijo%22%2C%0A%20%20%20%20porque%3A%20%22aunque%20se%20pague%20de%20golpe%20una%20vez%20al%20a%C3%B1o%2C%20la%20cifra%20no%20la%20decides%20t%C3%BA%20cada%20mes%3A%20es%20la%20misma%20p%C3%B3liza.%20Se%20prorratea%20(se%20reparte%20entre%20los%2012%20meses)%20para%20presupuestar%2C%20pero%20sigue%20siendo%20fijo.%22%0A%20%20%7D%0A%5D%3B%0A%0Aconst%20contenedor%20%3D%20document.getElementById(%22casos%22)%3B%0Aconst%20resultados%20%3D%20new%20Array(casos.length).fill(null)%3B%0A%0Acasos.forEach((caso%2C%20i)%20%3D%3E%20%7B%0A%20%20const%20div%20%3D%20document.createElement(%22div%22)%3B%0A%20%20div.className%20%3D%20%22caso%22%3B%0A%20%20div.innerHTML%20%3D%20%60%0A%20%20%20%20%3Cp%20class%3D%22enunciado%22%3E%3Cstrong%3ECaso%20%24%7Bi%20%2B%201%7D.%3C%2Fstrong%3E%20%24%7Bcaso.enunciado%7D%3C%2Fp%3E%0A%20%20%20%20%3Cdiv%20class%3D%22opciones%22%3E%0A%20%20%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%3Cinput%20type%3D%22radio%22%20name%3D%22caso%24%7Bi%7D%22%20value%3D%22fijo%22%3E%20Fijo%3C%2Flabel%3E%0A%20%20%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%3Cinput%20type%3D%22radio%22%20name%3D%22caso%24%7Bi%7D%22%20value%3D%22variable%22%3E%20Variable%3C%2Flabel%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3Cbutton%20class%3D%22comprobar%22%3EComprobar%3C%2Fbutton%3E%0A%20%20%20%20%3Cdiv%20class%3D%22explicacion%20vacia%22%3EElige%20fijo%20o%20variable%20y%20pulsa%20%22Comprobar%22.%3C%2Fdiv%3E%0A%20%20%60%3B%0A%20%20const%20boton%20%3D%20div.querySelector(%22button.comprobar%22)%3B%0A%20%20const%20explicacion%20%3D%20div.querySelector(%22.explicacion%22)%3B%0A%20%20boton.addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20const%20elegido%20%3D%20div.querySelector(%22input%3Achecked%22)%3B%0A%20%20%20%20if%20(!elegido)%20return%3B%0A%20%20%20%20const%20correcto%20%3D%20elegido.value%20%3D%3D%3D%20caso.correcto%3B%0A%20%20%20%20resultados%5Bi%5D%20%3D%20correcto%3B%0A%20%20%20%20explicacion.classList.remove(%22vacia%22)%3B%0A%20%20%20%20explicacion.innerHTML%20%3D%20%60%3Cspan%20class%3D%22veredicto%20%24%7Bcorrecto%20%3F%20%22correcto%22%20%3A%20%22incorrecto%22%7D%22%3E%24%7Bcorrecto%20%3F%20%22Correcto.%22%20%3A%20%22No%20del%20todo.%22%7D%3C%2Fspan%3E%20%24%7Bcaso.porque%7D%60%3B%0A%20%20%20%20actualizarResumen()%3B%0A%20%20%7D)%3B%0A%20%20contenedor.appendChild(div)%3B%0A%7D)%3B%0A%0Afunction%20actualizarResumen()%20%7B%0A%20%20const%20respondidos%20%3D%20resultados.filter(r%20%3D%3E%20r%20!%3D%3D%20null).length%3B%0A%20%20const%20resumen%20%3D%20document.getElementById(%22resumen-final%22)%3B%0A%20%20if%20(respondidos%20%3C%20casos.length)%20%7B%0A%20%20%20%20resumen.classList.add(%22vacia%22)%3B%0A%20%20%20%20resumen.textContent%20%3D%20%60Llevas%20%24%7Brespondidos%7D%20de%20%24%7Bcasos.length%7D%20casos%20comprobados.%60%3B%0A%20%20%20%20return%3B%0A%20%20%7D%0A%20%20const%20aciertos%20%3D%20resultados.filter(Boolean).length%3B%0A%20%20resumen.classList.remove(%22vacia%22)%3B%0A%20%20resumen.innerHTML%20%3D%20%60Aciertos%3A%20%3Cstrong%3E%24%7Baciertos%7D%20de%20%24%7Bcasos.length%7D%3C%2Fstrong%3E.%20La%20idea%20que%20se%20repite%3A%20fijo%0A%20%20o%20variable%20no%20depende%20de%20si%20pagas%20ese%20gasto%20todos%20los%20meses%2C%20sino%20de%20si%20t%C3%BA%20decides%20su%20cifra%20cada%20vez.%60%3B%0A%7D%0A%3C%2Fscript%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E%0A" loading="lazy"></iframe>
+  </div>
+
+  <div class="ejercicio-bloque">
+    <h3>¿Quién ahorra mejor?</h3>
+    <p class="desc">La tasa de ahorro — dos meses con ingresos y ahorro distintos, cifras editables.</p>
+    <iframe src="data:text/html;charset=utf-8,%3C!DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22es%22%3E%0A%3Chead%3E%0A%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1%22%3E%0A%3Ctitle%3E%C2%BFQui%C3%A9n%20ahorra%20mejor%3F%20%C2%B7%2001-02-01-presupuesto-personal%3C%2Ftitle%3E%0A%3Cstyle%3E%0A%20%20%3Aroot%20%7B%0A%20%20%20%20--bg%3A%20%23f7f5f0%3B%0A%20%20%20%20--fg%3A%20%231f1c17%3B%0A%20%20%20%20--card%3A%20%23ffffff%3B%0A%20%20%20%20--border%3A%20%23dcd6c9%3B%0A%20%20%20%20--accent%3A%20%238a5a2b%3B%0A%20%20%20%20--ok%3A%20%232e6b3e%3B%0A%20%20%20%20--bad%3A%20%239c2b2b%3B%0A%20%20%20%20--muted%3A%20%236b6558%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%3Aroot%20%7B%0A%20%20%20%20%20%20--bg%3A%20%23191714%3B%0A%20%20%20%20%20%20--fg%3A%20%23ece7dc%3B%0A%20%20%20%20%20%20--card%3A%20%23232019%3B%0A%20%20%20%20%20%20--border%3A%20%233a352c%3B%0A%20%20%20%20%20%20--accent%3A%20%23d99a5b%3B%0A%20%20%20%20%20%20--ok%3A%20%236fbf7f%3B%0A%20%20%20%20%20%20--bad%3A%20%23e07a7a%3B%0A%20%20%20%20%20%20--muted%3A%20%23a49c8a%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%20%20*%20%7B%20box-sizing%3A%20border-box%3B%20%7D%0A%20%20body%20%7B%0A%20%20%20%20margin%3A%200%3B%0A%20%20%20%20padding%3A%201.5rem%201rem%204rem%3B%0A%20%20%20%20background%3A%20var(--bg)%3B%0A%20%20%20%20color%3A%20var(--fg)%3B%0A%20%20%20%20font-family%3A%20-apple-system%2C%20BlinkMacSystemFont%2C%20%22Segoe%20UI%22%2C%20Roboto%2C%20sans-serif%3B%0A%20%20%20%20line-height%3A%201.5%3B%0A%20%20%7D%0A%20%20main%20%7B%20max-width%3A%20640px%3B%20margin%3A%200%20auto%3B%20%7D%0A%20%20h1%20%7B%20font-size%3A%201.3rem%3B%20margin-bottom%3A%200.2rem%3B%20%7D%0A%20%20.subtitulo%20%7B%20color%3A%20var(--muted)%3B%20margin-top%3A%200%3B%20margin-bottom%3A%201.5rem%3B%20font-size%3A%200.95rem%3B%20%7D%0A%20%20section%20%7B%20margin-bottom%3A%201.75rem%3B%20%7D%0A%20%20h2%20%7B%20font-size%3A%201rem%3B%20text-transform%3A%20uppercase%3B%20letter-spacing%3A%200.03em%3B%20color%3A%20var(--accent)%3B%20margin-bottom%3A%200.6rem%3B%20%7D%0A%20%20.caja%20%7B%0A%20%20%20%20background%3A%20var(--card)%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%2010px%3B%0A%20%20%20%20padding%3A%201rem%201.1rem%3B%0A%20%20%7D%0A%20%20.meses%20%7B%20display%3A%20flex%3B%20gap%3A%201rem%3B%20flex-wrap%3A%20wrap%3B%20%7D%0A%20%20.mes%20%7B%20flex%3A%201%201%20200px%3B%20%7D%0A%20%20.mes%20h3%20%7B%20margin%3A%200%200%200.5rem%3B%20font-size%3A%200.95rem%3B%20%7D%0A%20%20.campo%20%7B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20gap%3A%200.2rem%3B%20margin-bottom%3A%200.6rem%3B%20%7D%0A%20%20.campo%20label%20%7B%20font-size%3A%200.85rem%3B%20color%3A%20var(--muted)%3B%20%7D%0A%20%20.campo%20input%20%7B%0A%20%20%20%20font-size%3A%201rem%3B%0A%20%20%20%20padding%3A%200.4rem%200.5rem%3B%0A%20%20%20%20border-radius%3A%206px%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20background%3A%20var(--bg)%3B%0A%20%20%20%20color%3A%20var(--fg)%3B%0A%20%20%20%20width%3A%20100%25%3B%0A%20%20%7D%0A%20%20.opciones%20%7B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20gap%3A%200.4rem%3B%20margin%3A%201rem%200%3B%20%7D%0A%20%20label.opcion%20%7B%0A%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20gap%3A%200.5rem%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20padding%3A%200.5rem%200.7rem%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%7D%0A%20%20label.opcion%3Ahover%20%7B%20border-color%3A%20var(--accent)%3B%20%7D%0A%20%20button%20%7B%0A%20%20%20%20font-size%3A%200.9rem%3B%0A%20%20%20%20padding%3A%200.45rem%200.9rem%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--accent)%3B%0A%20%20%20%20background%3A%20var(--accent)%3B%0A%20%20%20%20color%3A%20%23fff%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20margin-right%3A%200.5rem%3B%0A%20%20%7D%0A%20%20button.secundario%20%7B%20background%3A%20transparent%3B%20color%3A%20var(--accent)%3B%20%7D%0A%20%20.explicacion%20%7B%0A%20%20%20%20margin-top%3A%200.8rem%3B%0A%20%20%20%20padding-top%3A%200.8rem%3B%0A%20%20%20%20border-top%3A%201px%20dashed%20var(--border)%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%7D%0A%20%20.explicacion.vacia%20%7B%20color%3A%20var(--muted)%3B%20font-style%3A%20italic%3B%20%7D%0A%20%20.veredicto%20%7B%20font-weight%3A%20600%3B%20%7D%0A%20%20.veredicto.correcto%20%7B%20color%3A%20var(--ok)%3B%20%7D%0A%20%20.veredicto.incorrecto%20%7B%20color%3A%20var(--bad)%3B%20%7D%0A%3C%2Fstyle%3E%0A%3C%2Fhead%3E%0A%3Cbody%3E%0A%3Cmain%3E%0A%20%20%3Ch1%3E%C2%BFQui%C3%A9n%20ahorra%20mejor%3F%3C%2Fh1%3E%0A%20%20%3Cp%20class%3D%22subtitulo%22%3EEjercicio%20de%20%3Ca%20href%3D%22..%2F..%2F..%2Fconceptos%2Ftasa-de-ahorro.md%22%3Etasa%20de%20ahorro%3C%2Fa%3E%20%C2%B7%20sesi%C3%B3n%2001-02-01-presupuesto-personal%3C%2Fp%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3ECondiciones%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20style%3D%22margin%3A0%200%200.8rem%22%3EEstos%20son%20tus%20ingresos%20y%20tu%20ahorro%20en%20dos%20meses%20distintos%20(puedes%0A%20%20%20%20%20%20cambiar%20las%20cifras)%3A%3C%2Fp%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22meses%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22mes%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Ch3%3EMes%20A%3C%2Fh3%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22campo%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Clabel%20for%3D%22ingresosA%22%3EIngresos%20(%E2%82%AC)%3C%2Flabel%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22ingresosA%22%20min%3D%221%22%20step%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22campo%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Clabel%20for%3D%22ahorroA%22%3EAhorro%20(%E2%82%AC)%3C%2Flabel%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22ahorroA%22%20min%3D%220%22%20step%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22mes%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Ch3%3EMes%20B%3C%2Fh3%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22campo%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Clabel%20for%3D%22ingresosB%22%3EIngresos%20(%E2%82%AC)%3C%2Flabel%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22ingresosB%22%20min%3D%221%22%20step%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22campo%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Clabel%20for%3D%22ahorroB%22%3EAhorro%20(%E2%82%AC)%3C%2Flabel%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22ahorroB%22%20min%3D%220%22%20step%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EReto%3C%2Fh2%3E%0A%20%20%20%20%3Cp%20style%3D%22color%3Avar(--muted)%3B%20font-size%3A0.9rem%3B%20margin-top%3A-0.4rem%3B%22%3ESin%20calcular%20el%20porcentaje%3A%20%C2%BFen%0A%20%20%20%20qu%C3%A9%20mes%20te%20queda%2C%20en%20proporci%C3%B3n%2C%20una%20parte%20mayor%20de%20lo%20que%20ingresas%3F%3C%2Fp%3E%0A%20%20%20%20%3Cdiv%20class%3D%22opciones%22%3E%0A%20%20%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%3Cinput%20type%3D%22radio%22%20name%3D%22respuesta%22%20value%3D%22A%22%3E%20En%20el%20Mes%20A%3C%2Flabel%3E%0A%20%20%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%3Cinput%20type%3D%22radio%22%20name%3D%22respuesta%22%20value%3D%22B%22%3E%20En%20el%20Mes%20B%3C%2Flabel%3E%0A%20%20%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%3Cinput%20type%3D%22radio%22%20name%3D%22respuesta%22%20value%3D%22igual%22%3E%20Ahorras%20igual%20de%20bien%20en%20los%20dos%3C%2Flabel%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3Cbutton%20id%3D%22comprobar%22%3EComprobar%3C%2Fbutton%3E%0A%20%20%20%20%3Cbutton%20id%3D%22otra%22%20class%3D%22secundario%22%20type%3D%22button%22%3EOtra%20ronda%3C%2Fbutton%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EExplicaci%C3%B3n%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20id%3D%22explicacion%22%20class%3D%22explicacion%20vacia%22%3EElige%20una%20opci%C3%B3n%20y%20pulsa%20%22Comprobar%22%20para%20ver%20las%20dos%0A%20%20%20%20%20%20tasas%20de%20ahorro.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%3C%2Fmain%3E%0A%0A%3Cscript%3E%0Afunction%20aleatorio(min%2C%20max)%20%7B%0A%20%20return%20Math.floor(Math.random()%20*%20(max%20-%20min%20%2B%201))%20%2B%20min%3B%0A%7D%0A%0Afunction%20nuevaRonda()%20%7B%0A%20%20const%20ingresosA%20%3D%20aleatorio(1200%2C%202800)%3B%0A%20%20let%20ingresosB%20%3D%20aleatorio(1200%2C%202800)%3B%0A%20%20while%20(Math.abs(ingresosB%20-%20ingresosA)%20%3C%20300)%20%7B%0A%20%20%20%20ingresosB%20%3D%20aleatorio(1200%2C%202800)%3B%0A%20%20%7D%0A%20%20const%20ahorroA%20%3D%20Math.round(ingresosA%20*%20(aleatorio(8%2C%2045)%20%2F%20100))%3B%0A%20%20const%20ahorroB%20%3D%20Math.round(ingresosB%20*%20(aleatorio(8%2C%2045)%20%2F%20100))%3B%0A%0A%20%20document.getElementById(%22ingresosA%22).value%20%3D%20ingresosA%3B%0A%20%20document.getElementById(%22ahorroA%22).value%20%3D%20ahorroA%3B%0A%20%20document.getElementById(%22ingresosB%22).value%20%3D%20ingresosB%3B%0A%20%20document.getElementById(%22ahorroB%22).value%20%3D%20ahorroB%3B%0A%0A%20%20document.querySelectorAll('input%5Bname%3D%22respuesta%22%5D').forEach(r%20%3D%3E%20r.checked%20%3D%20false)%3B%0A%20%20const%20explicacion%20%3D%20document.getElementById(%22explicacion%22)%3B%0A%20%20explicacion.classList.add(%22vacia%22)%3B%0A%20%20explicacion.textContent%20%3D%20'Elige%20una%20opci%C3%B3n%20y%20pulsa%20%22Comprobar%22%20para%20ver%20las%20dos%20tasas%20de%20ahorro.'%3B%0A%7D%0A%0Adocument.getElementById(%22comprobar%22).addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20const%20elegido%20%3D%20document.querySelector('input%5Bname%3D%22respuesta%22%5D%3Achecked')%3B%0A%20%20const%20explicacion%20%3D%20document.getElementById(%22explicacion%22)%3B%0A%20%20if%20(!elegido)%20%7B%0A%20%20%20%20explicacion.classList.add(%22vacia%22)%3B%0A%20%20%20%20explicacion.textContent%20%3D%20%22Elige%20primero%20una%20opci%C3%B3n.%22%3B%0A%20%20%20%20return%3B%0A%20%20%7D%0A%20%20const%20ingresosA%20%3D%20Number(document.getElementById(%22ingresosA%22).value)%3B%0A%20%20const%20ahorroA%20%3D%20Number(document.getElementById(%22ahorroA%22).value)%3B%0A%20%20const%20ingresosB%20%3D%20Number(document.getElementById(%22ingresosB%22).value)%3B%0A%20%20const%20ahorroB%20%3D%20Number(document.getElementById(%22ahorroB%22).value)%3B%0A%0A%20%20const%20tasaA%20%3D%20(ahorroA%20%2F%20ingresosA)%20*%20100%3B%0A%20%20const%20tasaB%20%3D%20(ahorroB%20%2F%20ingresosB)%20*%20100%3B%0A%20%20const%20dif%20%3D%20Math.abs(tasaA%20-%20tasaB)%3B%0A%0A%20%20let%20respuestaCorrecta%3B%0A%20%20if%20(dif%20%3C%200.05)%20respuestaCorrecta%20%3D%20%22igual%22%3B%0A%20%20else%20respuestaCorrecta%20%3D%20tasaA%20%3E%20tasaB%20%3F%20%22A%22%20%3A%20%22B%22%3B%0A%0A%20%20const%20correcto%20%3D%20elegido.value%20%3D%3D%3D%20respuestaCorrecta%3B%0A%20%20explicacion.classList.remove(%22vacia%22)%3B%0A%20%20explicacion.innerHTML%20%3D%20%60%3Cspan%20class%3D%22veredicto%20%24%7Bcorrecto%20%3F%20%22correcto%22%20%3A%20%22incorrecto%22%7D%22%3E%24%7Bcorrecto%20%3F%20%22Correcto.%22%20%3A%20%22No%20del%20todo.%22%7D%3C%2Fspan%3E%3Cbr%3E%0A%20%20%20%20Mes%20A%3A%20%24%7BahorroA.toFixed(2)%7D%20%E2%82%AC%20de%20%24%7BingresosA.toFixed(2)%7D%20%E2%82%AC%20%E2%86%92%20%24%7BtasaA.toFixed(1)%7D%25%20mensual.%3Cbr%3E%0A%20%20%20%20Mes%20B%3A%20%24%7BahorroB.toFixed(2)%7D%20%E2%82%AC%20de%20%24%7BingresosB.toFixed(2)%7D%20%E2%82%AC%20%E2%86%92%20%24%7BtasaB.toFixed(1)%7D%25%20mensual.%3Cbr%3E%0A%20%20%20%20%24%7Bdif%20%3C%200.05%0A%20%20%20%20%20%20%3F%20%22Las%20dos%20tasas%20salen%20pr%C3%A1cticamente%20iguales.%22%0A%20%20%20%20%20%20%3A%20%60Ahorras%20mejor%20en%20proporci%C3%B3n%20en%20el%20%24%7BrespuestaCorrecta%20%3D%3D%3D%20%22A%22%20%3F%20%22Mes%20A%22%20%3A%20%22Mes%20B%22%7D%2C%20aunque%20el%20ahorro%20en%20euros%20de%20ese%20mes%20%24%7B(respuestaCorrecta%20%3D%3D%3D%20%22A%22%20%3F%20ahorroA%20%3C%20ahorroB%20%3A%20ahorroB%20%3C%20ahorroA)%20%3F%20%22sea%20menor%22%20%3A%20%22tambi%C3%A9n%20sea%20mayor%22%7D%3A%20lo%20que%20importa%20es%20qu%C3%A9%20parte%20de%20los%20ingresos%20de%20cada%20mes%20te%20queda%2C%20no%20la%20cifra%20en%20euros.%60%7D%60%3B%0A%7D)%3B%0A%0Adocument.getElementById(%22otra%22).addEventListener(%22click%22%2C%20nuevaRonda)%3B%0A%0AnuevaRonda()%3B%0A%3C%2Fscript%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E%0A" loading="lazy"></iframe>
+  </div>
+
+  <div class="ejercicio-bloque">
+    <h3>¿Cuántos meses de colchón tienes?</h3>
+    <p class="desc">El colchón financiero — gastos y ahorro líquido editables.</p>
+    <iframe src="data:text/html;charset=utf-8,%3C!DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22es%22%3E%0A%3Chead%3E%0A%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1%22%3E%0A%3Ctitle%3E%C2%BFCu%C3%A1ntos%20meses%20de%20colch%C3%B3n%20tienes%3F%20%C2%B7%2001-02-01-presupuesto-personal%3C%2Ftitle%3E%0A%3Cstyle%3E%0A%20%20%3Aroot%20%7B%0A%20%20%20%20--bg%3A%20%23f7f5f0%3B%0A%20%20%20%20--fg%3A%20%231f1c17%3B%0A%20%20%20%20--card%3A%20%23ffffff%3B%0A%20%20%20%20--border%3A%20%23dcd6c9%3B%0A%20%20%20%20--accent%3A%20%238a5a2b%3B%0A%20%20%20%20--ok%3A%20%232e6b3e%3B%0A%20%20%20%20--bad%3A%20%239c2b2b%3B%0A%20%20%20%20--muted%3A%20%236b6558%3B%0A%20%20%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%20%7B%0A%20%20%20%20%3Aroot%20%7B%0A%20%20%20%20%20%20--bg%3A%20%23191714%3B%0A%20%20%20%20%20%20--fg%3A%20%23ece7dc%3B%0A%20%20%20%20%20%20--card%3A%20%23232019%3B%0A%20%20%20%20%20%20--border%3A%20%233a352c%3B%0A%20%20%20%20%20%20--accent%3A%20%23d99a5b%3B%0A%20%20%20%20%20%20--ok%3A%20%236fbf7f%3B%0A%20%20%20%20%20%20--bad%3A%20%23e07a7a%3B%0A%20%20%20%20%20%20--muted%3A%20%23a49c8a%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%20%20*%20%7B%20box-sizing%3A%20border-box%3B%20%7D%0A%20%20body%20%7B%0A%20%20%20%20margin%3A%200%3B%0A%20%20%20%20padding%3A%201.5rem%201rem%204rem%3B%0A%20%20%20%20background%3A%20var(--bg)%3B%0A%20%20%20%20color%3A%20var(--fg)%3B%0A%20%20%20%20font-family%3A%20-apple-system%2C%20BlinkMacSystemFont%2C%20%22Segoe%20UI%22%2C%20Roboto%2C%20sans-serif%3B%0A%20%20%20%20line-height%3A%201.5%3B%0A%20%20%7D%0A%20%20main%20%7B%20max-width%3A%20640px%3B%20margin%3A%200%20auto%3B%20%7D%0A%20%20h1%20%7B%20font-size%3A%201.3rem%3B%20margin-bottom%3A%200.2rem%3B%20%7D%0A%20%20.subtitulo%20%7B%20color%3A%20var(--muted)%3B%20margin-top%3A%200%3B%20margin-bottom%3A%201.5rem%3B%20font-size%3A%200.95rem%3B%20%7D%0A%20%20section%20%7B%20margin-bottom%3A%201.75rem%3B%20%7D%0A%20%20h2%20%7B%20font-size%3A%201rem%3B%20text-transform%3A%20uppercase%3B%20letter-spacing%3A%200.03em%3B%20color%3A%20var(--accent)%3B%20margin-bottom%3A%200.6rem%3B%20%7D%0A%20%20.caja%20%7B%0A%20%20%20%20background%3A%20var(--card)%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%2010px%3B%0A%20%20%20%20padding%3A%201rem%201.1rem%3B%0A%20%20%7D%0A%20%20.campo%20%7B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20gap%3A%200.2rem%3B%20margin-bottom%3A%200.7rem%3B%20%7D%0A%20%20.campo%20label%20%7B%20font-size%3A%200.85rem%3B%20color%3A%20var(--muted)%3B%20%7D%0A%20%20.campo%20input%20%7B%0A%20%20%20%20font-size%3A%201rem%3B%0A%20%20%20%20padding%3A%200.4rem%200.5rem%3B%0A%20%20%20%20border-radius%3A%206px%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20background%3A%20var(--bg)%3B%0A%20%20%20%20color%3A%20var(--fg)%3B%0A%20%20%20%20width%3A%20100%25%3B%0A%20%20%20%20max-width%3A%20220px%3B%0A%20%20%7D%0A%20%20.opciones%20%7B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20gap%3A%200.4rem%3B%20margin%3A%201rem%200%3B%20%7D%0A%20%20label.opcion%20%7B%0A%20%20%20%20display%3A%20flex%3B%0A%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20gap%3A%200.5rem%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--border)%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20padding%3A%200.5rem%200.7rem%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%7D%0A%20%20label.opcion%3Ahover%20%7B%20border-color%3A%20var(--accent)%3B%20%7D%0A%20%20button%20%7B%0A%20%20%20%20font-size%3A%200.9rem%3B%0A%20%20%20%20padding%3A%200.45rem%200.9rem%3B%0A%20%20%20%20border-radius%3A%208px%3B%0A%20%20%20%20border%3A%201px%20solid%20var(--accent)%3B%0A%20%20%20%20background%3A%20var(--accent)%3B%0A%20%20%20%20color%3A%20%23fff%3B%0A%20%20%20%20cursor%3A%20pointer%3B%0A%20%20%20%20margin-right%3A%200.5rem%3B%0A%20%20%7D%0A%20%20button.secundario%20%7B%20background%3A%20transparent%3B%20color%3A%20var(--accent)%3B%20%7D%0A%20%20.explicacion%20%7B%0A%20%20%20%20margin-top%3A%200.8rem%3B%0A%20%20%20%20padding-top%3A%200.8rem%3B%0A%20%20%20%20border-top%3A%201px%20dashed%20var(--border)%3B%0A%20%20%20%20font-size%3A%200.95rem%3B%0A%20%20%7D%0A%20%20.explicacion.vacia%20%7B%20color%3A%20var(--muted)%3B%20font-style%3A%20italic%3B%20%7D%0A%20%20.veredicto%20%7B%20font-weight%3A%20600%3B%20%7D%0A%20%20.veredicto.correcto%20%7B%20color%3A%20var(--ok)%3B%20%7D%0A%20%20.veredicto.incorrecto%20%7B%20color%3A%20var(--bad)%3B%20%7D%0A%3C%2Fstyle%3E%0A%3C%2Fhead%3E%0A%3Cbody%3E%0A%3Cmain%3E%0A%20%20%3Ch1%3E%C2%BFCu%C3%A1ntos%20meses%20de%20colch%C3%B3n%20tienes%3F%3C%2Fh1%3E%0A%20%20%3Cp%20class%3D%22subtitulo%22%3EEjercicio%20de%20%3Ca%20href%3D%22..%2F..%2F..%2Fconceptos%2Fcolchon-financiero.md%22%3Ecolch%C3%B3n%20financiero%3C%2Fa%3E%20%C2%B7%20sesi%C3%B3n%2001-02-01-presupuesto-personal%3C%2Fp%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3ECondiciones%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20style%3D%22margin%3A0%200%200.8rem%22%3ETus%20gastos%20totales%20de%20un%20mes%20normal%20y%20el%20dinero%20l%C3%ADquido%20que%20tienes%0A%20%20%20%20%20%20ahorrado%20aparte%20(puedes%20cambiar%20las%20cifras)%3A%3C%2Fp%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22campo%22%3E%0A%20%20%20%20%20%20%20%20%3Clabel%20for%3D%22gastos%22%3EGastos%20totales%20de%20un%20mes%20(%E2%82%AC)%3C%2Flabel%3E%0A%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22gastos%22%20min%3D%221%22%20step%3D%221%22%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22campo%22%3E%0A%20%20%20%20%20%20%20%20%3Clabel%20for%3D%22ahorro%22%3EDinero%20l%C3%ADquido%20ahorrado%20(%E2%82%AC)%3C%2Flabel%3E%0A%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22ahorro%22%20min%3D%220%22%20step%3D%221%22%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cp%20style%3D%22margin%3A0.6rem%200%200%3B%20font-size%3A0.9rem%3B%20color%3Avar(--muted)%22%3EFacturas%20por%20tu%20cuenta%3A%20el%20umbral%0A%20%20%20%20%20%20recomendado%20para%20ti%20no%20son%203%20meses%20(el%20de%20alguien%20con%20n%C3%B3mina%20fija)%2C%20son%205-6.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EReto%3C%2Fh2%3E%0A%20%20%20%20%3Cp%20style%3D%22color%3Avar(--muted)%3B%20font-size%3A0.9rem%3B%20margin-top%3A-0.4rem%3B%22%3EAntes%20de%20calcular%3A%20%C2%BFen%20qu%C3%A9%0A%20%20%20%20situaci%C3%B3n%20crees%20que%20est%C3%A1s%3F%3C%2Fp%3E%0A%20%20%20%20%3Cdiv%20class%3D%22opciones%22%3E%0A%20%20%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%3Cinput%20type%3D%22radio%22%20name%3D%22respuesta%22%20value%3D%22ambos%22%3E%20Cubro%20los%20dos%20umbrales%3A%20los%203%20meses%20de%20n%C3%B3mina%20fija%20y%20los%205-6%20de%20freelance%3C%2Flabel%3E%0A%20%20%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%3Cinput%20type%3D%22radio%22%20name%3D%22respuesta%22%20value%3D%22solo-3%22%3E%20Cubro%20los%203%20meses%20de%20n%C3%B3mina%20fija%2C%20pero%20no%20los%205-6%20de%20freelance%3C%2Flabel%3E%0A%20%20%20%20%20%20%3Clabel%20class%3D%22opcion%22%3E%3Cinput%20type%3D%22radio%22%20name%3D%22respuesta%22%20value%3D%22ninguno%22%3E%20No%20llego%20ni%20a%20los%203%20meses%3C%2Flabel%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3Cbutton%20id%3D%22comprobar%22%3EComprobar%3C%2Fbutton%3E%0A%20%20%20%20%3Cbutton%20id%3D%22otra%22%20class%3D%22secundario%22%20type%3D%22button%22%3EOtra%20ronda%3C%2Fbutton%3E%0A%20%20%3C%2Fsection%3E%0A%0A%20%20%3Csection%3E%0A%20%20%20%20%3Ch2%3EExplicaci%C3%B3n%3C%2Fh2%3E%0A%20%20%20%20%3Cdiv%20class%3D%22caja%22%3E%0A%20%20%20%20%20%20%3Cp%20id%3D%22explicacion%22%20class%3D%22explicacion%20vacia%22%3EElige%20una%20opci%C3%B3n%20y%20pulsa%20%22Comprobar%22%20para%20ver%20cu%C3%A1ntos%0A%20%20%20%20%20%20meses%20de%20colch%C3%B3n%20tienes%20de%20verdad.%3C%2Fp%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fsection%3E%0A%3C%2Fmain%3E%0A%0A%3Cscript%3E%0Afunction%20aleatorio(min%2C%20max)%20%7B%0A%20%20return%20Math.floor(Math.random()%20*%20(max%20-%20min%20%2B%201))%20%2B%20min%3B%0A%7D%0A%0Afunction%20nuevaRonda()%20%7B%0A%20%20const%20gastos%20%3D%20aleatorio(900%2C%201800)%3B%0A%20%20const%20ahorro%20%3D%20aleatorio(500%2C%209500)%3B%0A%20%20document.getElementById(%22gastos%22).value%20%3D%20gastos%3B%0A%20%20document.getElementById(%22ahorro%22).value%20%3D%20ahorro%3B%0A%20%20document.querySelectorAll('input%5Bname%3D%22respuesta%22%5D').forEach(r%20%3D%3E%20r.checked%20%3D%20false)%3B%0A%20%20const%20explicacion%20%3D%20document.getElementById(%22explicacion%22)%3B%0A%20%20explicacion.classList.add(%22vacia%22)%3B%0A%20%20explicacion.textContent%20%3D%20'Elige%20una%20opci%C3%B3n%20y%20pulsa%20%22Comprobar%22%20para%20ver%20cu%C3%A1ntos%20meses%20de%20colch%C3%B3n%20tienes%20de%20verdad.'%3B%0A%7D%0A%0Adocument.getElementById(%22comprobar%22).addEventListener(%22click%22%2C%20()%20%3D%3E%20%7B%0A%20%20const%20elegido%20%3D%20document.querySelector('input%5Bname%3D%22respuesta%22%5D%3Achecked')%3B%0A%20%20const%20explicacion%20%3D%20document.getElementById(%22explicacion%22)%3B%0A%20%20if%20(!elegido)%20%7B%0A%20%20%20%20explicacion.classList.add(%22vacia%22)%3B%0A%20%20%20%20explicacion.textContent%20%3D%20%22Elige%20primero%20una%20opci%C3%B3n.%22%3B%0A%20%20%20%20return%3B%0A%20%20%7D%0A%20%20const%20gastos%20%3D%20Number(document.getElementById(%22gastos%22).value)%3B%0A%20%20const%20ahorro%20%3D%20Number(document.getElementById(%22ahorro%22).value)%3B%0A%20%20const%20meses%20%3D%20ahorro%20%2F%20gastos%3B%0A%0A%20%20let%20respuestaCorrecta%3B%0A%20%20if%20(meses%20%3E%3D%205)%20respuestaCorrecta%20%3D%20%22ambos%22%3B%0A%20%20else%20if%20(meses%20%3E%3D%203)%20respuestaCorrecta%20%3D%20%22solo-3%22%3B%0A%20%20else%20respuestaCorrecta%20%3D%20%22ninguno%22%3B%0A%0A%20%20const%20correcto%20%3D%20elegido.value%20%3D%3D%3D%20respuestaCorrecta%3B%0A%20%20explicacion.classList.remove(%22vacia%22)%3B%0A%20%20explicacion.innerHTML%20%3D%20%60%3Cspan%20class%3D%22veredicto%20%24%7Bcorrecto%20%3F%20%22correcto%22%20%3A%20%22incorrecto%22%7D%22%3E%24%7Bcorrecto%20%3F%20%22Correcto.%22%20%3A%20%22No%20del%20todo.%22%7D%3C%2Fspan%3E%3Cbr%3E%0A%20%20%20%20%24%7Bahorro.toFixed(2)%7D%20%E2%82%AC%20%C3%B7%20%24%7Bgastos.toFixed(2)%7D%20%E2%82%AC%20%3D%20%3Cstrong%3E%24%7Bmeses.toFixed(1)%7D%20meses%3C%2Fstrong%3E%20de%20colch%C3%B3n.%3Cbr%3E%0A%20%20%20%20%24%7BrespuestaCorrecta%20%3D%3D%3D%20%22ambos%22%0A%20%20%20%20%20%20%3F%20%22Cubres%20de%20sobra%20los%203%20meses%20de%20alguien%20con%20n%C3%B3mina%20fija%2C%20y%20tambi%C3%A9n%20los%205-6%20que%20te%20convienen%20a%20ti%20por%20facturar%20de%20forma%20irregular.%22%0A%20%20%20%20%20%20%3A%20respuestaCorrecta%20%3D%3D%3D%20%22solo-3%22%0A%20%20%20%20%20%20%3F%20%22Cubres%20los%203%20meses%20de%20alguien%20con%20n%C3%B3mina%20fija%2C%20pero%20no%20los%205-6%20meses%20que%20te%20convienen%20a%20ti%3A%20con%20ingresos%20irregulares%2C%20un%20mes%20flojo%20(o%20varios%20seguidos)%20puede%20dejarte%20corto%20antes%20de%20llegar%20a%20ese%20nivel.%22%0A%20%20%20%20%20%20%3A%20%22Ni%20siquiera%20llegas%20a%20los%203%20meses%20de%20alguien%20con%20n%C3%B3mina%20fija.%20Con%20ingresos%20irregulares%2C%20esto%20es%20lo%20primero%20a%20construir%20antes%20de%20pensar%20en%20ahorrar%20para%20otra%20cosa.%22%7D%60%3B%0A%7D)%3B%0A%0Adocument.getElementById(%22otra%22).addEventListener(%22click%22%2C%20nuevaRonda)%3B%0A%0AnuevaRonda()%3B%0A%3C%2Fscript%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E%0A" loading="lazy"></iframe>
+  </div>
+</section>
+
+<section>
+  <h2 class="titulo-seccion">Visto desde tus ingresos irregulares</h2>
+
+  <div class="lente">
+    <h4>El presupuesto</h4>
+    <p>Con nómina fija, el presupuesto se hace una vez y sirve para todos los meses. Facturando por tu cuenta, los ingresos cambian de un mes a otro: por eso conviene rehacer este cálculo cada mes con lo que de verdad has ingresado, no con una cifra fija que igual no llega.</p>
+  </div>
+
+  <div class="lente">
+    <h4>La liquidez</h4>
+    <p>En un mes flojo, lo que te salva no es cuánto tienes ahorrado en total, sino cuánto de eso puedes usar ya mismo sin esperar ni perder valor. Por eso el colchón para los meses malos conviene tenerlo en algo muy líquido (efectivo, cuenta corriente), no en algo que penaliza por sacarlo antes de tiempo.</p>
+  </div>
+
+  <div class="lente">
+    <h4>La tasa de ahorro</h4>
+    <p>En un mes bueno puedes ahorrar más euros y aun así tener una tasa de ahorro peor que en un mes flojo, si ese mes bueno también disparó tus gastos variables. Mira la tasa, no solo la cifra en euros, para saber si de verdad estás mejorando mes a mes.</p>
+  </div>
+
+  <div class="lente">
+    <h4>El colchón financiero</h4>
+    <p>En un mes bueno, aparta más para este fondo; en un mes flojo, no te machaques si no puedes apartar nada ese mes. Lo normal, con ingresos irregulares, es que este colchón tarde más en construirse que si tuvieras nómina fija — no es una señal de que lo estés haciendo mal.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+const flashcards = [
+  { q: "Nombra las tres funciones del dinero.", a: "Medio de cambio, unidad de cuenta y depósito de valor." },
+  { q: "El aceite de oliva sube un 20% anual de precio por una mala cosecha, y el resto de los precios no cambia. ¿Es esto inflación? (sí/no, en una frase)", a: "No. Es la subida de un bien concreto por un motivo concreto (la cosecha), no una subida general y sostenida de casi todos los precios." },
+  { q: "Tienes 100,00 € guardados y la inflación es del 3% anual. El año que viene, ¿tu dinero compra lo mismo? (sí/no)", a: "No. Seguirán siendo 100,00 € en la cuenta, pero comprarán como unos 97,00 €: menos que hoy." },
+  { q: "¿Por qué un piso es poco líquido aunque valga mucho dinero?", a: "Porque convertirlo en dinero disponible (venderlo) lleva meses. La liquidez mide la rapidez de esa conversión sin perder valor, no el valor en sí." },
+  { q: "Pagas la luz todos los meses, pero la cifra cambia según lo que consumes. ¿Es un gasto fijo? (sí/no, en una frase)", a: "No. Que se repita cada mes no lo hace fijo: es fijo solo si la cifra no depende de lo que decidas gastar. La luz varía según tu consumo, así que es variable." },
+  { q: "Ahorras 400,00 € un mes con 2.000,00 € de ingresos, y 300,00 € otro mes con 1.200,00 € de ingresos. ¿En cuál ahorras mejor en proporción? (di el mes, en una frase)", a: "En el segundo: ahorras un 25% mensual de tus ingresos (300 de 1.200), frente a un 20% mensual en el primero (400 de 2.000), aunque en euros ahorres menos." },
+  { q: "Facturas 2.400,00 € tu mejor mes y 1.300,00 € tu peor mes. Si fijas tus gastos pensando en el mejor mes, ¿qué pasa el mes que factures 1.300,00 €? (en una frase)", a: "Que te faltará dinero: habrás comprometido gastos pensando en una cifra que no se repite todos los meses." },
+  { q: "Tienes 4.500,00 € ahorrados y gastas 900,00 € al mes. Facturas por tu cuenta. ¿Tienes ya el colchón que te conviene (5-6 meses)? (sí/no)", a: "Sí, justo: 4.500 ÷ 900 = 5 meses, el extremo bajo del colchón recomendado para ti (5-6 meses). Con nómina fija te sobraría, pero para ti es lo mínimo." }
+];
+
+const rejilla = document.getElementById("rejilla-flash");
+flashcards.forEach(fc => {
+  const div = document.createElement("div");
+  div.className = "flash";
+  div.innerHTML = `
+    <div class="flash-interior">
+      <div class="flash-cara frente"><span>${fc.q}<br><span class="flash-pista">(clic para ver la respuesta)</span></span></div>
+      <div class="flash-cara dorso"><span>${fc.a}</span></div>
+    </div>
+  `;
+  div.addEventListener("click", () => div.classList.toggle("volteada"));
+  rejilla.appendChild(div);
+});
+</script>
+</body>
+</html>

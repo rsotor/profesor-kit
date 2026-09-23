@@ -54,6 +54,8 @@ Termina con `node .kit/herramientas/comprobar.js` y guarda con
   y puede seguir estudiando igual.** Después propón abrir una issue con el motivo que ha dado la
   herramienta (sección "Feedback al kit" de `AGENTS.md`). No reintentes en bucle ni arregles el
   motor a mano.
+- **Motivo: un posible secreto** → no es un fallo del kit, no abras issue. Enséñale el fichero que dice la
+  herramienta (nunca el secreto) y ayúdale a quitarlo como dice la regla 5 de `AGENTS.md`; después, repite.
 - **No se pudo descargar** → casi siempre es la sesión de GitHub: `gh auth status`, y si hace
   falta, `gh auth login` por navegador. Nunca pidas un token.
 

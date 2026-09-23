@@ -2,10 +2,50 @@
 
 Sobre `main` en `53e3c83` (kit **0.19.0**). Solo informe: no se ha cambiado nada del repo.
 
-> **Seguimiento.** Bloque 1 ("que no se rompa", §8.3) aplicado en la **0.20.0**: §2.1, §2.2 (releases por
-> etiqueta, workflow `release.yml`), §2.3, §2.4, §5.1, `package.json`, `docs/superpowers/` retirado y
-> `CONTRIBUTING.md`/`README.md` con la verdad. Además, un fallo encontrado al probarlo: `tieneIdentidad`
-> daba por buena una identidad de git vacía. Sigue abierto: público/privado (§6.1), Linux (§4.2), 1.0.0.
+## 0. Seguimiento (se actualiza en cada bloque)
+
+Estado a **2026-09-23**, tras mezclar el PR #30 (release `v0.20.0`). Los hallazgos de abajo no se editan: aquí
+se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
+
+| Hallazgo | Bloque | Estado | Cómo se resolvió · dónde revisarlo |
+|---|---|---|---|
+| §2.1 Vuelta atrás que borraba lo no guardado | 1 | ✅ 0.20.0 | `actualizar.js` mira el resultado de `guardar` antes de tocar nada: si no pudo guardar (y no es `sin-cambios`) devuelve `sin-guardar` y no empieza. Test: "si no puede guardar antes de actualizar, no toca nada…" en `tests/actualizar.test.js` |
+| §2.1 (menor) Commit previo con secreto que luego se sube | — | ✅ 0.21.0 | `actualizar.js` escanea secretos antes de nada: si hay uno, no hace el commit previo ni actualiza, y dice en qué fichero (sin enseñarlo). Test en `tests/actualizar.test.js` |
+| **Nuevo** `tieneIdentidad` daba por buena una identidad vacía | 1 | ✅ 0.20.0 | Salió al probar §2.1: con `user.name=` en el git global, `git config` responde pero el commit falla. `lib/git.js` usa ahora `git var GIT_AUTHOR_IDENT` / `GIT_COMMITTER_IDENT`, que decide como `git commit` |
+| §2.2 Motor desde `main`, sin etiquetas | 1 | ✅ 0.20.0 | `actualizar.js`: `etiquetaPublicada()` lee la última release (`gh api …/releases/latest`), `descargar()` clona con `--branch vX.Y.Z`, `versionPublicada()` (aviso diario) sale de ahí. `.github/workflows/release.yml` crea la release en cada merge que sube `.kit/VERSION`, con las notas de `.github/release-notas.js` (sección del CHANGELOG). Flujo y paso manual en `CONTRIBUTING.md` (paso 6). Comprobado: `v0.20.0` creada sola al mezclar #30 |
+| §2.2 `enforce_admins` desactivado · sin firma del motor | — | ✅ 2026-09-23 | Con el sí de Roberto, `enforce_admins` activado: `main` exige `tests-ok` también al dueño. Firmar releases: no vale la pena mientras el repo tenga un solo mantenedor |
+| §2.3 Complementos de Obsidian sin fijar | 1 (adelantado) | ✅ 0.20.0 | `lib/obsidian.js`: cada complemento lleva `version` y sha256 por fichero (terminal 3.27.2, code-files 1.1.9, claudian 2.3.3); `descargarDeGitHub` baja esa versión, verifica el hash y rechaza lo que no coincide; `AbortSignal.timeout(120 s)`. Subir de versión: `CONTRIBUTING.md`, último apartado. Tests nuevos en `tests/obsidian.test.js` |
+| §2.3 (TBD) Claudian y la clave de API | — | ⏳ abierto | Sin comprobar. Toca a la hoja del alumno si pide clave |
+| §2.4 Inyección por la ruta del curso en el atajo | 1 (adelantado) | ✅ 0.20.0 | `crear-atajo.js`: `RUTA_PELIGROSA` rechaza `"`, `$`, `%`, acento grave y saltos de línea con motivo `ruta-no-valida` y explicación en llano. Test en `tests/crear-atajo.test.js` |
+| §3.2 Sin `package.json` | 1 (adelantado) | ✅ 0.20.0 | `package.json` mínimo: `private`, `engines >=22`, `npm test`, `npm run test:cobertura`, `npm run comprobar`. `preparar-curso.js` lo borra en los cursos (`SOLO_DEL_KIT`) |
+| §3.2 Sin linter · líneas largas | 3+ | ✅ 0.21.0 | ESLint como devDependency solo del repo del kit (`preparar-curso.js` lo borra en los cursos, junto con `node_modules/`), `eslint.config.js` en la raíz con `no-unused-vars`, `no-undef`, `eqeqeq`, `prefer-const` y `max-len` 160 (ignora cadenas/comentarios largos y los `assert.match` de los tests). `npm run lint`, paso de CI solo en el job Linux Node 24 |
+| §3.2 `comprobar.js` mezcla comprobar y generar | 2 | ✅ 0.21.0 | `comprobar.js` ya solo comprueba; lo que genera markdown (`pendientes`, `auditoría`, `formulario`, `ejercicios/_index`, `Estado` del README) vive en `lib/generados.js`, como `lib/indice.js`. `guardar.js` y los tests importan de ahí |
+| §3.2 Parser de frontmatter propio | 2 | ✅ 0.21.0 (de otra forma) | No se sustituye ni se amplía el lector: se decidió que detectar es mejor que prever. `lib/vault.js` → `revisarPropiedades()` señala las líneas que el lector no entiende y los valores que lee pero no sirven (`estudiada: sí`, `nota: 7/10`, fechas imposibles) en las propiedades que usan las herramientas. `comprobar.js` lo da como aviso `propiedad-no-estandar`. El profesor interpreta, pregunta la primera vez, reescribe en el estándar y lo apunta en `config/alumno.md` → *Cómo escribe en sus notas*; a la tercera, issue al kit describiendo el patrón, no el valor (`AGENTS.md`, "Cuando el alumno escribe a su manera"). Tests en `tests/propiedades.test.js` |
+| §3.2 Ficheros vivos mantenidos a mano | 2 | ✅ 0.21.0 | = P2, ver más abajo. **Añadido después:** `formulario.md` recoge de cada concepto su fórmula si la tiene y, si no, su definición en una frase (de su nota o, si falta, de `_index.md`); se mezclan en el mismo curso. Los índices generados no cuentan para decidir si un concepto es huérfano (si no, ninguno lo sería) |
+| §3.2 Temporal de la descarga sin limpiar | 1 (adelantado) | ✅ 0.20.0 | `cli()` de `actualizar.js` borra el clon temporal en un `finally` (solo si no vino por `--origen`) |
+| §3.2 Test que faltaba (§2.1) | 1 | ✅ 0.20.0 | Ver §2.1 |
+| §4.2 Linux sin documentar | — | ✅ 0.21.0 | Decisión de Roberto: **no se soporta** (no se puede probar). `README.md` lo dice; la guía para el LLM ya no habla de Linux. El CI sigue en Linux porque es el runner barato y hace de Mac. Si alguien lo pide, se hace entonces |
+| §4.2 Atajo depende de `~/.local/bin` en el PATH | 1 (adelantado) | ✅ 0.21.0 | `crear-atajo.js` → `anadirAlPath()`: si la carpeta no está en el PATH, la añade para siempre. Mac/Linux: una línea marcada al final del perfil de su shell (`.zshrc`, `.bash_profile`, `.bashrc` o `.profile` según `SHELL`). Windows: la variable `Path` del usuario con PowerShell (sin administrador). Una sola vez; si falla, lo dice. `diagnostico.js` da por bueno el PATH ya guardado aunque la ventana actual no lo vea. Tests en `tests/crear-atajo.test.js` y `tests/diagnostico.test.js` |
+| §4.2 Windows solo con Node 24 y sin instalación completa | — | ✅ 0.21.0 | Instalación completa en Windows con Codex hecha por Roberto el 2026-09-22: funciona. Documentado como probado. Mínimo subido a **Node 24** (`diagnostico.js`, `package.json`, guía); el CI deja de probar Node 22 |
+| §4.2 `diario.md` con `\n` fijo | 1 (adelantado) | ✅ 0.21.0 | `anotarEnDiario()` en `guardar.js` usa el fin de línea que ya tenga el fichero. Test en `tests/guardar.test.js` |
+| **Nuevo** Los tests dejaban sus cursos de prueba en la carpeta temporal | — | ✅ 0.21.0 | ~29.600 carpetas (5,3 GB). `tests/ayuda.js` → `temporal()` registra cada carpeta y la borra al acabar el proceso, también las renombradas. Todos los tests la usan; regla en `CONTRIBUTING.md`. Las antiguas se borraron a mano |
+| §5.1 `.gitignore` en el motor se reemplazaba | 1 | ✅ 0.20.0 | `.gitignore` sigue en `motor.json` (si saliera, el `actualizar.js` viejo de los cursos lo borraría), pero `actualizar.js` lo trata como `SE_FUSIONAN`: `fusionarGitignore()` añade al final las reglas del kit que falten bajo `# Reglas del kit añadidas al actualizar a la X`, sin tocar las del alumno ni el fin de línea. **Ojo:** la actualización 0.19→0.20 la hace el código viejo y lo sustituye entero una última vez (avisado en el CHANGELOG). Test en `tests/actualizar.test.js` |
+| §5.2 `ESTANDARES.md` es un encargo, no un adaptador | 2 | ✅ 0.21.0 | Formato de adaptador por asistente (`.kit/adaptadores/<llm>.json`: `comando`, `skills`, `puente`, `permisos`, `probado`, `modelo_recomendado`), documentado en `ESTANDARES.md`. Solo existe el de Claude Code (el de Codex llegará por issue `[adaptador] codex-cli`, con datos reales). `lib/vault.js` → `leerAdaptador()`: el local del curso (`config/adaptador-llm.json`) manda y nunca se pisa al actualizar. `instalar-skills.js`, `crear-atajo.js` y `diagnostico.js` lo usan; el diagnóstico comprueba que las skills existen de verdad y, sin adaptador, avisa sin bloquear. Flujo de devolución al kit: issue por defecto (el alumno no puede escribir en el kit), PR si sabe y quiere. **Gemini retirado** del kit (`GEMINI.md`, `gemini-cli`, `.gemini/skills/`). **Modelo recomendado** en el adaptador y en la tabla legible `.kit/adaptadores/LEEME.md` (enlazada desde la guía y las skills `/configurar` y `/sesion`); `tests/adaptadores.test.js` exige que coincidan. Claude: Sonnet (prueba completa del 2026-09-21), Opus opcional |
+| §5.3 Claude-ismos · calidad dependiente del modelo | 2 | ✅ 0.21.0 | Restos quitados en `/sesion`, `/examen` y `/repaso` ("Sin Artifact", "Crea una tarea por cada punto", "sin cargar ninguna skill de diseño"). La dependencia del modelo se cubre con P1 (revisor pedagógico) y con el modelo recomendado (§5.2) |
+| §6.1 `CONTRIBUTING.md` decía privado y sin protección | 1 | ✅ 0.20.0 | Reescrito: flujo con releases, "Las dos barreras de `main`" neutro respecto a la visibilidad, tabla de fuentes de verdad con `docs/auditoria/` en vez de `docs/superpowers/` |
+| §6.1 `README.md` y plantilla de PR decían CI con Mac | 1 | ✅ 0.20.0 | Corregidos (Linux y Windows), `npm test`, releases, lista completa de lo que se borra al crear un curso |
+| §6.1 `INSTALACION.md` habla de invitación al repo privado | — | ✅ 0.21.0 | Decisión de Roberto: el kit **se queda público** al menos hasta después de la 1.0.0. Quitados de `INSTALACION.md` (Mac y Windows, y el texto de arranque) los pasos de la invitación y la explicación del 404; `INSTALAR-AGENTE.md` paso 2 habla de "su cuenta"; el arreglo de `acceso-al-kit` en `diagnostico.js` habla de red y sesión. El repo de cada alumno sigue siendo privado siempre |
+| §6.1 La 1.0.0 | — | ⏳ decisión | Roberto: después de estos ajustes, no todavía. El mecanismo de release ya está |
+| §6.1 Fichero con datos de un curso real en `docs/superpowers/pruebas/` | 1 | ✅ 0.20.0 | `docs/superpowers/` borrado entero (specs, planes, pruebas, `comparar-con-vault.js`). Sigue en el historial de git |
+| §6.3 Documento de arquitectura vivo | 2 | ✅ 0.21.0 | `docs/arquitectura.md`: qué es el kit, motor y datos, mapa de herramientas, qué genera `guardar.js` y en qué orden, reglas de `comprobar.js`, invariantes con dónde se hacen cumplir, los cuatro ciclos (instalación, clase, actualización, publicación), multi-LLM, tests y "dónde tocar para…". En la tabla de documentación viva de `CONTRIBUTING.md` y enlazado desde `README.md`. De paso: `INSTALAR-AGENTE.md` con los pasos en orden y secciones para los pasos 5 y 6 |
+| §6.3 Regla "Deshacer" sin herramienta | 2 | ✅ 0.21.0 | `deshacer.js`: `git revert` del último guardado (nunca `reset`), commit `deshacer: <mensaje>`, anotado en el diario; se niega con cambios sin guardar, sin identidad de git o si lo último es del kit (actualización); deshacer un deshacer = rehacer; `--ver` enseña qué vuelve sin tocar nada; sube como `guardar.js` (`subirSiProcede`, ahora compartida). Regla 6 de `AGENTS.md`: primero `--ver`, luego con el sí del alumno. Tests en `tests/deshacer.test.js` |
+| §7 Releases | 1 | ✅ 0.20.0 | Ver §2.2 |
+| §7 Curso de referencia en el CI | 2 | ✅ 0.21.0 (falta la primera ejecución real) | Decisión de Roberto: la prueba con el asistente se ejecuta **en su Mac**, no en el CI. `pruebas/curso-ejemplo/`: curso inventado (finanzas personales, 2 módulos con submódulos, 3 clases con desorden a propósito) con opciones no por defecto (recuadro personal, marcador `??`, 4 flashcards, aprobado 6, regla propia). `npm run prueba-real`: todas las skills en secuencia (3 × `/sesion`, dudas y casilla `estudiada: sí` simuladas + `/dudas`, `/ejercicio`, `/examen` con respuestas preparadas y corrección, `/repaso`), resultado y `RESUMEN.md` en `pruebas/curso-ejemplo/resultado/`. `npm run prueba-actualizar` (sin asistente, en el CI): el último resultado con el motor de su versión, actualizado a la actual; no puede perder nada ni sumar errores. `.github/cambio-grande.js`: un PR que toca skills, `AGENTS.md` o plantillas no pasa sin un `RESUMEN.md` de una ejecución real (uno de `--sin-llm` no cuenta) |
+| §7 `.superpowers/sdd/` en el árbol de trabajo | — | ✅ 0.21.0 | Borrada (decisión de Roberto): eran informes y diffs de subagentes del índice del curso, fuera de git y ya sin uso |
+| §7 Bus factor 1 | — | ✅ mitigado | No se arregla del todo; `docs/arquitectura.md` (§6.3) permite que otra persona o un LLM entienda el kit sin haberlo visto |
+| §8.1 P1 Lint pedagógico | 2 | ✅ 0.21.0 | Seis avisos en `comprobar.js` (nunca bloquean): `nota-larga` (60 líneas de contenido por defecto, o el número de `longitud_nota`), `concepto-sin-ejemplo`, `sesion-incompleta` (por sección), `flashcards-fuera-de-rango` (`flashcards_por_sesion`), `requiere-vacio` (dificultad 3), `pregunta-doble` (heurística prudente: solo dos `?` en una pregunta numerada con su `✍️`). `AGENTS.md`: se arreglan antes de guardar salvo motivo, que se le dice al alumno. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Tests en `tests/revisor-pedagogico.test.js` |
+| §8.1 P2 Más ficheros vivos generados | 2 | ✅ 0.21.0 | `guardar.js` genera ahora `estudio/formulario.md` (fórmulas por bloque) y `estudio/ejercicios/_index.md` (qué practica cada ejercicio, desde `ejercicio:` y `## Practícalo`); `mapa-del-curso.md` se queda solo para la cobertura del material, como ya decía la skill. Migración `004-…` conserva con otro nombre lo que un curso ya tuviera escrito a mano y no coincida con lo generado. Ver `lib/generados.js`, `tests/generados.test.js` Las notas `-anterior` se quedan como están, sin paso de revisión: decisión de Roberto (hay pocos cursos afectados) |
+| §8 Resto de propuestas P1, P3-P8 y E1-E9 | 2 y 3 | ⏳ abierto | Siguiente: P1 (lint pedagógico) y P3 (calentamiento), bloque 2 |
 
 Alcance: seguridad · calidad del código y de los tests · multiplataforma · multi-LLM · documentación ·
 agilidad del proceso · y, sobre todo, **qué le vendría bien al kit en las próximas iteraciones**, para el
@@ -26,7 +66,7 @@ Linux y Windows, `main` protegida, actualizaciones con vuelta atrás, migracione
 secretos, y una documentación por audiencias poco habitual en un proyecto de una persona. Las decisiones
 de diseño (motor/datos, `estudio/` como bóveda, todo lo generado sale de disco) son las correctas.
 
-**Lo que hay que arreglar (🔴), por orden:**
+**Lo que hay que arreglar (🔴), por orden** (los cuatro resueltos en 0.20.0; el 4 a falta de tu decisión sobre la visibilidad):
 
 1. **La actualización puede borrar trabajo del alumno** en un caso concreto: si git no tiene identidad
    configurada y la actualización falla, la vuelta atrás hace `git clean -fd` sobre ficheros que nunca se
@@ -41,7 +81,7 @@ de diseño (motor/datos, `estudio/` como bóveda, todo lo generado sale de disco
    público es intencionado, hay un fichero en `docs/superpowers/pruebas/` con referencias a un curso real
    de Roberto que conviene limpiar.
 
-**Lo que más valor añadiría (§8):** hacer que la calidad pedagógica dependa menos del modelo (un "lint
+**Lo que más valor añadiría (§8)** (el lint pedagógico y los ficheros generados ya están en 0.21.0): hacer que la calidad pedagógica dependa menos del modelo (un "lint
 pedagógico" en `comprobar.js` y más ficheros vivos generados desde datos), y darle al alumno tres cosas
 que hoy no tiene: repaso espaciado, un plan con calendario y ver lo que el profesor sabe de él.
 
@@ -49,7 +89,9 @@ que hoy no tiene: repaso espaciado, un plan con calendario y ver lo que el profe
 
 ## 2. Seguridad
 
-### 2.1 🔴 Vuelta atrás que puede destruir trabajo sin guardar
+### 2.1 🔴 → ✅ Vuelta atrás que puede destruir trabajo sin guardar
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** `actualizar.js` comprueba el resultado de `guardar` y, si no pudo guardar, devuelve `sin-guardar` sin tocar nada. Con test. De paso salió y se arregló un fallo en `lib/git.js`: una identidad de git vacía pasaba por buena. El caso menor del secreto en el commit previo se arregló en la 0.21.0. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `actualizar.js:75-77` guarda "lo que hubiera sin guardar" con `guardar({ permitirErrores: true })` y toma
 el SHA. Pero **no mira el resultado**: si `guardar` no hizo commit por `sin-identidad` (git sin
@@ -66,7 +108,9 @@ Relacionado, menor: en ese mismo camino, si el curso tiene un posible secreto, e
 **sí se crea** (permitirErrores) y solo se bloquea el push; el siguiente `guardar` limpio empuja toda la
 historia, secreto incluido. Es un caso de esquina, pero el escaneo de secretos deja de proteger justo ahí.
 
-### 2.2 🔴 Cadena de suministro del motor
+### 2.2 🔴 → ✅ Cadena de suministro del motor
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** `actualizar.js` descarga la **última release** (`vX.Y.Z`), nunca `main`; el aviso diario también mira la release. El workflow `release.yml` publica la release en cada merge que sube `.kit/VERSION`, con las notas del CHANGELOG. Comprobado con la `v0.20.0`. `enforce_admins` activado el 2026-09-23; la firma del motor no compensa. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `actualizar.js:113-118` clona **`main`** del repo del kit y luego `require()` de las migraciones descargadas
 (`actualizar.js:95`) y copia skills y `AGENTS.md`, que gobiernan al LLM. Todo lo que llegue a `main` se
@@ -86,7 +130,9 @@ que etiquete al mezclar cuando `VERSION` cambia) y que `actualizar.js` clone **l
 `main`. Gana tres cosas: los alumnos reciben solo lo que se ha decidido publicar, se puede volver a una
 versión concreta, y `CHANGELOG` y etiqueta quedan atados. Coste: pequeño.
 
-### 2.3 🟡 Complementos de Obsidian sin fijar versión
+### 2.3 🟡 → ✅ Complementos de Obsidian sin fijar versión
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** Adelantado del bloque 1: cada complemento lleva versión y sha256 por fichero en `lib/obsidian.js`; lo que no coincide no se instala; descarga con tiempo límite. El TBD de la clave de Claudian sigue sin comprobar. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `lib/obsidian.js:40-45` descarga `releases/latest` de tres repos de terceros (`polyipseity/obsidian-terminal`,
 `lukasbach/obsidian-code-files`, `yishentu/claudian`) sin versión ni hash. Se instalan **apagados** y
@@ -99,7 +145,9 @@ llega al disco del alumno igualmente.
 - **TBD:** Claudian pide una clave de API o usa la sesión de Claude Code. Si pide clave, choca con la regla
   "nunca un token" de `AGENTS.md`, y la hoja del alumno debería avisarlo.
 
-### 2.4 🟡 Inyección en el atajo por la ruta del curso
+### 2.4 🟡 → ✅ Inyección en el atajo por la ruta del curso
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** Adelantado del bloque 1: `crear-atajo.js` rechaza rutas con `"`, `$`, `%`, acento grave o saltos de línea (`ruta-no-valida`), con explicación en llano. Con test. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `crear-atajo.js:14-21` escribe `cd "${raiz}"` en un script de shell. Una ruta con `"`, `$` o acento grave
 rompe el lanzador o ejecuta lo que haya dentro. La ruta la elige el propio alumno, así que el riesgo es
@@ -126,6 +174,8 @@ atajo (`nombre-no-valido` ya existe como patrón de respuesta).
 
 ### 3.1 🟢 Estado
 
+> Cifras del 2026-09-23, antes de la 0.20.0. Tras ella: **197 tests**, 99 % de líneas.
+
 | | |
 |---|---|
 | Herramientas + librerías | 1 848 líneas, sin dependencias externas, Node ≥ 22 |
@@ -140,26 +190,47 @@ de test que evita que la prosa y el código se separen, y aquí es lo más valio
 
 ### 3.2 🟡 Hallazgos
 
-- **Sin `package.json`.** No hay `engines` (el mínimo Node 22 solo lo sabe `diagnostico.js`), no hay
+Siete puntos: **los 7 arreglados ✅** (0.20.0 y 0.21.0). Cada uno dice el suyo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+
+- ✅ **Sin `package.json`.** No hay `engines` (el mínimo Node 22 solo lo sabe `diagnostico.js`), no hay
   `npm test`, no hay linter. Uno mínimo, sin dependencias, con `scripts.test` y `engines`, deja el proyecto
   reconocible para cualquier herramienta y para quien lo abra por primera vez.
-- **Sin linter.** 40 líneas de más de 160 caracteres en las herramientas; funciones de una línea con tres
+  → **Arreglado en 0.20.0:** `package.json` con `engines >=22`, `npm test`, `npm run test:cobertura` y
+  `npm run comprobar`. `preparar-curso.js` lo borra al crear un curso. El linter no: va en el punto siguiente.
+- ✅ **Sin linter.** 40 líneas de más de 160 caracteres en las herramientas; funciones de una línea con tres
   ternarios (`comprobar.js:291`, `indice.js:10`). Es consistente y está comentado, así que se lee, pero
   crece a base de compactar. Un ESLint con reglas mínimas (o al menos `max-len`) costaría poco.
-- **`comprobar.js` hace dos cosas:** comprobar y generar markdown (`pendientes`, `auditoría`, `Estado` del
+  → **Arreglado en 0.21.0:** ESLint como devDependency solo del repo (`preparar-curso.js` lo borra en los
+  cursos, con `node_modules/` y `package-lock.json`), `eslint.config.js` con `no-unused-vars`, `no-undef`,
+  `eqeqeq`, `prefer-const` y `max-len` 160 (ignora cadenas y comentarios largos, y los `assert.match` de los
+  tests, que son regex literales). `npm run lint`, y un paso de CI solo en el job Linux Node 24.
+- ✅ **`comprobar.js` hace dos cosas:** comprobar y generar markdown (`pendientes`, `auditoría`, `Estado` del
   README, `comprobar.js:220-327`). La generación del índice ya vive en `lib/indice.js`; el resto de
   generadores debería vivir en `lib/` también. Refactor pequeño, sin urgencia.
-- **Parser de frontmatter propio** (`vault.js:90-114`): escalares, listas en línea y en bloque. No entiende
+  → **Arreglado en 0.21.0:** `comprobar.js` ya solo comprueba; toda la generación (`pendientes`, `auditoría`,
+  `Estado`, y ahora también `formulario` y `ejercicios/_index`) vive en `lib/generados.js`. `guardar.js` y los
+  tests importan de ahí.
+- ✅ **Parser de frontmatter propio** (`vault.js:90-114`): escalares, listas en línea y en bloque. No entiende
   mapas anidados, cadenas multilínea ni valores con `:` sin comillas. Obsidian escribe frontmatter cuando
   el alumno marca casillas o edita propiedades; hoy solo hace `estudiada`, y está cubierto. Si el kit va a
   apoyarse más en propiedades que toca el alumno (§8), conviene tests de esquina o un parser YAML mínimo
   de verdad.
-- **Ficheros vivos que mantiene el LLM a mano:** `progreso.md`, `conceptos/_index.md`, `mapa-del-curso.md`,
+  → **Resuelto de otra forma en 0.21.0:** en vez de un lector más completo, el kit señala lo que no entiende o no le sirve (aviso `propiedad-no-estandar`) y el profesor lo interpreta con el alumno, lo reescribe en el estándar y apunta cómo escribe. Ver §0.
+- ✅ **Ficheros vivos que mantiene el LLM a mano:** `progreso.md`, `conceptos/_index.md`, `mapa-del-curso.md`,
   `formulario.md`, `ejercicios/_index.md`. `comprobar.js` sincroniza los dos primeros; los otros tres
   pueden desviarse sin que nadie avise. Y `mapa-del-curso.md` se solapa con `inicio.md` desde la 0.16.0 (la
   propia skill dice "no listes ahí las sesiones"). Ver §8.1 (P2).
-- **Carpeta temporal sin limpiar:** `actualizar.js:115` clona en `os.tmpdir()` y nunca la borra.
-- **Test que falta:** el caso de §2.1 (actualizar sin identidad y con fallo).
+  → **Arreglado en 0.21.0 (P2):** `formulario.md` y `ejercicios/_index.md` se escriben solos al guardar, como
+  `inicio.md` y `pendientes.md`. `mapa-del-curso.md` se queda, pero la skill `/sesion` ya solo le pide la
+  cobertura del material (se quitó "y estado del bloque", que ya da `inicio.md`). Migración `004-…` conserva
+  con otro nombre lo que un curso ya tuviera escrito a mano en los dos primeros y no coincida con lo generado.
+  `progreso.md` sigue a mano a propósito: solo lo cambian las respuestas del alumno.
+- ✅ **Carpeta temporal sin limpiar:** `actualizar.js:115` clona en `os.tmpdir()` y nunca la borra.
+  → **Arreglado en 0.20.0:** `cli()` de `actualizar.js` borra el clon al terminar (en un `finally`), salvo si
+  vino por `--origen`.
+- ✅ **Test que falta:** el caso de §2.1 (actualizar sin identidad y con fallo).
+  → **Arreglado en 0.20.0:** test "si no puede guardar antes de actualizar, no toca nada…" en
+  `tests/actualizar.test.js`.
 
 ---
 
@@ -173,7 +244,9 @@ de test que evita que la prosa y el código se separen, y aquí es lo más valio
 - Guía de instalación con las palabras exactas de cada sistema (Terminal/PowerShell, Finder/Explorador),
   aviso de OneDrive/iCloud, y el detalle del PATH de Windows que no se actualiza en la ventana abierta.
 
-### 4.2 🟡 Hallazgos
+### 4.2 🟡 → ✅ Hallazgos
+
+> ✅ **Los cuatro resueltos en 0.21.0.** Linux: **no soportado** (decisión de Roberto; el CI sigue ahí como Mac barato). Atajo: `crear-atajo.js` añade la carpeta al PATH él solo, en Mac y en Windows. Windows: probado con Codex; mínimo **Node 24**. Diario: respeta el fin de línea del fichero. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 - **Linux no existe en la documentación.** El CI corre en Ubuntu y las herramientas funcionan, pero
   `INSTALACION.md` solo tiene Mac y Windows, las skills dicen `open` (Mac) y `start` (Windows) sin
@@ -200,7 +273,9 @@ El kit está diseñado para no atarse a Claude (`AGENTS.md` como fuente, `SKILL.
 arquitectura lo permite. Lo que falla es que **el trabajo de adaptación se le delega al propio LLM en
 tiempo de instalación**, y ese es el momento y el actor menos fiables.
 
-### 5.1 🔴 `.gitignore` en el motor
+### 5.1 🔴 → ✅ `.gitignore` en el motor
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** `.gitignore` sigue en `motor.json` (sacarlo haría que el `actualizar.js` viejo lo borrase), pero ahora se **fusiona**: se añaden al final las reglas del kit que falten y no se toca ninguna del alumno. La actualización 0.19→0.20 la hace el código viejo y lo sustituye entero por última vez (avisado en el CHANGELOG). Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 `motor.json` incluye `.gitignore` entre los ficheros que `/actualizar` reemplaza. `ESTANDARES.md` paso 1
 pide al LLM "añade esa carpeta a `.gitignore`". La siguiente actualización la borra. Hoy el fichero ya
@@ -209,7 +284,9 @@ sobreviven, pero cualquier otro destino, y cualquier línea del alumno, no. **Ar
 del motor y se fusiona (añadir lo que falte, como hace `aplicarAjustes` con Obsidian), o el kit escribe un
 `.gitignore` propio dentro de `.kit/` e incluye desde el de la raíz.
 
-### 5.2 🟡 `ESTANDARES.md` es un encargo, no un adaptador
+### 5.2 🟡 → ✅ `ESTANDARES.md` es un encargo, no un adaptador
+
+> ✅ **Arreglado en 0.21.0.** Formato de adaptador por asistente; el kit trae el de Claude y cada asistente nuevo escribe el suyo en su curso y lo devuelve al kit con una issue. El diagnóstico comprueba las skills de verdad. Gemini retirado. Modelo recomendado por asistente (Claude: Sonnet) en `.kit/adaptadores/LEEME.md`. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 28 líneas que dicen "averigua en tu documentación oficial en qué carpeta buscas skills". Un modelo que
 alucina una ruta deja el curso sin skills y `diagnostico.js` lo da por bueno si existe
@@ -228,7 +305,9 @@ No invento las rutas: hay que confirmarlas en la documentación de cada uno y pr
 `ESTANDARES.md` queda para el LLM que no esté en la tabla, y `diagnostico.js` comprueba ficheros reales,
 no una nota.
 
-### 5.3 🟡 Claude-ismos y dependencia del modelo
+### 5.3 🟡 → ✅ Claude-ismos y dependencia del modelo
+
+> ✅ **Arreglado en 0.21.0.** Restos de Claude quitados de las skills. La calidad ya no depende solo del modelo: revisor pedagógico (P1) en `comprobar.js` y modelo recomendado. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 - Restos de Claude en las skills: "Sin Artifact" (`examen`, `repaso`), "Crea una tarea por cada punto"
   (`sesion`, es TodoWrite), "lánzalo en segundo plano" (instalación). Inofensivos, pero delatan.
@@ -244,7 +323,11 @@ no una nota.
 
 ## 6. Documentación
 
-### 6.1 🔴 Lo que ya no es verdad
+### 6.1 🔴 → ✅ Lo que ya no es verdad
+
+> ✅ **Completado en 0.21.0.** El kit se queda público (decisión de Roberto, hasta después de la 1.0.0): la guía ya no pide invitación. La 1.0.0 se prepara pero no se lanza todavía.
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** Corregidos `CONTRIBUTING.md` (flujo con releases, barreras de `main` sin depender de la visibilidad) y `README.md` y la plantilla de PR (CI sin Mac). `docs/superpowers/` borrado entero, incluido el fichero con datos del curso real. **Siguen tal cual** la invitación en `INSTALACION.md` y la 1.0.0: dependen de tu decisión sobre público/privado. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 | Dónde | Dice | Realidad |
 |---|---|---|
@@ -271,7 +354,9 @@ aplicarse (vuelve a ser el hook).
 - `AGENTS.md`: 196 líneas, denso pero ordenado; junto a las skills, 72 KB de instrucciones que el LLM lee
   por trozos, no de golpe. Aceptable.
 
-### 6.3 🟡 Lo que falta
+### 6.3 🟡 → ✅ Lo que falta
+
+> ✅ **Resuelto en 0.21.0.** `docs/arquitectura.md` es el documento vivo de arquitectura; `comparar-con-vault.js` se fue con `docs/superpowers/`; `deshacer.js` es la herramienta de "deshaz lo último". Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 - **Un documento de arquitectura vivo** (una página): motor/datos, qué genera quién (`guardar.js` →
   `inicio`, pies, `pendientes`, `auditoría`, `Estado`), invariantes (un concepto = una nota; `progreso`
@@ -286,7 +371,9 @@ aplicarse (vuelve a ser el hook).
 
 ---
 
-## 7. Agilidad del proceso
+## 7. Agilidad del proceso (releases resueltas en 0.20.0)
+
+> ✅ **Arreglado en 0.20.0 (PR #30).** Releases automáticas por etiqueta (ver §2.2). El curso de referencia en CI, `.superpowers/sdd/` y el documento de arquitectura siguen abiertos. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 🟢 **Funciona.** Rama → tests en local (hook) → PR → `tests-ok` → merge → CHANGELOG → migración si toca.
 Versiones con criterio ("qué nota el alumno"), CI barato y con cancelación, 15 PRs mezclados en dos días
@@ -315,7 +402,11 @@ mejor al profesor; después las que hacen mejor al alumno. Al final, el orden qu
 
 ### 8.1 Para el profesor: calidad del material, facilidad al enseñar, evolución con el curso
 
-**P1 · Lint pedagógico en `comprobar.js` (S-M).** Hoy `comprobar.js` vigila enlaces, índices, frontmatter y
+> Estado: **P1 y P2 hechos** en 0.21.0 · P3 a P8 **pendientes** de revisar con Roberto.
+
+> ✅ **P1 hecho en 0.21.0.** Seis avisos en `comprobar.js`: `nota-larga`, `concepto-sin-ejemplo`, `sesion-incompleta`, `flashcards-fuera-de-rango`, `requiere-vacio` y `pregunta-doble`. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+
+**P1 · ✅ Lint pedagógico en `comprobar.js` (S-M).** Hoy `comprobar.js` vigila enlaces, índices, frontmatter y
 lo que Obsidian no dibuja. No vigila **nada de la calidad pedagógica**, que hoy depende de que el modelo
 lea 196 líneas de skill y no se salte pasos. Avisos nuevos, todos calculables desde disco:
 
@@ -332,12 +423,20 @@ lea 196 líneas de skill y no se salte pasos. Avisos nuevos, todos calculables d
 Por qué primero: es lo que hace al kit **robusto frente al modelo** (§5.3) y lo que permite un curso de
 referencia en CI (§7). Y da al profesor un espejo objetivo de su propio trabajo antes de guardar.
 
-**P2 · Más ficheros vivos generados, menos mantenidos a mano (M).** `inicio.md` demostró el patrón: lo que
+> ✅ **P2 hecho en 0.21.0.** `formulario.md` (fórmula o definición de cada concepto) y `ejercicios/_index.md` se generan al guardar; `mapa-del-curso.md` se queda solo para la cobertura del material. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+
+**P2 · ✅ Más ficheros vivos generados, menos mantenidos a mano (M).** `inicio.md` demostró el patrón: lo que
 se puede calcular, se calcula en `guardar.js`. Candidatos: `ejercicios/_index.md` (de los `ejercicio:` de
 cada concepto y un frontmatter en cada ejercicio con `practica:` y `se-descubre:`), `formulario.md` (de las
 secciones `## La fórmula`, agrupadas por `bloques:`), y **retirar `mapa-del-curso.md`** o reducirlo a la
 cobertura del material (lo único que `inicio.md` no cubre). Menos pasos en `/sesion`, menos desvío, y
 `comprobar.js` deja de necesitar comprobarlos.
+
+> ✅ **Arreglado en 0.21.0.** `formulario.md` y `ejercicios/_index.md` los genera `guardar.js`. Una diferencia
+> con lo propuesto aquí: "lo que se descubre fallándolo" no sale de un frontmatter nuevo en cada ejercicio
+> (`practica:`/`se-descubre:`), sino del `## Practícalo` que la plantilla de concepto ya pedía escribir — no
+> hacía falta un campo más que mantener a mano en el propio ejercicio. `mapa-del-curso.md` se queda (no se
+> retira), reducido a la cobertura del material. Ver [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 **P3 · Calentamiento antes de cada clase nueva (S).** Al empezar `/sesion`, antes de leer el material: mirar
 `requiere:` de lo que probablemente venga y `progreso.md`, y si hay prerrequisitos en 🟡/🔴 o sin evaluar,
@@ -375,6 +474,8 @@ conversión que use lo que haya instalado (LibreOffice para PPTX). No lo dimensi
 traiga el material de los cursos reales.
 
 ### 8.2 Para el alumno: aprender mejor, entender mejor, seguir motivado
+
+> Estado: E1 a E9 **pendientes** de revisar con Roberto.
 
 **E1 · Repaso espaciado (M).** Las flashcards existen y se leen una vez. Lo que fija el conocimiento es
 volver a ellas a intervalos crecientes. Dos formas:
@@ -432,6 +533,8 @@ tropiezo.
 
 ### 8.3 Orden recomendado
 
+> Estado: la **iteración 1** salió en la 0.20.0. La **iteración 2** va en la 0.21.0 (PR #31) con P1, P2 y además las secciones 3 a 7 de este informe; P3 y P5 no entraron. La **iteración 3** y el orden final se deciden al revisar esta sección.
+
 Tres iteraciones, cada una un objetivo, cada una publicable sola:
 
 1. **"Que no se rompa" (0.20.0):** §2.1 (vuelta atrás segura), §2.2 (etiquetas y actualizar desde
@@ -452,7 +555,9 @@ un módulo y a la fecha del examen del centro, que es cuando se sabrá qué nece
 
 ---
 
-## 9. Decisiones que necesitan a Roberto
+## 9. Decisiones que necesitan a Roberto (cerrada)
+
+> ✅ **Cerrada.** 1: público hasta después de la 1.0.0. 2: la 1.0.0 se prepara, no se lanza todavía. 3: Linux no soportado. 4: Codex (probado en Windows; falta su issue de adaptador); Gemini retirado. 5: se decide al revisar la sección 8.
 
 1. **¿El repo del kit es público a propósito?** Cambia la guía de instalación, `CONTRIBUTING.md` y obliga a
    limpiar `docs/superpowers/pruebas/`.

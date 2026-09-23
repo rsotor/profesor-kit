@@ -6,7 +6,7 @@ forma, y de `main` solo sale lo que se publica como release:
 1. **Rama** desde `main` (`git checkout -b <tema>`).
 2. **Tests en local** antes de subir: `npm test` (o `node --test ".kit/herramientas/tests/*.test.js"`). El hook
    de pre-push los lanza solo; se activa una vez por copia del repo: `git config core.hooksPath .githooks`.
-3. **Pull request.** Cada PR lanza el CI: todos los tests en Linux (Node 22 y 24) y Windows (Node 24), y una
+3. **Pull request.** Cada PR lanza el CI: todos los tests en Linux (hace de Mac; Linux no se soporta) y Windows, con Node 24, y una
    **cobertura mínima del 80 %** de las herramientas. Mac no está en el CI a propósito (cuesta 10 minutos
    facturables por minuto): los tests corren en tu Mac en el hook de pre-push. Un push nuevo cancela el run
    anterior de la misma rama.
@@ -31,6 +31,58 @@ forma, y de `main` solo sale lo que se publica como release:
    profesor>`. `/actualizar` la lee y se lo ofrece al alumno tras actualizar; él puede decir que no. Si no
    se le puede ofrecer (porque hace falta cambiar sus datos sí o sí), no es una oferta: es una migración.
 
+## Tests: nada se queda en el disco
+
+Toda carpeta temporal de un test se crea con `temporal()` o `cursoTemporal()` de `tests/ayuda.js`, que la borran
+al terminar (también si el test la renombra a `<carpeta>-algo`). Nunca `fs.mkdtempSync` directo. Un test tampoco
+escribe en la carpeta personal real: si toca el perfil de la shell o el PATH, recibe una `casa` temporal o una
+función falsa (`ejecutarPs`).
+
+## Prueba real del profesor
+
+Los tests de `.kit/herramientas/tests/` comprueban el código. Nadie comprueba con ellos si una skill
+**explica bien**, si un examen sale razonable o si `/dudas` de verdad resuelve lo que el alumno dejó
+anotado — eso solo lo ve un LLM de verdad trabajando en un curso de verdad. Para eso está la prueba real.
+
+**Cuándo es obligatoria.** Si tu PR toca `.kit/skills/`, `AGENTS.md` o `.kit/plantillas/` (cualquier cosa
+que cambie cómo trabaja el profesor, no cómo funciona una herramienta), tiene que traer
+`pruebas/curso-ejemplo/resultado/RESUMEN.md` actualizado tras ejecutarla. El CI lo exige
+(`.github/cambio-grande.js`, solo en `pull_request`): un PR que toque esas rutas sin ese fichero no
+pasa. Si tu cambio es solo de una herramienta (`.kit/herramientas/`), no hace falta.
+
+**Cómo se lanza.** En tu Mac, con tu suscripción — **nunca en el CI** (gasta cuota de verdad):
+
+    npm run prueba-real
+
+Monta un curso de verdad (el motor de tu copia de trabajo + `pruebas/curso-ejemplo/`, un curso corto e
+inventado — finanzas personales para empezar, con fórmulas en unas clases y sin ellas en otras, y algo
+de desorden real de alumno) en una carpeta temporal, y le hace pasar, con `claude -p` en modo no
+interactivo, por las cinco skills de trabajo en orden: `/sesion` de cada clase, `/dudas` (tras simular
+que el alumno dejó dos dudas y marcó una casilla "a su manera"), `/ejercicio`, `/examen` (generar y
+corregir, con respuestas preparadas en `pruebas/curso-ejemplo/alumno/respuestas-examen.md`) y `/repaso`.
+Cada paso es una llamada a `claude` independiente (sesión nueva), y si uno falla o no encuentra lo que
+esperaba, se anota como fallo de **ese** paso y la prueba sigue con los demás — nunca revienta sin
+resumen. Al terminar, borra la carpeta temporal (también si algo falla) y sustituye
+`pruebas/curso-ejemplo/resultado/` entero por: el `estudio/` que quedó (sin `.obsidian/` ni `inbox/`),
+`config/alumno.md`, y `RESUMEN.md` (fecha, versión del kit, modelo, qué pasó en cada paso, los errores y
+avisos de `comprobar.js` agrupados por regla —con ojo a `no-se-vera-bien` y los pedagógicos—, y cuánto
+material salió). Revisa ese resumen a mano: es la parte que ningún test automático puede juzgar por ti.
+
+Opciones: `--modelo <id>` para probar otro modelo que el recomendado del adaptador; `--limite-ms <n>`
+para el tiempo máximo por llamada a `claude` (20 minutos por defecto). `--sin-llm` monta el curso y
+prueba el propio ejecutor sin llamar a `claude`: es lo que corre en los tests del repo (nunca cuesta
+cuota), y lo único que **tú** deberías ejecutar salvo que quieras de verdad una prueba real.
+
+**Cuánto tarda y cuánto gasta.** Primera ejecución (2026-09-23, kit 0.21.0, Sonnet): **unos 49 minutos** en total.
+Cada clase, entre 10 y 12 minutos; dudas, ejercicio, examen y repaso, entre 1,5 y 5 minutos cada uno. Son unas
+ocho sesiones seguidas del asistente con tu suscripción: lánzala cuando no vayas a necesitar la cuota.
+
+Aparte, `npm run prueba-actualizar` comprueba que un curso que se quedó en una versión antigua del kit
+(la que anota `pruebas/curso-ejemplo/resultado/RESUMEN.md`) se actualiza sin perder nada a la copia de
+trabajo actual. No usa ningún LLM —es mecánica de ficheros y de `actualizar.js`—, así que **sí** corre en
+el CI, en cada PR. Si todavía no existe `resultado/` (nadie ha hecho nunca una prueba real), lo dice y
+sale sin error.
+
 ## Las dos barreras de `main`
 
 `main` tiene protección de rama en GitHub con el check `tests-ok` obligatorio (se aplica mientras el repo sea
@@ -47,16 +99,18 @@ propósito con `PERMITIR_PUSH_A_MAIN=1` o `SALTAR_TESTS=1`.
 | El profesor (el LLM) | `AGENTS.md` y `.kit/skills/*/SKILL.md`; `.kit/guias/INSTALAR-AGENTE.md` al instalar; `.kit/ESTANDARES.md` si no es Claude Code | Nosotros, en cada PR que cambie comportamiento |
 | Quien instala | `.kit/guias/INSTALACION.md` | Nosotros |
 | Nosotros | este fichero y `.kit/CHANGELOG.md` | Nosotros, en cada PR |
+| Quien cambia el kit | `docs/arquitectura.md` | Nosotros, en cada PR que cambie la estructura |
 | Auditorías | `docs/auditoria/` (una por fecha: estado, hallazgos y propuestas) | Se escribe una nueva; las anteriores no se editan |
 
 Regla: **si un PR añade o cambia una herramienta, una skill o un paso, toca la fuente viva de cada audiencia
-afectada en el mismo PR.** El CI lo vigila en parte (`coherencia-skills.test.js`): toda herramienta tiene que
-estar explicada en `AGENTS.md` o en `INSTALAR-AGENTE.md`, toda plantilla tiene que usarla alguna skill, y
-lo que las skills citan tiene que existir. Lo que el CI no ve —que la explicación sea buena— lo ve la
+afectada en el mismo PR** — incluida `docs/arquitectura.md` si cambia el mapa de herramientas, el ciclo de
+guardado o alguna invariante. El CI lo vigila en parte (`coherencia-skills.test.js`): toda herramienta tiene
+que estar explicada en `AGENTS.md` o en `INSTALAR-AGENTE.md`, toda plantilla tiene que usarla alguna skill,
+y lo que las skills citan tiene que existir. Lo que el CI no ve —que la explicación sea buena— lo ve la
 revisión del PR.
 
-Lo que solo es del repo del kit (`docs/`, `.github/`, `.githooks/`, este fichero, `package.json`) lo borra
-`preparar-curso.js` al crear un curso.
+Lo que solo es del repo del kit (`docs/`, `.github/`, `.githooks/`, `pruebas/`, este fichero,
+`package.json`) lo borra `preparar-curso.js` al crear un curso.
 
 ## Versiones
 

@@ -6,9 +6,9 @@ const { spawnSync } = require('node:child_process');
 const v = require('./lib/vault');
 const g = require('./lib/git');
 const { comprobar } = require('./comprobar');
-const { MARCA } = require('./crear-atajo');
+const { MARCA, pathGuardado } = require('./crear-atajo');
 
-const NODE_MINIMO = 22;
+const NODE_MINIMO = 24;
 
 function ejecutarReal(comando, args, cwd) {
   const r = spawnSync(comando, args, { cwd, encoding: 'utf8' });
@@ -18,7 +18,7 @@ function ejecutarReal(comando, args, cwd) {
 // Repasa la instalación entera y devuelve una lista de comprobaciones. Es la respuesta objetiva a
 // "¿está todo instalado?": no depende del criterio del LLM que esté instalando.
 function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.versions.node, plataforma = process.platform,
-  entorno = process.env, carpetaBin = path.join(os.homedir(), '.local', 'bin') }) {
+  entorno = process.env, carpetaBin = path.join(os.homedir(), '.local', 'bin'), casa = os.homedir(), ejecutarPs }) {
   const lista = [];
   const anota = (id, ok, texto, arreglo, obligatorio = true) => lista.push({ id, ok: Boolean(ok), texto, arreglo: ok ? '' : arreglo, obligatorio });
   const existe = rel => fs.existsSync(path.join(raiz, ...rel.split('/')));
@@ -32,7 +32,7 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   const sesion = hayGh && ejecutar('gh', ['auth', 'status'], raiz).ok;
   anota('sesion-github', sesion, 'Sesión de GitHub iniciada', 'Inicia sesión: gh auth login --web -h github.com -p https (ver la guía: en segundo plano o en otra ventana).');
   anota('acceso-al-kit', sesion && ejecutar('gh', ['api', `repos/${motor.repo}`, '--jq', '.name'], raiz).ok, 'Acceso al kit (para recibir mejoras)',
-    'La cuenta de GitHub activa no ve el kit: o es otra cuenta (gh auth switch) o falta aceptar la invitación.');
+    'No se puede leer el kit en GitHub: comprueba la conexión a internet y la sesión (gh auth status).');
 
   anota('identidad-git', g.esRepo(raiz) && g.tieneIdentidad(raiz), 'Git sabe quién eres', 'Configura user.name y user.email en este curso (paso 4 de la guía).');
 
@@ -51,10 +51,15 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
     }
   }
 
-  if (ajustes.llm === 'claude-code') {
-    anota('skills', existe('.claude/skills/sesion/SKILL.md'), 'Skills instaladas', 'Ejecuta instalar-skills.js (paso 6).');
+  // Con adaptador (el del kit, o el que el curso escribió en config/adaptador-llm.json), se comprueba
+  // que las skills existen de verdad en su carpeta. Sin adaptador para este LLM, no se puede verificar:
+  // es un aviso, no un ✗, y dice cómo resolverlo.
+  const adaptador = v.leerAdaptador(raiz, ajustes.llm);
+  if (adaptador && adaptador.skills) {
+    anota('skills', existe(`${adaptador.skills}/sesion/SKILL.md`), 'Skills instaladas', 'Ejecuta instalar-skills.js (paso 6).');
   } else {
-    anota('skills', existe('config/adaptacion-llm.md'), `Skills adaptadas a ${ajustes.llm}`, 'Sigue .kit/ESTANDARES.md y anota lo que hagas en config/adaptacion-llm.md.');
+    anota('skills', false, `Skills de ${ajustes.llm}: no se puede verificar`,
+      `No hay un adaptador para ${ajustes.llm}. Sigue .kit/ESTANDARES.md: escribe config/adaptador-llm.json en este curso y, al terminar, propón devolverlo al kit con una issue.`, false);
   }
 
   const lanzador = ajustes.atajo ? path.join(carpetaBin, plataforma === 'win32' ? `${ajustes.atajo}.cmd` : ajustes.atajo) : null;
@@ -62,8 +67,10 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
     && fs.readFileSync(lanzador, 'utf8').includes(`curso: ${raiz}`);
   anota('atajo', lanzadorBueno, ajustes.atajo ? `Atajo "${ajustes.atajo}"` : 'Atajo para abrir el curso', 'Crea el atajo con crear-atajo.js --nombre <palabra> (paso 7). Si has movido el curso, añade --actualizar.');
   if (lanzadorBueno) {
-    const enPath = (entorno.PATH || entorno.Path || '').split(path.delimiter).some(d => d && path.resolve(d) === path.resolve(carpetaBin));
-    anota('atajo-en-path', enPath, 'El atajo se puede escribir desde cualquier sitio', `La carpeta ${carpetaBin} no está en el PATH de esta ventana: abre una nueva; si sigue igual, hay que añadirla al PATH.`);
+    // Vale si esta ventana ya lo ve, o si ya está guardado para las ventanas nuevas (crear-atajo.js lo añade).
+    const enPath = (entorno.PATH || entorno.Path || '').split(path.delimiter).some(d => d && path.resolve(d) === path.resolve(carpetaBin))
+      || pathGuardado({ carpetaBin, plataforma, entorno, casa, ...(ejecutarPs ? { ejecutarPs } : {}) });
+    anota('atajo-en-path', enPath, 'El atajo se puede escribir desde cualquier sitio', `La carpeta ${carpetaBin} no está en el PATH: repite crear-atajo.js, que la añade sola, y abre una ventana nueva.`);
   }
 
   anota('obsidian', existe(`${v.CARPETA_ALUMNO}/.obsidian/workspace.json`), 'La carpeta estudio está abierta en Obsidian', 'Falta abrir la carpeta estudio como bóveda en Obsidian (paso 9).', false);

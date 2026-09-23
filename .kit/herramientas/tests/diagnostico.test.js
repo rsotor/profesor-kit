@@ -6,7 +6,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { diagnostico, cli } = require('../diagnostico');
 const { crearAtajo } = require('../crear-atajo');
-const { cursoTemporal, escribir, iniciarGit, git } = require('./ayuda');
+const { cursoTemporal, escribir, iniciarGit, git, temporal } = require('./ayuda');
 
 const MOTOR = { '.kit/motor.json': JSON.stringify({ repo: 'rsotor/profesor-kit', version_datos: 1, ficheros: ['AGENTS.md', '.kit'] }), 'AGENTS.md': 'reglas' };
 
@@ -17,11 +17,15 @@ const ordenador = (respuestas = {}) => (comando, args) => {
   return r ? r[1] : { ok: true, salida: '' };
 };
 
+const ADAPTADOR_CLAUDE = { comando: 'claude', skills: '.claude/skills', puente: 'CLAUDE.md',
+  permisos: { fichero: '.claude/settings.json', formato: 'Bash(node .kit/herramientas/<nombre>.js *)' }, probado: 'macOS · 2026-09-23' };
+
 function cursoInstalado({ subir = false, llm = 'claude-code' } = {}) {
   const raiz = cursoTemporal({ ...MOTOR, 'config/ajustes.json': JSON.stringify({ subir_a_github: subir, llm }),
+    '.kit/adaptadores/claude-code.json': JSON.stringify(ADAPTADOR_CLAUDE),
     '.claude/skills/sesion/SKILL.md': 'x', 'estudio/.obsidian/workspace.json': '{}' });
   iniciarGit(raiz);
-  const carpetaBin = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-bin-'));
+  const carpetaBin = temporal('kit-bin-');
   const entorno = { PATH: [carpetaBin, os.tmpdir()].join(path.delimiter) };
   crearAtajo({ raiz, nombre: 'historia', carpetaBin, entorno });
   return { raiz, carpetaBin, entorno };
@@ -41,11 +45,12 @@ test('dice exactamente qué falta, con su arreglo, y no da por bueno lo que no p
   assert.ok(lista.filter(c => !c.ok).every(c => c.arreglo.length > 10));
 });
 
-test('sesión iniciada con otra cuenta: hay sesión pero no acceso al kit', () => {
+test('sesión iniciada pero el kit no responde (red): lo dice sin hablar de invitaciones', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado();
   const lista = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador({ 'gh api repos/rsotor/profesor-kit': { ok: false, salida: 'HTTP 404' } }) });
   assert.deepEqual(fallos(lista), ['acceso-al-kit']);
-  assert.match(lista.find(c => c.id === 'acceso-al-kit').arreglo, /otra cuenta/);
+  assert.match(lista.find(c => c.id === 'acceso-al-kit').arreglo, /conexión/);
+  assert.doesNotMatch(lista.find(c => c.id === 'acceso-al-kit').arreglo, /invitaci/);
 });
 
 test('si se sube a GitHub, exige remoto propio y que sea PRIVADO de verdad', () => {
@@ -66,17 +71,32 @@ test('si se sube a GitHub, exige remoto propio y que sea PRIVADO de verdad', () 
 
 test('atajo: que exista, que sea de ESTE curso y que su carpeta esté en el PATH', () => {
   const { raiz, carpetaBin } = cursoInstalado();
-  assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: os.tmpdir() }, ejecutar: ordenador() })), ['atajo-en-path']);
+  const casa = temporal('kit-casa-');
+  const sinNada = { casa, ejecutarPs: () => ({ ok: true, salida: '' }) };
+  assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: os.tmpdir() }, ejecutar: ordenador(), ...sinNada })), ['atajo-en-path']);
+  // Ya guardado para las ventanas nuevas (lo hizo crear-atajo.js), aunque esta ventana aún no lo vea: vale.
+  const guardado = { casa, ejecutarPs: () => ({ ok: true, salida: carpetaBin }) };
+  fs.writeFileSync(path.join(casa, process.platform === 'darwin' ? '.zshrc' : '.profile'), `export PATH="${carpetaBin}:$PATH"\n`);
+  assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: os.tmpdir() }, ejecutar: ordenador(), ...guardado })), []);
   fs.rmSync(path.join(carpetaBin, process.platform === 'win32' ? 'historia.cmd' : 'historia'));
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno: { PATH: carpetaBin }, ejecutar: ordenador() })), ['atajo']);
 });
 
-test('otro LLM: no exige la carpeta de skills de Claude, sino su adaptación anotada', () => {
+test('otro LLM sin adaptador del kit: no se puede verificar, es aviso, no bloquea', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado({ llm: 'codex-cli' });
   fs.rmSync(path.join(raiz, '.claude'), { recursive: true });
-  // el lanzador se creó con el llm del curso, así que sigue siendo válido
+  const lista = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() });
+  const skills = lista.find(c => c.id === 'skills');
+  assert.deepEqual([skills.ok, skills.obligatorio], [false, false]);
+  assert.match(skills.arreglo, /No hay un adaptador para codex-cli.*ESTANDARES\.md.*config\/adaptador-llm\.json/s);
+});
+
+test('otro LLM con adaptador propio del curso (config/adaptador-llm.json): comprueba su carpeta de skills de verdad', () => {
+  const { raiz, carpetaBin, entorno } = cursoInstalado({ llm: 'codex-cli' });
+  fs.rmSync(path.join(raiz, '.claude'), { recursive: true });
+  escribir(raiz, { 'config/adaptador-llm.json': JSON.stringify({ comando: 'codex', skills: '.codex/skills', puente: null, permisos: null, probado: 'Windows · 2026-09-23' }) });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), ['skills']);
-  escribir(raiz, { 'config/adaptacion-llm.md': '# Codex\n' });
+  escribir(raiz, { '.codex/skills/sesion/SKILL.md': 'x' });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), []);
 });
 

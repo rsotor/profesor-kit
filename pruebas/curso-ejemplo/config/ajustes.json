@@ -1,0 +1,11 @@
+{
+  "subir_a_github": false,
+  "llm": "claude-code",
+  "nombre_curso": "Finanzas personales para empezar",
+  "atajo": "",
+  "version_datos": 4,
+  "configuracion": { "curso": true, "estilo": true, "nivel": true },
+  "patrones_prohibidos": [
+    { "patron": "\\d+([.,]\\d+)?\\s?%(?!\\s*(anual|mensual|diari))", "mensaje": "una tasa de interés sin decir su periodo (anual, mensual, diario) — regla del dominio en config/curso.md" }
+  ]
+}

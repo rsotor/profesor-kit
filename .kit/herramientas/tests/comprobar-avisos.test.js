@@ -3,7 +3,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { comprobar, auditorias } = require('../comprobar');
+const { comprobar } = require('../comprobar');
+const { auditorias } = require('../lib/generados');
 const { guardar } = require('../guardar');
 const ix = require('../lib/indice');
 const { cursoTemporal, iniciarGit } = require('./ayuda');
@@ -122,7 +123,8 @@ test('auditorias: una sección "## Auditoría del material" vacía (plantilla) s
   const raiz = cursoTemporal({
     'estudio/sesiones/s02-tema.md': `---\ntipo: sesion\n---\n# Tema\n\n## Auditoría del material\n\n<Discrepancias entre los ficheros de la clase, errores detectados y qué falta.>\n\n${pie}\n`,
   });
-  assert.deepEqual(auditorias(raiz), []);
+  // s01-intro (la sesión base de cursoTemporal) sí trae una auditoría real; la que no cuenta es s02-tema.
+  assert.deepEqual(auditorias(raiz).filter(a => a.sesion === 'sesiones/s02-tema'), []);
 });
 
 test('orden-ambiguo: dos sesiones con las mismas cifras y sin orden:', () => {

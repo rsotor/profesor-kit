@@ -13,6 +13,44 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.21.0
+- **`estudio/formulario.md` y `estudio/ejercicios/_index.md` ahora se escriben solos**, como ya pasa con
+  **inicio** y **pendientes**. El formulario reúne la fórmula de cada concepto que la tiene, por bloque, con
+  enlace a la nota; el índice de ejercicios reúne qué practica cada uno y qué se descubre fallándolo. Ya no
+  hace falta mantenerlos a mano, y no pueden quedarse desactualizados.
+- **En el formulario sale cada concepto**: con su fórmula si la tiene y, si no, con su definición en una frase.
+  Un curso sin fórmulas (historia, derecho…) ya no tiene la hoja vacía.
+- **Si escribes algo a tu manera en tus notas** (un *sí* en vez de marcar la casilla, una nota como *7/10*),
+  tu profesor lo ve, te pregunta qué querías decir la primera vez y lo deja bien. Se apunta cómo escribes, así
+  que no te vuelve a preguntar lo mismo; y si es una forma natural de escribirlo, avisa al kit para que la
+  entienda para todos.
+- **El atajo funciona a la primera.** Si tu ordenador no sabía dónde buscar la palabra de tu curso, tu profesor
+  lo configura solo; basta con abrir una ventana de terminal nueva.
+- **Hace falta Node 24 o superior** (es el que se instala hoy por defecto). Si tienes uno más viejo, tu profesor
+  te lo dice al comprobar la instalación y lo actualiza contigo.
+- Windows ya está probado (con Codex). Linux no está soportado.
+- **Tu profesor se revisa antes de guardar**: avisa si una nota no cabe en una pantalla, si a un concepto le
+  falta el ejemplo, si una sesión se quedó sin su auditoría o sus preguntas para pensar, si hay más o menos
+  flashcards de las que pediste, o si una pregunta de examen en realidad son dos. Lo arregla antes de guardar; si
+  decide dejar alguno, te dice por qué.
+- **Modelo recomendado.** La guía dice qué modelo conviene usar con tu asistente (con Claude, Sonnet): hace bien
+  el trabajo sin gastarte la cuota. Si no lo estás usando, tu profesor te lo dice una vez al configurar o al
+  preparar una clase.
+- **Si usas otro asistente** (Codex u otro), tu profesor deja su configuración escrita en tu curso, donde nunca se
+  pisa al actualizar, y con tu sí la propone al kit para que al siguiente alumno le cueste menos. Gemini deja de
+  estar soportado: no se podía probar.
+- **"Deshaz lo último" es más seguro.** Tu profesor te enseña primero qué volvería a como estaba y solo lo hace
+  con tu sí. Nunca borra tu historia: añade un guardado que deshace el anterior, así que también se puede
+  rehacer. Si tienes algo sin guardar, o lo último fue una actualización del kit, no lo hace y te explica por qué.
+- Si tu curso tiene algo que parece una contraseña o un token, tu profesor no actualiza el kit hasta que lo
+  quites: así nunca acaba subido a GitHub.
+- La instalación ya no pide invitación al kit: es público. Tu curso sigue siendo privado.
+- **Si ya tenías tu curso:** si usas otro asistente que no es Claude, tu profesor te ofrece pasar lo que montó
+  al principio al formato nuevo.
+- **Si ya tenías tu curso:** si alguna de esas dos notas tenía algo escrito que tu profesor no habría
+  generado, se conserva tal cual, con el nombre **formulario-anterior** o **ejercicios/_index-anterior**; la
+  próxima vez que guardes, tu profesor deja ahí la versión generada.
+
 ## 0.20.0
 - **Actualizar es más seguro.** Si tu profesor no puede guardar tu trabajo antes de actualizar, no actualiza:
   antes, en ese caso raro, una actualización fallida podía borrar lo que aún no estaba guardado.

@@ -7,12 +7,13 @@ Cada paso es un **objetivo** y **cómo comprobarlo**. El comando lo eliges tú s
 operativo que detectes; los que aparecen aquí son ejemplos. Las herramientas del kit se ejecutan
 igual en todos los sistemas, siempre con `/`: `node .kit/herramientas/<nombre>.js`.
 
-Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso 3).
+Si no eres Claude Code, lee antes `.kit/ESTANDARES.md` (lo tendrás tras el paso 3): dice cómo escribir
+tu adaptador y, al final de la instalación, cómo proponer devolverlo al kit.
 
 | # | Objetivo | Cómo se comprueba | Ejemplo |
 |---|---|---|---|
-| 1 | Node LTS (22 o superior), Git y `gh` instalados | `node --version` · `git --version` · `gh --version` | Mac: `brew install node git gh` · Windows: `winget install OpenJS.NodeJS.LTS Git.Git GitHub.cli` |
-| 2 | Sesión de GitHub iniciada, **con la cuenta a la que se invitó al alumno** | `gh auth status` en verde y `gh api repos/rsotor/profesor-kit --jq .name` responde | ver abajo. **Nunca un token.** |
+| 1 | Node LTS (24 o superior), Git y `gh` instalados | `node --version` · `git --version` · `gh --version` | Mac: `brew install node git gh` · Windows: `winget install OpenJS.NodeJS.LTS Git.Git GitHub.cli` |
+| 2 | Sesión de GitHub iniciada **con la cuenta del alumno** | `gh auth status` en verde y `gh api repos/rsotor/profesor-kit --jq .name` responde | ver abajo. **Nunca un token.** |
 | 3 | El curso tiene nombre, y está creado desde la plantilla dentro de la carpeta de cursos del alumno | existe `<carpeta>/.kit/VERSION` | ver abajo |
 | 4 | Git sabe quién es el alumno | `git config user.name` y `git config user.email` devuelven algo | ver abajo |
 | 5 | Curso limpio y ajustes creados | existe `config/ajustes.json`; no existen `docs/` ni `.github/` | `node .kit/herramientas/preparar-curso.js --subir si --nombre "<nombre del curso>"` (o `--subir no`) |
@@ -48,13 +49,14 @@ siempre significa que el programa no esté instalado:
 
 **Cómo comprobarlo bien** (no te fíes de un solo intento):
 
-| | Mac / Linux | Windows (PowerShell) |
+| | Mac | Windows (PowerShell) |
 |---|---|---|
 | ¿Responde el comando? | `node --version; git --version; gh --version` | `node --version; git --version; gh --version` |
 | ¿Está instalado aunque no responda? | `brew list --versions node git gh` | `winget list --id OpenJS.NodeJS.LTS -e; winget list --id Git.Git -e; winget list --id GitHub.cli -e` |
 | Hacer que esta ventana lo vea sin cerrarla | `hash -r` (o abrir ventana nueva) | `$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')` — **en la misma línea** que el comando que quieras probar, porque cada comando que lanzas nace con el PATH viejo |
 
-Node tiene que ser **22 o superior**: mira el número, no solo que responda.
+Node tiene que ser **24 o superior**: mira el número, no solo que responda. Si tiene uno más viejo, actualízalo
+(`brew upgrade node` · `winget upgrade OpenJS.NodeJS.LTS`).
 - Si la instalación se interrumpió a medias (por lo que sea), **no empieces de cero**: repasa la tabla de
   arriba abajo comprobando cada objetivo y continúa por el primero que no se cumpla.
 
@@ -75,10 +77,10 @@ como un comando normal, el alumno no ve el código hasta que el comando termina,
 **Plan B**, si no puedes lanzar procesos en segundo plano o algo falla: que abra **otra ventana de
 terminal**, pegue ahí ese mismo comando, siga lo que le diga y vuelva a decirte "hecho".
 
-**Si ya tenía sesión iniciada** (`gh auth status` en verde antes de empezar): comprueba que es la cuenta a
-la que se invitó, leyendo el kit (`gh api repos/rsotor/profesor-kit --jq .name`). Un **404** aquí casi
-nunca es "falta la invitación": suele ser **otra cuenta activa**. Enséñale las cuentas que ve
-`gh auth status` y, si procede, `gh auth switch --user <la suya>`.
+**Si ya tenía sesión iniciada** (`gh auth status` en verde antes de empezar): comprueba que es **su** cuenta
+(si tiene varias, puede estar activa otra: enséñale las que ve `gh auth status` y, si procede,
+`gh auth switch --user <la suya>`). Su copia del curso se crea en la cuenta activa. El kit es público: leerlo
+(`gh api repos/rsotor/profesor-kit --jq .name`) solo falla por red o por sesión.
 
 ## Paso 3 — nombre y creación del curso
 
@@ -110,15 +112,7 @@ ves tú."** Recomienda que sí.
 
 El repo del alumno es **privado siempre**: dentro hay material con derechos de autor y su perfil.
 
-## Paso 4 — identidad de git
-
-Si falta, configúrala **solo en este repo** (sin `--global`), con los datos de su cuenta de GitHub:
-
-    gh api user --jq '.login, .id'
-    git config user.name "<login>"
-    git config user.email "<id>+<login>@users.noreply.github.com"
-
-## Paso 3 (continuación) — dile dónde queda su copia
+### Dile dónde queda su copia
 
 Si eligió copia en GitHub, **en cuanto crees el repo** comprueba que es privado
 (`gh repo view --json visibility,url`) y díselo con el enlace:
@@ -128,13 +122,32 @@ Si eligió copia en GitHub, **en cuanto crees el repo** comprueba que es privado
 > visibility*. No te lo recomiendo: dentro hay material del curso, que tiene derechos de autor, y lo que
 > tu profesor sabe de cómo aprendes."
 
+## Paso 4 — identidad de git
+
+Si falta, configúrala **solo en este repo** (sin `--global`), con los datos de su cuenta de GitHub:
+
+    gh api user --jq '.login, .id'
+    git config user.name "<login>"
+    git config user.email "<id>+<login>@users.noreply.github.com"
+
+## Pasos 5 y 6 — preparar el curso e instalar las skills
+
+    node .kit/herramientas/preparar-curso.js --subir si --nombre "<nombre del curso>"    (o --subir no)
+    node .kit/herramientas/instalar-skills.js
+
+`preparar-curso.js` borra lo que solo es del repo del kit (`docs/`, `.github/`…), crea `config/ajustes.json` y
+deja Obsidian configurado. `instalar-skills.js` copia las skills a la carpeta de tu asistente según su adaptador
+(`.kit/adaptadores/`); si tu asistente no tiene adaptador, sigue antes `.kit/ESTANDARES.md`.
+
 ## Paso 7 — el atajo
 
     node .kit/herramientas/crear-atajo.js --nombre <palabra>
 
 Si la herramienta dice que esa palabra no vale (ya es un programa, o ya abre otro curso suyo), propón
-otra y repite. Si avisa de que la carpeta no está en el PATH, lo normal es que baste con abrir una
-terminal nueva; si no, añádela al PATH explicándoselo en una frase. **Compruébalo de verdad** antes de
+otra y repite. Si la carpeta de los atajos no estaba en el PATH, la herramienta la añade sola (en Mac, al
+perfil de su terminal; en Windows, a la variable Path de su usuario, sin pedir administrador) y le pide abrir
+una ventana nueva: díselo en una frase. Si dice que no ha podido, explícale el motivo y añádela tú con su
+permiso. **Compruébalo de verdad** antes de
 seguir: en una terminal nueva, la palabra tiene que abrir el LLM dentro del curso.
 
 ## Paso 8 — verificar la instalación, no darla por buena

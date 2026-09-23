@@ -267,6 +267,6 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
 
 module.exports = {
   INICIO, leerSesiones, compararSesiones, ordenAmbiguo, leerProgreso, estadoProfesor,
-  leerExamenes, notaDeUnidad, leerAprobado, enlace, markdownInicio,
+  leerExamenes, notaDeUnidad, leerAprobado, enlace, tituloDe, markdownInicio,
   MARCA_INICIO, MARCA_FIN, pieDeSesion, ponerPie, marcadoresRotos, piesDeSesion, sinPie,
 };

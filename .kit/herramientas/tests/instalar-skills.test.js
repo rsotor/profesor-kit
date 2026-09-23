@@ -38,3 +38,28 @@ test('acepta otro destino', () => {
   instalarSkills({ raiz, destino: '.agents/skills' });
   assert.ok(fs.existsSync(path.join(raiz, '.agents', 'skills', 'sesion', 'SKILL.md')));
 });
+
+test('cli: sin --destino, lo toma del adaptador del LLM del curso', () => {
+  const { cli } = require('../instalar-skills');
+  const raiz = cursoTemporal({ ...skill('sesion'),
+    'config/ajustes.json': JSON.stringify({ llm: 'codex-cli' }),
+    '.kit/adaptadores/codex-cli.json': JSON.stringify({ comando: 'codex', skills: '.codex/skills' }) });
+  cli([], raiz);
+  assert.ok(fs.existsSync(path.join(raiz, '.codex', 'skills', 'sesion', 'SKILL.md')));
+});
+
+test('cli: --destino explícito gana siempre al adaptador', () => {
+  const { cli } = require('../instalar-skills');
+  const raiz = cursoTemporal({ ...skill('sesion'),
+    '.kit/adaptadores/claude-code.json': JSON.stringify({ comando: 'claude', skills: '.claude/skills' }) });
+  cli(['--destino', '.agents/skills'], raiz);
+  assert.ok(fs.existsSync(path.join(raiz, '.agents', 'skills', 'sesion', 'SKILL.md')));
+  assert.ok(!fs.existsSync(path.join(raiz, '.claude', 'skills', 'sesion', 'SKILL.md')));
+});
+
+test('cli: sin adaptador ni --destino, cae en el destino por defecto (Claude Code)', () => {
+  const { cli } = require('../instalar-skills');
+  const raiz = cursoTemporal(skill('sesion'));
+  cli([], raiz);
+  assert.ok(fs.existsSync(path.join(raiz, '.claude', 'skills', 'sesion', 'SKILL.md')));
+});

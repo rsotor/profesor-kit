@@ -13,6 +13,6 @@ labels: feedback
 
 **Qué pasó:**
 
-**Arreglo aplicado, si lo hubo** (incluye aquí `config/adaptacion-llm.md` si usas otro LLM):
+**Arreglo aplicado, si lo hubo** (incluye aquí `config/adaptador-llm.json` si usas otro LLM):
 
 <!-- No incluyas material del curso, datos personales, rutas con tu nombre de usuario ni secretos. -->

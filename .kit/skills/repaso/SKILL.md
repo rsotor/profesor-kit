@@ -33,8 +33,8 @@ se crea uno segundo para el mismo alcance.
 
 ### 3. Construir la página
 
-Un solo fichero HTML **autocontenido**: CSS y JS dentro, sin dependencias externas ni de red.
-Sin Artifact, sin URL, sin cargar ninguna skill de diseño. Contenido, en este orden:
+Un solo fichero HTML **autocontenido**: CSS y JS dentro, sin dependencias externas ni de red,
+sin URL. Contenido, en este orden:
 
 1. **Mapa del alcance** — diagrama de los conceptos y sus dependencias (`requiere:`). Un
    vistazo debe bastar para ver qué depende de qué.

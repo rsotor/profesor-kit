@@ -23,6 +23,12 @@
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
 
+## Cómo escribe en sus notas
+<!-- formas propias de escribir las propiedades (ver "Cuando el alumno escribe a su manera" en AGENTS.md) -->
+
+| Propiedad | Escribió | Quería decir | Veces | Última |
+|---|---|---|---|---|
+
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |

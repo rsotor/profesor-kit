@@ -3,10 +3,16 @@
   "private": true,
   "description": "Convierte un LLM de terminal en el profesor personal de un curso. Sin dependencias.",
   "license": "UNLICENSED",
-  "engines": { "node": ">=22" },
+  "engines": { "node": ">=24" },
   "scripts": {
     "test": "node --test \".kit/herramientas/tests/*.test.js\"",
     "test:cobertura": "node --test --experimental-test-coverage --test-coverage-include=\".kit/herramientas/**\" --test-coverage-exclude=\".kit/herramientas/tests/**\" --test-coverage-lines=80 --test-coverage-functions=80 --test-coverage-branches=80 \".kit/herramientas/tests/*.test.js\"",
-    "comprobar": "node .kit/herramientas/comprobar.js"
+    "comprobar": "node .kit/herramientas/comprobar.js",
+    "lint": "eslint .",
+    "prueba-real": "node pruebas/prueba-real.js",
+    "prueba-actualizar": "node pruebas/prueba-actualizar.js"
+  },
+  "devDependencies": {
+    "eslint": "^10.11.0"
   }
 }

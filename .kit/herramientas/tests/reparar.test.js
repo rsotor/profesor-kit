@@ -59,9 +59,9 @@ test('cli: lo cuenta en llano, y sale con 1 si algo no tiene arreglo', t => {
   assert.equal(cli([], raiz), 0);
   assert.match(lineas.join('\n'), /No faltaba nada/);
   fs.rmSync(en(raiz, 'estudio/repasos'), { recursive: true });
-  fs.renameSync(en(raiz, 'estudio/formulario.md'), en(raiz, 'formulario.md'));
+  fs.renameSync(en(raiz, 'estudio/mapa-del-curso.md'), en(raiz, 'mapa-del-curso.md'));
   assert.equal(cli([], raiz), 0);
-  assert.match(lineas.join('\n'), /Devuelto a su sitio.*formulario\.md/);
+  assert.match(lineas.join('\n'), /Devuelto a su sitio.*mapa-del-curso\.md/);
   assert.match(lineas.join('\n'), /Carpeta creada de nuevo.*repasos/);
   fs.rmSync(en(raiz, 'AGENTS.md'));                       // sin git no hay de dónde recuperarlo
   assert.equal(cli([], raiz), 1);
