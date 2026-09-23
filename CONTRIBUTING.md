@@ -59,12 +59,15 @@ si cambias una skill después de la prueba, hay que repetirla. Si tu cambio es s
 Monta un curso de verdad (el motor de tu copia de trabajo + `pruebas/curso-ejemplo/`, un curso corto e
 inventado — finanzas personales para empezar, con fórmulas en unas clases y sin ellas en otras, y algo
 de desorden real de alumno) en una carpeta temporal, y le hace pasar, con `claude -p` en modo no
-interactivo, por las cinco skills de trabajo en orden: `/sesion` de cada clase, `/dudas` (tras simular
-que el alumno dejó dos dudas y marcó una casilla "a su manera"), `/ejercicio`, `/examen` (generar y
-corregir, con respuestas preparadas en `pruebas/curso-ejemplo/alumno/respuestas-examen.md`) y `/repaso`.
-Cada paso es una llamada a `claude` independiente (sesión nueva), y si uno falla o no encuentra lo que
-esperaba, se anota como fallo de **ese** paso y la prueba sigue con los demás — nunca revienta sin
-resumen. Al terminar, borra la carpeta temporal (también si algo falla) y sustituye
+interactivo, por las cinco skills de trabajo en orden: `/sesion` de las clases del módulo del examen,
+`preparar.js --lanzar` de la clase que no hace falta para ese examen (en segundo plano, justo antes de
+`/dudas`), `/dudas` (tras simular que el alumno dejó dos dudas y marcó una casilla "a su manera"),
+`/ejercicio`, `/examen` (generar y corregir, con respuestas preparadas en
+`pruebas/curso-ejemplo/alumno/respuestas-examen.md`), `preparar.js --juntar` de esa preparación y
+`/repaso`. Es el caso de verdad con choques posibles del plan 0.22 (§4): dos ramas trabajando a la vez
+sobre el mismo curso. Cada paso es una llamada a `claude` independiente (sesión nueva), y si uno falla o
+no encuentra lo que esperaba, se anota como fallo de **ese** paso y la prueba sigue con los demás — nunca
+revienta sin resumen. Al terminar, borra la carpeta temporal (también si algo falla) y sustituye
 `pruebas/curso-ejemplo/resultado/` entero por: el `estudio/` que quedó (sin `.obsidian/` ni `inbox/`),
 `config/alumno.md`, y `RESUMEN.md` (fecha, versión del kit, modelo, qué pasó en cada paso, los errores y
 avisos de `comprobar.js` agrupados por regla —con ojo a `no-se-vera-bien` y los pedagógicos—, y cuánto

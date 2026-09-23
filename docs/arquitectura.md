@@ -68,6 +68,7 @@ el alumno/instalador a través del LLM.
 | `crear-atajo.js` | Escribe el lanzador en `~/.local/bin` (o `.cmd` en Windows) que abre el LLM dentro de este curso, y añade esa carpeta al `PATH` si hace falta | Skill `/configurar` (paso 7 de instalación); `diagnostico.js` lo lee para verificarlo |
 | `diagnostico.js` | Repasa toda la instalación (Node, git, `gh`, sesión, acceso al kit, identidad, copia privada, skills, atajo, salud del curso) y dice qué falta | El instalador (paso 8) y cuando algo no va (`AGENTS.md`, "si algo de la instalación no va") |
 | `obsidian.js` | Aplica los ajustes recomendados de Obsidian (sin pisar los del alumno) y descarga los complementos fijados por versión y hash | Tras preparar el curso (paso 9) y tras `/actualizar` |
+| `preparar.js` | Prepara una clase en segundo plano: `--lanzar` crea un `git worktree` en `.preparacion/<id>/` (rama `preparacion/<id>`) y lanza el asistente sin conversación como proceso aparte (`detached`); `--estado` dice cómo va; `--juntar` mezcla esa copia con la principal (resolviendo sola los choques previstos) y la borra | El profesor, caso 2/3 de `AGENTS.md` ("Al empezar cada sesión"); `--trabajar <id>` es el envoltorio interno que se lanza a sí mismo detached, nunca lo llama el profesor a mano |
 | `issue.js` | Prepara (y, con `--enviar`, crea) una issue de feedback al kit; se niega si detecta datos personales | Skills cuando escalan algo ("Feedback al kit") |
 
 `.kit/herramientas/lib/*.js` (no son CLI: las usan las herramientas de arriba):
@@ -202,6 +203,11 @@ curso: lo escribe el propio curso cuando su LLM no tiene el del kit, y manda si 
 `vault.js#leerAdaptador()` es el único punto de lectura; lo usan `instalar-skills.js`, `crear-atajo.js` y
 `diagnostico.js`. Hoy solo `claude-code` tiene adaptador de kit.
 
+Un séptimo campo, opcional — `segundo_plano` (lista de argumentos con `{prompt}`/`{modelo}`, sin el
+`comando`) — dice si ese asistente puede trabajar sin conversación: sin él, `preparar.js --lanzar` se
+niega. `.kit/adaptadores/LEEME.md` lleva una columna "Segundo plano" que también comprueba
+`adaptadores.test.js`.
+
 Si el LLM no es Claude Code, `.kit/ESTANDARES.md` dice qué hacer: comprobar en su documentación oficial
 (nunca inventar), escribir `config/adaptador-llm.json`, instalar skills, crear el atajo, verificar con
 `diagnostico.js`, y **proponer devolverlo al kit** con `issue.js --titulo "[adaptador] <id>"` — así el
@@ -235,6 +241,13 @@ toca el perfil de la shell o el `PATH`.
   siempre delante) y cada herramienta arranca por `lib/arranque.js`.
 - `extremo-a-extremo.test.js` — una instalación entera lanzando cada herramienta como proceso real,
   incluido el lanzador `.cmd` en Windows.
+- `preparar.test.js` — `preparar.js` con un **asistente de mentira** (`tests/asistente-de-mentira.js`,
+  que escribe una nota y llama a `guardar.js`, en vez de un LLM de verdad) sobre un curso real: motor de
+  la copia de trabajo actual + `preparar-curso.js`, con git de verdad — hace falta para probar `git
+  worktree`, una rama nueva y un `merge` con choques de verdad, que `cursoTemporal()` no puede (no tiene
+  historia de git). Lanzar, una sola preparación a la vez, los cuatro estados (incluida `interrumpida`
+  con un pid muerto), juntar sin choques, con `config/diario.md` y los generados en conflicto (se
+  resuelven solos), un choque real (aborta sin tocar el curso principal), y el fallo del asistente.
 
 El resto son unitarios por fichero (`vault.test.js`, `indice.test.js`, `generados.test.js`,
 `organizar.test.js`, `actualizar.test.js`, `guardar.test.js`, `comprobar-estructura.test.js`,
@@ -270,10 +283,14 @@ código — y por eso es la única que usa un LLM de verdad y nunca corre en el 
   `git init` + `instalar-skills.js`. Lo comparten `prueba-real.js` y `prueba-actualizar.js`.
 - `pruebas/prueba-real.js` (`npm run prueba-real`) monta el curso y lanza `claude -p` (una sesión nueva
   por paso) por las cinco skills de trabajo en orden, simulando al alumno entre medias (dudas, casilla
-  "a su manera", respuestas de examen). Guarda el resultado en `curso-ejemplo/resultado/` (estudio,
-  `config/alumno.md` y `RESUMEN.md`) y borra siempre la temporal. `--sin-llm` monta y prueba el propio
-  ejecutor sin gastar cuota — es lo único que corren los tests del repo y el CI nunca la lanza con un LLM
-  de verdad. Ver CONTRIBUTING.md, "Prueba real del profesor", para cuándo es obligatoria.
+  "a su manera", respuestas de examen). Las clases del módulo del examen se procesan en primer plano; la
+  que no hace falta para ese examen se lanza con `preparar.js --lanzar` en segundo plano justo antes de
+  `/dudas`, sigue corriendo durante `/ejercicio` y el examen, y se junta con `--juntar` en cuanto el
+  examen está corregido — el caso de verdad con choques posibles (plan 0.22, §4). Guarda el resultado en
+  `curso-ejemplo/resultado/` (estudio, `config/alumno.md` y `RESUMEN.md`) y borra siempre la temporal.
+  `--sin-llm` monta y prueba el propio ejecutor sin gastar cuota (también se salta el `--lanzar`: nunca
+  llama a `claude`) — es lo único que corren los tests del repo y el CI nunca la lanza con un LLM de
+  verdad. Ver CONTRIBUTING.md, "Prueba real del profesor", para cuándo es obligatoria.
 - `pruebas/prueba-actualizar.js` (`npm run prueba-actualizar`) no usa ningún LLM —es mecánica de ficheros
   y de `actualizar.js`—, así que sí corre en el CI en cada PR: reconstruye, con `git archive
   v<versión>` (o la release anterior disponible), el curso tal como quedó en `resultado/`, y comprueba
