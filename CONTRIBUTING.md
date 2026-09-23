@@ -38,6 +38,12 @@ al terminar (también si el test la renombra a `<carpeta>-algo`). Nunca `fs.mkdt
 escribe en la carpeta personal real: si toca el perfil de la shell o el PATH, recibe una `casa` temporal o una
 función falsa (`ejecutarPs`).
 
+
+**Ni se escapa al repo del kit.** Dentro de un hook, git fija `GIT_DIR` y otras variables apuntando al repo; si
+un test las hereda, sus `git commit`, `git config` o `reset` escriben en el repo del kit y no en su temporal
+(pasó el 2026-09-23: commits de prueba en una rama, `core.bare=true`, identidad `Test` y el remoto cambiado).
+`tests/ayuda.js` y `.githooks/pre-push` las quitan (`git rev-parse --local-env-vars`). Un test nuevo que lance
+git sin pasar por `ayuda.js` tiene que hacer lo mismo.
 ## Prueba real del profesor
 
 Los tests de `.kit/herramientas/tests/` comprueban el código. Nadie comprueba con ellos si una skill

@@ -12,6 +12,10 @@ while read -r _ref_local _sha_local ref_remota _sha_remota; do
   fi
 done
 if [ "$SALTAR_TESTS" != "1" ]; then
+  # Dentro de un hook, git fija GIT_DIR y compañía apuntando a ESTE repo. Los tests crean repos temporales y,
+  # con esas variables puestas, sus git (commit, config, reset…) acababan escribiendo en el repo del kit: pasó
+  # el 2026-09-23 desde una segunda carpeta de trabajo. Se quitan antes de lanzar nada.
+  unset $(git rev-parse --local-env-vars)
   echo "pre-push: ejecutando los tests…" >&2
   if ! node --test ".kit/herramientas/tests/*.test.js" >/dev/null 2>&1; then
     echo "✗ Hay tests en rojo: no se sube. Ejecuta node --test \".kit/herramientas/tests/*.test.js\" para verlos." >&2
