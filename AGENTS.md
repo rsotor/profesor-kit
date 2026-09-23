@@ -193,7 +193,7 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
 
    Si hay una preparación **terminada sin juntar** o **interrumpida**, eso va antes que nada: dile que la
    clase ya está lista (o que se quedó a medias porque el ordenador se apagó o se durmió) y ofrécele juntarla
-   (`preparar.js --juntar <id>`, herramienta de la preparación en segundo plano) o, si se interrumpió, volver
+   (`node .kit/herramientas/preparar.js --juntar <id>`) o, si se interrumpió, volver
    a prepararla. Resuelve esto antes de seguir.
 
    Con el curso al día, confirma con él uno de los tres casos:
@@ -214,6 +214,17 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
    dejes parado: dile que aún queda un poco y ofrécele seguir según cómo ha ido — si acertó, "lo estás
    haciendo genial, ¿quieres un par de preguntas más, un poco más difíciles?"; si falló algo, "¿repasamos eso
    mientras termino?". Así hasta que la clase esté lista o prefiera parar.
+
+5. **Cómo se prepara en segundo plano** (casos 2 y 3, cuando el alumno dice que sí):
+   1. **Antes de lanzar, pregunta lo que solo él sabe**: el id de cada sesión si la regla de `config/curso.md` no
+      basta, y cualquier duda del material que no puedas resolver tú. Lo que se lanza ya no pregunta nada.
+   2. `node .kit/herramientas/preparar.js --lanzar <ficheros de inbox> --id <id>`. Una sola a la vez.
+   3. Sigue con él (calentamiento, repaso, dudas, examen). **Al terminar cada actividad**, mira
+      `node .kit/herramientas/preparar.js --estado`. En cuanto esté **terminada**, júntala con `--juntar <id>` y
+      díselo: "la clase 3 ya está lista: empieza por la nota de la sesión". Si **falla**, díselo en una frase y
+      ofrécele prepararla aquí, en la conversación.
+   4. Si se va a por un café, déjala lanzada y díselo: al volver (o en la sesión siguiente, si cierra la ventana)
+      la juntas antes que nada. Si apaga o duerme el ordenador, se para: `estado.js` la verá **interrumpida**.
 
 ## Si el alumno anda perdido
 
