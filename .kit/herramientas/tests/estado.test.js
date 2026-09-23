@@ -136,3 +136,19 @@ test('cli: acepta --raiz', t => {
   assert.equal(cli(['--json', '--raiz', raiz], '/no/existe'), 0);
   assert.equal(JSON.parse(lineas.join('\n')).caso, 1);
 });
+
+// Visto en la prueba real de la 0.22: la clase que ya se estaba preparando en segundo plano contaba como
+// "material nuevo", y el profesor, en vez de hacer el examen que le pedían, ofrecía prepararla otra vez.
+test('lo que ya se está preparando (o está preparado sin juntar) no es material nuevo; lo interrumpido sí', () => {
+  const raiz = raizAlDia();
+  const ahora = new Date().toISOString();
+  const muerto = spawnSync(process.execPath, ['-e', ''], { encoding: 'utf8' }).pid;
+  escribir(raiz, {
+    'estudio/inbox/clase2.pdf': 'x', 'estudio/inbox/clase3.pdf': 'x', 'estudio/inbox/clase4.pdf': 'x',
+    '.preparacion/01-02/estado.json': JSON.stringify({ id: '01-02', ficheros: ['clase2.pdf'], pid: process.pid, inicio: ahora, fin: null, resultado: 'en-curso', rama: 'preparacion/01-02' }),
+    '.preparacion/01-03/estado.json': JSON.stringify({ id: '01-03', ficheros: ['clase3.pdf'], pid: muerto, inicio: ahora, fin: ahora, resultado: 'terminada', rama: 'preparacion/01-03' }),
+    '.preparacion/01-04/estado.json': JSON.stringify({ id: '01-04', ficheros: ['clase4.pdf'], pid: muerto, inicio: ahora, fin: null, resultado: 'en-curso', rama: 'preparacion/01-04' }),
+  });
+  const e = calcularEstado(raiz);
+  assert.deepEqual(e.materialNuevo, ['inbox/clase4.pdf'], 'solo la interrumpida vuelve a ser material por preparar');
+});

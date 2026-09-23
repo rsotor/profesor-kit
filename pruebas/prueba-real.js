@@ -234,6 +234,13 @@ function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conte
   }
   l.push('');
 
+  // Lo que respondió el asistente en los pasos que fallaron: sin esto, un fallo solo se puede adivinar.
+  const fallidos = pasos.filter(x => x.ok === false && x.salidaLlm);
+  if (fallidos.length) {
+    l.push('## Lo que respondió el asistente en los pasos que fallaron', '');
+    for (const x of fallidos) l.push(`### ${x.paso}`, '', '```text', String(x.salidaLlm).slice(-4000).replace(/```/g, "'''"), '```', '');
+  }
+
   l.push('## `comprobar.js`', '', `- **${informe.errores.length} error(es)** · **${informe.avisos.length} aviso(s)**`, '');
   if (informe.errores.length) {
     l.push('### Errores', '');

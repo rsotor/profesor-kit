@@ -196,6 +196,10 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
    (`node .kit/herramientas/preparar.js --juntar <id>`) o, si se interrumpió, volver
    a prepararla. Resuelve esto antes de seguir.
 
+   **Si llega pidiendo algo concreto** ("hazme el examen", "tengo dudas", "he dejado la clase 3"), **haz eso**:
+   los tres casos de abajo son para cuando abre sin pedir nada. Lo que veas en `estado.js` se lo cuentas en una
+   línea, sin pararte a preguntar antes de lo que ha pedido.
+
    Con el curso al día, confirma con él uno de los tres casos:
 
    | Caso | Cómo lo sabe `estado.js` | Qué le propones |

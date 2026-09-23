@@ -5,6 +5,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { MARCA_INICIO } = require('../../.kit/herramientas/lib/indice');
+const { sinCodigo } = require('../../.kit/herramientas/lib/vault');
 
 // Inserta contenido en el cuerpo de la nota, antes del pie de navegación (`%% navegación %%` de
 // lib/indice.js) si ya lo tiene: si se añadiera detrás, quedaría fuera del cuerpo que lee /dudas y
@@ -67,7 +68,8 @@ function simularAlumnoTrasSesiones(destino, marcador) {
 // /dudas se las comió todas)
 function quedaMarcador(destino, marcador) {
   for (const f of recorrerMd(path.join(destino, 'estudio'))) {
-    if (fs.readFileSync(f, 'utf8').includes(marcador)) return f;
+    // Como comprobar.js: el marcador entre comillas de código es un ejemplo (la hoja de uso lo explica así), no una duda.
+    if (sinCodigo(fs.readFileSync(f, 'utf8')).includes(marcador)) return f;
   }
   return null;
 }

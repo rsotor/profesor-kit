@@ -61,13 +61,17 @@ function leerPreparaciones(raiz) {
 // El caso sugerido (tabla del plan §2): 1 si no hay material nuevo; si lo hay, 3 cuando queda algo por
 // estudiar de lo ya preparado o algo en 🔁 (atrasado), y 2 en el resto (al día).
 function calcularEstado(raiz) {
-  const nuevos = materialNuevo(raiz);
+  const preparaciones = leerPreparaciones(raiz);
+  // Lo que ya está en una preparación en marcha o terminada (sin juntar todavía) no es material nuevo: si lo
+  // fuera, el profesor ofrecería prepararlo otra vez (visto en la prueba real de la 0.22).
+  const enPreparacion = new Set(preparaciones.filter(p => p.resultado === 'en-curso' || p.resultado === 'terminada')
+    .flatMap(p => (p.ficheros || []).map(f => path.posix.basename(v.aPosix(String(f))))));
+  const nuevos = materialNuevo(raiz).filter(rel => !enPreparacion.has(path.posix.basename(rel)));
   const sesiones = indice.leerSesiones(raiz).sort(indice.compararSesiones);
   const progreso = indice.leerProgreso(raiz);
   const siguiente = sesiones.find(s => !s.estudiada) || null;
   const preparadasSinEstudiar = sesiones.filter(s => !s.estudiada).map(s => s.id);
   const enRepaso = sesiones.filter(s => indice.estadoProfesor(s.conceptos, progreso).marca === 'repasar').map(s => s.id);
-  const preparaciones = leerPreparaciones(raiz);
   const atrasado = preparadasSinEstudiar.length > 0 || enRepaso.length > 0;
   const caso = nuevos.length === 0 ? 1 : (atrasado ? 3 : 2);
   return {
