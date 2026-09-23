@@ -25,6 +25,13 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - Tus notas ya no dicen "falta información" cuando el material de clase no trae un error típico: tu profesor
   propone uno, marcado como suyo, o quita el apartado. La nota **pendientes** queda solo con lo que de verdad
   te toca resolver.
+- **Codex ya viene configurado** (skills en `.agents/skills`, sin fichero puente, permisos por herramienta), con
+  lo que aprendió la instalación real en Windows. Si tu asistente no es Claude y el kit no sabe dónde van sus
+  skills, ya no las deja en la carpeta de Claude: te dice qué falta.
+- **Mensajes más claros cuando algo falla por el entorno** (un permiso denegado, un programa que no está, la
+  sesión de GitHub): ya no dicen "esto es del kit" cuando no lo es, ni se quedan en blanco.
+- **Si ya tenías tu curso:** si usas Codex, tras actualizar tu profesor reinstala tus skills en su sitio, con la
+  configuración que trae el kit.
 - **Si ya tenías tu curso:** no tienes que hacer nada. Tu hoja *Cómo usar tu profesor* tiene un apartado nuevo,
   "Cuando llega una clase nueva": tu profesor te ofrece ponerla al día.
 
