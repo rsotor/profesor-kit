@@ -1,56 +1,44 @@
 ---
 tipo: concepto
-bloques: ["1"]
-visto_en: ["01-02-01-presupuesto-personal"]
+bloques: [modulo-01]
+visto_en: [01-02-01-presupuesto-personal]
 dificultad: 3
 requiere: [presupuesto]
-alias: [tasa de ahorro, porcentaje de ahorro]
-tags: []
-ejercicio: 01-02-01-quien-ahorra-mejor
+alias: [tasa de ahorro mensual]
+tags: [presupuesto, ahorro]
 ---
-# La tasa de ahorro
+# Tasa de ahorro
 
-> **En una frase:** la tasa de ahorro es qué parte de tus ingresos te queda, en porcentaje, así puedes comparar meses (o personas) con ingresos distintos.
+> **En una frase:** la parte de lo que ganas que te queda, en vez de la cifra absoluta.
 
 ## El problema
 
-655,00 € de ahorro suenan bien, pero no dicen si ahorras mucho o poco: depende de cuánto ingreses.
-655,00 € de 1.850,00 € no es lo mismo que 655,00 € de 4.000,00 €. La cifra absoluta no se puede comparar
-entre dos meses, o dos personas, con ingresos distintos.
+"Ahorro 655,00 € al mes" no dice si es mucho: depende de cuánto ganas. Dos personas con sueldos distintos no se pueden comparar con cifras absolutas.
 
 ## El ejemplo
 
-Con el ejemplo de [[presupuesto]]: ahorras 655,00 € de unos ingresos de 1.850,00 €. 655 ÷ 1.850 × 100 ≈
-35,4% mensual: te queda algo más de un tercio de lo que ingresas ese mes.
+Con 1.850,00 € de ingresos y 655,00 € de ahorro, te queda un 35,4 % mensual de lo que entra. Otra persona que ingresa 3.000,00 € y ahorra 700,00 € ahorra más euros, pero su tasa es 23,3 % mensual: tú ahorras una parte mayor.
 
 ## La fórmula
 
-$$ tasa\ de\ ahorro = \dfrac{ahorro}{ingresos} \times 100 $$
+$$ \text{tasa de ahorro} = \frac{A}{I} \times 100 $$
 
-El resultado es un porcentaje: cuánto de lo que ingresas ese mes te queda, no cuánto dinero en cifra
-absoluta.
+$A$ es el ahorro del mes e $I$ los ingresos del mes. Se mide sobre el mes, por eso se dice "mensual". Con las cifras de clase: 655,00 ÷ 1.850,00 × 100 ≈ **35,4 % mensual**.
 
 ## El error típico
 
-⚠️ **FALTA INFO:** el material no da un error típico propio para la tasa de ahorro más allá de "no se
-puede comparar la cifra absoluta", que ya queda cubierto en "El problema".
+> [!info] Ampliación fuera de los apuntes
+> Dividir entre los gastos en vez de entre los ingresos. Con 655,00 € y 1.195,00 € de gastos saldría 54,8 % mensual, una cifra que no dice qué parte de lo que ganas te queda.
 
-## Practícalo
+## Visto desde tus ingresos irregulares
 
-→ **[¿Quién ahorra mejor?](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-quien-ahorra-mejor.html)**
-
-Compara dos meses tuyos con ingresos y ahorro distintos. Lo que sorprende: el mes con más euros ahorrados
-no siempre es el que mejor tasa de ahorro tiene.
-
-> [!tip] Visto desde tus ingresos irregulares
-> En un mes bueno puedes ahorrar más euros y aun así tener una tasa de ahorro peor que en un mes flojo, si
-> ese mes bueno también disparó tus gastos variables. Mira la tasa, no solo la cifra en euros, para saber
-> si de verdad estás mejorando mes a mes.
+> [!info] Ampliación fuera de los apuntes
+> Tu tasa cambia cada mes porque cambian los ingresos aunque los gastos sean los mismos. Mírala sobre la media de varios meses, no sobre un mes suelto.
 
 ## Relacionados
 
-- [[presupuesto]] — de ahí salen el ahorro y los ingresos que entran en la fórmula
-- [[colchon-financiero]] — el primer destino de ese ahorro, antes de pensar en otra cosa
+- [[presupuesto]] — de donde sale el ahorro del mes
+- [[gastos-fijos-y-variables]] — lo que resta a los ingresos
 
 ## Historial
 

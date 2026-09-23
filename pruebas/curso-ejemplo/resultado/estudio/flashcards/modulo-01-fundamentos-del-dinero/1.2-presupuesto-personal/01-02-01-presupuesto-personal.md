@@ -4,32 +4,23 @@ sesion: 01-02-01-presupuesto-personal
 ---
 # Flashcards · 01-02-01-presupuesto-personal
 
-> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos y lo
-> que huela a examen. Se responde mentalmente antes de desplegar.
+> Se responde mentalmente antes de desplegar.
 
-**Pagas la luz todos los meses, pero la cifra cambia según lo que consumes. ¿Es un gasto fijo? (sí/no, en
-una frase)**
+**Facturas por tu cuenta y tus ingresos varían cada mes. ¿Con qué cifra haces el presupuesto?**
 > [!success]- Respuesta
-> No. Que se repita cada mes no lo hace fijo: es fijo solo si la cifra no depende de lo que decidas
-> gastar. La luz varía según tu consumo, así que es variable.
+> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
 
-**Ahorras 400,00 € un mes con 2.000,00 € de ingresos, y 300,00 € otro mes con 1.200,00 € de ingresos.
-¿En cuál ahorras mejor en proporción? (di el mes, en una frase)**
+**Todos los meses gastas algo en ocio. ¿Es un gasto fijo?**
 > [!success]- Respuesta
-> En el segundo: ahorras un 25% mensual de tus ingresos (300 de 1.200), frente a un 20% mensual en el
-> primero (400 de 2.000), aunque en euros ahorres menos.
+> No. Es variable: la cifra exacta la decides tú cada mes. Fijo es lo que no decides este mes, como el alquiler.
 
-**Facturas 2.400,00 € tu mejor mes y 1.300,00 € tu peor mes. Si fijas tus gastos pensando en el mejor
-mes, ¿qué pasa el mes que factures 1.300,00 €? (en una frase)**
+**¿Cómo se calcula la tasa de ahorro y por qué sirve más que el ahorro en euros?**
 > [!success]- Respuesta
-> Que te faltará dinero: habrás comprometido gastos pensando en una cifra que no se repite todos los
-> meses.
+> Ahorro del mes ÷ ingresos del mes × 100. Permite comparar entre personas con ingresos distintos, cosa que la cifra absoluta no permite.
 
-**Tienes 4.500,00 € ahorrados y gastas 900,00 € al mes. Facturas por tu cuenta. ¿Tienes ya el colchón
-que te conviene (5-6 meses)? (sí/no)**
+**¿Cuántos meses de gastos conviene tener de colchón financiero siendo freelance?**
 > [!success]- Respuesta
-> Sí, justo: 4.500 ÷ 900 = 5 meses, el extremo bajo del colchón recomendado para ti (5-6 meses). Con
-> nómina fija te sobraría, pero para ti es lo mínimo.
+> 5-6 meses, frente a los 3 de quien tiene nómina fija.
 
 ---
-Conceptos que cubren: [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[ingreso-medio]] · [[colchon-financiero]]
+Conceptos que cubren: [[presupuesto]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

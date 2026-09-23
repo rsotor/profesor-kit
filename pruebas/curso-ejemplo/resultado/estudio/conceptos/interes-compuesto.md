@@ -1,63 +1,60 @@
 ---
 tipo: concepto
-bloques: ["2"]
-visto_en: ["02-01-01-interes-simple-y-compuesto"]
-dificultad: 3
-requiere: [capital-y-tipo-de-interes, interes-simple]
+bloques: [modulo-02]
+visto_en: [02-01-01-interes-simple-y-compuesto]
+dificultad: 2
+requiere: [interes-simple, capital-y-tipo-de-interes]
 alias: [interés compuesto, interés sobre interés]
-tags: []
-ejercicio: 02-01-01-simple-vs-compuesto
+tags: [interes, ahorro]
+ejercicio: 02-01-01-interes-simple-y-compuesto
 ---
-# El interés compuesto
+# Interés compuesto
 
-> **En una frase:** con interés compuesto, los intereses de cada periodo se suman al capital y a partir de ahí generan intereses ellos también.
+> **En una frase:** los intereses de cada periodo se suman al capital y, desde ahí, generan intereses ellos también ("interés sobre interés").
 
 ## El problema
 
-Con [[interes-simple]], lo ganado cada periodo se calcula siempre sobre el mismo capital de partida. Pero
-si esos intereses se quedan invertidos junto al capital, el periodo siguiente también generan algo: es
-"interés sobre interés", y hace que el capital crezca cada vez más rápido, no en línea recta.
+Con interés simple, los intereses que cobras se quedan parados. Si en vez de dejarlos quietos los reinviertes, el dinero crece más deprisa. Hace falta una forma de calcularlo.
 
 ## El ejemplo
 
-Mismo caso que en [[interes-simple]]: 1.000,00 € al 5% anual, 3 años, pero ahora compuesto. El primer año
-genera 50,00 € (igual que el simple), pero el segundo año el 5% anual se calcula sobre 1.050,00 €, no
-sobre 1.000,00 €. Al final de los 3 años: 1.157,63 €. Frente a los 1.150,00 € del interés simple, la diferencia
-(7,63 €) parece poca cosa a 3 años — pero crece cada vez más rápido cuantos más años pasan.
+Los mismos 1.000,00 € al 5 % anual durante 3 años, pero ahora los intereses se suman al capital cada año:
+
+| Año | Capital al empezar | Intereses (5 % anual) | Capital al acabar |
+|---|---|---|---|
+| 1 | 1.000,00 € | 50,00 € | 1.050,00 € |
+| 2 | 1.050,00 € | 52,50 € | 1.102,50 € |
+| 3 | 1.102,50 € | 55,13 € | **1.157,63 €** |
+
+Con interés simple eran 1.150,00 €: **7,63 € de diferencia**. A 3 años parece poco; crece cada vez más deprisa cuantos más periodos pasan.
 
 ## La fórmula
 
 $$ C_f = C \cdot (1 + i)^n $$
 
-`C` es el capital inicial, `i` el tipo de interés en tanto por uno y `n` el número de periodos de
-capitalización (si `i` es anual, `n` en años).
+$C$ es el capital inicial, $i$ el tipo en tanto por uno y $n$ el número de periodos de capitalización (si $i$ es anual, $n$ en años). Con las cifras de clase: 1.000,00 × 1,05³ = 1.000,00 × 1,157625 = **1.157,63 €**.
 
 ## El error típico
 
-Esperar que crezca en línea recta, como el interés simple. El interés compuesto acelera: la diferencia
-frente al simple es pequeña al principio y se dispara con los años, precisamente porque cada periodo
-genera intereses sobre un capital algo mayor que el anterior — es la parte que más sorprende la primera
-vez que se ve.
+> [!info] Ampliación fuera de los apuntes
+> Creer que el compuesto "siempre gana" desde el primer día. En el primer periodo dan lo mismo; la ventaja se ve con el tiempo, y a plazos cortos una oferta simple con un tipo algo mayor puede salir mejor (mira el ejercicio). Este error lo propone el profesor: los apuntes no traen ninguno.
+
+## Visto desde tus ingresos irregulares
+
+> [!info] Ampliación fuera de los apuntes
+> Lo que hace crecer al compuesto es el **tiempo** sin tocar el dinero, no que las aportaciones sean regulares. Por eso conviene separar el ahorro a largo plazo de tu [[colchon-financiero]]: el colchón se toca cuando un mes flojo lo pide; lo otro, mejor que no.
 
 ## Practícalo
 
-→ **[Simple o compuesto: ¿cuánto se dispara la diferencia?](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-vs-compuesto.html)**
+→ **[Ejercicios de 02-01-01-interes-simple-y-compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto.md)**
 
-Cambia el capital y el tipo de interés, y compara la diferencia entre simple y compuesto a 3 años y a 25.
-Lo que sorprende: cuánto más grande es esa diferencia a largo plazo de lo que parece a corto.
-
-> [!tip] Visto desde tus ingresos irregulares
-> El interés compuesto premia sobre todo el tiempo que el dinero lleva invertido, no la cantidad exacta
-> que metas cada vez. Con ingresos irregulares es tentador esperar a tener "más de golpe" en un mes bueno
-> antes de invertir algo: pero ese dinero, metido antes aunque sea poco, lleva más tiempo generando
-> intereses sobre intereses que el mismo dinero metido más tarde.
+Mueve el plazo entre una oferta simple y una compuesta. Lo que debería sorprender: hay un año a partir del cual el veredicto se invierte.
 
 ## Relacionados
 
-- [[capital-y-tipo-de-interes]] — de ahí salen `C` e `i`
-- [[interes-simple]] — la otra forma de calcularlo, sin reinvertir
-- [[capitalizacion]] — cuántas veces al año se aplica de verdad ese "cada periodo"
-- [[regla-del-72]] — a ojo, cuántos años tarda este capital en doblarse
+- [[interes-simple]] — el punto de comparación: crece en línea recta
+- [[capitalizacion]] — cada cuánto se suman los intereses al capital
+- [[regla-del-72]] — atajo para saber cuándo se dobla el capital
 
 ## Historial
 

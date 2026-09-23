@@ -9,9 +9,9 @@
 
 👉 Sigue por aquí: [[01-02-01-presupuesto-personal|1.2 Presupuesto personal]]
 
-Estudiadas 1 de 3 · Pendientes abiertos: 19 → [[pendientes]]
+Estudiadas 1 de 3 · Pendientes abiertos: 7 → [[pendientes]]
 
-## Módulo 1 · Fundamentos del dinero · 1/2 estudiadas · 📝 0,0 suspenso (2026-09-23)
+## Módulo 1 · Fundamentos del dinero · 1/2 estudiadas · 📝 0,5 suspenso (2026-09-23)
 
 ### 1.1 El dinero y sus funciones · 1/1 estudiadas
 

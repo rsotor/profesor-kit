@@ -4,28 +4,23 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 ---
 # Flashcards · 01-01-01-el-dinero-y-sus-funciones
 
-> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos y lo
-> que huela a examen. Se responde mentalmente antes de desplegar.
+> Se responde mentalmente antes de desplegar.
 
 **Nombra las tres funciones del dinero.**
 > [!success]- Respuesta
 > Medio de cambio, unidad de cuenta y depósito de valor.
 
-**El aceite de oliva sube un 20% anual de precio por una mala cosecha, y el resto de los precios no
-cambia. ¿Es esto inflación? (sí/no, en una frase)**
+**¿Qué es la doble coincidencia de deseos y por qué hunde el trueque?**
 > [!success]- Respuesta
-> No. Es la subida de un bien concreto por un motivo concreto (la cosecha), no una subida general y
-> sostenida de casi todos los precios.
+> Que cada parte quiera justo lo que ofrece la otra, y en el mismo momento. Si no coinciden, no hay trato.
 
-**Tienes 100,00 € guardados y la inflación es del 3% anual. El año que viene, ¿tu dinero compra lo mismo?
-(sí/no)**
+**Sube el precio del café por una mala cosecha. ¿Es inflación?**
 > [!success]- Respuesta
-> No. Seguirán siendo 100,00 € en la cuenta, pero comprarán como unos 97,00 €: menos que hoy.
+> No. Es la subida de una cosa concreta. Inflación es que sube el nivel general de precios, de casi todo a la vez.
 
-**¿Por qué un piso es poco líquido aunque valga mucho dinero?**
+**¿Por qué un piso es poco líquido aunque valga mucho?**
 > [!success]- Respuesta
-> Porque convertirlo en dinero disponible (venderlo) lleva meses. La liquidez mide la rapidez de esa
-> conversión sin perder valor, no el valor en sí.
+> Porque venderlo bien lleva meses, y con prisa se pierde valor.
 
 ---
 Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]

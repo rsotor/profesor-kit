@@ -4,31 +4,23 @@ sesion: 02-01-01-interes-simple-y-compuesto
 ---
 # Flashcards · 02-01-01-interes-simple-y-compuesto
 
-> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos y lo
-> que huela a examen. Se responde mentalmente antes de desplegar.
+> Se responde mentalmente antes de desplegar.
 
-**Un banco te ofrece "un cuatro por ciento de interés", sin decir nada más. ¿Tienes ya toda la
-información que necesitas para saber cuánto te va a pagar? (sí/no, en una frase)**
+**Te dicen "un cinco por ciento" de interés y nada más. ¿Qué falta y por qué importa?**
 > [!success]- Respuesta
-> No. Falta el periodo: no es lo mismo un 4% anual que un 4% mensual, y sin decirlo la cifra no significa
-> nada.
+> El periodo (anual, mensual…). Un 5 % anual y un 5 % mensual son cosas muy distintas.
 
-**Con interés simple, ¿sobre qué capital se calculan los intereses de cada periodo: sobre el capital
-inicial, o sobre el capital ya crecido con los intereses anteriores? (en una frase)**
+**¿Cuál es la diferencia de fondo entre interés simple y compuesto?**
 > [!success]- Respuesta
-> Siempre sobre el capital inicial. Los intereses no se reinvierten, por eso crece en línea recta y no
-> se acelera.
+> En el simple, los intereses se calculan siempre sobre el capital inicial. En el compuesto se suman al capital y generan intereses ellos también.
 
-**Al 9% anual, ¿cuántos años tarda aproximadamente un capital en doblarse, usando la regla del 72? (una
-cifra)**
+**1.000,00 € al 5 % anual durante 3 años: ¿cuánto tienes con interés simple y cuánto con compuesto?**
 > [!success]- Respuesta
-> 8 años (72 ÷ 9 = 8).
+> Simple: 1.150,00 €. Compuesto: 1.157,63 €.
 
-**Un banco te da un tipo nominal del 12% anual pero lo capitaliza mensualmente, no una sola vez al año.
-Pasado un año, ¿ganas exactamente un 12% anual, algo más, o algo menos? (en una frase)**
+**Un capital crece al 6 % anual a interés compuesto. ¿En cuántos años se dobla, aproximadamente, y con qué regla?**
 > [!success]- Respuesta
-> Algo más: como cada mes se aplica una parte del tipo sobre el capital ya crecido, el resultado a un año
-> supera el 12% anual (en el ejemplo de la nota, se queda en un 12,68% anual).
+> 72 ÷ 6 = 12 años, con la regla del 72 (el cálculo exacto da 11,9 años).
 
 ---
-Conceptos que cubren: [[capital-y-tipo-de-interes]] · [[interes-simple]] · [[regla-del-72]] · [[capitalizacion]]
+Conceptos que cubren: [[capital-y-tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[regla-del-72]]

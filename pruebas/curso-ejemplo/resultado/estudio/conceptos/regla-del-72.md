@@ -1,50 +1,38 @@
 ---
 tipo: concepto
-bloques: ["2"]
-visto_en: ["02-01-01-interes-simple-y-compuesto"]
-dificultad: 2
+bloques: [modulo-02]
+visto_en: [02-01-01-interes-simple-y-compuesto]
+dificultad: 1
 requiere: [interes-compuesto]
-alias: [regla del 72]
-tags: []
-ejercicio: 02-01-01-la-regla-del-72-a-prueba
+alias: [regla del 72, regla de 72]
+tags: [interes, ahorro]
 ---
-# La regla del 72
+# Regla del 72
 
-> **En una frase:** una forma rápida, a ojo, de saber cuántos años tarda un capital en doblarse a interés compuesto, sin sacar la calculadora.
+> **En una frase:** una aproximación para saber, sin calculadora, cuántos años tarda un capital en doblarse a interés compuesto.
 
 ## El problema
 
-La fórmula de [[interes-compuesto]] ($C_f = C \cdot (1+i)^n$) da el resultado exacto, pero hay que
-despejar `n` con logaritmos para saber cuántos años tarda en doblarse un capital. Para una cifra rápida,
-sin calculadora, basta con una división.
+Quieres saber a ojo si una inversión te dobla el dinero en 10 años o en 40, sin sacar la fórmula del interés compuesto.
 
 ## El ejemplo
 
-Al 6% anual: 72 ÷ 6 = 12 años, aproximadamente. El cálculo exacto con la fórmula de interés compuesto da
-11,9 años: la regla del 72 es una aproximación, no el resultado exacto.
+Al 6 % anual: 72 ÷ 6 = **12 años**, aproximadamente. Con la fórmula exacta, el capital se dobla en 11,9 años: la regla es una aproximación, no el resultado exacto.
 
 ## La fórmula
 
-$$ n \approx \dfrac{72}{i} $$
+$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, sin el símbolo de tanto por ciento}} $$
 
-`i` es el tipo de interés anual, en número y sin el símbolo (6% anual → 6, no 0,06). `n` sale en años.
+Se divide 72 entre el número del tipo anual. Solo sirve con interés compuesto.
 
 ## El error típico
 
-Tomar el resultado como si fuera exacto. La regla del 72 es una aproximación: es más precisa cerca del 8% anual,
-y se desvía más cuanto más lejos de ese punto, tanto hacia tipos muy bajos como muy altos.
-
-## Practícalo
-
-→ **[La regla del 72 a prueba](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-la-regla-del-72-a-prueba.html)**
-
-Con un tipo de interés al azar, predice si el resultado exacto tardará más, menos, o casi lo mismo que la
-aproximación, antes de verlo. Lo que sorprende: no siempre se desvía en el mismo sentido.
+> [!info] Ampliación fuera de los apuntes
+> Tomarla por exacta o usarla con interés simple. Con interés simple el capital se dobla en 100 ÷ tipo anual años (a 5 % anual, 20 años), no en 72 ÷ 5.
 
 ## Relacionados
 
-- [[interes-compuesto]] — la fórmula exacta que esta regla aproxima
-- [[capitalizacion]] — con capitalización más frecuente, doblar el capital tarda algo menos
+- [[interes-compuesto]] — la fórmula exacta de la que esto es un atajo
 
 ## Historial
 
