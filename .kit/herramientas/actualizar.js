@@ -33,7 +33,11 @@ function nodo(script, args, cwd) {
 function contarErrores(dirKit, raiz) {
   const r = nodo(path.join(dirKit, '.kit', 'herramientas', 'comprobar.js'), ['--json', '--raiz', raiz], raiz);
   if (['permiso', 'no-existe'].includes(r.motivo)) throw new Error(`comprobar.js falló: ${explicar(r)}`);
-  return JSON.parse(r.stdout).errores.length;
+  try {
+    return JSON.parse(r.stdout).errores.length;
+  } catch {
+    throw new Error(`comprobar.js --json no devolvió un informe legible (llegaron ${r.stdout.length} bytes; el final: ${r.salida.slice(-300)})`);
+  }
 }
 
 // Sin adaptador para un LLM que no es Claude Code, instalar-skills.js se niega a adivinar destino (ver

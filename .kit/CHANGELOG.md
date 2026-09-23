@@ -13,6 +13,13 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.22.1
+- **Actualizar ya no falla en un curso grande.** Si tu curso tenía muchos avisos, la actualización se paraba con
+  un error raro ("Unterminated string in JSON") sin tocar nada. Ahora se actualiza con normalidad.
+- **El diagnóstico te avisa si tu profesor no va a funcionar dentro de Obsidian.** Pasa si tu curso no tiene su
+  propio git, o si la carpeta estudio tiene uno aparte: el chat de Obsidian no encuentra al profesor. El aviso
+  dice cómo arreglarlo.
+
 ## 0.22.0
 - **Al abrir, tu profesor mira cómo está tu curso y te propone qué hacer**: seguir con lo que ya tienes
   preparado, o preparar la clase nueva que acabas de dejar. Siempre te lo pregunta: decides tú.
