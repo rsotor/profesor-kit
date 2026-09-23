@@ -4,6 +4,17 @@
 // de esto llama a `claude`: eso lo hace prueba-real.js, que es quien decide el prompt de cada paso.
 const fs = require('node:fs');
 const path = require('node:path');
+const { MARCA_INICIO } = require('../../.kit/herramientas/lib/indice');
+
+// Inserta contenido en el cuerpo de la nota, antes del pie de navegación (`%% navegación %%` de
+// lib/indice.js) si ya lo tiene: si se añadiera detrás, quedaría fuera del cuerpo que lee /dudas y
+// comprobar.js lo contaría como duda pendiente en un sitio raro (plan 0.22, arreglo 5b.2). Si la nota
+// todavía no tiene pie (aún no ha pasado por guardar.js), se añade al final, como antes.
+function insertarAntesDelPie(texto, contenido) {
+  const i = texto.indexOf(MARCA_INICIO);
+  if (i < 0) return `${texto.replace(/\s+$/, '')}\n\n${contenido}\n`;
+  return `${texto.slice(0, i).replace(/\s+$/, '')}\n\n${contenido}\n\n${texto.slice(i)}`;
+}
 
 function recorrerMd(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -44,7 +55,7 @@ function simularAlumnoTrasSesiones(destino, marcador) {
   }
   if (sesion) {
     let texto = fs.readFileSync(sesion, 'utf8');
-    texto += `\n${marcador} ¿por qué esto importa para el resto del módulo?\n`;
+    texto = insertarAntesDelPie(texto, `${marcador} ¿por qué esto importa para el resto del módulo?`);
     if (/estudiada:\s*false/.test(texto)) { texto = texto.replace(/estudiada:\s*false/, 'estudiada: sí'); tocado.casillaNoEstandar = true; }
     fs.writeFileSync(sesion, texto);
     tocado.sesion = path.relative(baseEstudio, sesion).split(path.sep).join('/');
@@ -137,6 +148,6 @@ function repasosGenerados(destino) {
 }
 
 module.exports = {
-  recorrerMd, primerConcepto, primeraSesion, simularAlumnoTrasSesiones, quedaMarcador,
+  recorrerMd, primerConcepto, primeraSesion, insertarAntesDelPie, simularAlumnoTrasSesiones, quedaMarcador,
   conceptoConFormula, examenMasReciente, parseTablaRespuestas, rellenarRespuestasExamen, repasosGenerados,
 };
