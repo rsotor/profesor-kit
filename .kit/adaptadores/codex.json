@@ -1,0 +1,10 @@
+{
+  "comando": "codex",
+  "skills": ".agents/skills",
+  "puente": null,
+  "permisos": {
+    "fichero": "~/.codex/rules/default.rules (fichero de usuario, fuera del curso; ruta relativa al perfil del alumno)",
+    "formato": "Una regla por herramienta, sin comodín: prefix_rule(pattern=[\"node\", \".kit/herramientas/<nombre>.js\"], decision=\"allow\")"
+  },
+  "probado": "Windows 11 · Codex CLI 0.155.1 · 2026-09-23"
+}

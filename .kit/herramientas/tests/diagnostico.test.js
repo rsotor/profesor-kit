@@ -91,6 +91,16 @@ test('otro LLM sin adaptador del kit: no se puede verificar, es aviso, no bloque
   assert.match(skills.arreglo, /No hay un adaptador para codex-cli.*ESTANDARES\.md.*config\/adaptador-llm\.json/s);
 });
 
+test('con la nota vieja (config/adaptacion-llm.md) y sin el JSON nuevo, el aviso propone convertirla (issue #33)', () => {
+  const { raiz, carpetaBin, entorno } = cursoInstalado({ llm: 'un-llm-sin-adaptador' });
+  fs.rmSync(path.join(raiz, '.claude'), { recursive: true });
+  escribir(raiz, { 'config/adaptacion-llm.md': '# Adaptación del kit\n\nnota vieja en prosa\n' });
+  const lista = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() });
+  const skills = lista.find(c => c.id === 'skills');
+  assert.deepEqual([skills.ok, skills.obligatorio], [false, false]);
+  assert.match(skills.arreglo, /config\/adaptacion-llm\.md.*config\/adaptador-llm\.json.*ESTANDARES\.md/s);
+});
+
 test('otro LLM con adaptador propio del curso (config/adaptador-llm.json): comprueba su carpeta de skills de verdad', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado({ llm: 'codex-cli' });
   fs.rmSync(path.join(raiz, '.claude'), { recursive: true });

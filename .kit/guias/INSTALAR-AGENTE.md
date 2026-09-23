@@ -17,11 +17,11 @@ tu adaptador y, al final de la instalación, cómo proponer devolverlo al kit.
 | 3 | El curso tiene nombre, y está creado desde la plantilla dentro de la carpeta de cursos del alumno | existe `<carpeta>/.kit/VERSION` | ver abajo |
 | 4 | Git sabe quién es el alumno | `git config user.name` y `git config user.email` devuelven algo | ver abajo |
 | 5 | Curso limpio y ajustes creados | existe `config/ajustes.json`; no existen `docs/` ni `.github/` | `node .kit/herramientas/preparar-curso.js --subir si --nombre "<nombre del curso>"` (o `--subir no`) |
-| 6 | Skills instaladas | Claude Code: existe `.claude/skills/sesion/SKILL.md` | `node .kit/herramientas/instalar-skills.js` |
+| 6 | Skills instaladas | Existe `<carpeta de skills del adaptador>/sesion/SKILL.md` (Claude Code: `.claude/skills/sesion/SKILL.md`; mira `.kit/adaptadores/<llm>.json` o `config/adaptador-llm.json` para saber cuál es la tuya) | `node .kit/herramientas/instalar-skills.js` |
 | 7 | **El atajo funciona:** escribir una palabra en la terminal abre este curso | `config/ajustes.json` tiene `atajo`; en una terminal nueva, esa palabra abre el LLM en el curso | `node .kit/herramientas/crear-atajo.js --nombre <palabra>` — ver abajo |
 | 8 | **Instalación verificada** y guardada | `node .kit/herramientas/diagnostico.js` termina con **"Todo listo"** | después, `node .kit/herramientas/guardar.js "curso: instalación"` — ver abajo |
 | 9 | Obsidian instalado y con la carpeta `estudio/` abierta como bóveda | existe `estudio/.obsidian/workspace.json` (solo lo escribe Obsidian al abrir la bóveda) y el alumno ve sus carpetas en la columna izquierda | Mac: `brew install --cask obsidian` · Windows: `winget install -e --id Obsidian.Obsidian` — ver abajo |
-| 10 | Arranca la sesión 0 | — | dile que **cierre esta ventana, abra una terminal nueva y escriba su atajo**. Avísale antes: al abrirse le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso. Ya dentro, que escriba "empezamos" (o lanza tú `/configurar`) |
+| 10 | Arranca la sesión 0 | — | dile que **cierre esta ventana, abra una terminal nueva y escriba su atajo**. Avísale antes: al abrirse le preguntará **si confía en esta carpeta** — tiene que decir que sí, o los permisos del kit no se aplican y le pedirá confirmación a cada paso. Aun confiando en la carpeta, algunos asistentes tienen un entorno restringido (sandbox) que puede seguir pidiendo autorización para ejecutar o escribir: si pasa, dile que la conceda (no es un fallo, ver `.kit/ESTANDARES.md` si no eres Claude Code). Ya dentro, que escriba "empezamos" (o lanza tú `/configurar`) |
 
 ## Antes de nada — ¿es su primer curso?
 

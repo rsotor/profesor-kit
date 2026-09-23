@@ -107,6 +107,21 @@ test('.kit/adaptadores/ viaja con el motor; config/adaptador-llm.json (local, de
   assert.deepEqual(v.leerAdaptador(raiz, 'claude-code'), JSON.parse(local), 'el local sigue mandando tras actualizar');
 });
 
+// issue #33: instalar-skills.js se niega, con razón, a adivinar el destino de un LLM sin adaptador (ver
+// instalar-skills.test.js). Que actualizar.js lo reinstale automáticamente tras cada actualización no
+// puede tirar abajo toda la actualización por eso: avisa y sigue.
+test('sin adaptador para un LLM que no es Claude Code, la actualización avisa y sigue (no revierte)', t => {
+  const lineas = [];
+  t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
+  const { raiz, origen } = montar({
+    extraCurso: { 'config/ajustes.json': JSON.stringify({ subir_a_github: false, llm: 'un-llm-sin-adaptador', version_datos: 1 }) },
+  });
+  const r = actualizar({ raiz, origen });
+  assert.equal(r.actualizado, true);
+  assert.match(lineas.join('\n'), /Aviso: no hay adaptador para "un-llm-sin-adaptador"/);
+  assert.ok(!fs.existsSync(path.join(raiz, '.claude', 'skills', 'nueva')));
+});
+
 test('rechaza un motor que pretende tocar datos del alumno', () => {
   for (const mala of ['estudio', 'estudio/conceptos', 'estudio/progreso.md', 'config/alumno.md', '../fuera']) {
     const { raiz, origen } = montar({ motorNuevo: { ficheros: ['AGENTS.md', mala] } });

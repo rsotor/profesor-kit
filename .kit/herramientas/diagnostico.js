@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
+const { ejecutar } = require('./lib/proceso');
 const v = require('./lib/vault');
 const g = require('./lib/git');
 const { comprobar } = require('./comprobar');
@@ -11,8 +11,7 @@ const { MARCA, pathGuardado } = require('./crear-atajo');
 const NODE_MINIMO = 24;
 
 function ejecutarReal(comando, args, cwd) {
-  const r = spawnSync(comando, args, { cwd, encoding: 'utf8' });
-  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+  return ejecutar(comando, args, { cwd });
 }
 
 // Repasa la instalación entera y devuelve una lista de comprobaciones. Es la respuesta objetiva a
@@ -58,8 +57,15 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   if (adaptador && adaptador.skills) {
     anota('skills', existe(`${adaptador.skills}/sesion/SKILL.md`), 'Skills instaladas', 'Ejecuta instalar-skills.js (paso 6).');
   } else {
+    // Un curso puede llevar la nota vieja en prosa (config/adaptacion-llm.md, de antes de que existiera
+    // el JSON) sin haberla convertido nunca al formato que leen las herramientas: no es lo mismo que no
+    // tener nada, así que el arreglo se lo dice.
+    const notaVieja = existe('config/adaptacion-llm.md') && !existe('config/adaptador-llm.json');
     anota('skills', false, `Skills de ${ajustes.llm}: no se puede verificar`,
-      `No hay un adaptador para ${ajustes.llm}. Sigue .kit/ESTANDARES.md: escribe config/adaptador-llm.json en este curso y, al terminar, propón devolverlo al kit con una issue.`, false);
+      notaVieja
+        ? `Este curso tiene config/adaptacion-llm.md (la nota antigua, en prosa) pero no config/adaptador-llm.json, y "${ajustes.llm}" no tiene adaptador en el kit. Convierte esa nota al JSON que pide .kit/ESTANDARES.md (comando, skills, puente, permisos, probado) y, al terminar, propón devolverlo al kit con una issue.`
+        : `No hay un adaptador para ${ajustes.llm}. Sigue .kit/ESTANDARES.md: escribe config/adaptador-llm.json en este curso y, al terminar, propón devolverlo al kit con una issue.`,
+      false);
   }
 
   const lanzador = ajustes.atajo ? path.join(carpetaBin, plataforma === 'win32' ? `${ajustes.atajo}.cmd` : ajustes.atajo) : null;

@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
+const { ejecutar } = require('./lib/proceso');
 const v = require('./lib/vault');
 
 const MARCA = 'profesor-kit: lanzador de curso';
@@ -53,8 +53,7 @@ function perfilDeShell({ plataforma, entorno, casa }) {
 }
 
 function powershell(script) {
-  const r = spawnSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', script], { encoding: 'utf8' });
-  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+  return ejecutar('powershell', ['-NoProfile', '-NonInteractive', '-Command', script]);
 }
 const comillasPs = t => `'${t.replace(/'/g, "''")}'`;
 

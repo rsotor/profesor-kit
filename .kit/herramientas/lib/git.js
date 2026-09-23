@@ -1,14 +1,13 @@
 'use strict';
-const { spawnSync } = require('node:child_process');
+const { ejecutar, explicar } = require('./proceso');
 
 function intentarGit(raiz, args) {
-  const r = spawnSync('git', args, { cwd: raiz, encoding: 'utf8' });
-  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+  return ejecutar('git', args, { cwd: raiz });
 }
 
 function git(raiz, args) {
   const r = intentarGit(raiz, args);
-  if (!r.ok) throw new Error(`git ${args[0]} falló: ${r.salida}`);
+  if (!r.ok) throw new Error(`git ${args[0]} falló: ${explicar(r)}`);
   return r.salida;
 }
 

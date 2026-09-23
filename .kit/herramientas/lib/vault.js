@@ -207,13 +207,23 @@ function leerMotor(dir) {
   return JSON.parse(fs.readFileSync(path.join(dir, '.kit', 'motor.json'), 'utf8'));
 }
 
+// Identificadores viejos de `llm` que apuntan al adaptador de hoy: cursos creados antes de que el id se
+// afinara siguen funcionando sin tocar su config/ajustes.json. `codex-cli` es el nombre del ejecutable
+// que anunciaba `codex --version`; el adaptador del kit vive como `codex` (issue [adaptador] codex-cli).
+const ALIAS_LLM = { 'codex-cli': 'codex' };
+
 // El adaptador dice, para un LLM, dónde busca sus skills, qué comando lo abre, si necesita un fichero
 // puente hacia AGENTS.md y cómo se le dan permisos. `config/adaptador-llm.json` es el que ha escrito el
 // propio curso (vive en config/: /actualizar nunca lo toca) y manda sobre el que trae el kit en
 // `.kit/adaptadores/<llm>.json`, que solo existe para los LLMs ya verificados. Sin ninguno de los dos,
 // null: quien llama decide cómo avisar (ver .kit/ESTANDARES.md).
 function leerAdaptador(raiz, llm) {
-  for (const ruta of [path.join(raiz, 'config', 'adaptador-llm.json'), path.join(raiz, '.kit', 'adaptadores', `${llm}.json`)]) {
+  // El alias es un respaldo, nunca sustituye la búsqueda literal: si algún día existiera de verdad un
+  // adaptador `codex-cli.json` (un curso que lo escribió a mano antes de este cambio, por ejemplo), ese
+  // manda sobre el alias.
+  const rutas = [path.join(raiz, 'config', 'adaptador-llm.json')];
+  for (const id of [llm, ALIAS_LLM[llm]].filter(Boolean)) rutas.push(path.join(raiz, '.kit', 'adaptadores', `${id}.json`));
+  for (const ruta of rutas) {
     if (!fs.existsSync(ruta)) continue;
     try { return JSON.parse(fs.readFileSync(ruta, 'utf8')); } catch { return null; }
   }

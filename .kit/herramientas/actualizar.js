@@ -2,9 +2,9 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
 const v = require('./lib/vault');
 const g = require('./lib/git');
+const { ejecutar: ejecutarProceso, explicar } = require('./lib/proceso');
 const { guardar } = require('./guardar');
 const { escanearSecretos } = require('./lib/secretos');
 
@@ -20,18 +20,34 @@ function validarMotor(ficheros) {
   }
 }
 
+// `node <script>` no debería dar ENOENT ni EACCES en circunstancias normales (es el mismo intérprete que
+// ya está corriendo esto), pero un entorno restringido puede negarse a lanzar procesos hijos sin más
+// explicación: por eso pasa también por proceso.js, en vez de spawnSync a pelo.
 function nodo(script, args, cwd) {
-  return spawnSync(process.execPath, [script, ...args], { cwd, encoding: 'utf8' });
+  return ejecutarProceso(process.execPath, [script, ...args], { cwd });
 }
 
+// comprobar.js --json sale con el código 1 cuando el curso tiene errores: eso no es un fallo del proceso,
+// es su contrato (ver comprobar.js#cli). Lo que sí es un fallo real es que el proceso ni llegara a
+// arrancar (permiso denegado, comando inexistente): ahí no hay stdout que parsear, solo lo dice `motivo`.
 function contarErrores(dirKit, raiz) {
   const r = nodo(path.join(dirKit, '.kit', 'herramientas', 'comprobar.js'), ['--json', '--raiz', raiz], raiz);
+  if (['permiso', 'no-existe'].includes(r.motivo)) throw new Error(`comprobar.js falló: ${explicar(r)}`);
   return JSON.parse(r.stdout).errores.length;
 }
 
+// Sin adaptador para un LLM que no es Claude Code, instalar-skills.js se niega a adivinar destino (ver
+// instalar-skills.js): eso no es un fallo de la actualización, es que este curso aún no tiene su
+// config/adaptador-llm.json. Se avisa y se sigue, en vez de deshacer la actualización entera por esto.
 function reinstalarSkills(raiz) {
+  const ajustes = v.leerAjustes(raiz);
+  const adaptador = v.leerAdaptador(raiz, ajustes.llm);
+  if (!adaptador && ajustes.llm && ajustes.llm !== 'claude-code') {
+    console.log(`Aviso: no hay adaptador para "${ajustes.llm}"; no se han podido reinstalar las skills. Sigue .kit/ESTANDARES.md para escribir config/adaptador-llm.json y repite node .kit/herramientas/instalar-skills.js.`);
+    return;
+  }
   const r = nodo(path.join(raiz, '.kit', 'herramientas', 'instalar-skills.js'), [], raiz);
-  if (r.status !== 0) throw new Error(`instalar-skills falló: ${r.stderr}`);
+  if (!r.ok) throw new Error(`instalar-skills falló: ${explicar(r)}`);
 }
 
 function migracionesPendientes(raiz, desde) {
@@ -144,23 +160,34 @@ function actualizar({ raiz, origen }) {
 }
 
 function gh(args) {
-  const r = spawnSync('gh', args, { encoding: 'utf8' });
-  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+  return ejecutarProceso('gh', args);
 }
+
+function consultaEtiqueta(repo, ejecutar) {
+  return ejecutar(['api', `repos/${repo}/releases/latest`, '--jq', '.tag_name']);
+}
+const esEtiqueta = r => r.ok && /^v\d+\.\d+\.\d+$/.test(r.salida);
 
 // La versión publicada es la última **release** del kit (etiqueta `vX.Y.Z`), nunca lo que haya en `main`:
 // así a los cursos solo les llega lo que se ha decidido publicar, y se puede volver a una versión concreta.
 function etiquetaPublicada(repo, ejecutar = gh) {
-  const r = ejecutar(['api', `repos/${repo}/releases/latest`, '--jq', '.tag_name']);
-  return r.ok && /^v\d+\.\d+\.\d+$/.test(r.salida) ? r.salida : null;
+  const r = consultaEtiqueta(repo, ejecutar);
+  return esEtiqueta(r) ? r.salida : null;
 }
 
+// Sin sesión de `gh` o sin red, la consulta a la API falla igual que si `gh` no pudiera ni lanzarse
+// (sandbox) o no estuviera instalado: `motivo` (de proceso.js) distingue esos dos últimos casos, que no
+// son "sin sesión ni release" sino del entorno de quien lo ejecuta.
 function descargar(repo, ejecutar = gh) {
-  const etiqueta = etiquetaPublicada(repo, ejecutar);
-  if (!etiqueta) throw new Error('No se pudo saber cuál es la última versión publicada del kit (¿sesión de gh iniciada? ¿hay alguna release?)');
+  const consulta = consultaEtiqueta(repo, ejecutar);
+  if (!esEtiqueta(consulta)) {
+    const razon = ['permiso', 'no-existe'].includes(consulta.motivo) ? `: ${explicar(consulta)}` : ' (¿sesión de gh iniciada? ¿hay alguna release?)';
+    throw new Error(`No se pudo saber cuál es la última versión publicada del kit${razon}`);
+  }
+  const etiqueta = consulta.salida;
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'profesor-kit-'));
   const r = ejecutar(['repo', 'clone', repo, tmp, '--', '--depth', '1', '--branch', etiqueta, '-q']);
-  if (!r.ok) throw new Error(`No se pudo descargar el kit ${etiqueta}: ${r.salida}`);
+  if (!r.ok) throw new Error(`No se pudo descargar el kit ${etiqueta}: ${explicar(r)}`);
   return tmp;
 }
 

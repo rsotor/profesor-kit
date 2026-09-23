@@ -26,13 +26,24 @@ function instalarSkills({ raiz, destino = '.claude/skills' }) {
 
 // Sin --destino, se toma del adaptador del LLM que diga config/ajustes.json (config/adaptador-llm.json
 // si el curso tiene uno propio, si no el de .kit/adaptadores/<llm>.json). Sin ninguno de los dos, el
-// destino por defecto de instalarSkills() (Claude Code).
+// destino por defecto de instalarSkills() es el de Claude Code: solo vale si el curso de verdad usa
+// Claude Code (o no ha dicho nada). Para cualquier otro LLM sin adaptador, copiar ahí sería un error
+// silencioso (las skills quedarían donde ese asistente nunca las busca): se para y se explica qué falta.
 function cli(args, raiz) {
   const i = args.indexOf('--destino');
   let destino = i >= 0 ? args[i + 1] : undefined;
   if (!destino) {
-    const adaptador = v.leerAdaptador(raiz, v.leerAjustes(raiz).llm);
-    if (adaptador && adaptador.skills) destino = adaptador.skills;
+    const llm = v.leerAjustes(raiz).llm;
+    const adaptador = v.leerAdaptador(raiz, llm);
+    if (adaptador && adaptador.skills) {
+      destino = adaptador.skills;
+    } else if (llm && llm !== 'claude-code') {
+      console.log(`No sé dónde busca las skills "${llm}": no hay un adaptador para él (ni del kit, ni propio del `
+        + 'curso en config/adaptador-llm.json) y no se ha pasado --destino. No instalo nada en .claude/skills: es '
+        + 'la carpeta de Claude Code, no la suya. Sigue .kit/ESTANDARES.md para escribir config/adaptador-llm.json, '
+        + 'o repite con --destino <carpeta>.');
+      return 1;
+    }
   }
   const r = instalarSkills({ raiz, destino });
   console.log(`Skills instaladas: ${r.instaladas.join(', ') || 'ninguna'}${r.retiradas.length ? ` · retiradas: ${r.retiradas.join(', ')}` : ''}`);
