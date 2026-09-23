@@ -120,6 +120,19 @@ function comprobarPendientes(raiz, informe) {
   }
 }
 
+// "El error típico" nunca es algo que el curso "tuviera que entregar" (plan 0.22, arreglo 5b.1): si no lo
+// trae el material, se propone uno marcado como ampliación, o se borra la sección. Un FALTA INFO ahí es
+// casi siempre de más, y llenaba pendientes que el alumno no puede resolver.
+function comprobarFaltaInfoMalUsado(raiz, informe) {
+  for (const slug of v.listarConceptos(raiz)) {
+    const fichero = `conceptos/${slug}.md`;
+    const seccion = capturarSeccion(leer(raiz, fichero), 'El error típico');
+    if (seccion !== null && /FALTA INFO:/.test(seccion)) {
+      informe.avisos.push({ regla: 'falta-info-mal-usado', fichero, detalle: '"## El error típico" lleva FALTA INFO — no es algo que el curso tuviera que entregar: propón uno marcado como ampliación, o borra la sección' });
+    }
+  }
+}
+
 function comprobarPatrones(raiz, notas, informe) {
   for (const { patron, mensaje } of v.leerAjustes(raiz).patrones_prohibidos || []) {
     let regex;
@@ -457,6 +470,7 @@ function comprobar(raiz) {
   comprobarPatrones(raiz, notas, informe);
   comprobarQueSeVeraBien(raiz, notas, informe);
   comprobarPendientes(raiz, informe);
+  comprobarFaltaInfoMalUsado(raiz, informe);
   comprobarHuerfanos(raiz, notas, informe);
   comprobarDuplicados(raiz, informe);
   comprobarAlias(raiz, informe);

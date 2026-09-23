@@ -31,21 +31,17 @@
 
 ## Conceptos que costaron
 
-| Concepto | Qué costó | Prueba |
-|---|---|---|
-| [[interes-compuesto]] | Confundió interés simple con compuesto y no supo decir cuál crece más rápido | test inicial, pregunta 4 |
+- **colchon-financiero** — pidió otro ejemplo sin decir qué parte no entendía; se le dio uno con tres meses de facturación irregular en tabla. Falta ver si lo desbloqueó. — *duda en conceptos/colchon-financiero.md, 2026-09-23*
 
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
 
-| Concepto | Qué falla | Prueba |
-|---|---|---|
-| [[funciones-del-dinero]] | En los tres casos prácticos (preguntas 1, 2 y 3) responde con la definición genérica de las tres funciones en vez de identificar cuál aplica al caso concreto | examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md |
-| [[liquidez]] | No llega a identificar ni explicar la liquidez en ninguno de los dos casos (coche vs. urgencia; cuál es más líquido) | examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md |
-| [[presupuesto]] | Define qué es un presupuesto pero no calcula el ahorro del mes a partir de ingresos y gastos, en ninguno de los dos casos numéricos | examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md |
-| [[tasa-de-ahorro]] | Define qué es la tasa de ahorro pero no calcula el porcentaje ni compara dos meses por tasa, en los tres casos donde se pedía | examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md |
-| [[colchon-financiero]] | Confunde el colchón financiero con un gasto de imprevisto puntual, no calcula los meses de colchón y no relaciona el colchón con la liquidez del activo donde se guarda | examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md |
+- **funciones-del-dinero** — en las preguntas 1, 2 y 3 no elige ni nombra la función que se pedía: lista las tres. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
+- **presupuesto** — en las preguntas 8, 9 y 10 no da la cifra ni el significado que se pedían. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
+- **tasa-de-ahorro** — en las preguntas 13, 14 y 15 define el concepto pero no calcula el porcentaje ni elige opción. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
+- **colchon-financiero** — en las preguntas 16 a 20 describe algo distinto ("la tele nueva") o repite otro texto; no da ninguna cifra. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
+- **TODO:** las respuestas de ese examen son casi todas un mismo texto repetido bajo preguntas distintas. Puede ser un pegado por error y no falta de conocimiento; confirmar con el alumno antes de dar estos fallos por reales. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
 
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
@@ -55,11 +51,11 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | true | 1 | 2026-09-23 |
+| estudiada | sí | marcada (true) | 2 | 2026-09-23 · sesión 01-01-01, `estudiada: sí` |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| [[capital-y-tipo-de-interes]] | 1 | 2026-09-23 |
-| [[funciones-del-dinero]] | 1 | 2026-09-23 |
+| colchon-financiero | 1 | 2026-09-23 · conceptos/colchon-financiero.md |
+| sesión 01-01-01 (relación con el módulo) | 1 | 2026-09-23 · sesiones/…/01-01-01-el-dinero-y-sus-funciones.md |

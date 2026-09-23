@@ -22,3 +22,27 @@ test('arranque: un fallo inesperado lo dice, señala al kit y sale con 3', () =>
   assert.equal(r.status, 3);
   assert.match(r.stderr, /Fallo inesperado en x\.js: pum[\s\S]*Esto es del kit, no del curso/);
 });
+
+// issue #33: en un entorno restringido (sandbox de Codex), un permiso denegado al ejecutar o escribir no
+// es un fallo del kit — es del entorno del alumno, y decir "abre una issue" ahí solo confunde.
+test('arranque: un permiso denegado (EACCES/EPERM/EIO) no dice que sea "del kit"', () => {
+  const { spawnSync } = require('node:child_process');
+  const arranqueJs = JSON.stringify(path.join(RAIZ, '.kit', 'herramientas', 'lib', 'arranque.js'));
+  for (const codigo of ['EACCES', 'EPERM', 'EIO']) {
+    const script = `const e = new Error('denegado'); e.code = '${codigo}'; require(${arranqueJs}).arrancar(() => { throw e; }, '.', 'x.js')`;
+    const r = spawnSync(process.execPath, ['-e', script], { encoding: 'utf8' });
+    assert.equal(r.status, 3, codigo);
+    assert.match(r.stderr, /entorno restringido/, codigo);
+    assert.doesNotMatch(r.stderr, /Esto es del kit/, codigo);
+  }
+});
+
+test('arranque: un comando o fichero inexistente (ENOENT) tampoco es "del kit"', () => {
+  const { spawnSync } = require('node:child_process');
+  const arranqueJs = JSON.stringify(path.join(RAIZ, '.kit', 'herramientas', 'lib', 'arranque.js'));
+  const script = `const e = new Error('no encontrado'); e.code = 'ENOENT'; require(${arranqueJs}).arrancar(() => { throw e; }, '.', 'x.js')`;
+  const r = spawnSync(process.execPath, ['-e', script], { encoding: 'utf8' });
+  assert.equal(r.status, 3);
+  assert.match(r.stderr, /no encuentra un comando o un fichero/);
+  assert.doesNotMatch(r.stderr, /Esto es del kit/);
+});

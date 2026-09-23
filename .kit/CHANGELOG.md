@@ -13,6 +13,28 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.22.0
+- **Al abrir, tu profesor mira cómo está tu curso y te propone qué hacer**: seguir con lo que ya tienes
+  preparado, o preparar la clase nueva que acabas de dejar. Siempre te lo pregunta: decides tú.
+- **Preparar una clase ya no te deja esperando.** Mientras tu profesor la prepara (tarda unos diez minutos),
+  podéis hacer un repaso rápido, resolver dudas o un examen; o te vas a por un café y te avisa. Hacer las dos
+  cosas a la vez gasta más cuota, y te lo dice antes. Si cierras la ventana, la preparación sigue y se junta
+  cuando vuelvas; si apagas el ordenador, se para y te ofrece empezarla otra vez.
+- **Calentamiento:** al empezar, dos preguntas rápidas de lo que ya viste y vas a necesitar. Recordarlo tú solo
+  es de lo que más ayuda a fijarlo. Si no te apetece, di "ahora no".
+- Tus notas ya no dicen "falta información" cuando el material de clase no trae un error típico: tu profesor
+  propone uno, marcado como suyo, o quita el apartado. La nota **pendientes** queda solo con lo que de verdad
+  te toca resolver.
+- **Codex ya viene configurado** (skills en `.agents/skills`, sin fichero puente, permisos por herramienta), con
+  lo que aprendió la instalación real en Windows. Si tu asistente no es Claude y el kit no sabe dónde van sus
+  skills, ya no las deja en la carpeta de Claude: te dice qué falta.
+- **Mensajes más claros cuando algo falla por el entorno** (un permiso denegado, un programa que no está, la
+  sesión de GitHub): ya no dicen "esto es del kit" cuando no lo es, ni se quedan en blanco.
+- **Si ya tenías tu curso:** si usas Codex, tras actualizar tu profesor reinstala tus skills en su sitio, con la
+  configuración que trae el kit.
+- **Si ya tenías tu curso:** no tienes que hacer nada. Tu hoja *Cómo usar tu profesor* tiene un apartado nuevo,
+  "Cuando llega una clase nueva": tu profesor te ofrece ponerla al día.
+
 ## 0.21.0
 - **`estudio/formulario.md` y `estudio/ejercicios/_index.md` ahora se escriben solos**, como ya pasa con
   **inicio** y **pendientes**. El formulario reúne la fórmula de cada concepto que la tiene, por bloque, con

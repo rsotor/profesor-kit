@@ -1,0 +1,316 @@
+'use strict';
+// preparar.js con un asistente de mentira (asistente-de-mentira.js): un curso de verdad (clonado del
+// propio repo, con git de verdad) es la única forma honesta de probar `git worktree`, una rama nueva y un
+// merge con choques — cursoTemporal() no tiene historia de git. Se lanza siempre como el profesor lo
+// haría, con `node .kit/herramientas/preparar.js ...` DENTRO del curso clonado (nunca con require()
+// directo del módulo de este repo): así `--trabajar` recalcula su raíz igual que en producción.
+// Los escenarios están numerados y comparten un solo curso clonado (como extremo-a-extremo.test.js):
+// clonar de verdad para cada uno sería mucho más lento sin añadir nada.
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+const { temporal } = require('./ayuda');
+const { ficheroResoluble, pidVivo, construirPrompt } = require('../preparar');
+
+const KIT = path.resolve(__dirname, '..', '..', '..');
+const SCRIPT_ASISTENTE = path.join(__dirname, 'asistente-de-mentira.js');
+const casa = temporal('kit-preparar-');
+const curso = path.join(casa, 'curso');
+
+function ejecutar(cmd, args, cwd = curso, envExtra = {}) {
+  const r = spawnSync(cmd, args, { cwd, encoding: 'utf8', env: { ...process.env, ...envExtra } });
+  return { codigo: r.status, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+}
+function git(args, cwd = curso) { return ejecutar('git', args, cwd); }
+function herramienta(nombre, ...args) { return ejecutar(process.execPath, [path.join(curso, '.kit', 'herramientas', `${nombre}.js`), ...args]); }
+function leer(rel) { return fs.readFileSync(path.join(curso, ...rel.split('/')), 'utf8'); }
+function existe(rel) { return fs.existsSync(path.join(curso, ...rel.split('/'))); }
+function preparaciones() { return JSON.parse(herramienta('preparar', '--estado', '--json').salida); }
+
+// Espera activa CORTA (sin sleeps largos del harness): duerme de verdad con Atomics.wait, no gasta CPU.
+function dormir(ms) { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms); }
+function esperarTerminada(id) {
+  const limite = Date.now() + 20000;
+  for (;;) {
+    const [p] = preparaciones();
+    if (p && p.id === id && p.resultadoEnCaliente !== 'en-curso') return p;
+    if (Date.now() > limite) throw new Error(`tiempo agotado esperando que ${id} termine`);
+    dormir(50);
+  }
+}
+
+// El adaptador de un asistente que trabaja en segundo plano con asistente-de-mentira.js, con el id
+// grabado literal (el asistente de mentira no lee el prompt: el test ya sabe qué id le toca).
+function escribirAdaptador(idParaElAsistente) {
+  const adaptador = { comando: process.execPath, skills: '.claude/skills', permisos: { fichero: '.claude/settings.json', formato: 'x' } };
+  if (idParaElAsistente) adaptador.segundo_plano = [SCRIPT_ASISTENTE, idParaElAsistente, '{prompt}', '{modelo}'];
+  fs.writeFileSync(path.join(curso, 'config', 'adaptador-llm.json'), JSON.stringify(adaptador, null, 2));
+}
+function conFichero(id) {
+  fs.mkdirSync(path.join(curso, 'estudio', 'inbox'), { recursive: true });
+  fs.writeFileSync(path.join(curso, 'estudio', 'inbox', `${id}.md`), 'apuntes de mentira');
+  return [`${id}.md`];
+}
+function lanzar(id, ficheros = conFichero(id)) { return herramienta('preparar', '--lanzar', ...ficheros, '--id', id); }
+
+// Copia el repo entero como plantilla de instalación (motor + estudio/config de partida), tal como lo
+// dejaría clonar la plantilla del kit — pero desde la copia de trabajo actual, no de git: así no hace
+// falta commitear nada para probar un cambio en marcha. `preparar-curso.js` (más abajo) borra lo que
+// solo es del repo del kit, igual que al instalar de verdad.
+function copiarPlantilla() {
+  fs.mkdirSync(curso, { recursive: true });
+  fs.cpSync(KIT, curso, { recursive: true, filter: src => path.relative(KIT, src).split(path.sep)[0] !== '.git' });
+}
+
+test('0. montar un curso real (motor de la copia de trabajo actual) y comprobarlo sano', () => {
+  copiarPlantilla();
+  git(['init', '-q', '-b', 'main']);
+  for (const [k, val] of [['user.name', 'Prueba preparar.js'], ['user.email', 'preparar@example.com'], ['commit.gpgsign', 'false']]) git(['config', k, val]);
+  const p = herramienta('preparar-curso', '--subir', 'no', '--nombre', 'Curso de prueba de preparar.js');
+  assert.equal(p.codigo, 0, p.salida);
+  git(['add', '-A']); git(['commit', '-q', '-m', 'curso preparado']);
+  assert.equal(herramienta('comprobar', '--json').codigo, 0);
+});
+
+test('1. sin un adaptador con segundo_plano, --lanzar se niega (nunca lanza el `claude` real)', () => {
+  escribirAdaptador(null);   // adaptador sin `segundo_plano`: pisa .kit/adaptadores/claude-code.json
+  const r = lanzar('a0');
+  assert.equal(r.codigo, 1);
+  assert.match(r.salida, /no puede trabajar en segundo plano/);
+  assert.deepEqual(preparaciones(), []);
+});
+
+test('2. --lanzar crea la copia de trabajo (worktree + rama) y el asistente de mentira la termina', () => {
+  escribirAdaptador('b1');
+  const r = lanzar('b1');
+  assert.equal(r.codigo, 0, r.salida);
+  assert.match(r.salida, /Preparando la clase b1 en segundo plano/);
+  const dir = path.join(curso, '.preparacion', 'b1');
+  assert.ok(fs.existsSync(path.join(dir, 'estado.json')));
+  assert.equal(git(['rev-parse', '--verify', 'preparacion/b1']).codigo, 0, 'la rama existe');
+
+  const [antes] = preparaciones();
+  assert.equal(antes.id, 'b1');
+  assert.ok(['en-curso', 'terminada'].includes(antes.resultadoEnCaliente), antes.resultadoEnCaliente);
+
+  const terminada = esperarTerminada('b1');
+  assert.equal(terminada.resultado, 'terminada');
+  assert.ok(terminada.fin);
+  assert.match(herramienta('preparar', '--estado').salida, /Terminada: b1/);
+  // El asistente de mentira guardó dentro del worktree, en su propia rama: nunca en el curso principal.
+  assert.ok(fs.existsSync(path.join(dir, 'estudio', 'conceptos', 'concepto-b1.md')));
+  assert.ok(!existe('estudio/conceptos/concepto-b1.md'));
+});
+
+test('3. una sola preparación a la vez: --lanzar se niega mientras hay una en marcha o terminada sin juntar', () => {
+  // Terminada sin juntar (sigue de 2): otro --lanzar se niega.
+  const r1 = lanzar('otra');
+  assert.equal(r1.codigo, 1);
+  assert.match(r1.salida, /terminada sin juntar \(b1\)/);
+
+  assert.equal(herramienta('preparar', '--juntar', 'b1').codigo, 0);   // se limpia para el siguiente paso
+
+  // Y con una EN MARCHA (dos --lanzar seguidos, sin esperar entre medias: el segundo pid casi siempre
+  // sigue vivo en ese instante), el segundo también se niega — o, si ya ha terminado, por "terminada".
+  escribirAdaptador('c1');
+  const primero = lanzar('c1');
+  assert.equal(primero.codigo, 0, primero.salida);
+  const segundo = lanzar('c1b');
+  assert.equal(segundo.codigo, 1);
+  assert.match(segundo.salida, /(en marcha \(c1\)|terminada sin juntar \(c1\))/);
+
+  esperarTerminada('c1');
+  assert.equal(herramienta('preparar', '--juntar', 'c1').codigo, 0);
+});
+
+test('4. juntar sin choques: mezcla, comprueba, comitea "(preparada en segundo plano)" y borra la copia', () => {
+  escribirAdaptador('d1');
+  assert.equal(lanzar('d1').codigo, 0);
+  esperarTerminada('d1');
+
+  const antesDeJuntar = git(['rev-parse', 'HEAD']).salida;
+  const r = herramienta('preparar', '--juntar', 'd1');
+  assert.equal(r.codigo, 0, r.salida);
+  assert.match(r.salida, /Juntada: sesion\(d1\): .* \(preparada en segundo plano\)/);
+  assert.notEqual(git(['rev-parse', 'HEAD']).salida, antesDeJuntar);
+  assert.ok(existe('estudio/conceptos/concepto-d1.md'), 'el concepto de la clase llega al curso principal');
+  assert.match(leer('config/diario.md'), /preparada en segundo plano/);
+  assert.equal(git(['status', '--porcelain']).salida, '', 'working tree limpio');
+  assert.equal(git(['rev-parse', '--verify', 'preparacion/d1']).codigo, 128, 'la rama se borra al juntar');
+  assert.ok(!fs.existsSync(path.join(curso, '.preparacion', 'd1')), 'la copia de trabajo se borra al juntar');
+  assert.deepEqual(preparaciones(), []);
+});
+
+test('5. juntar con diario.md y los ficheros generados en conflicto: se resuelven solos', () => {
+  escribirAdaptador('e1');
+  assert.equal(lanzar('e1').codigo, 0);
+
+  // Mientras tanto, "tutoría" en primer plano: el alumno marca la clase d1 (de antes) como estudiada.
+  // Esto no toca ni conceptos/_index.md ni progreso.md (esos son líneas nuevas de cada lado, y ya se
+  // vio en el escenario 4 que git los junta solo): solo cambia una línea EXISTENTE de una nota, que
+  // obliga a recalcular inicio.md de forma distinta a como lo hace la preparación (que no sabe nada de
+  // este cambio) — el choque real que preparar.js tiene que resolver solo — y deja su propia línea en
+  // config/diario.md (el otro choque previsto, con el driver union).
+  const sesionD1 = path.join(curso, 'estudio', 'sesiones', 'd1-clase-de-mentira.md');
+  fs.writeFileSync(sesionD1, fs.readFileSync(sesionD1, 'utf8').replace('bloque: 1', 'bloque: 1\nestudiada: true'));
+  const g = herramienta('guardar', 'dudas: d1 marcada como estudiada, en paralelo');
+  assert.equal(g.codigo, 0, g.salida);
+  assert.match(leer('config/diario.md'), /en paralelo/);
+
+  esperarTerminada('e1');
+  const r = herramienta('preparar', '--juntar', 'e1');
+  assert.equal(r.codigo, 0, r.salida);
+  assert.ok(existe('estudio/conceptos/concepto-e1.md'), 'lo de la preparación llega');
+  assert.match(leer('estudio/sesiones/d1-clase-de-mentira.md'), /estudiada: true/, 'lo de la tutoría en paralelo no se pierde');
+  const diario = leer('config/diario.md');
+  assert.match(diario, /en paralelo/);
+  assert.match(diario, /sesion\(e1\).*preparada en segundo plano/);
+  assert.equal(git(['status', '--porcelain']).salida, '');
+});
+
+test('6. un choque real (el mismo fichero de contenido tocado en los dos lados) aborta sin tocar nada', () => {
+  // El orden importa: para que sea un choque de verdad, los dos lados tienen que partir del MISMO
+  // "Uno." — la preparación se lanza (y bifurca su copia) ANTES de que la tutoría edite esa misma línea
+  // en la rama principal, no al revés.
+  const ficheroDisputado = 'estudio/conceptos/concepto-b1.md';
+  const abs = path.join(curso, ...ficheroDisputado.split('/'));
+  assert.match(fs.readFileSync(abs, 'utf8'), /Uno\./, 'de partida, los dos lados tienen "Uno."');
+
+  escribirAdaptador('f1');
+  const r = ejecutar(process.execPath, [path.join(curso, '.kit', 'herramientas', 'preparar.js'), '--lanzar', ...conFichero('f1'), '--id', 'f1'], curso, {
+    PROFESOR_KIT_ASISTENTE_DE_MENTIRA_EDITA: ficheroDisputado,
+  });
+  assert.equal(r.codigo, 0, r.salida);
+
+  fs.writeFileSync(abs, fs.readFileSync(abs, 'utf8').replace('Uno.', 'Editado desde la tutoría.'));
+  assert.equal(herramienta('guardar', 'dudas: tocando concepto-b1').codigo, 0);
+  const antes = git(['rev-parse', 'HEAD']).salida;
+
+  esperarTerminada('f1');
+  const j = herramienta('preparar', '--juntar', 'f1');
+  assert.equal(j.codigo, 1);
+  assert.match(j.salida, new RegExp(ficheroDisputado.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.equal(git(['rev-parse', 'HEAD']).salida, antes, 'el curso principal no se ha movido');
+  assert.equal(git(['status', '--porcelain']).salida, '', 'sin merge a medias');
+  assert.equal(git(['rev-parse', '--verify', 'preparacion/f1']).codigo, 0, 'la rama se conserva para reintentar');
+  assert.ok(fs.existsSync(path.join(curso, '.preparacion', 'f1')), 'la copia se conserva');
+
+  // Se limpia a mano para no dejar basura a los siguientes escenarios.
+  git(['worktree', 'remove', '--force', path.join(curso, '.preparacion', 'f1')]);
+  git(['branch', '-D', 'preparacion/f1']);
+});
+
+test('7. fallo del asistente: queda "fallida", con su registro, y --juntar se niega', () => {
+  escribirAdaptador('g1');
+  const r = ejecutar(process.execPath, [path.join(curso, '.kit', 'herramientas', 'preparar.js'), '--lanzar', ...conFichero('g1'), '--id', 'g1'], curso, {
+    PROFESOR_KIT_ASISTENTE_DE_MENTIRA_FALLA: '1',
+  });
+  assert.equal(r.codigo, 0, r.salida);
+
+  const fallida = esperarTerminada('g1');
+  assert.equal(fallida.resultado, 'fallida');
+  assert.match(fs.readFileSync(path.join(curso, '.preparacion', 'g1', 'registro.txt'), 'utf8'), /fallo simulado/);
+  assert.match(herramienta('preparar', '--estado').salida, /Fallida: g1/);
+
+  const j = herramienta('preparar', '--juntar', 'g1');
+  assert.equal(j.codigo, 1);
+  assert.match(j.salida, /falló/);
+});
+
+test('8. interrumpida (pid muerto): --estado lo dice, y el siguiente --lanzar descarta la copia sola', () => {
+  // g1 sigue "fallida" de antes: --lanzar ya la descartaría igual, pero forzamos aquí el caso
+  // "interrumpida" de verdad reescribiendo su estado.json con un pid que no existe y resultado
+  // "en-curso" (como si el ordenador se hubiera apagado a medio camino).
+  const estadoJson = path.join(curso, '.preparacion', 'g1', 'estado.json');
+  const estado = JSON.parse(fs.readFileSync(estadoJson, 'utf8'));
+  const pidImposible = 2 ** 30;   // no hay proceso real con este pid
+  fs.writeFileSync(estadoJson, JSON.stringify({ ...estado, pid: pidImposible, resultado: 'en-curso', fin: null }));
+
+  const [enCaliente] = preparaciones();
+  assert.equal(enCaliente.resultadoEnCaliente, 'interrumpida');
+  assert.match(herramienta('preparar', '--estado').salida, /Interrumpida: g1/);
+  // El contrato de estado.json no cambia solo por leerlo: "en-curso" tal cual lo escribiría estado.js.
+  assert.equal(JSON.parse(fs.readFileSync(estadoJson, 'utf8')).resultado, 'en-curso');
+
+  escribirAdaptador('h1');
+  const r = lanzar('h1');
+  assert.equal(r.codigo, 0, r.salida);
+  assert.ok(!fs.existsSync(path.join(curso, '.preparacion', 'g1')), 'la interrumpida se descarta sola');
+  assert.equal(git(['rev-parse', '--verify', 'preparacion/g1']).codigo, 128, 'y su rama también');
+
+  esperarTerminada('h1');
+  assert.equal(herramienta('preparar', '--juntar', 'h1').codigo, 0);
+});
+
+test('9. sin ficheros, con un fichero que no existe en inbox, o sin id: se niega antes de tocar git', () => {
+  escribirAdaptador('i1');
+  assert.match(herramienta('preparar', '--lanzar', '--id', 'i1').salida, /falta al menos un fichero/);
+  assert.match(herramienta('preparar', '--lanzar', 'no-existe.md', '--id', 'i1').salida, /no está en estudio\/inbox/);
+  assert.match(herramienta('preparar', '--lanzar', ...conFichero('i1'), '--id', 'a/b').salida, /el id de la sesión/);
+  assert.deepEqual(preparaciones(), []);
+});
+
+test('10. --estado sin ninguna preparación no revienta', () => {
+  assert.match(herramienta('preparar', '--estado').salida, /No hay ninguna preparación en marcha/);
+  assert.deepEqual(preparaciones(), []);
+});
+
+test('ficheroResoluble: los generados y los pies de sesión sí, el contenido de una nota no', () => {
+  assert.equal(ficheroResoluble('estudio/inicio.md'), true);
+  assert.equal(ficheroResoluble('estudio/pendientes.md'), true);
+  assert.equal(ficheroResoluble('estudio/formulario.md'), true);
+  assert.equal(ficheroResoluble('estudio/auditoria-del-material.md'), true);
+  assert.equal(ficheroResoluble('estudio/ejercicios/_index.md'), true);
+  assert.equal(ficheroResoluble('estudio/sesiones/01-01-intro.md'), true);
+  assert.equal(ficheroResoluble('README.md'), true);
+  assert.equal(ficheroResoluble('estudio/conceptos/velocidad-media.md'), false);
+  assert.equal(ficheroResoluble('config/diario.md'), false);   // ese lo resuelve el driver union, no esto
+});
+
+test('pidVivo: el propio proceso está vivo, un pid inventado no', () => {
+  assert.equal(pidVivo(process.pid), true);
+  assert.equal(pidVivo(2 ** 30), false);
+  assert.equal(pidVivo(null), false);
+});
+
+test('construirPrompt: dice que trabaja en segundo plano, no pregunta, y lleva los ficheros y el id', () => {
+  const prompt = construirPrompt(['a.md', 'b.md'], '01-02');
+  assert.match(prompt, /segundo plano/);
+  assert.match(prompt, /no preguntes nada/);
+  assert.match(prompt, /estudio\/inbox\/a\.md y estudio\/inbox\/b\.md/);
+  assert.match(prompt, /id 01-02/);
+});
+
+test('juntarPorFilas: las filas del curso principal mandan y las nuevas de la preparación van detrás de la última', () => {
+  const { juntarPorFilas } = require('../preparar');
+  const clave = l => (/^\|\s*\[\[([^\]|\\#]+)/.exec(l) || [])[1];
+  const ours = '# Progreso\n\n| Concepto | T | A |\n|---|---|---|\n| [[a]] | ✅ | ⬜ |\n| [[b]] | 🟡 | ⬜ |\n\nnota final\n';
+  const theirs = '# Progreso\n\n| Concepto | T | A |\n|---|---|---|\n| [[a]] | ⬜ | ⬜ |\n| [[b]] | ⬜ | ⬜ |\n| [[c]] | ⬜ | ⬜ |\n\nnota final\n';
+  assert.equal(juntarPorFilas(ours, theirs, clave),
+    '# Progreso\n\n| Concepto | T | A |\n|---|---|---|\n| [[a]] | ✅ | ⬜ |\n| [[b]] | 🟡 | ⬜ |\n| [[c]] | ⬜ | ⬜ |\n\nnota final\n');
+  assert.equal(juntarPorFilas('sin tabla\n', theirs, clave), null, 'sin filas propias no se adivina');
+});
+
+// El caso de la prueba real de la 0.22: mientras la preparación añade su fila al final de progreso.md, la tutoría
+// cambia el estado de la última fila (un examen). Quedan pegadas y git no las junta solo.
+test('juntar: progreso.md tocado en los dos lados (estado cambiado y fila nueva pegados) se junta por concepto', () => {
+  escribirAdaptador('p1');
+  assert.equal(herramienta('preparar', '--lanzar', ...conFichero('p1'), '--id', 'p1').codigo, 0);
+  const rel = 'estudio/progreso.md';
+  const abs = path.join(curso, ...rel.split('/'));
+  const lineas = fs.readFileSync(abs, 'utf8').split('\n');
+  const ultima = lineas.map((l, i) => [l, i]).filter(([l]) => /^\|\s*\[\[/.test(l)).pop();
+  assert.ok(ultima, 'hay alguna fila de concepto');
+  lineas[ultima[1]] = ultima[0].replace('⬜', '✅');
+  fs.writeFileSync(abs, lineas.join('\n'));
+  assert.equal(herramienta('guardar', 'examen: en paralelo').codigo, 0);
+  esperarTerminada('p1');
+  const j = herramienta('preparar', '--juntar', 'p1');
+  assert.equal(j.codigo, 0, j.salida);
+  const progreso = leer(rel);
+  assert.ok(progreso.includes(lineas[ultima[1]]), 'el estado que demostró el alumno se conserva');
+  assert.match(progreso, /\[\[concepto-p1\]\] \| ⬜ \| ⬜ \|/, 'la fila nueva de la preparación llega');
+  assert.equal(git(['status', '--porcelain']).salida, '');
+});

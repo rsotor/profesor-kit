@@ -3,71 +3,60 @@
 > Lo genera tu profesor cada vez que guarda: **no lo edites**. Lo que hay que saberse de cada concepto, por
 > bloque: su fórmula si la tiene, y si no, su definición en una frase.
 
-## Bloque 1
+## Bloque modulo-01
 
-### [[colchon-financiero|El colchón financiero]]
+### [[colchon-financiero|Colchón financiero]]
 
-$$ meses\ de\ colch\acute{o}n = \dfrac{\text{dinero líquido ahorrado}}{\text{gastos totales de un mes}} $$
+$$ \text{colchón} = \text{meses a cubrir} \times \text{gastos del mes} $$
 
-Dinero líquido: el que puedes usar ya, sin esperar ni perder valor (ver [[liquidez]]).
+### [[inflacion|Inflación]]
 
-### [[ingreso-medio|El ingreso medio]]
+$$ \text{poder de compra dentro de un año} = \frac{C}{1+i} $$
 
-$$ ingreso\ medio = \dfrac{\text{suma de los ingresos de 6-12 meses}}{\text{número de meses}} $$
+$C$ es el dinero que tendrás y $i$ es la inflación anual en tanto por uno (0,03 equivale a 3 % anual). Con $C$ = 100,00 € el resultado es 97,09 €, que en clase se redondeó a "unos 97 €".
 
-Cuantos más meses metas (hasta 12), menos pesa un mes suelto especialmente bueno o especialmente malo.
+> [!info] Ampliación fuera de los apuntes
+> La clase solo da el ejemplo de 100,00 € y 3 % anual; la fórmula general la he deducido de él.
 
-### [[presupuesto|El presupuesto]]
+### [[presupuesto|Presupuesto]]
 
-$$ ahorro = ingresos - gastos $$
+$$ \text{ahorro del mes} = \text{ingresos del mes} - \text{gastos del mes} $$
 
-Ingresos y gastos, los de un mismo mes. Si el resultado es negativo, no ahorras: gastas más de lo que
-entra ese mes.
+Es una resta. Si sale negativa, has gastado más de lo que entró.
 
-### [[tasa-de-ahorro|La tasa de ahorro]]
+### [[tasa-de-ahorro|Tasa de ahorro]]
 
-$$ tasa\ de\ ahorro = \dfrac{ahorro}{ingresos} \times 100 $$
+$$ \text{tasa de ahorro} = \frac{A}{I} \times 100 $$
 
-El resultado es un porcentaje: cuánto de lo que ingresas ese mes te queda, no cuánto dinero en cifra
-absoluta.
+$A$ es el ahorro del mes e $I$ los ingresos del mes. Se mide sobre el mes, por eso se dice "mensual". Con las cifras de clase: 655,00 ÷ 1.850,00 × 100 ≈ **35,4 % mensual**.
 
 ### Definiciones
 
-- [[funciones-del-dinero|Las tres funciones del dinero]]: el dinero resuelve el problema del trueque haciendo a la vez de medio de cambio, unidad de cuenta y depósito de valor.
-- [[gastos-fijos-y-variables|Gastos fijos y variables]]: un gasto es fijo si tú no decides su cifra cada mes, y variable si sí la decides, aunque lo pagues todos los meses.
-- [[inflacion|La inflación]]: la inflación es la subida general y sostenida de los precios: con el mismo dinero,
-- [[liquidez|La liquidez]]: la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin
-- [[masa-monetaria|La masa monetaria (M1)]]: el M1 mide la cantidad de dinero en manos del público; es un indicador que sale en las
+- [[funciones-del-dinero|Las funciones del dinero]]: el dinero sirve a la vez como medio de cambio, unidad de cuenta y depósito de valor, y con eso resuelve los problemas del trueque.
+- [[gastos-fijos-y-variables|Gastos fijos y variables]]: un gasto es fijo si se repite cada mes con casi la misma cifra sin que tú decidas; es variable si la cifra la decides tú cada mes.
+- [[liquidez|Liquidez]]: lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
-## Bloque 2
+## Bloque modulo-02
 
-### [[capitalizacion|La capitalización]]
-
-$$ C_f = C \cdot \left(1 + \dfrac{i}{m}\right)^{m \cdot n} $$
-
-`i` es el tipo de interés nominal anual en tanto por uno, `m` las veces que se capitaliza al año (1 si es
-anual, 4 si es trimestral, 12 si es mensual) y `n` los años.
-
-### [[interes-compuesto|El interés compuesto]]
+### [[interes-compuesto|Interés compuesto]]
 
 $$ C_f = C \cdot (1 + i)^n $$
 
-`C` es el capital inicial, `i` el tipo de interés en tanto por uno y `n` el número de periodos de
-capitalización (si `i` es anual, `n` en años).
+$C$ es el capital inicial, $i$ el tipo en tanto por uno y $n$ el número de periodos de capitalización (si $i$ es anual, $n$ en años). Con las cifras de clase: 1.000,00 × 1,05³ = 1.000,00 × 1,157625 = **1.157,63 €**.
 
-### [[interes-simple|El interés simple]]
+### [[interes-simple|Interés simple]]
 
-$$ I = C \cdot i \cdot t $$
+$$ I = C \cdot i \cdot t \qquad C_f = C + I $$
 
-`C` es el capital inicial, `i` el tipo de interés en tanto por uno (5% anual = 0,05) y `t` el tiempo en el
-mismo periodo que `i` (si `i` es anual, `t` en años). El capital final es $C_f = C + I$.
+$C$ es el capital inicial, $i$ el tipo en tanto por uno (5 % anual = 0,05) y $t$ el tiempo **en el mismo periodo que $i$** (si $i$ es anual, $t$ en años). Con las cifras de clase: 1.000,00 × 0,05 × 3 = **150,00 €**.
 
-### [[regla-del-72|La regla del 72]]
+### [[regla-del-72|Regla del 72]]
 
-$$ n \approx \dfrac{72}{i} $$
+$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, sin el símbolo de tanto por ciento}} $$
 
-`i` es el tipo de interés anual, en número y sin el símbolo (6% anual → 6, no 0,06). `n` sale en años.
+Se divide 72 entre el número del tipo anual. Solo sirve con interés compuesto.
 
 ### Definiciones
 
-- [[capital-y-tipo-de-interes|El capital y el tipo de interés]]: el capital es el dinero de partida, y el tipo de interés es el precio de tenerlo prestado un tiempo — un porcentaje que no dice nada si no lleva su periodo (anual, mensual, diario) pegado.
+- [[capital-y-tipo-de-interes|Capital y tipo de interés]]: el capital es el dinero del que partes, y el tipo de interés es el precio de tenerlo prestado durante un tiempo, siempre dicho con su periodo.
+- [[capitalizacion|Capitalización]]: la capitalización es cada cuánto se suman los intereses al capital; cuanto más a menudo, más rápido crece.

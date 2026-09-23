@@ -4,55 +4,40 @@
 > de cada clase (cifras que no cuadran, diapositivas vacías, plantillas tocadas). Es control de calidad del
 > material, no contenido del curso: sirve para no tropezar dos veces y para contárselo al centro.
 
-## Bloque 1
+## Bloque modulo-01
 
 ### [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]]
 
-Fuente única para esta clase (apuntes exportados de PDF a markdown): no hay otros ficheros con los que
-compararla.
-Comprobado con cálculo propio: 100,00 € con una inflación del 3% anual dan 100 / 1,03 ≈ 97,09 €, coincide
-con la aproximación del material ("unos 97,00 €"). Sin discrepancia.
-⚠️ **FALTA INFO:** la diapositiva 6 ("El patrón oro") llega vacía en la exportación —solo el título, sin
-texto ni notas del profesor—. Puede ser un fallo de exportación PDF→texto, o que la diapositiva original
-solo tuviera una imagen o un gráfico sin texto seleccionable. No se puede saber cuál de las dos sin ver el
-PDF o las diapositivas originales.
+- **Diapositiva 6 vacía:** solo tiene el título y un comentario que dice que no hay más texto ni notas del profesor. Puede ser un fallo de la exportación o una diapositiva realmente vacía.
+- **Cifras sin decimales:** la clase escribe "40 €", "12 €" y "97 €". Las notas usan dos decimales (40,00 €, 12,00 €), como pide el curso.
+- **La cifra "unos 97 €" es aproximada:** 100 / 1,03 = 97,09. La diferencia es de 9 céntimos, aceptable como redondeo, pero las notas usan 97,09 €.
+- **Diapositiva 4, redacción:** dice el periodo dos veces seguidas ("al año" y "anual") para la misma cifra; en las notas se dice una sola vez, como "3 % anual".
 
 ### [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]]
 
-Comprobado con cálculo propio el ejemplo de la diapositiva 4: 650,00 + 40,00 + 25,00 = 715,00 € de fijos;
-715,00 + 480,00 = 1.195,00 € de gastos totales; 1.850,00 − 1.195,00 = 655,00 € de ahorro; 655 ÷ 1.850 ×
-100 ≈ 35,4% mensual. Todo cuadra: sin discrepancia dentro de los apuntes.
-**Comparado con la plantilla de la hoja de cálculo, sí hay una discrepancia**, y parece un error real de
-la plantilla, no un matiz de estilo:
-- La hoja "Gastos fijos" muestra Suscripciones en **52,00 €** (según la nota de quien la exportó, el
-  profesor lo subió en directo desde 25,00 € "se le había olvidado una, la del gimnasio"), pero la celda
-  del total (`=B2+B3+25`) sigue sumando el **25 antiguo escrito a mano**, no la celda de Suscripciones. El
-  total que enseña la hoja sigue en 715,00 €.
-- El total real de gastos fijos, con la cifra nueva, es 650,00 + 40,00 + 52,00 = **742,00 €**: 27,00 € más
-  de lo que muestra la celda.
-- Eso arrastra el resto de la hoja "Resumen": el total de gastos real sería 742,00 + 480,00 = 1.222,00 €
-  (no 1.195,00 €), el ahorro real 1.850,00 − 1.222,00 = 628,00 € (no 655,00 €), y la tasa de ahorro real
-  628 ÷ 1.850 × 100 ≈ 33,9% mensual (no ≈35,4% mensual).
-- Los apuntes de la diapositiva 4 nunca se actualizaron con el cambio en directo: siguen con
-  Suscripciones a 25,00 €, coherentes entre sí pero ya no coherentes con la plantilla.
-Las notas de concepto usan las cifras de los **apuntes** (25,00 € de suscripciones, 715,00 € de fijos),
-que son internamente consistentes: es el material "oficial" de la clase. La plantilla queda señalada aquí
-como lo que es, un fallo de la hoja de cálculo de apoyo, no como una fuente alternativa de las cifras del
-ejemplo.
+Control de calidad del material, no contenido del curso. Revisadas las fórmulas de la hoja, no solo los valores; comparada con las diapositivas.
+- **Suscripciones no cuadra entre diapositivas y hoja:** las diapositivas dicen 25,00 €; la hoja muestra 52,00 € en B4 (según la nota de quien exporta, se cambió en directo por olvidar el gimnasio). Diferencia: 27,00 €.
+- **La fórmula de "Total fijos" no suma B4:** en la hoja, B5 es `=B2+B3+25`, con el 25 escrito a mano. Por eso el total sigue en 715,00 € aunque B4 ya diga 52,00 €. Sumando las celdas de verdad: 650,00 + 40,00 + 52,00 = **742,00 €**.
+- **El error se arrastra a toda la hoja "Resumen":**
+| | Hoja / diapositivas | Con Suscripciones a 52,00 € |
+|---|---|---|
+| Total fijos | 715,00 € | 742,00 € |
+| Total gastos | 1.195,00 € | 1.222,00 € |
+| Ahorro | 655,00 € | 628,00 € |
+| Tasa de ahorro | 35,4 % mensual | 33,9 % mensual |
+| Colchón de 3 meses | 3.585,00 € | 3.666,00 € |
+- **Gastos variables:** `=SUMA(B2:B4)` da 480,00 €, correcto y coincide con las diapositivas.
+- **Tasa de ahorro con distinto redondeo:** la hoja muestra la cifra sin decimales (35, sin periodo) y la diapositiva 35,4 % mensual. Es el mismo resultado (655 ÷ 1.850 = 35,41 % mensual), solo cambia el formato de la celda; la hoja tampoco dice el periodo.
+- **Cifras sin decimales en las diapositivas** ("1.195 €" en la diapositiva 6): las notas usan dos decimales, como pide el curso.
+- **Qué cifra vale es una decisión pendiente:** las notas usan la de las diapositivas (25,00 €), la más conservadora, y avisan del conflicto. No se ha dado por buena ninguna de las dos.
 
-## Bloque 2
+## Bloque modulo-02
 
 ### [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]]
 
-Fuente única para esta clase (apuntes exportados a texto): no hay otros ficheros con los que compararla.
-Comprobado con cálculo propio el ejemplo de la diapositiva 2: 1.000 × 0,05 × 3 = 150,00 € de intereses,
-1.150,00 € de capital final. Coincide con el material.
-Comprobado con cálculo propio el ejemplo de la diapositiva 3: 1.000 × 1,05³ = 1.157,63 €, 7,63 € más que
-el interés simple. Coincide con el material, incluida la diferencia exacta.
-Comprobado con cálculo propio el ejemplo de la diapositiva 5 (regla del 72): 72 ÷ 6 = 12 años
-aproximados; el cálculo exacto (ln 2 ÷ ln 1,06 ≈ 11,9 años) coincide con lo que dice el material. También
-se ha comprobado, con un barrido de tipos de interés anuales entre el 1% anual y el 30% anual, que la
-aproximación se queda corta (da menos años de los reales) por encima de aproximadamente un 8% anual, y se
-pasa (da más años de los reales) por debajo: el material no lo dice explícitamente, pero es consistente
-con que marque la aproximación como tal y no como el resultado exacto.
-Sin discrepancias dentro de los apuntes.
+Control de calidad del material, no contenido del curso. Solo hay un fichero de clase (sin hoja de cálculo); se han reproducido todas las cifras.
+- **Cuadran:** 1.000 × 0,05 × 3 = 150,00 €; 1,05³ = 1,157625 → 1.157,63 €; la diferencia con el simple es 7,63 €; la regla del 72 al 6 % anual da 12 años y el cálculo exacto 11,9 años.
+- **Diapositiva 1, tasa sin periodo:** la frase de los apuntes sobre "el cinco por ciento" va sin periodo a propósito, para ilustrar el error. Las notas dicen siempre "5 % anual".
+- **Diapositiva 4, sin cifras:** dice que la capitalización mensual da "algo más", pero no cuánto. Con 1.000,00 € al 5 % anual son 1.051,16 € frente a 1.050,00 €: 1,16 € más (cálculo del profesor, marcado como ampliación en la nota).
+- **Diapositiva 5, error de la aproximación:** solo se da un caso. Contrastada con la fórmula exacta: a 3 % anual, 24 años frente a 23,4; a 8 % anual, 9 frente a 9,0; a 12 % anual, 6 frente a 6,1. Es buena aproximación en ese rango.
+- **Cifras sin símbolo de porcentaje con periodo:** la fórmula de la diapositiva 5 habla de "tipo anual, en número", correcto.

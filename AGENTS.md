@@ -101,11 +101,13 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 ## Avisos pedagógicos de `comprobar.js`
 
 La calidad del material no puede depender solo de que sigas la skill al pie de la letra: `comprobar.js`
-también vigila seis señales de calidad pedagógica, calculadas desde disco. `nota-larga` (no cabe en una
+también vigila siete señales de calidad pedagógica, calculadas desde disco. `nota-larga` (no cabe en una
 pantalla), `concepto-sin-ejemplo` (falta "## El ejemplo" o está sin rellenar), `sesion-incompleta` (falta
 "## Cobertura del material", "## Auditoría del material" o "## Para pensarlo despacio"),
 `flashcards-fuera-de-rango` (el número no cae en `flashcards_por_sesion`), `requiere-vacio` (dificultad: 3
-sin `requiere:`) y `pregunta-doble` (una pregunta de examen con dos signos de interrogación).
+sin `requiere:`), `pregunta-doble` (una pregunta de examen con dos signos de interrogación) y
+`falta-info-mal-usado` ("## El error típico" con `FALTA INFO`, cuando lo que toca es proponer uno como
+ampliación o borrar la sección).
 
 **Se arreglan siempre antes de guardar**, igual que `no-se-vera-bien`, salvo que tengas un motivo concreto
 para dejarlos (un concepto que de verdad no se puede partir sin perder sentido, una sesión cuyo material no
@@ -184,6 +186,49 @@ usa ninguna herramienta y él la quiere, déjala y apúntalo en la tabla para no
 2. Lo primero, en silencio: `node .kit/herramientas/actualizar.js --comprobar`. Si imprime algo, hay una versión
 nueva del kit: díselo al alumno en **una línea** al saludar y sigue con lo suyo; no le insistas ni actualices
 sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al día y nunca bloquea.)
+3. **Mira cómo está el curso:** `node .kit/herramientas/estado.js --json` — material nuevo sin procesar en
+   `estudio/inbox/`, siguiente sesión sin estudiar, sesiones preparadas sin estudiar, sesiones en 🔁, y preparaciones
+   en curso, terminadas, fallidas o interrumpidas. **Es una sugerencia: la confirmas siempre con el alumno**,
+   nunca la impones.
+
+   Si hay una preparación **terminada sin juntar** o **interrumpida**, eso va antes que nada: dile que la
+   clase ya está lista (o que se quedó a medias porque el ordenador se apagó o se durmió) y ofrécele juntarla
+   (`node .kit/herramientas/preparar.js --juntar <id>`) o, si se interrumpió, volver
+   a prepararla. Resuelve esto antes de seguir.
+
+   **Si llega pidiendo algo concreto** ("hazme el examen", "tengo dudas", "he dejado la clase 3"), **haz eso**:
+   los tres casos de abajo son para cuando abre sin pedir nada. Lo que veas en `estado.js` se lo cuentas en una
+   línea, sin pararte a preguntar antes de lo que ha pedido.
+
+   Con el curso al día, confirma con él uno de los tres casos:
+
+   | Caso | Cómo lo sabe `estado.js` | Qué le propones |
+   |---|---|---|
+   | **1. Estudiar lo ya preparado** | No hay material nuevo en `estudio/inbox/` | Seguir por **inicio** (👉 *Sigue por aquí*), con calentamiento, repaso o examen. Nada en segundo plano |
+   | **2. Al día, con material nuevo** | Hay material nuevo y ha estudiado todo lo preparado | "Tengo que preparar la clase, tardo unos minutos. ¿Hacemos un repaso rápido mientras tanto (gasta más cuota) o te vas a por un café y te aviso?" Si tu adaptador no tiene el campo `segundo_plano`, no hay preparación en segundo plano: dile "tardo unos minutos, ¿me esperas o vuelves luego?" y prepárala tú mismo, en la propia conversación, como hoy |
+   | **3. Atrasado, con material nuevo** | Hay material nuevo y le quedan sesiones preparadas sin estudiar, o algo en 🔁 | Lo nuevo **no le hace falta hoy**: "¿Voy preparando la clase nueva mientras repasamos lo pendiente (gasta más cuota), o la dejo para otro día?" Decide él |
+
+4. **Calentamiento, en los casos 1 y 3, y en el 2 si el alumno se queda:** dos preguntas de lo que ya vio y
+   necesita la sesión siguiente (salen de `requiere:` de sus conceptos y de `estudio/progreso.md` — lo flojo o sin
+   evaluar primero; reglas de "Cuando preguntas para medir"). Se puede saltar ("ahora no"); las respuestas
+   cuentan como prueba y mueven `estudio/progreso.md`. **Si lo salta tres veces seguidas**, deja de ofrecerlo y
+   apúntalo en `config/alumno.md` (sección "## Calentamiento"; créala si no existe).
+
+   **Si la preparación sigue en marcha** tras las dos preguntas (caso 2, con el alumno esperando), no lo
+   dejes parado: dile que aún queda un poco y ofrécele seguir según cómo ha ido — si acertó, "lo estás
+   haciendo genial, ¿quieres un par de preguntas más, un poco más difíciles?"; si falló algo, "¿repasamos eso
+   mientras termino?". Así hasta que la clase esté lista o prefiera parar.
+
+5. **Cómo se prepara en segundo plano** (casos 2 y 3, cuando el alumno dice que sí):
+   1. **Antes de lanzar, pregunta lo que solo él sabe**: el id de cada sesión si la regla de `config/curso.md` no
+      basta, y cualquier duda del material que no puedas resolver tú. Lo que se lanza ya no pregunta nada.
+   2. `node .kit/herramientas/preparar.js --lanzar <ficheros de inbox> --id <id>`. Una sola a la vez.
+   3. Sigue con él (calentamiento, repaso, dudas, examen). **Al terminar cada actividad**, mira
+      `node .kit/herramientas/preparar.js --estado`. En cuanto esté **terminada**, júntala con `--juntar <id>` y
+      díselo: "la clase 3 ya está lista: empieza por la nota de la sesión". Si **falla**, díselo en una frase y
+      ofrécele prepararla aquí, en la conversación.
+   4. Si se va a por un café, déjala lanzada y díselo: al volver (o en la sesión siguiente, si cierra la ventana)
+      la juntas antes que nada. Si apaga o duerme el ordenador, se para: `estado.js` la verá **interrumpida**.
 
 ## Si el alumno anda perdido
 
@@ -198,6 +243,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 
 | Cuándo | Comando |
 |---|---|
+| Al empezar cada sesión, para saber cómo está el curso | `node .kit/herramientas/estado.js` (`--json` para el detalle) |
 | Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
 | Para deshacer el último guardado | `node .kit/herramientas/deshacer.js` (antes, `--ver` para enseñar qué cambiaría) |
@@ -205,6 +251,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 | Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |
 | Tras preparar el curso (paso 9) y tras actualizar un curso existente | `node .kit/herramientas/obsidian.js` |
+| Para preparar una clase en segundo plano (lanzar, ver cómo va, juntarla) | `node .kit/herramientas/preparar.js --lanzar <ficheros de inbox> --id <id>` · `--estado` · `--juntar <id>` |
 | Solo al instalar (ver `INSTALAR-AGENTE.md`) | `preparar-curso.js`, `instalar-skills.js`, `crear-atajo.js` |
 
 **Guardar es parte del trabajo, no un extra al final.** Cada cosa terminada y comprobada se guarda en el
@@ -220,6 +267,20 @@ subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no
 
 Mensajes de guardado: `sesion(<id>): <tema>` · `dudas: N resueltas` · `examen: <alcance>` ·
 `ejercicio: <concepto>` · `repaso: <alcance>` · `config: <qué cambió>`.
+
+## Si trabajas en segundo plano
+
+Esto no te pasa a ti solo: te lanza `preparar.js --trabajar` en una copia aparte del curso
+(`.preparacion/<id>/`), sin el alumno delante — el prompt te lo dice. Entonces:
+
+- **No saludes, no preguntes nada** (ni al empezar ni por el camino): lo dudoso, `**TODO:**`, nunca una
+  pregunta. Tampoco compruebes si hay una versión nueva del kit.
+- Procesa el material con la skill `/sesion`, siguiendo el id que te den. Si son varios ficheros, son la
+  misma clase.
+- Al terminar, `node .kit/herramientas/guardar.js "sesion(<id>): <tema>"` como siempre. Estás en una rama
+  `preparacion/<id>`: `guardar.js` ya sabe que no tiene que subir (se sube cuando el profesor la junte con
+  `--juntar`). No hagas nada más — nadie está mirando la pantalla, así que no hay nada que "contar" al
+  terminar.
 
 ## Material del alumno
 

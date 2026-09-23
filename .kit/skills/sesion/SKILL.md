@@ -14,6 +14,9 @@ Convierte apuntes en bruto en material de estudio, sin duplicar lo que ya existe
 Si no estás usando el modelo recomendado para tu asistente (`.kit/adaptadores/LEEME.md`), díselo al alumno en
 una frase antes de empezar. No insistas: decide él.
 
+Si te han lanzado en segundo plano (`preparar.js --trabajar`, ver "Si trabajas en segundo plano" en
+`AGENTS.md`), no preguntes nada de lo de abajo: lo dudoso, `**TODO:**`, y sigue.
+
 ## Checklist
 
 Sigue estos puntos en orden y no te saltes ninguno.
@@ -77,10 +80,14 @@ Reglas de `AGENTS.md`, en corto:
 - Cumple las reglas propias del dominio de `config/curso.md`.
 - Orden: problema → ejemplo → nombre → fórmula → error típico.
 - Rellena `requiere:` con los conceptos previos necesarios. Si un prerrequisito está marcado
-  `dificultad: 3` en su nota, refréscalo en dos líneas antes de seguir.
+  `dificultad: 3` en su nota, refréscalo en dos líneas antes de seguir. Ese `requiere:` es también de
+  donde sale el calentamiento (dos preguntas) del arranque de la sesión siguiente: si queda vacío, no
+  hay de qué calentar.
 - Lo que no venga en los apuntes: `**TODO:**` con la pregunta concreta. **Nunca inventes.**
 - Material que el curso no entregó: `⚠️ **FALTA INFO:**`. No es lo mismo que un TODO — eso solo
-  lo puede resolver el alumno o el centro.
+  lo puede resolver el alumno o el centro. **"El error típico" nunca lleva `FALTA INFO`:** si el
+  material no trae uno para ese concepto, propón tú uno marcado `> [!info] Ampliación fuera de los
+  apuntes`, o borra la sección. Un error típico no es algo que el curso "tuviera que entregar".
 - Ampliaciones tuyas fuera de los apuntes: `> [!info] Ampliación fuera de los apuntes`.
 - Dato con fuente externa: `💬 *Conocimiento general, no del curso.*` + la fuente.
 - Si `lente` está activada en `config/profesor.md`, añade al final la lectura desde ese punto de

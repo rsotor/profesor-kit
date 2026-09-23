@@ -29,7 +29,10 @@ $$ ... $$
 
 ## El error típico
 
-<Dónde se cae la gente. Si es carne de examen, se dice.>
+<Dónde se cae la gente. Si es carne de examen, se dice. Si el material no trae un error típico para este
+concepto, propón uno tú mismo marcado `> [!info] Ampliación fuera de los apuntes`, o borra la sección
+entera: nunca `⚠️ FALTA INFO` — eso es solo para lo que el curso tenía que entregar y no entregó, y un
+error típico no lo es.>
 
 ## Practícalo
 

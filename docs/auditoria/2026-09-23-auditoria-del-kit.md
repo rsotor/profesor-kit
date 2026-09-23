@@ -402,7 +402,7 @@ mejor al profesor; después las que hacen mejor al alumno. Al final, el orden qu
 
 ### 8.1 Para el profesor: calidad del material, facilidad al enseñar, evolución con el curso
 
-> Estado: **P1 y P2 hechos** en 0.21.0 · P3 a P8 **pendientes** de revisar con Roberto.
+> Estado: **P1 y P2 hechos** en 0.21.0 · **P3 hecho** en 0.22.0 · P4 a P8 **pendientes** de revisar con Roberto.
 
 > ✅ **P1 hecho en 0.21.0.** Seis avisos en `comprobar.js`: `nota-larga`, `concepto-sin-ejemplo`, `sesion-incompleta`, `flashcards-fuera-de-rango`, `requiere-vacio` y `pregunta-doble`. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
@@ -438,7 +438,9 @@ cobertura del material (lo único que `inicio.md` no cubre). Menos pasos en `/se
 > hacía falta un campo más que mantener a mano en el propio ejercicio. `mapa-del-curso.md` se queda (no se
 > retira), reducido a la cobertura del material. Ver [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
-**P3 · Calentamiento antes de cada clase nueva (S).** Al empezar `/sesion`, antes de leer el material: mirar
+> ✅ **P3 hecho en 0.22.0**, ampliado con Roberto: el arranque de sesión distingue tutoría y preparación (tres casos que el alumno confirma), calentamiento de dos preguntas y preparación de clases en segundo plano (`estado.js`, `preparar.js`). Plan en `docs/planes/2026-09-23-tutoria-y-preparacion.md`.
+
+**P3 · ✅ Calentamiento antes de cada clase nueva (S).** Al empezar `/sesion`, antes de leer el material: mirar
 `requiere:` de lo que probablemente venga y `progreso.md`, y si hay prerrequisitos en 🟡/🔴 o sin evaluar,
 hacerle al alumno dos preguntas de la sesión anterior. Es *retrieval practice* con coste cero y usa datos
 que ya existen. Va en la skill, sin herramienta nueva.

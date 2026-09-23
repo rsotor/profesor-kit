@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(node .kit/herramientas/comprobar.js *)",
+      "Bash(node .kit/herramientas/estado.js *)",
       "Bash(node .kit/herramientas/guardar.js *)",
       "Bash(node .kit/herramientas/deshacer.js *)",
       "Bash(node .kit/herramientas/actualizar.js *)",
@@ -13,6 +14,7 @@
       "Bash(node .kit/herramientas/organizar.js *)",
       "Bash(node .kit/herramientas/obsidian.js *)",
       "Bash(node .kit/herramientas/issue.js *)",
+      "Bash(node .kit/herramientas/preparar.js *)",
       "Bash(gh issue list *)",
       "Bash(gh issue view *)",
       "Bash(git status *)",

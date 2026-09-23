@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
+const { ejecutar } = require('./lib/proceso');
 const v = require('./lib/vault');
 
 // El camino del profesor al kit: una issue bien formada, sin datos del alumno, sin duplicar.
@@ -17,8 +17,7 @@ const PERSONAL = [
 ];
 
 function ejecutarReal(cmd, args) {
-  const r = spawnSync(cmd, args, { encoding: 'utf8' });
-  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+  return ejecutar(cmd, args);
 }
 
 function entorno(raiz, plataforma = process.platform, version = os.release()) {

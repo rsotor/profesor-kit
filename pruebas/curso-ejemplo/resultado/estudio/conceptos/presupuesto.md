@@ -1,53 +1,48 @@
 ---
 tipo: concepto
-bloques: ["1"]
-visto_en: ["01-02-01-presupuesto-personal"]
-dificultad: 3
-requiere: []
-alias: []
-tags: []
+bloques: [modulo-01]
+visto_en: [01-02-01-presupuesto-personal]
+dificultad: 2
+requiere: [funciones-del-dinero]
+alias: [presupuesto personal, ingreso medio]
+tags: [presupuesto, ahorro]
 ---
-# El presupuesto
+# Presupuesto
 
-> **En una frase:** un presupuesto es apuntar, cada mes, lo que entra y lo que sale, para saber si te sobra o te falta.
+> **En una frase:** apuntar lo que entra y lo que sale cada mes, para saber cuánto te queda.
 
 ## El problema
 
-Sin apuntar nada, el dinero "se va" sin que sepas a dónde: llegas a fin de mes sin saber en qué se te ha
-ido. Un presupuesto no necesita ninguna herramienta complicada: basta con dos columnas, ingresos y
-gastos, para verlo.
+Si llevas las cuentas de cabeza, a final de mes no sabes dónde se ha ido el dinero. No hace falta una herramienta complicada: bastan dos columnas.
 
 ## El ejemplo
 
-Eres freelance y este mes has ingresado 1.850,00 €. Apuntas todo lo que gastas: 650,00 € de alquiler,
-40,00 € de seguro y 25,00 € de suscripciones (715,00 € en total), más 300,00 € de comida, 60,00 € de
-transporte y 120,00 € de ocio (480,00 € en total). En total gastas 1.195,00 €. Con la fórmula de abajo:
-te sobran 655,00 €.
+Un mes cualquiera entran 1.850,00 € y salen 1.195,00 €. Te quedan 655,00 €. Sin apuntar nada, esos 655,00 € se habrían diluido en gastos pequeños que nadie recuerda.
+
+| Ingresos | Gastos |
+|---|---|
+| 1.850,00 € | 1.195,00 € |
 
 ## La fórmula
 
-$$ ahorro = ingresos - gastos $$
+$$ \text{ahorro del mes} = \text{ingresos del mes} - \text{gastos del mes} $$
 
-Ingresos y gastos, los de un mismo mes. Si el resultado es negativo, no ahorras: gastas más de lo que
-entra ese mes.
+Es una resta. Si sale negativa, has gastado más de lo que entró.
 
 ## El error típico
 
-⚠️ **FALTA INFO:** el material no da un error típico propio de "qué es un presupuesto" en sí — el que sí
-trae la clase (meter el ocio como gasto fijo) pertenece a [[gastos-fijos-y-variables]].
+> [!info] Ampliación fuera de los apuntes
+> Presupuestar con el mejor mes. Si un mes facturas 2.400,00 € y otro 1.300,00 €, la cifra de trabajo no es 2.400,00 €: es la media de los últimos 6-12 meses.
 
-> [!tip] Visto desde tus ingresos irregulares
-> Con nómina fija, el presupuesto se hace una vez y sirve para todos los meses. Facturando por tu cuenta,
-> los ingresos cambian de un mes a otro: por eso conviene rehacer este cálculo cada mes con lo que de
-> verdad has ingresado, no con una cifra fija que igual no llega. Ver [[ingreso-medio]] para qué ingreso
-> usar cuando no es siempre el mismo.
+## Visto desde tus ingresos irregulares
+
+Con nómina fija, los ingresos son siempre la misma cifra. Tú no: la clase da 2.400,00 € en un mes bueno y 1.300,00 € en uno flojo. Por eso el presupuesto se hace con el **ingreso medio de los últimos 6-12 meses**, no con el del mejor mes. En el ejemplo de clase, esa media es 1.850,00 €.
 
 ## Relacionados
 
-- [[ingreso-medio]] — qué ingreso usar si el tuyo cambia cada mes
-- [[gastos-fijos-y-variables]] — cómo se reparte el lado de los gastos
-- [[tasa-de-ahorro]] — cómo comparar el ahorro de dos meses (o dos personas) distintos
-- [[colchon-financiero]] — qué hacer con el ahorro antes de pensar en otra cosa
+- [[gastos-fijos-y-variables]] — cómo se ordenan los gastos
+- [[tasa-de-ahorro]] — el ahorro del mes expresado como parte de lo que ganas
+- [[funciones-del-dinero]] — el ahorro es el depósito de valor en marcha
 
 ## Historial
 

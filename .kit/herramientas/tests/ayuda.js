@@ -4,6 +4,13 @@ const os = require('node:os');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 
+// Los tests trabajan en repos temporales. Si el proceso hereda GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE… (git las
+// pone dentro de un hook), cada git de un test escribiría en el repo que las fijó, no en el temporal. Se quitan
+// para este proceso y para todo lo que lance. Ver .githooks/pre-push.
+for (const variable of execFileSync('git', ['rev-parse', '--local-env-vars'], { encoding: 'utf8' }).split(/\r?\n/).filter(Boolean)) {
+  delete process.env[variable];
+}
+
 const BASE = {
   'config/profesor.md': '---\nmarcador_dudas: "@@"\n---\n# Profesor\n',
   'config/ajustes.json': JSON.stringify({ subir_a_github: false, llm: 'claude-code', version_datos: 1 }, null, 2),

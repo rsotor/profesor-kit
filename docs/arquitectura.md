@@ -57,16 +57,18 @@ el alumno/instalador a través del LLM.
 
 | Fichero | Qué hace | Quién la llama |
 |---|---|---|
+| `estado.js` | La foto del curso al abrir (plan 0.22, §3.1): material nuevo en `inbox/` sin procesar, siguiente sesión y sesiones preparadas sin estudiar, sesiones en 🔁, preparaciones en segundo plano (en curso, terminadas sin juntar, fallidas o interrumpidas si el proceso ya no existe) y el caso sugerido (1/2/3) | `AGENTS.md`, "Al empezar cada sesión" |
 | `comprobar.js` | Valida el curso entero (estructura, enlaces, secretos, "se verá bien", lint pedagógico, propiedades no estándar) y devuelve `{ errores, avisos }` | Todas las skills de trabajo antes de guardar; internamente `guardar.js`, `actualizar.js` y `diagnostico.js` |
 | `guardar.js` | Regenera los ficheros derivados, comprueba, hace `commit` (y `push` si procede) | Toda skill de trabajo al terminar (`sesion`, `dudas`, `examen`, `ejercicio`, `repaso`, `configurar`, `actualizar`) |
 | `actualizar.js` | Descarga la última release publicada, sustituye el motor, aplica migraciones pendientes y reinstala skills; vuelve atrás si algo empeora | Skill `/actualizar`; `--comprobar` lo lanza AGENTS.md al empezar cada sesión (silencioso, una vez al día) |
 | `organizar.js` | Mueve sesiones/flashcards/ejercicios/exámenes a la carpeta de su unidad según `config/estructura.json` y reescribe los enlaces afectados | Skill `/configurar` (al escribir la estructura) y skill `/sesion` |
 | `reparar.js` | Recupera piezas ausentes del motor o del alumno (fichero suelto → su sitio; si no, última versión en git; si no, carpeta vacía), sin pisar nada existente | El profesor, cuando `comprobar.js` da `pieza-ausente` |
 | `preparar-curso.js` | Borra lo que es solo del repo del kit (`docs/`, `.github/`…), sustituye el README, quita el remoto del kit y crea `config/ajustes.json` | Solo al instalar (paso 5 de `INSTALAR-AGENTE.md`) |
-| `instalar-skills.js` | Copia `.kit/skills/` al destino que diga el adaptador del LLM (`.claude/skills` por defecto) | Al instalar (paso 6) y tras cada `/actualizar` |
+| `instalar-skills.js` | Copia `.kit/skills/` al destino que diga el adaptador del LLM (`.claude/skills` por defecto solo si el LLM es `claude-code` o no dice nada); sin adaptador ni `--destino` para cualquier otro LLM, se niega y explica qué falta, en vez de instalar en la carpeta de Claude Code | Al instalar (paso 6) y tras cada `/actualizar` (si no hay adaptador para un LLM que no es Claude Code, `actualizar.js` avisa y sigue: no revierte la actualización por esto) |
 | `crear-atajo.js` | Escribe el lanzador en `~/.local/bin` (o `.cmd` en Windows) que abre el LLM dentro de este curso, y añade esa carpeta al `PATH` si hace falta | Skill `/configurar` (paso 7 de instalación); `diagnostico.js` lo lee para verificarlo |
-| `diagnostico.js` | Repasa toda la instalación (Node, git, `gh`, sesión, acceso al kit, identidad, copia privada, skills, atajo, salud del curso) y dice qué falta | El instalador (paso 8) y cuando algo no va (`AGENTS.md`, "si algo de la instalación no va") |
+| `diagnostico.js` | Repasa toda la instalación (Node, git, `gh`, sesión, acceso al kit, identidad, copia privada, skills, atajo, salud del curso) y dice qué falta; sin adaptador para el LLM del curso, el aviso de skills distingue si ya existe la nota vieja `config/adaptacion-llm.md` (propone convertirla al JSON) de no tener nada | El instalador (paso 8) y cuando algo no va (`AGENTS.md`, "si algo de la instalación no va") |
 | `obsidian.js` | Aplica los ajustes recomendados de Obsidian (sin pisar los del alumno) y descarga los complementos fijados por versión y hash | Tras preparar el curso (paso 9) y tras `/actualizar` |
+| `preparar.js` | Prepara una clase en segundo plano: `--lanzar` crea un `git worktree` en `.preparacion/<id>/` (rama `preparacion/<id>`) y lanza el asistente sin conversación como proceso aparte (`detached`); `--estado` dice cómo va; `--juntar` mezcla esa copia con la principal (resolviendo sola los choques previstos) y la borra | El profesor, caso 2/3 de `AGENTS.md` ("Al empezar cada sesión"); `--trabajar <id>` es el envoltorio interno que se lanza a sí mismo detached, nunca lo llama el profesor a mano |
 | `issue.js` | Prepara (y, con `--enviar`, crea) una issue de feedback al kit; se niega si detecta datos personales | Skills cuando escalan algo ("Feedback al kit") |
 
 `.kit/herramientas/lib/*.js` (no son CLI: las usan las herramientas de arriba):
@@ -74,8 +76,9 @@ el alumno/instalador a través del LLM.
 | Fichero | Qué hace |
 |---|---|
 | `vault.js` | El núcleo de datos: rutas protegidas, listar notas/conceptos, leer/escribir `frontmatter` y `ajustes.json`, detectar propiedades no estándar, piezas ausentes, leer el adaptador. Lo importa casi todo lo demás |
-| `arranque.js` | Punto de entrada común: atrapa una excepción inesperada y le dice al LLM que abra una issue, en vez de dejarlo adivinar |
-| `git.js` | Envoltorio fino sobre `git` (estado, commit, identidad, remoto) |
+| `arranque.js` | Punto de entrada común: atrapa una excepción inesperada; si es del sistema (`EACCES`/`EPERM`/`EIO`: permiso denegado; `ENOENT`: comando inexistente) lo explica como tal, y solo si no lo es le dice al LLM que abra una issue |
+| `proceso.js` | Lanza un proceso externo (`git`, `gh`, `node`, `powershell`) y clasifica por qué falló (`ok` / `permiso` / `no-existe` / `fallo`), para que ningún mensaje se quede vacío o con "undefined" cuando el proceso ni llega a arrancar. Lo usan `git.js`, `actualizar.js`, `crear-atajo.js`, `diagnostico.js` e `issue.js` |
+| `git.js` | Envoltorio fino sobre `git` (estado, commit, identidad, remoto), sobre `proceso.js` |
 | `indice.js` | Calcula `estudio/inicio.md` y el pie de navegación de cada sesión, a partir de las sesiones, el progreso y los exámenes en disco |
 | `generados.js` | Calcula el resto de ficheros que escribe `guardar.js`: pendientes, auditoría del material, formulario, índice de ejercicios y la sección "Estado" del README |
 | `secretos.js` | Escanea los ficheros candidatos a `git` en busca de patrones de tokens y claves conocidos |
@@ -133,7 +136,8 @@ tabla) · `obsidian-oculta-ejercicios` (falta activar "Detectar todas las extens
 (no cabe en una pantalla) · `concepto-sin-ejemplo` (falta o está vacía "## El ejemplo") ·
 `sesion-incompleta` (falta "Cobertura", "Auditoría" o "Para pensarlo despacio") ·
 `flashcards-fuera-de-rango` · `requiere-vacio` (dificultad 3 sin prerrequisito declarado) ·
-`pregunta-doble` (≥2 signos `?` en una pregunta de examen).
+`pregunta-doble` (≥2 signos `?` en una pregunta de examen) · `falta-info-mal-usado` (`FALTA INFO` dentro de
+"## El error típico" de un concepto: eso no es material que el curso tuviera que entregar).
 
 **Propiedades no estándar (aviso)**: `propiedad-no-estandar` — el alumno escribió una propiedad conocida
 (`estudiada`, `nota`, `dificultad`…) de una forma que el kit no sabe interpretar (`vault.js#ESPERADO`).
@@ -165,6 +169,13 @@ tabla) · `obsidian-oculta-ejercicios` (falta activar "Detectar todas las extens
 8) `diagnostico.js` hasta "Todo listo" (repasa 1-7 de un tirón) · 9) `obsidian.js` + abrir `estudio/` como
 bóveda · 10) cerrar, reabrir con el atajo y decir "empezamos" (skill `/configurar`).
 
+**Arranque de sesión** (plan 0.22, tutoría y preparación; `AGENTS.md`, "Al empezar cada sesión"): saludo desde
+`config/diario.md` → `actualizar.js --comprobar` en silencio → `estado.js --json` da el caso sugerido (1
+estudiar lo ya preparado, 2 al día con material nuevo, 3 atrasado con material nuevo) y, si la hay, una
+preparación en segundo plano terminada sin juntar o interrumpida, que se resuelve primero → el profesor lo
+confirma con el alumno, nunca lo impone, y ofrece el calentamiento (dos preguntas) en los casos 1 y 3, y en
+el 2 si el alumno se queda mientras se prepara la clase.
+
 **Una clase**: el alumno deja material en `estudio/inbox/` → skill `/sesion` escribe las notas →
 `organizar.js` si hay `config/estructura.json` → `comprobar.js` → `guardar.js` (regenera, comprueba de
 nuevo, commit y push).
@@ -186,19 +197,38 @@ CHANGELOG (`.github/release-notas.js`). `actualizar.js` **solo** descarga releas
 
 ## 8. Multi-LLM
 
-El adaptador de un LLM tiene cinco campos (`comando`, `skills`, `puente`, `permisos`, `probado`, y
-`modelo_recomendado` — seis, en realidad) y vive en `.kit/adaptadores/<llm>.json` (motor: solo lo
-escribimos nosotros, tras validar una issue con datos reales) o en `config/adaptador-llm.json` (datos del
-curso: lo escribe el propio curso cuando su LLM no tiene el del kit, y manda si existen los dos).
-`vault.js#leerAdaptador()` es el único punto de lectura; lo usan `instalar-skills.js`, `crear-atajo.js` y
-`diagnostico.js`. Hoy solo `claude-code` tiene adaptador de kit.
+El adaptador de un LLM tiene cinco campos obligatorios (`comando`, `skills`, `puente`, `permisos`,
+`probado`) y hasta dos opcionales (`modelo_recomendado`, `segundo_plano`) y vive en
+`.kit/adaptadores/<llm>.json` (motor: solo lo escribimos nosotros, tras validar una issue con datos
+reales) o en `config/adaptador-llm.json` (datos del curso: lo escribe el propio curso cuando su LLM no
+tiene el del kit, y manda si existen los dos). `vault.js#leerAdaptador()` es el único punto de lectura;
+lo usan `instalar-skills.js`, `crear-atajo.js` y `diagnostico.js`. Hoy `claude-code` y `codex` tienen
+adaptador de kit (`codex-cli` — el nombre que anuncia `codex --version` — es alias de `codex` en
+`leerAdaptador()`, para los cursos que ya tenían ese `llm`).
 
-Si el LLM no es Claude Code, `.kit/ESTANDARES.md` dice qué hacer: comprobar en su documentación oficial
-(nunca inventar), escribir `config/adaptador-llm.json`, instalar skills, crear el atajo, verificar con
-`diagnostico.js`, y **proponer devolverlo al kit** con `issue.js --titulo "[adaptador] <id>"` — así el
-adaptador vuelve al motor y el siguiente alumno con ese mismo LLM no tiene que montarlo de cero. La fila
-de `.kit/adaptadores/LEEME.md` y el JSON del adaptador tienen que decir lo mismo (`modelo_recomendado`):
-un test lo comprueba.
+`modelo_recomendado` (`{ modelo, por_que, comprobado }`) es opcional: un adaptador puede existir sin él
+si aún no se ha comparado qué modelo conviene con ese asistente (issue #33; caso de `codex`, hoy). Cuando
+existe, tiene que coincidir con su fila de `.kit/adaptadores/LEEME.md` (un test lo comprueba); cuando no
+existe, esa fila lleva "— (sin comparar)". `segundo_plano` (lista de argumentos con `{prompt}`/`{modelo}`,
+sin el `comando`) dice si ese asistente puede trabajar sin conversación: sin él, `preparar.js --lanzar`
+se niega. `.kit/adaptadores/LEEME.md` lleva una columna "Segundo plano" que también comprueba
+`adaptadores.test.js`.
+
+Un asistente sin comodín para permisos (Codex, por ejemplo: una regla por herramienta, en un fichero de
+usuario fuera del curso) no es una carencia del adaptador — es el propio campo `permisos.formato`
+contándolo, y `.kit/ESTANDARES.md` lo documenta como ejemplo. Un entorno restringido (sandbox) puede
+seguir pidiendo autorización para ejecutar o escribir aunque el alumno ya confíe en la carpeta:
+`lib/arranque.js` y las herramientas que lanzan `git`/`gh`/`node` (`lib/proceso.js`) distinguen ese caso
+(`EACCES`/`EPERM`/`EIO`) y el de un comando inexistente (`ENOENT`) de un fallo real del kit, y no piden
+abrir una issue por ellos.
+
+Si el LLM no tiene adaptador de kit, `.kit/ESTANDARES.md` dice qué hacer: comprobar en su documentación
+oficial (nunca inventar), escribir `config/adaptador-llm.json`, instalar skills, crear el atajo, verificar
+con `diagnostico.js` (que, si el curso conserva la nota vieja `config/adaptacion-llm.md` sin el JSON
+nuevo, lo dice en el aviso de skills), y **proponer devolverlo al kit** con `issue.js --titulo "[adaptador]
+<id>"` — así el adaptador vuelve al motor y el siguiente alumno con ese mismo LLM no tiene que montarlo de
+cero. Sin adaptador ni `--destino` explícito, `instalar-skills.js` se niega a instalar en `.claude/skills`
+para un LLM que no es `claude-code` (issue #33): copiar ahí sin adaptador sería un error silencioso.
 
 ## 9. Tests
 
@@ -226,6 +256,13 @@ toca el perfil de la shell o el `PATH`.
   siempre delante) y cada herramienta arranca por `lib/arranque.js`.
 - `extremo-a-extremo.test.js` — una instalación entera lanzando cada herramienta como proceso real,
   incluido el lanzador `.cmd` en Windows.
+- `preparar.test.js` — `preparar.js` con un **asistente de mentira** (`tests/asistente-de-mentira.js`,
+  que escribe una nota y llama a `guardar.js`, en vez de un LLM de verdad) sobre un curso real: motor de
+  la copia de trabajo actual + `preparar-curso.js`, con git de verdad — hace falta para probar `git
+  worktree`, una rama nueva y un `merge` con choques de verdad, que `cursoTemporal()` no puede (no tiene
+  historia de git). Lanzar, una sola preparación a la vez, los cuatro estados (incluida `interrumpida`
+  con un pid muerto), juntar sin choques, con `config/diario.md` y los generados en conflicto (se
+  resuelven solos), un choque real (aborta sin tocar el curso principal), y el fallo del asistente.
 
 El resto son unitarios por fichero (`vault.test.js`, `indice.test.js`, `generados.test.js`,
 `organizar.test.js`, `actualizar.test.js`, `guardar.test.js`, `comprobar-estructura.test.js`,
@@ -261,10 +298,14 @@ código — y por eso es la única que usa un LLM de verdad y nunca corre en el 
   `git init` + `instalar-skills.js`. Lo comparten `prueba-real.js` y `prueba-actualizar.js`.
 - `pruebas/prueba-real.js` (`npm run prueba-real`) monta el curso y lanza `claude -p` (una sesión nueva
   por paso) por las cinco skills de trabajo en orden, simulando al alumno entre medias (dudas, casilla
-  "a su manera", respuestas de examen). Guarda el resultado en `curso-ejemplo/resultado/` (estudio,
-  `config/alumno.md` y `RESUMEN.md`) y borra siempre la temporal. `--sin-llm` monta y prueba el propio
-  ejecutor sin gastar cuota — es lo único que corren los tests del repo y el CI nunca la lanza con un LLM
-  de verdad. Ver CONTRIBUTING.md, "Prueba real del profesor", para cuándo es obligatoria.
+  "a su manera", respuestas de examen). Las clases del módulo del examen se procesan en primer plano; la
+  que no hace falta para ese examen se lanza con `preparar.js --lanzar` en segundo plano justo antes de
+  `/dudas`, sigue corriendo durante `/ejercicio` y el examen, y se junta con `--juntar` en cuanto el
+  examen está corregido — el caso de verdad con choques posibles (plan 0.22, §4). Guarda el resultado en
+  `curso-ejemplo/resultado/` (estudio, `config/alumno.md` y `RESUMEN.md`) y borra siempre la temporal.
+  `--sin-llm` monta y prueba el propio ejecutor sin gastar cuota (también se salta el `--lanzar`: nunca
+  llama a `claude`) — es lo único que corren los tests del repo y el CI nunca la lanza con un LLM de
+  verdad. Ver CONTRIBUTING.md, "Prueba real del profesor", para cuándo es obligatoria.
 - `pruebas/prueba-actualizar.js` (`npm run prueba-actualizar`) no usa ningún LLM —es mecánica de ficheros
   y de `actualizar.js`—, así que sí corre en el CI en cada PR: reconstruye, con `git archive
   v<versión>` (o la release anterior disponible), el curso tal como quedó en `resultado/`, y comprueba

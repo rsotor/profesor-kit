@@ -94,3 +94,11 @@ test('leerAdaptador: un JSON roto no revienta, se trata como si no hubiera adapt
   const raiz = cursoTemporal({ 'config/adaptador-llm.json': '{ no es json' });
   assert.equal(v.leerAdaptador(raiz, 'claude-code'), null);
 });
+
+// El adaptador del kit vive como "codex" (issue [adaptador] codex-cli); "codex-cli" era el nombre que
+// anunciaba `codex --version` y con el que algún curso ya tiene su llm en config/ajustes.json.
+test('leerAdaptador: "codex-cli" es alias de "codex", para los cursos que ya tenían ese llm', () => {
+  const raiz = cursoTemporal({ '.kit/adaptadores/codex.json': JSON.stringify({ comando: 'codex', skills: '.agents/skills' }) });
+  assert.deepEqual(v.leerAdaptador(raiz, 'codex-cli'), { comando: 'codex', skills: '.agents/skills' });
+  assert.deepEqual(v.leerAdaptador(raiz, 'codex'), { comando: 'codex', skills: '.agents/skills' }, 'y sigue funcionando con el id de hoy');
+});

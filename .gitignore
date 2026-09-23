@@ -22,6 +22,10 @@
 # Banco de pruebas del kit: cursos de usar y tirar para probar instalaciones. Nunca se sube.
 pruebas-local/
 
+# Copias de trabajo de preparar.js (una por clase en preparación en segundo plano): cada una es su
+# propio git worktree, en su propia rama preparacion/<id>. Se borran solas al juntar con --juntar.
+.preparacion/
+
 # Linter del repo del kit (dev): preparar-curso.js ya borra eslint.config.js en los cursos
 node_modules/
 
