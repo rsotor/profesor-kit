@@ -56,7 +56,7 @@ examen mide lo estudiado, no lo que "debería" saber.
 
 `estudio/examenes/<carpeta de la unidad>/<prefijo de la unidad>-examen-YYYY-MM-DD.md`, con las soluciones en
 un callout plegado, o una página HTML local autocorregible en la misma carpeta si el alumno lo prefiere.
-**Sin Artifact:** es un test interno, se queda en el repo.
+Es un test interno: se escribe directamente en el repo, no como un documento aparte.
 
 Con este frontmatter, que es lo que lee `estudio/inicio.md`:
 

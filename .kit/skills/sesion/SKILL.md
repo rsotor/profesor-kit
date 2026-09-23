@@ -13,7 +13,7 @@ Convierte apuntes en bruto en material de estudio, sin duplicar lo que ya existe
 
 ## Checklist
 
-Crea una tarea por cada punto y complétalas en orden.
+Sigue estos puntos en orden y no te saltes ninguno.
 
 ### 1. Situar la sesión
 
@@ -169,7 +169,10 @@ del concepto (la fórmula, el `## Practícalo`) y el índice sale solo: no los t
 node .kit/herramientas/comprobar.js
 ```
 
-Si falla, arregla antes de dar la sesión por cerrada. Después:
+Si falla, arregla antes de dar la sesión por cerrada. Los avisos pedagógicos (`nota-larga`,
+`concepto-sin-ejemplo`, `sesion-incompleta`…) se arreglan también, salvo que tengas un motivo concreto —
+entonces se lo dices al alumno al cerrar, no se ignoran en silencio (ver "Avisos pedagógicos" en `AGENTS.md`).
+Después:
 
 ```
 node .kit/herramientas/guardar.js "sesion(<id>): <tema>"
