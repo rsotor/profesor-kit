@@ -54,12 +54,14 @@ propósito con `PERMITIR_PUSH_A_MAIN=1` o `SALTAR_TESTS=1`.
 | El profesor (el LLM) | `AGENTS.md` y `.kit/skills/*/SKILL.md`; `.kit/guias/INSTALAR-AGENTE.md` al instalar; `.kit/ESTANDARES.md` si no es Claude Code | Nosotros, en cada PR que cambie comportamiento |
 | Quien instala | `.kit/guias/INSTALACION.md` | Nosotros |
 | Nosotros | este fichero y `.kit/CHANGELOG.md` | Nosotros, en cada PR |
+| Quien cambia el kit | `docs/arquitectura.md` | Nosotros, en cada PR que cambie la estructura |
 | Auditorías | `docs/auditoria/` (una por fecha: estado, hallazgos y propuestas) | Se escribe una nueva; las anteriores no se editan |
 
 Regla: **si un PR añade o cambia una herramienta, una skill o un paso, toca la fuente viva de cada audiencia
-afectada en el mismo PR.** El CI lo vigila en parte (`coherencia-skills.test.js`): toda herramienta tiene que
-estar explicada en `AGENTS.md` o en `INSTALAR-AGENTE.md`, toda plantilla tiene que usarla alguna skill, y
-lo que las skills citan tiene que existir. Lo que el CI no ve —que la explicación sea buena— lo ve la
+afectada en el mismo PR** — incluida `docs/arquitectura.md` si cambia el mapa de herramientas, el ciclo de
+guardado o alguna invariante. El CI lo vigila en parte (`coherencia-skills.test.js`): toda herramienta tiene
+que estar explicada en `AGENTS.md` o en `INSTALAR-AGENTE.md`, toda plantilla tiene que usarla alguna skill,
+y lo que las skills citan tiene que existir. Lo que el CI no ve —que la explicación sea buena— lo ve la
 revisión del PR.
 
 Lo que solo es del repo del kit (`docs/`, `.github/`, `.githooks/`, este fichero, `package.json`) lo borra

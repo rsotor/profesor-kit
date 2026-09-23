@@ -11,7 +11,7 @@ configuración.
   pero está sin probar. **Linux no está soportado**: las herramientas funcionan (el CI corre ahí), pero no hay
   guía de instalación; si alguien lo necesita, se hace entonces. Si algo falla, tu profesor te ayudará a
   contarlo con una issue en este repo.
-- **¿Vas a desarrollarlo?** Lee [`CONTRIBUTING.md`](CONTRIBUTING.md). Tests: `npm test`. `main` solo recibe
+- **¿Vas a desarrollarlo?** Lee [`CONTRIBUTING.md`](CONTRIBUTING.md) y [`docs/arquitectura.md`](docs/arquitectura.md). Tests: `npm test`. `main` solo recibe
   cambios por PR, y el CI exige todos los tests en verde en Linux y Windows y una **cobertura mínima del
   80 %** de las herramientas (check obligatorio: `tests-ok`). Cada merge que sube `.kit/VERSION` publica su
   release, que es lo que los cursos descargan al actualizar. La última auditoría completa está en `docs/auditoria/`.
