@@ -1,6 +1,6 @@
 # Plan 0.22.0 · Tutoría y preparación
 
-Estado: **borrador para revisar con Roberto** · 2026-09-23 · rama `feat/tutoria-y-preparacion` (sale de
+Estado: **revisado con Roberto**, listo para implementar · 2026-09-23 · rama `feat/tutoria-y-preparacion` (sale de
 `feat/mejoras-kit`; se rebasa sobre `main` cuando se publique la 0.21.0).
 
 ## 1. El problema
@@ -24,7 +24,7 @@ Al abrir, el profesor mira cómo está el curso y **lo confirma con el alumno**:
 |---|---|---|
 | **1. Estudiar lo ya preparado** | No hay material nuevo en `inbox/` | Seguir por **inicio** (👉 *Sigue por aquí*), con calentamiento, repaso o examen. Nada en segundo plano |
 | **2. Al día, con material nuevo** | Hay material nuevo y ha estudiado todo lo preparado | "Tengo que preparar la clase, tardo unos minutos. ¿Hacemos un repaso rápido mientras tanto (gasta más cuota) o te vas a por un café y te aviso?" |
-| **3. Atrasado, con material nuevo** | Hay material nuevo y le quedan sesiones preparadas sin estudiar, o algo en 🔁 | "Preparo lo nuevo mientras repasamos lo que tienes pendiente" |
+| **3. Atrasado, con material nuevo** | Hay material nuevo y le quedan sesiones preparadas sin estudiar, o algo en 🔁 | Lo nuevo **no le hace falta hoy**, así que pregunta: "¿Voy preparando la clase nueva mientras repasamos lo pendiente (gasta más cuota), o la dejo para otro día?" Decide el alumno |
 
 "Material nuevo" = un fichero de `estudio/inbox/` que ninguna sesión cita en su `fuente:`.
 
@@ -44,11 +44,16 @@ leer diez ficheros:
 
 ### 3.2 P3 · Calentamiento
 
-En los casos 1 y 3, y en el 2 si el alumno elige quedarse: **dos preguntas como máximo** de lo que ya vio y la
-sesión siguiente necesita. Salen de `requiere:` de los conceptos de esa sesión y de `progreso.md` (flojo o sin
+En los casos 1 y 3, y en el 2 si el alumno elige quedarse: **dos preguntas** de lo que ya vio y la sesión
+siguiente necesita. Salen de `requiere:` de los conceptos de esa sesión y de `progreso.md` (flojo o sin
 evaluar primero). Reglas de "Cuando preguntas para medir". Se puede saltar ("ahora no"). Las respuestas cuentan
 como prueba y mueven `progreso.md`. Si lo salta tres veces seguidas, deja de ofrecerlo y lo apunta en
 `config/alumno.md`. Vive en `AGENTS.md` (arranque) y en una línea de `/sesion`.
+
+**Si la preparación sigue en marcha** tras las dos preguntas (caso 2 con el alumno esperando), el profesor no le
+deja parado. Le dice que aún queda un poco y le ofrece seguir según cómo ha ido: si acertó, "lo estás haciendo
+genial, ¿quieres un par de preguntas más, un poco más difíciles?"; si falló algo, "¿repasamos eso mientras
+termino?". Así hasta que la clase esté lista o el alumno prefiera parar.
 
 ### 3.3 `preparar.js`: preparación en segundo plano
 
@@ -117,13 +122,17 @@ hoy. Windows: lanzar un `.cmd` necesita `shell: true` y comillas cuidadas; se pr
   examen del módulo 1 en primer plano, y luego junta. Es el caso de verdad con choques posibles.
 - **Prueba de actualización**: sin cambios (no hay migración).
 
-## 5. Decisiones para Roberto
+## 5. Decisiones de Roberto (2026-09-23)
 
-1. **Una preparación a la vez** por curso. Recomendado: sí (menos choques, menos cuota de golpe).
-2. **Si cierra la ventana, la preparación sigue** y se junta al volver. Recomendado: sí.
-3. **El aviso llega entre actividades**, no al instante. Recomendado: aceptarlo (no hay otra forma portable).
-4. **La prueba real incluye el caso en paralelo.** Recomendado: sí, aunque gasta más cuota por ejecución.
-5. **Nombre de la carpeta de las copias**: `.preparacion/`. TBD si prefieres otro.
+1. **Una preparación a la vez** por curso: **sí**.
+2. **Si cierra la conversación o la terminal, la preparación sigue**: aceptado, con la explicación. La hace otro
+   programa (el asistente sin conversación) lanzado aparte, no el profesor con el que habla; cerrar la ventana no
+   lo para. Si se apaga o se duerme el ordenador, sí se para: el arranque siguiente lo detecta (proceso muerto sin
+   fin anotado → "interrumpida"), descarta la copia (el curso principal no se tocó) y ofrece volver a prepararla.
+   Se prueba en Mac y en Windows.
+3. **El aviso llega entre actividades**, no al instante: **ok**.
+4. **La prueba real incluye el caso en paralelo**: **ok**.
+5. **Carpeta de las copias `.preparacion/`**: **ok**.
 
 ## 6. Fuera de esta versión
 
