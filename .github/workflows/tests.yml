@@ -28,6 +28,11 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: git config --global core.autocrlf false
+      # El linter solo en un job (Linux, Node 24): no aporta nada repetirlo en toda la matriz y gasta minutos.
+      - if: matrix.os == 'ubuntu-latest' && matrix.node == 24
+        run: npm ci
+      - if: matrix.os == 'ubuntu-latest' && matrix.node == 24
+        run: npm run lint
       # Falla si algún test falla O si la cobertura de las herramientas baja del 80 %.
       - run: >
           node --test --experimental-test-coverage

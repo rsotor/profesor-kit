@@ -5,7 +5,7 @@ const v = require('./lib/vault');
 const g = require('./lib/git');
 const { aplicarAjustes } = require('./lib/obsidian');
 
-const SOLO_DEL_KIT = ['docs', '.github', '.githooks', 'CONTRIBUTING.md', 'package.json'];
+const SOLO_DEL_KIT = ['docs', '.github', '.githooks', 'CONTRIBUTING.md', 'package.json', 'eslint.config.js', 'node_modules', 'package-lock.json'];
 const MARCA_README_DEL_KIT = '# profesor-kit';
 
 function prepararCurso({ raiz, subir, llm = 'claude-code', nombre = '' }) {
@@ -42,7 +42,9 @@ function prepararCurso({ raiz, subir, llm = 'claude-code', nombre = '' }) {
   const ficheroAjustes = path.join(raiz, 'config', 'ajustes.json');
   const ajustesCreados = !fs.existsSync(ficheroAjustes);
   if (ajustesCreados) {
-    v.escribirAjustes(raiz, { ...structuredClone(v.AJUSTES_POR_DEFECTO), subir_a_github: subir, llm, nombre_curso: nombre, version_datos: motor.version_datos });
+    v.escribirAjustes(raiz, {
+      ...structuredClone(v.AJUSTES_POR_DEFECTO), subir_a_github: subir, llm, nombre_curso: nombre, version_datos: motor.version_datos,
+    });
   }
   // Antes de que el alumno abra la carpeta en Obsidian: así arranca ya configurado (abierto, pisaría los ficheros).
   const obsidian = aplicarAjustes(raiz);

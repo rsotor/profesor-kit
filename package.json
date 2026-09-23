@@ -7,6 +7,10 @@
   "scripts": {
     "test": "node --test \".kit/herramientas/tests/*.test.js\"",
     "test:cobertura": "node --test --experimental-test-coverage --test-coverage-include=\".kit/herramientas/**\" --test-coverage-exclude=\".kit/herramientas/tests/**\" --test-coverage-lines=80 --test-coverage-functions=80 --test-coverage-branches=80 \".kit/herramientas/tests/*.test.js\"",
-    "comprobar": "node .kit/herramientas/comprobar.js"
+    "comprobar": "node .kit/herramientas/comprobar.js",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^10.11.0"
   }
 }

@@ -23,6 +23,9 @@
 # Banco de pruebas del kit: cursos de usar y tirar para probar instalaciones. Nunca se sube.
 pruebas-local/
 
+# Linter del repo del kit (dev): preparar-curso.js ya borra eslint.config.js en los cursos
+node_modules/
+
 # Sistema
 .DS_Store
 Thumbs.db
