@@ -29,7 +29,7 @@ test('markdownFormulario: agrupa por bloque, enlaza el concepto, y avisa si no h
   assert.match(md, /no lo edites/);
   assert.match(md, /## Bloque 2\n\n### \[\[beta\|Beta\]\]\n\n\$\$ x = y \$\$/);
   assert.equal(gen.markdownFormulario(cursoTemporal()), gen.markdownFormulario(cursoTemporal()));
-  assert.match(gen.markdownFormulario(cursoTemporal()), /no tiene fórmulas/, 'sin fórmulas, las definiciones');
+  assert.match(gen.markdownFormulario(cursoTemporal()), /La primera letra/, 'sin fórmulas, las definiciones');
 });
 
 test('markdownFormulario: sin bloques: va a "Sin bloque"', () => {
@@ -92,18 +92,17 @@ test('markdownFormulario: un curso sin fórmulas reúne la definición de cada c
     'estudio/conceptos/romanico.md': '---\ntipo: concepto\nbloques: [1]\nalias: []\n---\n# Románico\n\n> **En una frase:** El arte de los monasterios.\n',
   });
   const md = gen.markdownFormulario(raiz);
-  assert.match(md, /Tu curso no tiene fórmulas/);
-  assert.match(md, /## Bloque 1\n\n- \[\[romanico\|Románico\]\]: El arte de los monasterios\./, 'la de la nota manda');
+    assert.match(md, /## Bloque 1\n\n- \[\[romanico\|Románico\]\]: El arte de los monasterios\./, 'la de la nota manda');
   assert.match(md, /- \[\[alfa\|Alfa\]\]: La primera letra/, 'si la nota no la trae, la del índice');
   assert.doesNotMatch(md, /### /);
 });
 
-test('markdownFormulario: en cuanto hay una fórmula, el formulario es de fórmulas', () => {
+test('markdownFormulario: se mezcla; cada concepto con su fórmula si la tiene, y si no, con su definición', () => {
   const raiz = cursoTemporal({
-    'estudio/conceptos/beta.md': '---\ntipo: concepto\nbloques: [1]\nalias: []\n---\n# Beta\n\n> **En una frase:** La segunda.\n\n## La fórmula\n\n$$ b = 2 $$\n',
+    'estudio/conceptos/beta.md': '---\ntipo: concepto\nalias: []\n---\n# Beta\n\n> **En una frase:** La segunda.\n\n## La fórmula\n\n$$ b = 2 $$\n',
   });
   const md = gen.markdownFormulario(raiz);
-  assert.match(md, /Reúne la sección "La fórmula"/);
   assert.match(md, /### \[\[beta\|Beta\]\]\n\n\$\$ b = 2 \$\$/);
-  assert.doesNotMatch(md, /La segunda/);
+  assert.doesNotMatch(md, /La segunda/, 'con fórmula, no se repite la definición');
+  assert.match(md, /### Definiciones\n\n- \[\[alfa\|Alfa\]\]: La primera letra/, 'el concepto sin fórmula también sale');
 });

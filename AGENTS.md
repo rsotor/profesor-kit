@@ -39,7 +39,7 @@ README.md                                                            ← DATOS: 
 - **`estudio/pendientes.md` lo escribe `guardar.js`** con todos los `TODO`, `FALTA INFO` y dudas abiertas,
   por bloques. No lo edites ni lo cites como fuente: se regenera en cada guardado.
 - **`estudio/formulario.md` y `estudio/ejercicios/_index.md` también los escribe `guardar.js`**: el primero,
-  desde la sección "La fórmula" de cada concepto que la tiene, por bloque; el segundo, desde el `ejercicio:`
+  por bloque, con la fórmula de cada concepto que la tiene y la definición en una frase de los demás; el segundo, desde el `ejercicio:`
   del frontmatter de cada concepto y los ficheros de `estudio/ejercicios/`. No los edites ni los cites como
   fuente de lo que ya sabe el alumno: son un índice, no contenido.
 - **`estudio/inicio.md` y el pie de navegación de cada sesión también los escribe `guardar.js`**: el temario

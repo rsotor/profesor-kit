@@ -121,22 +121,29 @@ function definiciones(raiz) {
   return lista;
 }
 
-// estudio/formulario.md: todas las fórmulas del curso, agrupadas por bloque, con enlace a cada concepto. Un curso
-// sin ninguna fórmula (historia, derecho…) no se queda con la hoja vacía: reúne la definición de cada concepto,
-// que es lo que ahí hay que saberse literal.
+// estudio/formulario.md: lo que hay que saberse de cada concepto, por bloque. Si el concepto tiene fórmula, su
+// fórmula; si no, su definición en una frase. Un curso con fórmulas también tiene conceptos sin ellas, y uno de
+// historia no tiene ninguna: así ninguno se queda fuera.
 function markdownFormulario(raiz) {
-  const conFormulas = formulas(raiz);
-  const lista = conFormulas.length ? conFormulas : definiciones(raiz);
-  const lineas = ['# Formulario', '', conFormulas.length
-    ? '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Reúne la sección "La fórmula" de cada\n> concepto que la tiene, agrupadas por bloque, para repasar antes del examen.'
-    : '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Tu curso no tiene fórmulas: aquí está la\n> definición en una frase de cada concepto, por bloque, para repasar lo que hay que saberse literal.', ''];
+  const conFormula = new Map(formulas(raiz).map(f => [f.slug, f]));
+  const lista = definiciones(raiz).filter(d => !conFormula.has(d.slug)).map(d => ({ ...d, tipo: 'definicion' }))
+    .concat([...conFormula.values()].map(f => ({ ...f, tipo: 'formula' })))
+    .sort((a, b) => a.slug.localeCompare(b.slug));
+  const lineas = ['# Formulario', '',
+    '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Lo que hay que saberse de cada concepto, por',
+    '> bloque: su fórmula si la tiene, y si no, su definición en una frase.', ''];
   if (!lista.length) { lineas.push('Nada todavía.', ''); return lineas.join('\n'); }
   const porBloque = new Map();
   for (const f of lista) { const k = f.bloque ? `Bloque ${f.bloque}` : 'Sin bloque'; if (!porBloque.has(k)) porBloque.set(k, []); porBloque.get(k).push(f); }
   for (const [bloque, items] of [...porBloque.entries()].sort()) {
     lineas.push(`## ${bloque}`, '');
-    if (conFormulas.length) for (const f of items) lineas.push(`### ${enlaceConcepto(f.slug, f.titulo)}`, '', f.cuerpo, '');
-    else { for (const f of items) lineas.push(`- ${enlaceConcepto(f.slug, f.titulo)}: ${f.cuerpo}`); lineas.push(''); }
+    const defs = items.filter(x => x.tipo === 'definicion');
+    for (const x of items.filter(y => y.tipo === 'formula')) lineas.push(`### ${enlaceConcepto(x.slug, x.titulo)}`, '', x.cuerpo, '');
+    if (defs.length) {
+      if (defs.length < items.length) lineas.push('### Definiciones', '');
+      for (const x of defs) lineas.push(`- ${enlaceConcepto(x.slug, x.titulo)}: ${x.cuerpo}`);
+      lineas.push('');
+    }
   }
   return lineas.join('\n');
 }
