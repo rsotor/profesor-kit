@@ -159,6 +159,8 @@ test('inicio solo enlaza las hojas que existen', () => {
   const md = ix.markdownInicio(cursoTemporal());
   assert.match(md, /\[\[mapa-del-curso\]\]/);
   assert.doesNotMatch(md, /como-usar-tu-profesor/);
+  assert.doesNotMatch(md, /test-inicial/);
+  assert.match(ix.markdownInicio(cursoTemporal({ 'estudio/test-inicial.md': '# Test inicial\n' })), /\[\[test-inicial\]\]/);
 });
 
 test('pieDeSesion: anterior · inicio · siguiente, con línea en blanco antes de la raya', () => {

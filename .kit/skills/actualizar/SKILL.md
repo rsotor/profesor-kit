@@ -67,7 +67,8 @@ copia al configurar). Esas llegan como ofertas: en las novedades que leíste en 
    ponerte ejemplos de tu mundo; ¿te las hago ahora?". Puede decir que no, o que otro día.
 2. Si dice que sí, hazlo tal como lo hace la skill o la plantilla de donde sale (por ejemplo, las preguntas de
    `/configurar` o la hoja desde `.kit/plantillas/guia-de-uso.md`, con los mismos huecos que usó `/configurar`).
-   Mira antes qué tiene ya: no repitas lo que su curso ya tiene hecho.
+   Mira antes qué tiene ya: no repitas lo que su curso ya tiene hecho. Lo que apuntes en `config/` cita
+   **de dónde sale de verdad**: "al actualizar a la <versión>, respuesta del alumno", no "sesión 0".
 3. Si dice que no, dile en una frase cómo pedirlo más tarde.
 
 Guarda al terminar con `node .kit/herramientas/guardar.js "config: al día con la <versión>"`.

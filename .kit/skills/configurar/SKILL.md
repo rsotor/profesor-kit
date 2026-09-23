@@ -178,12 +178,34 @@ Las explicaciones de este bloque, y la muestra del recuadro, son muestras: **no 
 2. **Test corto generado del temario:** 1-2 preguntas por bloque, empezando por los que ha
    puntuado con 2 o 3 (es donde la autoevaluación engaña más). Si falla una pregunta de base,
    **baja a los prerrequisitos**: pregunta lo que hay que saber antes, hasta encontrar suelo firme.
-   Máximo 10-12 preguntas en total.
-3. Escribe `## Nivel de partida` en `config/alumno.md`: por bloque, la autoevaluación, el resultado
-   y los prerrequisitos flojos. **Cada entrada cita su prueba**: "test de /configurar, pregunta N".
-4. Marca `configuracion.nivel: true`.
+   Máximo 10-12 preguntas en total. Redáctalas y corrígelas con las reglas de "Cuando preguntas para
+   medir" (`AGENTS.md`): una cosa por pregunta, y la pregunta dice qué respuesta espera.
+3. **Guarda el test** en `estudio/test-inicial.md`: por cada pregunta, el enunciado tal como se lo hiciste,
+   su respuesta (en sus palabras, resumida si fue larga) y tu veredicto (correcta · le falta lo que se
+   pedía · incorrecta) con el porqué. Arriba, la fecha y una línea: "Tu punto de partida. No cuenta para
+   nada: sirve para saber por dónde empezar". Es lo que hace que la prueba se pueda consultar.
+4. Escribe `## Nivel de partida` en `config/alumno.md`: por bloque, la autoevaluación, el resultado
+   y los prerrequisitos flojos. **Cada entrada cita su prueba**: "test inicial, pregunta N".
+5. Marca `configuracion.nivel: true`.
 
 Los prerrequisitos que haya que enseñar fuera del temario irán marcados como ampliación.
+
+### Revisar un nivel de partida hecho antes de estas reglas
+
+Para cursos configurados antes de la 0.19.0 (su `## Nivel de partida` cita "test de /configurar" y no existe
+`estudio/test-inicial.md`): sus preguntas no se guardaron y pudieron dar falsos negativos. No se pueden
+recuperar desde el curso, así que no las reconstruyas de memoria:
+
+1. En `## Nivel de partida`, busca los huecos que huelen a pregunta mal hecha: "sin nombrarlo", "no usó la
+   fórmula", "le falta el término", "intuye… pero". Pregúntate si la pregunta original los pedía; si no lo
+   sabes, trátalo como dudoso.
+2. Si desde entonces hay pruebas mejores (exámenes corregidos, `estudio/progreso.md`), mandan ellas: ese
+   hueco ya está medido y no se repregunta.
+3. De lo que queda dudoso, **una pregunta nueva por hueco**, con las reglas de ahora. Cuéntale antes, en una
+   frase, por qué: "algunas preguntas del primer test no pedían lo que luego te apunté como fallo".
+4. Guarda estas preguntas en `estudio/test-inicial.md` (con una línea arriba: "Revisión del <fecha>: las
+   preguntas del primer test no se guardaron") y corrige `## Nivel de partida`: lo que era falso negativo se
+   quita, citando "test inicial, revisión del <fecha>, pregunta N". Lo que se confirma, se queda.
 
 ## Cierre
 

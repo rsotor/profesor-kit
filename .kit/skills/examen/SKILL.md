@@ -45,6 +45,10 @@ sube a 35 %.
 - **Cálculo** (si el curso tiene cálculo) — números inventados y redondos, que salgan a mano.
 - **"Explica por qué"** — respuesta corta. Es donde se ve si entendió o memorizó.
 
+Cada pregunta, con las reglas de "Cuando preguntas para medir" (`AGENTS.md`): una cosa por pregunta, el caso
+antes que la pregunta, y entre paréntesis qué respuesta espera. En las de "explica por qué", di cuánto:
+*(en 2-3 líneas)*.
+
 **Todas las preguntas salen de las notas del curso.** Nada de material que no haya visto: el
 examen mide lo estudiado, no lo que "debería" saber.
 
@@ -91,7 +95,8 @@ vista; nunca decide qué se explica ni cuánto, y nunca puntúa.
 Cuando te dé las respuestas:
 
 1. Corrige pregunta a pregunta, diciendo **por qué** falla la respuesta equivocada, no solo cuál
-   era la buena.
+   era la buena. **Corrige lo que la pregunta pedía, nada más** ("Cuando preguntas para medir", `AGENTS.md`):
+   una respuesta corta y correcta es un acierto, y la idea bien sin el nombre también, si no pedías el nombre.
 2. Agrupa los fallos por concepto, no por número de pregunta.
 3. Si un concepto acumula 2+ fallos → a `## Errores repetidos` de `config/alumno.md`, citando
    este examen como prueba, y sube su `dificultad` en la nota.
