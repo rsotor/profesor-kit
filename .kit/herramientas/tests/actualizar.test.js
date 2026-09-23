@@ -180,3 +180,56 @@ test('migración 003: un app.json previo con promptDelete lo conserva y añade l
   assert.equal(app.promptDelete, true);
   assert.equal(app.alwaysUpdateLinks, true);
 });
+
+// Lo único que la actualización promete es no tocar nunca lo del alumno. Si no puede guardar antes (git sin
+// identidad), no puede prometer la vuelta atrás: entonces no empieza. Antes, `git clean -fd` borraba lo que
+// nunca llegó a guardarse.
+test('si no puede guardar antes de actualizar, no toca nada y lo que no estaba guardado sigue ahí', () => {
+  const lanza = `module.exports = { descripcion: 'lanza', migrar() { throw new Error('pum'); } };`;
+  const { raiz, origen } = montar({ motorNuevo: { version_datos: 2 }, extraOrigen: { '.kit/herramientas/migraciones/002-lanza.js': lanza } });
+  git(raiz, 'config', '--unset', 'user.name');
+  git(raiz, 'config', '--unset', 'user.email');
+  git(raiz, 'config', 'user.useConfigOnly', 'true');   // que git no se invente una identidad con el nombre de la máquina
+  escribir(raiz, { 'estudio/inbox/clase-07.md': 'apuntes sin guardar todavía' });
+  const r = actualizar({ raiz, origen });
+  assert.equal(r.actualizado, false);
+  assert.equal(r.motivo, 'sin-guardar');
+  assert.match(r.detalle, /sin-identidad/);
+  assert.equal(leer(raiz, 'estudio/inbox/clase-07.md'), 'apuntes sin guardar todavía');
+  assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
+});
+
+test('.gitignore: al actualizar se añaden las reglas del kit que falten y no se pisa ninguna del alumno', () => {
+  const { actualizar: act, fusionarGitignore } = require('../actualizar');
+  const { raiz, origen } = montar({
+    extraOrigen: { '.gitignore': '# del kit\n.claude/skills/\n.codex/skills/\n.env\n' },
+    motorNuevo: { ficheros: ['AGENTS.md', '.gitignore', '.kit'] },
+  });
+  escribir(raiz, { '.gitignore': '# mío\n.claude/skills/\nmis-borradores/\n' });   // el alumno (u otro LLM) añadió lo suyo
+  assert.equal(act({ raiz, origen }).actualizado, true);
+  const texto = leer(raiz, '.gitignore');
+  assert.match(texto, /^# mío\n\.claude\/skills\/\nmis-borradores\/\n/);
+  assert.match(texto, /# Reglas del kit añadidas al actualizar a la 2\.0\.0\n\.codex\/skills\/\n\.env\n$/);
+  assert.equal((texto.match(/\.claude\/skills\//g) || []).length, 1, 'lo que ya estaba no se repite');
+  assert.equal(fusionarGitignore('a\nb\n', 'b\n# c\na\n', '9'), 'a\nb\n', 'sin nada que añadir, no se toca');
+  assert.equal(fusionarGitignore('a\r\nb\r\n', 'c\n', '9'), 'a\r\nb\r\n\r\n# Reglas del kit añadidas al actualizar a la 9\r\nc\r\n', 'respeta el fin de línea');
+});
+
+test('la versión publicada es la última release (etiqueta vX.Y.Z), y se descarga esa etiqueta, no main', () => {
+  const { etiquetaPublicada, versionPublicada, descargar } = require('../actualizar');
+  const llamadas = [];
+  const gh = respuestas => args => { llamadas.push(args); return respuestas(args); };
+  const conRelease = gh(args => args[0] === 'api' ? { ok: true, salida: 'v0.20.0' } : { ok: true, salida: '' });
+  assert.equal(etiquetaPublicada('rsotor/profesor-kit', conRelease), 'v0.20.0');
+  assert.equal(versionPublicada('rsotor/profesor-kit', conRelease), '0.20.0');
+  const tmp = descargar('rsotor/profesor-kit', conRelease);
+  assert.ok(fs.existsSync(tmp));
+  fs.rmSync(tmp, { recursive: true, force: true });
+  const clon = llamadas.find(a => a[0] === 'repo');
+  assert.deepEqual(clon.slice(0, 3), ['repo', 'clone', 'rsotor/profesor-kit']);
+  assert.ok(clon.includes('--branch') && clon[clon.indexOf('--branch') + 1] === 'v0.20.0');
+
+  assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: false, salida: 'HTTP 404' }))), null, 'sin release o sin red: null');
+  assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: true, salida: 'main' }))), null, 'solo vale una etiqueta de versión');
+  assert.throws(() => descargar('x/y', gh(() => ({ ok: false, salida: '' }))), /última versión publicada/);
+});

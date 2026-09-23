@@ -5,7 +5,7 @@ const v = require('./lib/vault');
 const g = require('./lib/git');
 const { aplicarAjustes } = require('./lib/obsidian');
 
-const SOLO_DEL_KIT = ['docs', '.github', '.githooks', 'CONTRIBUTING.md'];
+const SOLO_DEL_KIT = ['docs', '.github', '.githooks', 'CONTRIBUTING.md', 'package.json'];
 const MARCA_README_DEL_KIT = '# profesor-kit';
 
 function prepararCurso({ raiz, subir, llm = 'claude-code', nombre = '' }) {

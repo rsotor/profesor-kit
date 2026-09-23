@@ -13,6 +13,17 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.20.0
+- **Actualizar es más seguro.** Si tu profesor no puede guardar tu trabajo antes de actualizar, no actualiza:
+  antes, en ese caso raro, una actualización fallida podía borrar lo que aún no estaba guardado.
+- **Solo te llegan versiones publicadas.** Tu profesor descarga la última versión publicada del kit, no lo que
+  esté a medio hacer, y se puede volver a una versión concreta.
+- **Tu `.gitignore` es tuyo.** Al actualizar se añaden las reglas del kit que falten, sin borrar las tuyas
+  (esta vez, y solo esta, se sustituye entero: si le habías añadido algo, vuelve a ponerlo).
+- **Los complementos de Obsidian van fijados a una versión** y se comprueba que lo descargado es exactamente
+  lo esperado; si no coincide, no se instala.
+- El atajo rechaza carpetas con caracteres que romperían el lanzador (comillas, `$`, `%`), y lo explica.
+
 ## 0.19.0
 - **Las preguntas de tus tests y exámenes se leen mejor**: cada una pregunta una sola cosa y te dice qué
   respuesta espera (una cifra, una frase, el porqué en 2-3 líneas). Si tu profesor quiere tu razonamiento, te

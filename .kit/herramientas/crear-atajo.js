@@ -6,6 +6,9 @@ const v = require('./lib/vault');
 
 const MARCA = 'profesor-kit: lanzador de curso';
 const NOMBRE_VALIDO = /^[a-z][a-z0-9-]{1,19}$/;
+// La ruta del curso se escribe dentro del lanzador entre comillas: estos caracteres la romperían o
+// ejecutarían lo que hubiera dentro (`$(…)`, `%VAR%`). Ninguna carpeta de cursos los necesita.
+const RUTA_PELIGROSA = /["$`%\r\n]/;
 // Cómo se llama en la terminal cada LLM. Si el de `ajustes.json` no está aquí, se usa tal cual.
 const COMANDO_LLM = { 'claude-code': 'claude', 'codex-cli': 'codex', 'gemini-cli': 'gemini' };
 
@@ -37,6 +40,7 @@ function existeComando(nombre, { entorno, plataforma, salvo }) {
 
 function crearAtajo({ raiz, nombre, actualizar = false, carpetaBin = path.join(os.homedir(), '.local', 'bin'), plataforma = process.platform, entorno = process.env }) {
   if (!NOMBRE_VALIDO.test(nombre || '')) return { creado: false, motivo: 'nombre-no-valido' };
+  if (RUTA_PELIGROSA.test(raiz)) return { creado: false, motivo: 'ruta-no-valida' };
 
   const fichero = path.join(carpetaBin, plataforma === 'win32' ? `${nombre}.cmd` : nombre);
   if (fs.existsSync(fichero)) {
@@ -67,6 +71,7 @@ const EXPLICACION = {
   'fichero-ajeno': 'Ya existe un fichero con ese nombre que no es del kit. No lo toco: elige otra palabra.',
   'atajo-de-otro-curso': 'Esa palabra ya abre otro de tus cursos. Elige otra para este. (Si es este mismo curso y lo has movido de carpeta, repite con --actualizar.)',
   'comando-existente': 'Esa palabra ya es un programa de tu ordenador. Elige otra para no taparlo.',
+  'ruta-no-valida': 'La carpeta del curso tiene en su nombre un carácter que el atajo no puede llevar (comillas, $, % o acento grave). Cambia el nombre de la carpeta y repite con --actualizar.',
 };
 
 function cli(args, raiz, opciones = {}) {

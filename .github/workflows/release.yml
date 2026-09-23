@@ -1,0 +1,31 @@
+name: release
+# Cada merge a main con una versión nueva en .kit/VERSION publica su release (etiqueta vX.Y.Z). Es lo que
+# `actualizar.js` descarga en los cursos: a los alumnos solo les llega lo publicado, nunca main a secas.
+# Si la etiqueta ya existe (un merge que no cambia la versión), no hace nada.
+on:
+  push:
+    branches: [main]
+    paths: ['.kit/VERSION']
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: echo "v=$(tr -d '[:space:]' < .kit/VERSION)" >> "$GITHUB_OUTPUT"
+      - id: existe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.version.outputs.v }}" >/dev/null 2>&1; then echo "si=1" >> "$GITHUB_OUTPUT"; else echo "si=0" >> "$GITHUB_OUTPUT"; fi
+      # Las notas son la sección de esa versión en el CHANGELOG (escrito para el alumno).
+      - if: steps.existe.outputs.si == '0'
+        run: node .github/release-notas.js "${{ steps.version.outputs.v }}" > notas.md
+      - if: steps.existe.outputs.si == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "v${{ steps.version.outputs.v }}" --title "v${{ steps.version.outputs.v }}" --notes-file notas.md --target "${{ github.sha }}"

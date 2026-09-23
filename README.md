@@ -9,11 +9,11 @@ configuración.
 - **¿Ya lo tienes y hay versión nueva?** Dile a tu profesor "actualiza el kit". Él lo hace todo; tú no tocas nada.
 - **Probado** en Claude Code y en Mac. Con otros LLMs de terminal y en Windows es compatible pero
   está sin probar: si algo falla, tu profesor te ayudará a contarlo con una issue en este repo.
-- **¿Vas a desarrollarlo?** El diseño y el plan están en `docs/superpowers/`. Tests:
-  `node --test ".kit/herramientas/tests/*.test.js"`. `main` solo recibe cambios por PR, y el CI
-  exige todos los tests en verde en Mac, Windows y Linux y una **cobertura mínima del 80 %** de
-  las herramientas (check obligatorio: `tests-ok`).
+- **¿Vas a desarrollarlo?** Lee [`CONTRIBUTING.md`](CONTRIBUTING.md). Tests: `npm test`. `main` solo recibe
+  cambios por PR, y el CI exige todos los tests en verde en Linux y Windows y una **cobertura mínima del
+  80 %** de las herramientas (check obligatorio: `tests-ok`). Cada merge que sube `.kit/VERSION` publica su
+  release, que es lo que los cursos descargan al actualizar. La última auditoría completa está en `docs/auditoria/`.
 - **Versiones:** todo cambio que note el alumno lleva su línea en `.kit/CHANGELOG.md`. El kit está
   en `0.x` hasta que sustituya al curso con el que nació; entonces, `1.0.0`.
 
-Este fichero, `docs/` y `.github/` son del repo del kit: desaparecen al crear un curso.
+Este fichero, `docs/`, `.github/`, `.githooks/`, `CONTRIBUTING.md` y `package.json` son del repo del kit: desaparecen al crear un curso.
