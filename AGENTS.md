@@ -70,9 +70,10 @@ README.md                                                            ← DATOS: 
 4. **Ningún marcador de duda se borra sin responderlo.** El marcador está en `config/profesor.md`.
 5. **Secretos.** Si el alumno pega un token o una contraseña en el chat: no lo uses, avísale, y
    explícale cómo ponerlo él mismo en un fichero local ignorado por git. Nunca pidas un token.
-6. **Deshacer.** Si el alumno pide deshacer lo último, deshaces el último guardado con git
-   (`git revert` del último commit, nunca reescribir historia ya subida) y le dices qué ha vuelto
-   a como estaba. El alumno nunca necesita saber git.
+6. **Deshacer.** Si el alumno pide deshacer lo último, usas `node .kit/herramientas/deshacer.js`, nunca git a
+   mano: primero con `--ver` le enseñas qué se desharía, y con su sí, sin `--ver`. Ella decide si procede
+   (nunca si hay cambios sin guardar, nunca si lo último es del kit y no un guardado suyo) y le dices qué ha
+   vuelto a como estaba. El alumno nunca necesita saber git.
 
 ## Cómo explicas (valores por defecto)
 
@@ -199,6 +200,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 |---|---|
 | Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
+| Para deshacer el último guardado | `node .kit/herramientas/deshacer.js` (antes, `--ver` para enseñar qué cambiaría) |
 | Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 | Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |

@@ -49,6 +49,21 @@ function regenerarGenerados(raiz) {
   escribirSiCambia(path.join(base, 'auditoria-del-material.md'), markdownAuditoria(raiz));
 }
 
+// Decide si lo que hay en HEAD se sube, y lo sube si procede. Mismo criterio para un guardado que para
+// un deshacer (deshacer.js la reutiliza): sin subir_a_github, con un secreto o sin remoto, se queda en local.
+function subirSiProcede(raiz, informe) {
+  const resultado = { subido: false };
+  if (!leerAjustes(raiz).subir_a_github) resultado.motivoSubida = 'subir_a_github está desactivado';
+  else if (informe.errores.some(e => e.regla === 'secreto')) resultado.motivoSubida = 'hay un posible secreto: no se sube hasta quitarlo';
+  else if (!g.urlOrigen(raiz)) resultado.motivoSubida = 'no hay remoto configurado';
+  else {
+    const push = g.intentarGit(raiz, ['push', '-q', 'origin', 'HEAD']);
+    if (push.ok) resultado.subido = true;
+    else resultado.motivoSubida = `el push falló (el trabajo está guardado en local): ${push.salida}`;
+  }
+  return resultado;
+}
+
 function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
   if (!g.esRepo(raiz)) return { guardado: false, motivo: 'sin-repo', subido: false, informe: comprobar(raiz) };
   regenerarGenerados(raiz);
@@ -63,16 +78,7 @@ function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
   g.git(raiz, ['add', '-A']);
   g.git(raiz, ['commit', '-q', '-m', mensaje]);
 
-  const resultado = { guardado: true, subido: false, informe };
-  if (!leerAjustes(raiz).subir_a_github) resultado.motivoSubida = 'subir_a_github está desactivado';
-  else if (informe.errores.some(e => e.regla === 'secreto')) resultado.motivoSubida = 'hay un posible secreto: no se sube hasta quitarlo';
-  else if (!g.urlOrigen(raiz)) resultado.motivoSubida = 'no hay remoto configurado';
-  else {
-    const push = g.intentarGit(raiz, ['push', '-q', 'origin', 'HEAD']);
-    if (push.ok) resultado.subido = true;
-    else resultado.motivoSubida = `el push falló (el trabajo está guardado en local): ${push.salida}`;
-  }
-  return resultado;
+  return { guardado: true, informe, ...subirSiProcede(raiz, informe) };
 }
 
 const EXPLICACION = {
@@ -93,4 +99,4 @@ function cli(args, raiz) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'guardar.js');
 
-module.exports = { guardar, regenerarGenerados, anotarEnDiario, cli };
+module.exports = { guardar, regenerarGenerados, anotarEnDiario, subirSiProcede, cli };

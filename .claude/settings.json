@@ -3,6 +3,7 @@
     "allow": [
       "Bash(node .kit/herramientas/comprobar.js *)",
       "Bash(node .kit/herramientas/guardar.js *)",
+      "Bash(node .kit/herramientas/deshacer.js *)",
       "Bash(node .kit/herramientas/actualizar.js *)",
       "Bash(node .kit/herramientas/instalar-skills.js *)",
       "Bash(node .kit/herramientas/preparar-curso.js *)",
