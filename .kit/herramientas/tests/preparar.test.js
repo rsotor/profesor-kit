@@ -282,3 +282,35 @@ test('construirPrompt: dice que trabaja en segundo plano, no pregunta, y lleva l
   assert.match(prompt, /estudio\/inbox\/a\.md y estudio\/inbox\/b\.md/);
   assert.match(prompt, /id 01-02/);
 });
+
+test('juntarPorFilas: las filas del curso principal mandan y las nuevas de la preparación van detrás de la última', () => {
+  const { juntarPorFilas } = require('../preparar');
+  const clave = l => (/^\|\s*\[\[([^\]|\\#]+)/.exec(l) || [])[1];
+  const ours = '# Progreso\n\n| Concepto | T | A |\n|---|---|---|\n| [[a]] | ✅ | ⬜ |\n| [[b]] | 🟡 | ⬜ |\n\nnota final\n';
+  const theirs = '# Progreso\n\n| Concepto | T | A |\n|---|---|---|\n| [[a]] | ⬜ | ⬜ |\n| [[b]] | ⬜ | ⬜ |\n| [[c]] | ⬜ | ⬜ |\n\nnota final\n';
+  assert.equal(juntarPorFilas(ours, theirs, clave),
+    '# Progreso\n\n| Concepto | T | A |\n|---|---|---|\n| [[a]] | ✅ | ⬜ |\n| [[b]] | 🟡 | ⬜ |\n| [[c]] | ⬜ | ⬜ |\n\nnota final\n');
+  assert.equal(juntarPorFilas('sin tabla\n', theirs, clave), null, 'sin filas propias no se adivina');
+});
+
+// El caso de la prueba real de la 0.22: mientras la preparación añade su fila al final de progreso.md, la tutoría
+// cambia el estado de la última fila (un examen). Quedan pegadas y git no las junta solo.
+test('juntar: progreso.md tocado en los dos lados (estado cambiado y fila nueva pegados) se junta por concepto', () => {
+  escribirAdaptador('p1');
+  assert.equal(herramienta('preparar', '--lanzar', ...conFichero('p1'), '--id', 'p1').codigo, 0);
+  const rel = 'estudio/progreso.md';
+  const abs = path.join(curso, ...rel.split('/'));
+  const lineas = fs.readFileSync(abs, 'utf8').split('\n');
+  const ultima = lineas.map((l, i) => [l, i]).filter(([l]) => /^\|\s*\[\[/.test(l)).pop();
+  assert.ok(ultima, 'hay alguna fila de concepto');
+  lineas[ultima[1]] = ultima[0].replace('⬜', '✅');
+  fs.writeFileSync(abs, lineas.join('\n'));
+  assert.equal(herramienta('guardar', 'examen: en paralelo').codigo, 0);
+  esperarTerminada('p1');
+  const j = herramienta('preparar', '--juntar', 'p1');
+  assert.equal(j.codigo, 0, j.salida);
+  const progreso = leer(rel);
+  assert.ok(progreso.includes(lineas[ultima[1]]), 'el estado que demostró el alumno se conserva');
+  assert.match(progreso, /\[\[concepto-p1\]\] \| ⬜ \| ⬜ \|/, 'la fila nueva de la preparación llega');
+  assert.equal(git(['status', '--porcelain']).salida, '');
+});

@@ -67,7 +67,9 @@ function simularAlumnoTrasSesiones(destino, marcador) {
 // ¿Queda algún marcador de duda sin resolver, en cualquier nota de estudio/? (para comprobar que
 // /dudas se las comió todas)
 function quedaMarcador(destino, marcador) {
-  for (const f of recorrerMd(path.join(destino, 'estudio'))) {
+  // Solo las notas que mira comprobar.js: la hoja de uso explica el marcador con ejemplos y no es una duda.
+  const notas = require('../../.kit/herramientas/lib/vault').listarNotas(destino, { conInbox: true }).map(rel => path.join(destino, 'estudio', ...rel.split('/')));
+  for (const f of notas) {
     // Como comprobar.js: el marcador entre comillas de código es un ejemplo (la hoja de uso lo explica así), no una duda.
     if (sinCodigo(fs.readFileSync(f, 'utf8')).includes(marcador)) return f;
   }

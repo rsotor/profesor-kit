@@ -166,6 +166,38 @@ function ficheroResoluble(rel) {
   return rel.startsWith('estudio/') && ['inicio.md', 'pendientes.md', 'formulario.md', 'auditoria-del-material.md'].includes(base);
 }
 
+// Ficheros que los dos lados tocan a la vez con filas, una por concepto: la tutoría cambia el estado de filas que
+// ya existían (un examen) y la preparación añade filas nuevas al final. Si quedan pegadas, git no sabe juntarlas
+// (visto en la prueba real de la 0.22). Se juntan por concepto: todas las filas del curso principal (que llevan
+// lo que el alumno ha demostrado) y, detrás de la última, las filas nuevas de la preparación.
+const POR_FILAS = {
+  'estudio/progreso.md': linea => (/^\|\s*\[\[([^\]|\\#]+)/.exec(linea) || [])[1],
+  'estudio/conceptos/_index.md': linea => (/^([a-z0-9][a-z0-9-]*) *\|/.exec(linea) || [])[1],
+};
+
+function juntarPorFilas(ours, theirs, clave) {
+  const eol = ours.includes('\r\n') ? '\r\n' : '\n';
+  const nuestras = ours.split(/\r?\n/);
+  const tenemos = new Set(nuestras.map(clave).filter(Boolean));
+  const nuevas = theirs.split(/\r?\n/).filter(l => clave(l) && !tenemos.has(clave(l)));
+  let ultima = -1;
+  nuestras.forEach((l, i) => { if (clave(l)) ultima = i; });
+  if (ultima < 0) return null;   // sin filas propias: no se sabe dónde van; que decida una persona
+  nuestras.splice(ultima + 1, 0, ...nuevas);
+  return nuestras.join(eol);
+}
+
+function resolverPorFilas(raiz, rel) {
+  const ours = g.intentarGit(raiz, ['show', `:2:${rel}`]);
+  const theirs = g.intentarGit(raiz, ['show', `:3:${rel}`]);
+  if (!ours.ok || !theirs.ok) return false;
+  const texto = juntarPorFilas(ours.salida, theirs.salida, POR_FILAS[rel]);
+  if (texto === null) return false;
+  fs.writeFileSync(path.join(raiz, ...rel.split('/')), texto.endsWith('\n') ? texto : texto + '\n');
+  g.git(raiz, ['add', '--', rel]);
+  return true;
+}
+
 // El driver "union" es de git de fábrica (no hace falta declarar merge.union.driver): basta con la
 // marca en .git/info/attributes. No toca .gitattributes del curso, así que no es nada que el alumno vea.
 function configurarUnionParaDiario(raiz) {
@@ -202,9 +234,12 @@ function juntar(raiz, id) {
 
   if (!rMerge.ok && !conflictos.length) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'error-merge', detalle: rMerge.salida }; }
   if (conflictos.length) {
-    const noResolubles = conflictos.filter(f => !ficheroResoluble(f));
+    const noResolubles = conflictos.filter(f => !ficheroResoluble(f) && !POR_FILAS[f]);
     if (noResolubles.length) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'choque', ficheros: noResolubles }; }
-    for (const f of conflictos) { g.git(raiz, ['checkout', '--ours', '--', f]); g.git(raiz, ['add', '--', f]); }
+    for (const f of conflictos.filter(x => POR_FILAS[x])) {
+      if (!resolverPorFilas(raiz, f)) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'choque', ficheros: [f] }; }
+    }
+    for (const f of conflictos.filter(x => !POR_FILAS[x])) { g.git(raiz, ['checkout', '--ours', '--', f]); g.git(raiz, ['add', '--', f]); }
   }
 
   regenerarGenerados(raiz);
@@ -300,6 +335,7 @@ function cli(args, raiz) {
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'preparar.js');
 
 module.exports = {
+  juntarPorFilas,
   lanzar, trabajar, juntar, cli, todasLasPreparaciones, formatearEstado, ficheroResoluble, pidVivo, descartarCopia,
   construirPrompt, dirDe, ramaDe,
 };
