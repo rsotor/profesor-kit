@@ -5,7 +5,7 @@ Estado: **revisado con Roberto**, listo para implementar · 2026-09-23 · rama `
 
 ## 1. El problema
 
-Preparar una clase (`/sesion`) tarda **entre 6 y 10 minutos** con Sonnet (observado en la primera prueba real; la cifra definitiva, en su `RESUMEN.md`). El alumno
+Preparar una clase (`/sesion`) tarda **entre 10 y 12 minutos** con Sonnet (medido en la primera prueba real, 2026-09-23). El alumno
 abre su curso para estudiar y se encuentra esperando. Sobre todo al principio del curso, cuando cada clase es
 material nuevo, eso quita las ganas.
 
@@ -145,6 +145,15 @@ hoy. Windows: lanzar un `.cmd` necesita `shell: true` y comillas cuidadas; se pr
 2. **Prueba real: la duda simulada se inserta al final del fichero**, debajo del pie de navegación, y la
    respuesta queda ahí. Es del script (`pruebas/prueba-real.js`), no del profesor: insertarla dentro del
    cuerpo de la nota, antes del pie.
+3. **Prueba real, `/dudas`: falso positivo.** El script busca el marcador en texto crudo y lo encuentra en la hoja
+   *Cómo usar tu profesor*, donde va como ejemplo entre comillas de código. Usar `sinCodigo` de `lib/vault.js`,
+   como `comprobar.js`.
+4. **Prueba real, examen: las respuestas preparadas no corresponden a las preguntas** (el examen se genera en
+   cada prueba y el script rellena por palabras clave: sale la misma definición en tres preguntas y frases
+   vacías). El profesor las suspende con razón y la nota es 0, pero así no se prueba una corrección con
+   aciertos. Arreglo: que responda un **alumno simulado** (otra llamada sin conversación con el perfil del curso
+   de ejemplo y una consigna: bien unas, a medias otras, mal y en blanco las demás, con la proporción de
+   `alumno/respuestas-examen.md`), y comprobar que la nota queda entre unos márgenes.
 
 ## 6. Fuera de esta versión
 
