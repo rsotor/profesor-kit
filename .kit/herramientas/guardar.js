@@ -3,7 +3,8 @@ const path = require('node:path');
 const g = require('./lib/git');
 const { leerAjustes } = require('./lib/vault');
 const fs = require('node:fs');
-const { comprobar, pendientes, markdownPendientes, markdownAuditoria, actualizarEstadoReadme } = require('./comprobar');
+const { comprobar } = require('./comprobar');
+const { pendientes, markdownPendientes, markdownAuditoria, actualizarEstadoReadme } = require('./lib/generados');
 const { CARPETA_ALUMNO } = require('./lib/vault');
 const indice = require('./lib/indice');
 
