@@ -240,7 +240,38 @@ obligatorio de la rama `main`. **Hook local** (`.githooks/pre-push`, se activa c
 `git config core.hooksPath .githooks`): rechaza el push directo a `main` y no sube nada con los tests en
 rojo — es la segunda barrera, la que no depende de que GitHub aplique la protección de rama (en un repo
 privado del plan gratuito, GitHub deja crearla pero no la aplica). Saltable a propósito con
-`PERMITIR_PUSH_A_MAIN=1` / `SALTAR_TESTS=1`.
+`PERMITIR_PUSH_A_MAIN=1` / `SALTAR_TESTS=1`. El checkout del job de Linux usa `fetch-depth: 0` (con
+etiquetas): lo necesitan `cambio-grande.js` (comparar con la rama base) y `prueba-actualizar.js`
+(reconstruir una versión antigua del kit con `git archive`).
+
+**La prueba real del profesor** (`pruebas/`, fuera de `.kit/`: `preparar-curso.js` la borra al crear un
+curso, igual que `docs/` o `.github/`) es la única pieza que comprueba **calidad pedagógica**, no solo
+código — y por eso es la única que usa un LLM de verdad y nunca corre en el CI:
+
+- `pruebas/curso-ejemplo/` — un curso inventado y corto ("Finanzas personales para empezar", 2 módulos,
+  3 clases, con fórmulas en unas y sin ellas en otras, y desorden real de alumno: una cifra que no cuadra
+  entre dos ficheros de la misma clase, una diapositiva con solo título, jerga sin explicar) con su
+  `config/` ya configurado (como lo dejaría `/configurar`) y valores **no por defecto** a propósito
+  (lente activada, marcador de dudas distinto, `flashcards_por_sesion` fijo, `estructura.json` con
+  submódulos, `patrones_prohibidos`): así la prueba real ejercita rutas que un curso recién instalado no
+  toca. `clases.json` y `alumno/respuestas-examen.md` son metadatos del ejecutor (qué clases procesar y en
+  qué orden, cómo "contestar" el examen), no datos del curso.
+- `pruebas/lib/montaje.js` monta, en una carpeta temporal autolimpiable, un curso de verdad: el motor de
+  la copia de trabajo actual + `preparar-curso.js --subir no` + los datos de `curso-ejemplo/` encima +
+  `git init` + `instalar-skills.js`. Lo comparten `prueba-real.js` y `prueba-actualizar.js`.
+- `pruebas/prueba-real.js` (`npm run prueba-real`) monta el curso y lanza `claude -p` (una sesión nueva
+  por paso) por las cinco skills de trabajo en orden, simulando al alumno entre medias (dudas, casilla
+  "a su manera", respuestas de examen). Guarda el resultado en `curso-ejemplo/resultado/` (estudio,
+  `config/alumno.md` y `RESUMEN.md`) y borra siempre la temporal. `--sin-llm` monta y prueba el propio
+  ejecutor sin gastar cuota — es lo único que corren los tests del repo y el CI nunca la lanza con un LLM
+  de verdad. Ver CONTRIBUTING.md, "Prueba real del profesor", para cuándo es obligatoria.
+- `pruebas/prueba-actualizar.js` (`npm run prueba-actualizar`) no usa ningún LLM —es mecánica de ficheros
+  y de `actualizar.js`—, así que sí corre en el CI en cada PR: reconstruye, con `git archive
+  v<versión>` (o la release anterior disponible), el curso tal como quedó en `resultado/`, y comprueba
+  que `actualizar.js --aplicar --origen <copia de trabajo actual>` lo deja al día sin perder nada del
+  alumno ni dejar las skills desactualizadas.
+- `.github/cambio-grande.js` compara los ficheros del PR con la rama base y falla si toca
+  `.kit/skills/`, `AGENTS.md` o `.kit/plantillas/` sin traer `resultado/RESUMEN.md` actualizado.
 
 ## 10. Dónde tocar para…
 
@@ -253,3 +284,4 @@ privado del plan gratuito, GitHub deja crearla pero no la aplica). Saltable a pr
 | Añadir o actualizar un adaptador de LLM | `.kit/adaptadores/<id>.json` con los campos de `.kit/ESTANDARES.md` | Fila en `.kit/adaptadores/LEEME.md` con el mismo `modelo_recomendado` (un test exige que coincidan); solo tras validar una issue `[adaptador] <id>` con datos reales |
 | Añadir o cambiar una herramienta CLI | `.kit/herramientas/<nombre>.js`, arrancando con `require('./lib/arranque').arrancar(cli, …)` | Permiso en `.claude/settings.json`; explicación en `AGENTS.md` o `.kit/guias/INSTALAR-AGENTE.md`; este fichero (sección 3) si cambia el mapa de herramientas |
 | Publicar un cambio | `.kit/CHANGELOG.md` + subir `.kit/VERSION` | Ver `CONTRIBUTING.md` (PR → `tests-ok` → merge → `release.yml`); si el cambio no llega a un curso ya configurado, línea `**Si ya tenías tu curso:**` para que `/actualizar` la ofrezca |
+| Cambiar cómo trabaja el profesor (una skill, `AGENTS.md`, una plantilla) | El fichero que toque, y luego `npm run prueba-real` en tu Mac | `pruebas/curso-ejemplo/resultado/RESUMEN.md` actualizado en el mismo PR: `cambio-grande.js` lo exige en el CI (ver CONTRIBUTING.md, "Prueba real del profesor") |

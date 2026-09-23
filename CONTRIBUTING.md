@@ -38,6 +38,50 @@ al terminar (también si el test la renombra a `<carpeta>-algo`). Nunca `fs.mkdt
 escribe en la carpeta personal real: si toca el perfil de la shell o el PATH, recibe una `casa` temporal o una
 función falsa (`ejecutarPs`).
 
+## Prueba real del profesor
+
+Los tests de `.kit/herramientas/tests/` comprueban el código. Nadie comprueba con ellos si una skill
+**explica bien**, si un examen sale razonable o si `/dudas` de verdad resuelve lo que el alumno dejó
+anotado — eso solo lo ve un LLM de verdad trabajando en un curso de verdad. Para eso está la prueba real.
+
+**Cuándo es obligatoria.** Si tu PR toca `.kit/skills/`, `AGENTS.md` o `.kit/plantillas/` (cualquier cosa
+que cambie cómo trabaja el profesor, no cómo funciona una herramienta), tiene que traer
+`pruebas/curso-ejemplo/resultado/RESUMEN.md` actualizado tras ejecutarla. El CI lo exige
+(`.github/cambio-grande.js`, solo en `pull_request`): un PR que toque esas rutas sin ese fichero no
+pasa. Si tu cambio es solo de una herramienta (`.kit/herramientas/`), no hace falta.
+
+**Cómo se lanza.** En tu Mac, con tu suscripción — **nunca en el CI** (gasta cuota de verdad):
+
+    npm run prueba-real
+
+Monta un curso de verdad (el motor de tu copia de trabajo + `pruebas/curso-ejemplo/`, un curso corto e
+inventado — finanzas personales para empezar, con fórmulas en unas clases y sin ellas en otras, y algo
+de desorden real de alumno) en una carpeta temporal, y le hace pasar, con `claude -p` en modo no
+interactivo, por las cinco skills de trabajo en orden: `/sesion` de cada clase, `/dudas` (tras simular
+que el alumno dejó dos dudas y marcó una casilla "a su manera"), `/ejercicio`, `/examen` (generar y
+corregir, con respuestas preparadas en `pruebas/curso-ejemplo/alumno/respuestas-examen.md`) y `/repaso`.
+Cada paso es una llamada a `claude` independiente (sesión nueva), y si uno falla o no encuentra lo que
+esperaba, se anota como fallo de **ese** paso y la prueba sigue con los demás — nunca revienta sin
+resumen. Al terminar, borra la carpeta temporal (también si algo falla) y sustituye
+`pruebas/curso-ejemplo/resultado/` entero por: el `estudio/` que quedó (sin `.obsidian/` ni `inbox/`),
+`config/alumno.md`, y `RESUMEN.md` (fecha, versión del kit, modelo, qué pasó en cada paso, los errores y
+avisos de `comprobar.js` agrupados por regla —con ojo a `no-se-vera-bien` y los pedagógicos—, y cuánto
+material salió). Revisa ese resumen a mano: es la parte que ningún test automático puede juzgar por ti.
+
+Opciones: `--modelo <id>` para probar otro modelo que el recomendado del adaptador; `--limite-ms <n>`
+para el tiempo máximo por llamada a `claude` (20 minutos por defecto). `--sin-llm` monta el curso y
+prueba el propio ejecutor sin llamar a `claude`: es lo que corre en los tests del repo (nunca cuesta
+cuota), y lo único que **tú** deberías ejecutar salvo que quieras de verdad una prueba real.
+
+**Cuánto tarda y cuánto gasta.** TBD — depende del modelo y de cuánto material salga; se irá anotando
+aquí según se vaya usando.
+
+Aparte, `npm run prueba-actualizar` comprueba que un curso que se quedó en una versión antigua del kit
+(la que anota `pruebas/curso-ejemplo/resultado/RESUMEN.md`) se actualiza sin perder nada a la copia de
+trabajo actual. No usa ningún LLM —es mecánica de ficheros y de `actualizar.js`—, así que **sí** corre en
+el CI, en cada PR. Si todavía no existe `resultado/` (nadie ha hecho nunca una prueba real), lo dice y
+sale sin error.
+
 ## Las dos barreras de `main`
 
 `main` tiene protección de rama en GitHub con el check `tests-ok` obligatorio (se aplica mientras el repo sea
@@ -64,8 +108,8 @@ que estar explicada en `AGENTS.md` o en `INSTALAR-AGENTE.md`, toda plantilla tie
 y lo que las skills citan tiene que existir. Lo que el CI no ve —que la explicación sea buena— lo ve la
 revisión del PR.
 
-Lo que solo es del repo del kit (`docs/`, `.github/`, `.githooks/`, este fichero, `package.json`) lo borra
-`preparar-curso.js` al crear un curso.
+Lo que solo es del repo del kit (`docs/`, `.github/`, `.githooks/`, `pruebas/`, este fichero,
+`package.json`) lo borra `preparar-curso.js` al crear un curso.
 
 ## Versiones
 
