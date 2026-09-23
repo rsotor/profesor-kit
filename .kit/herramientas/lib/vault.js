@@ -116,6 +116,51 @@ function leerFrontmatter(texto) {
   return datos;
 }
 
+// Lo que el alumno escribe a su manera. Las propiedades de una nota las escribe el profesor, pero también el
+// alumno desde Obsidian, y hay mil formas de escribir lo mismo. Aquí NO se adivina qué quiso decir: se señala
+// lo que el kit no sabe leer, o lee pero no le sirve, para que el profesor lo entienda, lo pregunte si hace
+// falta y lo reescriba en el estándar (AGENTS.md, "Cuando el alumno escribe a su manera").
+// Solo las propiedades que alguna herramienta lee: las demás son texto libre y no se vigilan.
+const esFecha = t => /^\d{4}-\d{2}-\d{2}$/.test(t) && !Number.isNaN(Date.parse(`${t}T00:00:00Z`))
+  && new Date(`${t}T00:00:00Z`).toISOString().startsWith(t);
+const ESPERADO = {
+  'si-no': { vale: t => /^(true|false)$/i.test(t), dice: 'el kit espera true o false (la casilla de Obsidian)' },
+  numero: { vale: t => numero(t) !== null, dice: 'el kit espera un número' },
+  entero: { vale: t => Number.isInteger(numero(t)), dice: 'el kit espera un número entero' },
+  nota: { vale: t => numero(t) !== null && numero(t) >= 0 && numero(t) <= 10, dice: 'el kit espera un número de 0 a 10 (por ejemplo 7,5; nunca 7/10)' },
+  dificultad: { vale: t => [1, 2, 3].includes(numero(t)), dice: 'el kit espera 1, 2 o 3' },
+  fecha: { vale: esFecha, dice: 'el kit espera una fecha AAAA-MM-DD' },
+};
+const PROPIEDADES = {
+  estudiada: 'si-no', parcial: 'si-no',
+  nota: 'nota', dificultad: 'dificultad', orden: 'numero', intentos: 'entero', version: 'entero',
+  fecha: 'fecha', trabajada: 'fecha',
+};
+
+// Devuelve [{ linea, texto, motivo }]; `linea` es la del fichero (la 1 es el primer `---`).
+function revisarPropiedades(texto) {
+  const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(texto);
+  if (!m) return [];
+  const problemas = [];
+  let lista = null;
+  m[1].split(/\r?\n/).forEach((linea, i) => {
+    const n = i + 2;
+    if (lista && /^\s*-\s+/.test(linea)) return;
+    lista = null;
+    if (linea.trim() === '' || /^\s*#/.test(linea)) return;
+    const par = /^([A-Za-z_][\w-]*):\s*(.*)$/.exec(linea);
+    if (!par) { problemas.push({ linea: n, texto: linea.trim(), motivo: 'el kit no sabe leer esta línea' }); return; }
+    const bruto = par[2].trim();
+    if (bruto === '') { lista = par[1]; return; }
+    const tipo = PROPIEDADES[par[1]];
+    if (!tipo) return;
+    const valor = /^\[.*\]$/.test(bruto) ? null : limpiarValor(bruto);
+    if (valor === '') return;   // vacía a propósito (la nota de un examen sin corregir)
+    if (valor === null || !ESPERADO[tipo].vale(valor)) problemas.push({ linea: n, texto: linea.trim(), motivo: ESPERADO[tipo].dice });
+  });
+  return problemas;
+}
+
 function leerAjustes(raiz) {
   const fichero = path.join(raiz, 'config', 'ajustes.json');
   if (!fs.existsSync(fichero)) return structuredClone(AJUSTES_POR_DEFECTO);
@@ -169,6 +214,6 @@ function leerVersion(dir) {
 module.exports = {
   CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, GENERADOS_CON_ENLACES, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
   aPosix, baseAlumno,
-  recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter, esCierto, numero,
+  recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter, revisarPropiedades, PROPIEDADES, esCierto, numero,
   leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, piezasAusentes,
 };

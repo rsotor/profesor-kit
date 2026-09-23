@@ -20,7 +20,7 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §3.2 Sin `package.json` | 1 (adelantado) | ✅ 0.20.0 | `package.json` mínimo: `private`, `engines >=22`, `npm test`, `npm run test:cobertura`, `npm run comprobar`. `preparar-curso.js` lo borra en los cursos (`SOLO_DEL_KIT`) |
 | §3.2 Sin linter · líneas largas | 3+ | ✅ 0.21.0 | ESLint como devDependency solo del repo del kit (`preparar-curso.js` lo borra en los cursos, junto con `node_modules/`), `eslint.config.js` en la raíz con `no-unused-vars`, `no-undef`, `eqeqeq`, `prefer-const` y `max-len` 160 (ignora cadenas/comentarios largos y los `assert.match` de los tests). `npm run lint`, paso de CI solo en el job Linux Node 24 |
 | §3.2 `comprobar.js` mezcla comprobar y generar | 2 | ✅ 0.21.0 | `comprobar.js` ya solo comprueba; lo que genera markdown (`pendientes`, `auditoría`, `formulario`, `ejercicios/_index`, `Estado` del README) vive en `lib/generados.js`, como `lib/indice.js`. `guardar.js` y los tests importan de ahí |
-| §3.2 Parser de frontmatter propio | 3 | ⏳ abierto | Antes de E5 (`me-lo-se:`) |
+| §3.2 Parser de frontmatter propio | 2 | ✅ 0.21.0 (de otra forma) | No se sustituye ni se amplía el lector: se decidió que detectar es mejor que prever. `lib/vault.js` → `revisarPropiedades()` señala las líneas que el lector no entiende y los valores que lee pero no sirven (`estudiada: sí`, `nota: 7/10`, fechas imposibles) en las propiedades que usan las herramientas. `comprobar.js` lo da como aviso `propiedad-no-estandar`. El profesor interpreta, pregunta la primera vez, reescribe en el estándar y lo apunta en `config/alumno.md` → *Cómo escribe en sus notas*; a la tercera, issue al kit describiendo el patrón, no el valor (`AGENTS.md`, "Cuando el alumno escribe a su manera"). Tests en `tests/propiedades.test.js` |
 | §3.2 Ficheros vivos mantenidos a mano | 2 | ✅ 0.21.0 | = P2, ver más abajo |
 | §3.2 Temporal de la descarga sin limpiar | 1 (adelantado) | ✅ 0.20.0 | `cli()` de `actualizar.js` borra el clon temporal en un `finally` (solo si no vino por `--origen`) |
 | §3.2 Test que faltaba (§2.1) | 1 | ✅ 0.20.0 | Ver §2.1 |
@@ -207,12 +207,12 @@ Siete puntos: **6 arreglados ✅** y **1 abierto ⏳**. Cada uno dice el suyo. D
   → **Arreglado en 0.21.0:** `comprobar.js` ya solo comprueba; toda la generación (`pendientes`, `auditoría`,
   `Estado`, y ahora también `formulario` y `ejercicios/_index`) vive en `lib/generados.js`. `guardar.js` y los
   tests importan de ahí.
-- ⏳ **Parser de frontmatter propio** (`vault.js:90-114`): escalares, listas en línea y en bloque. No entiende
+- ✅ **Parser de frontmatter propio** (`vault.js:90-114`): escalares, listas en línea y en bloque. No entiende
   mapas anidados, cadenas multilínea ni valores con `:` sin comillas. Obsidian escribe frontmatter cuando
   el alumno marca casillas o edita propiedades; hoy solo hace `estudiada`, y está cubierto. Si el kit va a
   apoyarse más en propiedades que toca el alumno (§8), conviene tests de esquina o un parser YAML mínimo
   de verdad.
-  → **Abierto.** Hace falta antes de E5 (bloque 3), que añade propiedades que marca el alumno.
+  → **Resuelto de otra forma en 0.21.0:** en vez de un lector más completo, el kit señala lo que no entiende o no le sirve (aviso `propiedad-no-estandar`) y el profesor lo interpreta con el alumno, lo reescribe en el estándar y apunta cómo escribe. Ver §0.
 - ✅ **Ficheros vivos que mantiene el LLM a mano:** `progreso.md`, `conceptos/_index.md`, `mapa-del-curso.md`,
   `formulario.md`, `ejercicios/_index.md`. `comprobar.js` sincroniza los dos primeros; los otros tres
   pueden desviarse sin que nadie avise. Y `mapa-del-curso.md` se solapa con `inicio.md` desde la 0.16.0 (la

@@ -267,6 +267,16 @@ function comprobarPiezas(raiz, informe) {
   }
 }
 
+// Propiedades que el kit no sabe leer, o lee pero no le sirven (`estudiada: sí`, `nota: 7/10`). Aviso, no error:
+// el profesor pregunta al alumno qué quería decir y lo reescribe en el estándar.
+function comprobarPropiedades(raiz, notas, informe) {
+  for (const nota of notas) {
+    for (const p of v.revisarPropiedades(leer(raiz, nota))) {
+      informe.avisos.push({ regla: 'propiedad-no-estandar', fichero: nota, detalle: `línea ${p.linea}: «${p.texto}» — ${p.motivo}. Entiende qué quería decir el alumno (mira "Cómo escribe en sus notas" en config/alumno.md), pregúntaselo si no lo sabes y reescríbelo en el estándar` });
+    }
+  }
+}
+
 function comprobar(raiz) {
   const informe = { errores: [], avisos: [] };
   comprobarPiezas(raiz, informe);
@@ -274,6 +284,7 @@ function comprobar(raiz) {
   comprobarEnlaces(raiz, notas, informe);
   comprobarIndice(raiz, informe);
   comprobarFrontmatter(raiz, informe);
+  comprobarPropiedades(raiz, notas, informe);
   comprobarProgreso(raiz, informe);
   const declarados = comprobarEjercicios(raiz, notas, informe);
   comprobarEjerciciosSueltos(raiz, declarados, informe);
