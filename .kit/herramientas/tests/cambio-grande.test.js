@@ -8,17 +8,17 @@ const { evaluar, cli, ficherosCambiados, TOCA_COMPORTAMIENTO, RESUMEN } = requir
 
 test('evaluar: PR que no toca skills/AGENTS.md/plantillas no necesita el resumen', () => {
   const r = evaluar(['.kit/herramientas/comprobar.js', 'docs/arquitectura.md']);
-  assert.deepEqual(r, { ok: true, tocaComportamiento: false, tocaResumen: false, resumenReal: false });
+  assert.deepEqual(r, { ok: true, tocaComportamiento: false, tocaResumen: false, resumenReal: false, alDia: true });
 });
 
 test('evaluar: toca una skill y NO trae el resumen → falla', () => {
   const r = evaluar(['.kit/skills/sesion/SKILL.md']);
-  assert.deepEqual(r, { ok: false, tocaComportamiento: true, tocaResumen: false, resumenReal: false });
+  assert.deepEqual(r, { ok: false, tocaComportamiento: true, tocaResumen: false, resumenReal: false, alDia: true });
 });
 
 test('evaluar: toca AGENTS.md pero SÍ trae el resumen → pasa', () => {
   const r = evaluar(['AGENTS.md', RESUMEN], '# Prueba real\n\nModelo: sonnet\n');
-  assert.deepEqual(r, { ok: true, tocaComportamiento: true, tocaResumen: true, resumenReal: true });
+  assert.deepEqual(r, { ok: true, tocaComportamiento: true, tocaResumen: true, resumenReal: true, alDia: true });
 });
 
 test('evaluar: toca una plantilla, sin resumen → falla', () => {
@@ -59,4 +59,26 @@ test('evaluar: un RESUMEN.md hecho con --sin-llm no cuenta como prueba real', ()
   const r = evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], deMentira);
   assert.deepEqual([r.ok, r.tocaResumen, r.resumenReal], [false, true, false]);
   assert.equal(evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], '# Prueba real\n\nModelo: sonnet\n').ok, true);
+});
+
+test('evaluar: un resumen real pero anterior al último cambio de skill no cuenta', () => {
+  const r = evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], '# Prueba real\n', false);
+  assert.deepEqual([r.ok, r.resumenReal, r.alDia], [false, true, false]);
+});
+
+test('resumenAlDia: mira el orden de los commits del PR, no solo que el resumen esté', () => {
+  const { resumenAlDia } = require('../../../.github/cambio-grande');
+  const { temporal, escribir, git } = require('./ayuda');
+  const repo = temporal('kit-');
+  git(repo, 'init', '-q', '-b', 'main');
+  for (const [k, val] of [['user.name', 'T'], ['user.email', 't@e.com'], ['commit.gpgsign', 'false']]) git(repo, 'config', k, val);
+  const commit = (ficheros, msg) => { escribir(repo, ficheros); git(repo, 'add', '-A'); git(repo, 'commit', '-q', '-m', msg); };
+  commit({ 'README.md': 'x' }, 'base');
+  git(repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD');
+  commit({ '.kit/skills/sesion/SKILL.md': 'v1' }, 'skill');
+  assert.equal(resumenAlDia('main', repo).alDia, false, 'cambio sin prueba');
+  commit({ [RESUMEN]: '# Prueba real\n' }, 'prueba');
+  assert.equal(resumenAlDia('main', repo).alDia, true, 'prueba después del cambio');
+  commit({ 'AGENTS.md': 'otra regla' }, 'otro cambio');
+  assert.equal(resumenAlDia('main', repo).alDia, false, 'un cambio posterior deja la prueba vieja');
 });
