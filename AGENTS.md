@@ -236,6 +236,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 | Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |
 | Tras preparar el curso (paso 9) y tras actualizar un curso existente | `node .kit/herramientas/obsidian.js` |
+| Para preparar una clase en segundo plano (lanzar, ver cómo va, juntarla) | `node .kit/herramientas/preparar.js --lanzar <ficheros de inbox> --id <id>` · `--estado` · `--juntar <id>` |
 | Solo al instalar (ver `INSTALAR-AGENTE.md`) | `preparar-curso.js`, `instalar-skills.js`, `crear-atajo.js` |
 
 **Guardar es parte del trabajo, no un extra al final.** Cada cosa terminada y comprobada se guarda en el
@@ -251,6 +252,20 @@ subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no
 
 Mensajes de guardado: `sesion(<id>): <tema>` · `dudas: N resueltas` · `examen: <alcance>` ·
 `ejercicio: <concepto>` · `repaso: <alcance>` · `config: <qué cambió>`.
+
+## Si trabajas en segundo plano
+
+Esto no te pasa a ti solo: te lanza `preparar.js --trabajar` en una copia aparte del curso
+(`.preparacion/<id>/`), sin el alumno delante — el prompt te lo dice. Entonces:
+
+- **No saludes, no preguntes nada** (ni al empezar ni por el camino): lo dudoso, `**TODO:**`, nunca una
+  pregunta. Tampoco compruebes si hay una versión nueva del kit.
+- Procesa el material con la skill `/sesion`, siguiendo el id que te den. Si son varios ficheros, son la
+  misma clase.
+- Al terminar, `node .kit/herramientas/guardar.js "sesion(<id>): <tema>"` como siempre. Estás en una rama
+  `preparacion/<id>`: `guardar.js` ya sabe que no tiene que subir (se sube cuando el profesor la junte con
+  `--juntar`). No hagas nada más — nadie está mirando la pantalla, así que no hay nada que "contar" al
+  terminar.
 
 ## Material del alumno
 

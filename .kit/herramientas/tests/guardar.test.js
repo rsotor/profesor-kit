@@ -72,6 +72,19 @@ test('sin cambios no crea commit', () => {
   assert.deepEqual([guardar({ raiz, mensaje: 'x' }).guardado, guardar({ raiz, mensaje: 'x' }).motivo], [false, 'sin-cambios']);
 });
 
+test('en una rama preparacion/* hace commit pero no sube, aunque subir_a_github esté activo y haya remoto', () => {
+  const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
+  iniciarGit(raiz);
+  const remoto = conOrigen(raiz);
+  git(raiz, 'checkout', '-b', 'preparacion/02-01');
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
+  const r = guardar({ raiz, mensaje: 'sesion(02-01): prueba' });
+  assert.equal(r.guardado, true);
+  assert.equal(r.subido, false);
+  assert.match(r.motivoSubida, /preparación en segundo plano/);
+  assert.equal(git(remoto, 'branch', '--list', 'preparacion/02-01'), '', 'la rama de preparación no llega al remoto');
+});
+
 test('sin remoto guarda en local y lo dice', () => {
   const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
   iniciarGit(raiz);

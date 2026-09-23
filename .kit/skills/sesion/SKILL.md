@@ -14,6 +14,9 @@ Convierte apuntes en bruto en material de estudio, sin duplicar lo que ya existe
 Si no estás usando el modelo recomendado para tu asistente (`.kit/adaptadores/LEEME.md`), díselo al alumno en
 una frase antes de empezar. No insistas: decide él.
 
+Si te han lanzado en segundo plano (`preparar.js --trabajar`, ver "Si trabajas en segundo plano" en
+`AGENTS.md`), no preguntes nada de lo de abajo: lo dudoso, `**TODO:**`, y sigue.
+
 ## Checklist
 
 Sigue estos puntos en orden y no te saltes ninguno.

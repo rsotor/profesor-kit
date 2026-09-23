@@ -20,11 +20,12 @@ test('cada adaptador del kit tiene los campos que usan las herramientas y su mod
 
 test('la tabla de .kit/adaptadores/LEEME.md dice lo mismo que los adaptadores (ni sobra ni falta ninguno)', () => {
   assert.deepEqual(filas.map(f => f[0]).sort(), adaptadores.map(a => a[0]).sort());
-  for (const [id, [probado, modelo, porQue, comprobado]] of filas) {
+  for (const [id, [probado, modelo, porQue, comprobado, segundoPlano]] of filas) {
     const a = Object.fromEntries(adaptadores)[id];
     assert.equal(probado, a.probado, `${id}: "Probado en"`);
     assert.equal(modelo, a.modelo_recomendado.modelo, `${id}: modelo`);
     assert.equal(porQue, a.modelo_recomendado.por_que, `${id}: por qué`);
     assert.equal(comprobado, a.modelo_recomendado.comprobado, `${id}: comprobado`);
+    assert.equal(segundoPlano, a.segundo_plano ? 'sí' : 'no', `${id}: "Segundo plano"`);
   }
 });

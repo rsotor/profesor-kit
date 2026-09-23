@@ -1,8 +1,10 @@
 'use strict';
 // La prueba real del profesor: monta un curso de verdad a partir de pruebas/curso-ejemplo/ y le hace
 // pasar, con el LLM de verdad (claude, en modo no interactivo), por las cinco skills de trabajo en
-// orden, como lo haría un alumno de principio a fin. Se ejecuta en el Mac del mantenedor, con su
-// suscripción — nunca en el CI. Ver CONTRIBUTING.md, "Prueba real del profesor".
+// orden, como lo haría un alumno de principio a fin — y, de paso, por una preparación en segundo plano
+// (`preparar.js`) en paralelo con el examen: el caso de verdad con choques posibles (plan 0.22, §4). Se
+// ejecuta en el Mac del mantenedor, con su suscripción — nunca en el CI. Ver CONTRIBUTING.md, "Prueba
+// real del profesor".
 //
 //   node pruebas/prueba-real.js                 # de verdad, con claude
 //   node pruebas/prueba-real.js --sin-llm       # solo monta y prueba el propio ejecutor, sin gastar cuota
@@ -25,6 +27,13 @@ function leerJson(f) { return JSON.parse(fs.readFileSync(f, 'utf8')); }
 
 function comando(comando_, args) {
   const r = spawnSync(comando_, args, { encoding: 'utf8' });
+  return { ok: !r.error && r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+}
+
+// Sondear sin gastar CPU mientras se espera a que termine algo en segundo plano.
+function dormir(ms) { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms); }
+function preparar(ctx, ...args) {
+  const r = spawnSync(process.execPath, [path.join(ctx.destino, '.kit', 'herramientas', 'preparar.js'), ...args], { cwd: ctx.destino, encoding: 'utf8' });
   return { ok: !r.error && r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
 }
 
@@ -75,6 +84,32 @@ function pasoSesion(ctx, clase) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   const r = invocarClaude({ prompt: promptSesion(clase), modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs });
   return { ok: r.ok, detalle: r.ok ? `claude terminó (código ${r.codigo})` : `claude falló (código ${r.codigo}${r.agotado ? ', tiempo agotado' : ''})`, salidaLlm: r.salida };
+}
+
+// El caso de verdad con choques posibles (plan 0.22, §4): la clase que no hace falta para el examen del
+// módulo se prepara en segundo plano mientras el examen (y lo que venga antes) sigue en primer plano.
+function pasoPrepararEnSegundoPlano(ctx, clase) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const r = preparar(ctx, '--lanzar', ...clase.ficheros, '--id', clase.id);
+  return { ok: r.ok, detalle: r.ok ? `lanzada la preparación de ${clase.id} en segundo plano` : `no se pudo lanzar: ${r.salida}` };
+}
+
+// Espera (sondeando --estado, sin sleeps largos de un tirón) a que termine, y la junta con la principal.
+function pasoJuntarPreparacion(ctx, clase) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const limite = Date.now() + ctx.limiteMs;
+  let estado;
+  for (;;) {
+    const r = preparar(ctx, '--estado', '--json');
+    if (!r.ok) return { ok: false, detalle: `preparar.js --estado falló: ${r.salida}` };
+    estado = JSON.parse(r.salida || '[]').find(e => e.id === clase.id);
+    if (estado && estado.resultadoEnCaliente !== 'en-curso') break;
+    if (Date.now() > limite) return { ok: false, detalle: `la preparación de ${clase.id} no terminó a tiempo (${estado ? estado.resultadoEnCaliente : 'no se encuentra'})` };
+    dormir(2000);
+  }
+  if (estado.resultadoEnCaliente !== 'terminada') return { ok: false, detalle: `la preparación de ${clase.id} quedó "${estado.resultadoEnCaliente}"` };
+  const j = preparar(ctx, '--juntar', clase.id);
+  return { ok: j.ok, detalle: j.ok ? `${clase.id} juntada con la rama principal` : `no se pudo juntar: ${j.salida}` };
 }
 
 function pasoDudas(ctx) {
@@ -243,11 +278,22 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     const ctx = { destino, sinLlm, modelo, limiteMs, datosCurso };
     const pasos = [];
 
-    for (const clase of clases.clases) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+    // El caso de verdad con choques posibles (plan 0.22, §4): las clases del módulo del examen, en
+    // primer plano; la que no hace falta para ese examen (de otro módulo), en segundo plano — en
+    // paralelo con dudas, ejercicio y el examen. Al final se junta y sigue como si nada.
+    const prefijoExamen = clases.examen_modulo.prefijo;
+    const clasesModuloDelExamen = clases.clases.filter(c => c.id.startsWith(prefijoExamen));
+    const clasesEnSegundoPlano = clases.clases.filter(c => !c.id.startsWith(prefijoExamen));
+    const [claseEnSegundoPlano, ...otrasEnSegundoPlano] = clasesEnSegundoPlano;
+
+    for (const clase of clasesModuloDelExamen) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+    if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
     ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));
     ejecutarPaso(pasos, '/ejercicio', () => pasoEjercicio(ctx));
     ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
     ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
+    if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --juntar ${claseEnSegundoPlano.id}`, () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano));
+    for (const clase of otrasEnSegundoPlano) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
     ejecutarPaso(pasos, '/repaso', () => pasoRepaso(ctx, clases.examen_modulo));
 
     const informe = comprobarJson(destino);

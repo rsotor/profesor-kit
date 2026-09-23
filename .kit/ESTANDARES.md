@@ -19,6 +19,15 @@ te da un permiso) lo lee de un fichero con esta forma:
 | `probado` | En qué sistema y cuándo lo comprobaste de verdad (no basta con leer tu documentación) | nunca | `"macOS · Claude Code CLI · 2026-09-23"` |
 | `modelo_recomendado` | `{ modelo, por_que, comprobado }`: el modelo con el que el kit hace bien el trabajo sin gastar cuota de más, por qué, y cuándo se comprobó. Va también como fila en `.kit/adaptadores/LEEME.md` (un test exige que coincidan) | si aún no lo sabes: lo dices en la issue | `{ "modelo": "Sonnet", … }` |
 
+**Campo opcional, solo si tu asistente puede trabajar sin conversación** (lo usa `preparar.js` para
+preparar una clase en segundo plano, ver `AGENTS.md`, "Si trabajas en segundo plano"): `segundo_plano`,
+una lista de argumentos (sin `comando`, que ya lo pone delante) con los huecos `{prompt}` y `{modelo}`,
+por ejemplo `["-p", "{prompt}", "--model", "{modelo}", "--permission-mode", "acceptEdits",
+"--permission-prompts", "none"]`. Compruébalo de verdad antes de escribirlo: lánzalo tú a mano una vez y
+mira que termina sin preguntar nada. Sin este campo, `preparar.js --lanzar` se niega y el kit se queda
+en primer plano para todo. Añade también una columna en `.kit/adaptadores/LEEME.md` ("Segundo plano":
+sí/no).
+
 Vive en dos sitios posibles, y las herramientas del kit (`instalar-skills.js`, `crear-atajo.js`,
 `diagnostico.js`) miran primero el segundo:
 

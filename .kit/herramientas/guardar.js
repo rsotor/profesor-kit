@@ -51,9 +51,13 @@ function regenerarGenerados(raiz) {
 
 // Decide si lo que hay en HEAD se sube, y lo sube si procede. Mismo criterio para un guardado que para
 // un deshacer (deshacer.js la reutiliza): sin subir_a_github, con un secreto o sin remoto, se queda en local.
+// Una copia de trabajo de preparar.js (rama `preparacion/<id>`) nunca sube: es una rama aparte que nadie
+// más ve hasta que `--juntar` la mezcla con la principal, y esa mezcla es la que sube (con sus reglas
+// normales), no cada guardado suelto de la preparación.
 function subirSiProcede(raiz, informe) {
   const resultado = { subido: false };
   if (!leerAjustes(raiz).subir_a_github) resultado.motivoSubida = 'subir_a_github está desactivado';
+  else if (g.ramaActual(raiz).startsWith('preparacion/')) resultado.motivoSubida = 'esto es una copia de preparación en segundo plano: se sube cuando el profesor la junte con --juntar';
   else if (informe.errores.some(e => e.regla === 'secreto')) resultado.motivoSubida = 'hay un posible secreto: no se sube hasta quitarlo';
   else if (!g.urlOrigen(raiz)) resultado.motivoSubida = 'no hay remoto configurado';
   else {

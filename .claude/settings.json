@@ -14,6 +14,7 @@
       "Bash(node .kit/herramientas/organizar.js *)",
       "Bash(node .kit/herramientas/obsidian.js *)",
       "Bash(node .kit/herramientas/issue.js *)",
+      "Bash(node .kit/herramientas/preparar.js *)",
       "Bash(gh issue list *)",
       "Bash(gh issue view *)",
       "Bash(git status *)",
