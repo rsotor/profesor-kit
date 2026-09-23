@@ -3,9 +3,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const CARPETAS_NOTAS = ['conceptos', 'sesiones', 'ejercicios', 'examenes', 'flashcards'];
-const FICHEROS_VIVOS = ['progreso.md', 'formulario.md', 'mapa-del-curso.md'];
-// Generados por guardar.js que enlazan a otras notas: se comprueban sus enlaces, pero no se exigen ni se reparan.
-const GENERADOS_CON_ENLACES = ['inicio.md'];
+// mapa-del-curso.md es el único fichero vivo que sigue a mano (solo la cobertura del material: lo único
+// que inicio.md no cubre). progreso.md también, porque solo lo cambian las respuestas del alumno.
+const FICHEROS_VIVOS = ['progreso.md', 'mapa-del-curso.md'];
+// Generados por guardar.js que enlazan a otras notas: se comprueban sus enlaces, pero no se exigen ni se reparan
+// (antes de que exista el primer guardado, un enlace a uno de ellos no es un enlace roto).
+const GENERADOS_CON_ENLACES = ['inicio.md', 'formulario.md'];
 // Todo lo del alumno vive en una sola carpeta: es la que abre en Obsidian, y así no ve ni toca el motor.
 const CARPETA_ALUMNO = 'estudio';
 // Carpetas del alumno que no son notas: 'inbox' es su material en bruto y 'repasos' es HTML generado.

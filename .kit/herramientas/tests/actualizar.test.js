@@ -53,7 +53,7 @@ test('misma versión: no hace nada', () => {
 
 test('ejecuta las migraciones pendientes en orden y sube version_datos', () => {
   const migracion = n => `module.exports = { descripcion: 'm${n}', migrar(raiz) {
-    const f = require('node:path').join(raiz, 'estudio/formulario.md');
+    const f = require('node:path').join(raiz, 'estudio/mapa-del-curso.md');
     require('node:fs').appendFileSync(f, 'migrado-${n}\\n');
   } };`;
   const { raiz, origen } = montar({
@@ -62,7 +62,7 @@ test('ejecuta las migraciones pendientes en orden y sube version_datos', () => {
   });
   const r = actualizar({ raiz, origen });
   assert.deepEqual(r.migraciones, [2, 3]);
-  assert.match(leer(raiz, 'estudio/formulario.md'), /migrado-2\nmigrado-3\n$/);
+  assert.match(leer(raiz, 'estudio/mapa-del-curso.md'), /migrado-2\nmigrado-3\n$/);
   assert.equal(JSON.parse(leer(raiz, 'config/ajustes.json')).version_datos, 3);
 });
 
@@ -179,6 +179,28 @@ test('migración 003: un app.json previo con promptDelete lo conserva y añade l
   const app = JSON.parse(leer(raiz, 'estudio/.obsidian/app.json'));
   assert.equal(app.promptDelete, true);
   assert.equal(app.alwaysUpdateLinks, true);
+});
+
+test('migración 004: un formulario.md o un ejercicios/_index.md escritos a mano se conservan con otro nombre; y es idempotente', () => {
+  const m = require('../migraciones/004-formulario-y-ejercicios-generados');
+  const raiz = cursoTemporal({
+    'estudio/formulario.md': '# Formulario\n\n> Todas las fórmulas del curso, por bloque.\n',
+    'estudio/ejercicios/_index.md': '# Índice de ejercicios\n\n| Ejercicio | Practica | De | Lo que se descubre |\n|---|---|---|---|\n',
+  });
+  m.migrar(raiz);
+  m.migrar(raiz);   // idempotente: la segunda vuelta no encuentra nada que conservar (ya se conservó)
+  assert.equal(leer(raiz, 'estudio/formulario-anterior.md'), '# Formulario\n\n> Todas las fórmulas del curso, por bloque.\n');
+  assert.equal(leer(raiz, 'estudio/ejercicios/_index-anterior.md'), '# Índice de ejercicios\n\n| Ejercicio | Practica | De | Lo que se descubre |\n|---|---|---|---|\n');
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'formulario.md')), 'guardar.js lo escribirá de nuevo, generado');
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'ejercicios', '_index.md')));
+});
+
+test('migración 004: si el contenido ya es justo el que generaría el kit, no conserva nada', () => {
+  const m = require('../migraciones/004-formulario-y-ejercicios-generados');
+  const raiz = cursoTemporal();   // cursoTemporal ya deja formulario.md y ejercicios/_index.md recién generados
+  m.migrar(raiz);
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'formulario-anterior.md')));
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'ejercicios', '_index-anterior.md')));
 });
 
 // Lo único que la actualización promete es no tocar nunca lo del alumno. Si no puede guardar antes (git sin

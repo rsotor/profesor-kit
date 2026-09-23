@@ -23,7 +23,7 @@ README.md                                                            ← DATOS: 
 - **`estudio/` es la carpeta que el alumno abre en Obsidian.** Desde ahí no ve el motor ni `config/`, y así
   no puede borrarlos ni moverlos sin querer. Todo lo que generes para él va dentro: `estudio/inbox/`,
   `estudio/conceptos/`, `estudio/sesiones/`, `estudio/ejercicios/`, `estudio/examenes/`, `estudio/flashcards/`,
-  `estudio/repasos/` y los ficheros vivos (`estudio/progreso.md`, `estudio/formulario.md`, `estudio/mapa-del-curso.md`).
+  `estudio/repasos/` y los ficheros vivos que sigues a mano (`estudio/progreso.md`, `estudio/mapa-del-curso.md`).
 - **Dentro de las notas, los enlaces y las rutas son relativos a `estudio/`**, que es la raíz de su bóveda:
   se escribe `[[flashcards/<id>]]` y `fuente: inbox/<fichero>`, nunca con `estudio/` delante. Y cuando le
   hables de un fichero, nómbralo como él lo ve en Obsidian: "la nota **<slug>**, en la carpeta **conceptos**".
@@ -38,6 +38,10 @@ README.md                                                            ← DATOS: 
   plantilla o un error ya salió, dilo ("la misma hoja que en la 1.2") en vez de descubrirlo de nuevo.
 - **`estudio/pendientes.md` lo escribe `guardar.js`** con todos los `TODO`, `FALTA INFO` y dudas abiertas,
   por bloques. No lo edites ni lo cites como fuente: se regenera en cada guardado.
+- **`estudio/formulario.md` y `estudio/ejercicios/_index.md` también los escribe `guardar.js`**: el primero,
+  desde la sección "La fórmula" de cada concepto que la tiene, por bloque; el segundo, desde el `ejercicio:`
+  del frontmatter de cada concepto y los ficheros de `estudio/ejercicios/`. No los edites ni los cites como
+  fuente de lo que ya sabe el alumno: son un índice, no contenido.
 - **`estudio/inicio.md` y el pie de navegación de cada sesión también los escribe `guardar.js`**: el temario
   entero, qué ha estudiado el alumno (la casilla `estudiada` de cada sesión, que marca él) y qué tiene probado
   (sale de `estudio/progreso.md`). No los edites ni los cites como fuente. Es la puerta del alumno al curso

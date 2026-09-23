@@ -106,8 +106,8 @@ pesan causas entre sí, no hay ningún número que mover—.
 
 ### 6. Enlazarlo — en los dos sentidos
 
-Un ejercicio que solo se alcanza desde el fichero de su sesión está medio perdido. Cuatro
-sitios, y `node .kit/herramientas/comprobar.js` valida que no falte el primero:
+Un ejercicio que solo se alcanza desde el fichero de su sesión está medio perdido. Tres
+sitios a mano, y `node .kit/herramientas/comprobar.js` valida que no falte el primero:
 
 1. **Nota del concepto** → `ejercicio: <slug>` en el frontmatter y sección `## Practícalo` con
    el enlace y qué hay que mover. Si el ejercicio sirve a **varios** conceptos, cada uno lo
@@ -116,8 +116,10 @@ sitios, y `node .kit/herramientas/comprobar.js` valida que no falte el primero:
    sesión de la que salió.
 3. **`estudio/ejercicios/<id-de-sesion>.md`** de la sesión de la que salga, con su versión a mano. Si
    nace suelto, va a `estudio/ejercicios/extra.md`.
-4. **`estudio/ejercicios/_index.md`**: fila en las dos tablas —por ejercicio y por concepto—, con *qué
-   se descubre fallándolo*. Es el único sitio donde se ve qué practica qué sin abrir nada.
+
+`estudio/ejercicios/_index.md` **se escribe solo al guardar**, con una fila en las dos tablas —por ejercicio
+y por concepto— por cada `ejercicio:` del punto 1, y *qué se descubre fallándolo* sale del `## Practícalo`
+de esa misma nota. No lo toques a mano: escribe bien el punto 1 y el índice sale solo.
 
 ### 7. Lo que aprende el profesor
 

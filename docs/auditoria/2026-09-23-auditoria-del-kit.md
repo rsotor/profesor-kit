@@ -18,10 +18,10 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §2.3 (TBD) Claudian y la clave de API | — | ⏳ abierto | Sin comprobar. Toca a la hoja del alumno si pide clave |
 | §2.4 Inyección por la ruta del curso en el atajo | 1 (adelantado) | ✅ 0.20.0 | `crear-atajo.js`: `RUTA_PELIGROSA` rechaza `"`, `$`, `%`, acento grave y saltos de línea con motivo `ruta-no-valida` y explicación en llano. Test en `tests/crear-atajo.test.js` |
 | §3.2 Sin `package.json` | 1 (adelantado) | ✅ 0.20.0 | `package.json` mínimo: `private`, `engines >=22`, `npm test`, `npm run test:cobertura`, `npm run comprobar`. `preparar-curso.js` lo borra en los cursos (`SOLO_DEL_KIT`) |
-| §3.2 Sin linter · líneas largas | 3+ | ⏳ abierto | |
-| §3.2 `comprobar.js` mezcla comprobar y generar | 2 | ⏳ abierto | Encaja con P2 (ficheros vivos generados) |
+| §3.2 Sin linter · líneas largas | 3+ | ✅ 0.21.0 | ESLint como devDependency solo del repo del kit (`preparar-curso.js` lo borra en los cursos, junto con `node_modules/`), `eslint.config.js` en la raíz con `no-unused-vars`, `no-undef`, `eqeqeq`, `prefer-const` y `max-len` 160 (ignora cadenas/comentarios largos y los `assert.match` de los tests). `npm run lint`, paso de CI solo en el job Linux Node 24 |
+| §3.2 `comprobar.js` mezcla comprobar y generar | 2 | ✅ 0.21.0 | `comprobar.js` ya solo comprueba; lo que genera markdown (`pendientes`, `auditoría`, `formulario`, `ejercicios/_index`, `Estado` del README) vive en `lib/generados.js`, como `lib/indice.js`. `guardar.js` y los tests importan de ahí |
 | §3.2 Parser de frontmatter propio | 3 | ⏳ abierto | Antes de E5 (`me-lo-se:`) |
-| §3.2 Ficheros vivos mantenidos a mano | 2 | ⏳ abierto | = P2 |
+| §3.2 Ficheros vivos mantenidos a mano | 2 | ✅ 0.21.0 | = P2, ver más abajo |
 | §3.2 Temporal de la descarga sin limpiar | 1 (adelantado) | ✅ 0.20.0 | `cli()` de `actualizar.js` borra el clon temporal en un `finally` (solo si no vino por `--origen`) |
 | §3.2 Test que faltaba (§2.1) | 1 | ✅ 0.20.0 | Ver §2.1 |
 | §4.2 Linux sin documentar | — | ⏳ decisión | Roberto: son dos proyectos; pendiente decidir si se documenta o se declara no soportado |
@@ -41,7 +41,8 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §7 Releases | 1 | ✅ 0.20.0 | Ver §2.2 |
 | §7 Curso de referencia en el CI | 2 | ⏳ abierto | Después de P1 |
 | §7 `.superpowers/sdd/` en el árbol de trabajo | — | ⏳ abierto | Ignorado por su propio `.gitignore`; sin decidir si se saca |
-| §8 Propuestas P1-P8 y E1-E9 | 2 y 3 | ⏳ abierto | Siguiente: bloque 2, "que no dependa del modelo" |
+| §8.1 P2 Más ficheros vivos generados | 2 | ✅ 0.21.0 | `guardar.js` genera ahora `estudio/formulario.md` (fórmulas por bloque) y `estudio/ejercicios/_index.md` (qué practica cada ejercicio, desde `ejercicio:` y `## Practícalo`); `mapa-del-curso.md` se queda solo para la cobertura del material, como ya decía la skill. Migración `004-…` conserva con otro nombre lo que un curso ya tuviera escrito a mano y no coincida con lo generado. Ver `lib/generados.js`, `tests/generados.test.js` |
+| §8 Resto de propuestas P1, P3-P8 y E1-E9 | 2 y 3 | ⏳ abierto | Siguiente: P1 (lint pedagógico) y P3 (calentamiento), bloque 2 |
 
 Alcance: seguridad · calidad del código y de los tests · multiplataforma · multi-LLM · documentación ·
 agilidad del proceso · y, sobre todo, **qué le vendría bien al kit en las próximas iteraciones**, para el
@@ -186,32 +187,41 @@ de test que evita que la prosa y el código se separen, y aquí es lo más valio
 
 ### 3.2 🟡 Hallazgos
 
-Siete puntos: **3 arreglados ✅** y **4 abiertos ⏳**. Cada uno dice el suyo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
+Siete puntos: **6 arreglados ✅** y **1 abierto ⏳**. Cada uno dice el suyo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 - ✅ **Sin `package.json`.** No hay `engines` (el mínimo Node 22 solo lo sabe `diagnostico.js`), no hay
   `npm test`, no hay linter. Uno mínimo, sin dependencias, con `scripts.test` y `engines`, deja el proyecto
   reconocible para cualquier herramienta y para quien lo abra por primera vez.
   → **Arreglado en 0.20.0:** `package.json` con `engines >=22`, `npm test`, `npm run test:cobertura` y
   `npm run comprobar`. `preparar-curso.js` lo borra al crear un curso. El linter no: va en el punto siguiente.
-- ⏳ **Sin linter.** 40 líneas de más de 160 caracteres en las herramientas; funciones de una línea con tres
+- ✅ **Sin linter.** 40 líneas de más de 160 caracteres en las herramientas; funciones de una línea con tres
   ternarios (`comprobar.js:291`, `indice.js:10`). Es consistente y está comentado, así que se lee, pero
   crece a base de compactar. Un ESLint con reglas mínimas (o al menos `max-len`) costaría poco.
-  → **Abierto.** Sin bloque asignado; cuando haya hueco.
-- ⏳ **`comprobar.js` hace dos cosas:** comprobar y generar markdown (`pendientes`, `auditoría`, `Estado` del
+  → **Arreglado en 0.21.0:** ESLint como devDependency solo del repo (`preparar-curso.js` lo borra en los
+  cursos, con `node_modules/` y `package-lock.json`), `eslint.config.js` con `no-unused-vars`, `no-undef`,
+  `eqeqeq`, `prefer-const` y `max-len` 160 (ignora cadenas y comentarios largos, y los `assert.match` de los
+  tests, que son regex literales). `npm run lint`, y un paso de CI solo en el job Linux Node 24.
+- ✅ **`comprobar.js` hace dos cosas:** comprobar y generar markdown (`pendientes`, `auditoría`, `Estado` del
   README, `comprobar.js:220-327`). La generación del índice ya vive en `lib/indice.js`; el resto de
   generadores debería vivir en `lib/` también. Refactor pequeño, sin urgencia.
-  → **Abierto.** Se hará en el bloque 2, junto con P2 (ficheros vivos generados).
+  → **Arreglado en 0.21.0:** `comprobar.js` ya solo comprueba; toda la generación (`pendientes`, `auditoría`,
+  `Estado`, y ahora también `formulario` y `ejercicios/_index`) vive en `lib/generados.js`. `guardar.js` y los
+  tests importan de ahí.
 - ⏳ **Parser de frontmatter propio** (`vault.js:90-114`): escalares, listas en línea y en bloque. No entiende
   mapas anidados, cadenas multilínea ni valores con `:` sin comillas. Obsidian escribe frontmatter cuando
   el alumno marca casillas o edita propiedades; hoy solo hace `estudiada`, y está cubierto. Si el kit va a
   apoyarse más en propiedades que toca el alumno (§8), conviene tests de esquina o un parser YAML mínimo
   de verdad.
   → **Abierto.** Hace falta antes de E5 (bloque 3), que añade propiedades que marca el alumno.
-- ⏳ **Ficheros vivos que mantiene el LLM a mano:** `progreso.md`, `conceptos/_index.md`, `mapa-del-curso.md`,
+- ✅ **Ficheros vivos que mantiene el LLM a mano:** `progreso.md`, `conceptos/_index.md`, `mapa-del-curso.md`,
   `formulario.md`, `ejercicios/_index.md`. `comprobar.js` sincroniza los dos primeros; los otros tres
   pueden desviarse sin que nadie avise. Y `mapa-del-curso.md` se solapa con `inicio.md` desde la 0.16.0 (la
   propia skill dice "no listes ahí las sesiones"). Ver §8.1 (P2).
-  → **Abierto.** Es P2, bloque 2.
+  → **Arreglado en 0.21.0 (P2):** `formulario.md` y `ejercicios/_index.md` se escriben solos al guardar, como
+  `inicio.md` y `pendientes.md`. `mapa-del-curso.md` se queda, pero la skill `/sesion` ya solo le pide la
+  cobertura del material (se quitó "y estado del bloque", que ya da `inicio.md`). Migración `004-…` conserva
+  con otro nombre lo que un curso ya tuviera escrito a mano en los dos primeros y no coincida con lo generado.
+  `progreso.md` sigue a mano a propósito: solo lo cambian las respuestas del alumno.
 - ✅ **Carpeta temporal sin limpiar:** `actualizar.js:115` clona en `os.tmpdir()` y nunca la borra.
   → **Arreglado en 0.20.0:** `cli()` de `actualizar.js` borra el clon al terminar (en un `finally`), salvo si
   vino por `--origen`.
@@ -402,6 +412,12 @@ cada concepto y un frontmatter en cada ejercicio con `practica:` y `se-descubre:
 secciones `## La fórmula`, agrupadas por `bloques:`), y **retirar `mapa-del-curso.md`** o reducirlo a la
 cobertura del material (lo único que `inicio.md` no cubre). Menos pasos en `/sesion`, menos desvío, y
 `comprobar.js` deja de necesitar comprobarlos.
+
+> ✅ **Arreglado en 0.21.0.** `formulario.md` y `ejercicios/_index.md` los genera `guardar.js`. Una diferencia
+> con lo propuesto aquí: "lo que se descubre fallándolo" no sale de un frontmatter nuevo en cada ejercicio
+> (`practica:`/`se-descubre:`), sino del `## Practícalo` que la plantilla de concepto ya pedía escribir — no
+> hacía falta un campo más que mantener a mano en el propio ejercicio. `mapa-del-curso.md` se queda (no se
+> retira), reducido a la cobertura del material. Ver [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 **P3 · Calentamiento antes de cada clase nueva (S).** Al empezar `/sesion`, antes de leer el material: mirar
 `requiere:` de lo que probablemente venga y `progreso.md`, y si hay prerrequisitos en 🟡/🔴 o sin evaluar,

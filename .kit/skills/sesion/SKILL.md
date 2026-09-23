@@ -146,19 +146,22 @@ después ni se espera a que los pida el alumno.
 
 ### 7. Actualizar los ficheros vivos
 
-Los siete, sin saltarse ninguno:
+Los cinco que se siguen a mano, sin saltarse ninguno:
 
 1. `estudio/conceptos/_index.md` — línea nueva o alias actualizado
-2. `estudio/formulario.md` — cualquier fórmula nueva, en su sección de bloque
-3. `estudio/mapa-del-curso.md` — cobertura del material de la clase y estado del bloque (sin lista de sesiones:
-   esa es `estudio/inicio.md`, y se escribe sola)
-4. `estudio/ejercicios/_index.md` — fila por ejercicio nuevo, en las dos tablas
-5. `estudio/progreso.md` — una fila por concepto nuevo, todos en `⬜ sin evaluar`. **Nunca se marca nada
+2. `estudio/mapa-del-curso.md` — solo la cobertura del material de la clase (qué diapositiva o apartado quedó
+   en qué nota): la lista de sesiones y el estado de cada bloque ya los da `estudio/inicio.md`, y se escribe solo
+3. `estudio/progreso.md` — una fila por concepto nuevo, todos en `⬜ sin evaluar`. **Nunca se marca nada
    como sólido aquí:** eso solo lo hacen `/examen` y `/ejercicio`, con respuestas del alumno delante
-6. `README.md` (raíz del curso) — la sección **Estado** la escribe `guardar.js` sola; tú solo tocas "De qué va"
+4. `README.md` (raíz del curso) — la sección **Estado** la escribe `guardar.js` sola; tú solo tocas "De qué va"
    y "Temario" si el curso ha cambiado (y si siguen en `_Pendiente_`, rellénalos ahora desde `config/curso.md`)
-7. `config/alumno.md` — **solo si has aprendido algo de él en esta sesión** (una duda, un error
+5. `config/alumno.md` — **solo si has aprendido algo de él en esta sesión** (una duda, un error
    repetido, una analogía que funcionó). Si no, no lo toques.
+
+`estudio/formulario.md` y `estudio/ejercicios/_index.md` **se escriben solos al guardar**: el primero sale de la
+sección "## La fórmula" de cada concepto (agrupado por `bloques:`); el segundo, del `ejercicio:` del
+frontmatter de cada concepto y de los ficheros de `estudio/ejercicios/`. Escribe bien esas partes de la nota
+del concepto (la fórmula, el `## Practícalo`) y el índice sale solo: no los toques a mano.
 
 ### 8. Cerrar
 

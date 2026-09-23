@@ -13,6 +13,15 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.21.0
+- **`estudio/formulario.md` y `estudio/ejercicios/_index.md` ahora se escriben solos**, como ya pasa con
+  **inicio** y **pendientes**. El formulario reúne la fórmula de cada concepto que la tiene, por bloque, con
+  enlace a la nota; el índice de ejercicios reúne qué practica cada uno y qué se descubre fallándolo. Ya no
+  hace falta mantenerlos a mano, y no pueden quedarse desactualizados.
+- **Si ya tenías tu curso:** si alguna de esas dos notas tenía algo escrito que tu profesor no habría
+  generado, se conserva tal cual, con el nombre **formulario-anterior** o **ejercicios/_index-anterior**; la
+  próxima vez que guardes, tu profesor deja ahí la versión generada.
+
 ## 0.20.0
 - **Actualizar es más seguro.** Si tu profesor no puede guardar tu trabajo antes de actualizar, no actualiza:
   antes, en ese caso raro, una actualización fallida podía borrar lo que aún no estaba guardado.

@@ -46,7 +46,7 @@ test('guardar: sin mensaje explica el uso; guarda; y avisa si no hay nada nuevo'
   iniciarGit(raiz);
   assert.equal(cli([], raiz), 2);
   assert.match(salida(), /Uso:/);
-  escribir(raiz, { 'estudio/formulario.md': '# Formulario\n\nnuevo\n' });
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
   assert.equal(cli(['sesion(s02): prueba'], raiz), 0);
   assert.match(salida(), /Guardado en local/);
   assert.equal(cli(['otra vez'], raiz), 0);
@@ -70,7 +70,7 @@ test('guardar: sin identidad de git lo explica en vez de fallar', t => {
   iniciarGit(raiz);
   git(raiz, 'config', '--unset', 'user.name');
   git(raiz, 'config', '--unset', 'user.email');
-  escribir(raiz, { 'estudio/formulario.md': '# Formulario\n\nnuevo\n' });
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
   // Aísla de la identidad global de la máquina que ejecuta los tests.
   const antes = { ...process.env };
   Object.assign(process.env, { GIT_CONFIG_GLOBAL: path.join(raiz, 'no-existe'), GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_SYSTEM: path.join(raiz, 'no-existe') });
@@ -131,7 +131,7 @@ function cursoYOrigen({ versionOrigen = '2.0.0', migracion } = {}) {
 test('actualizar: --ver enseña solo las novedades y no toca nada; --aplicar actualiza y migra', t => {
   const salida = capturar(t);
   const { cli } = require('../actualizar');
-  const migracion = `module.exports = { descripcion: 'm', migrar(raiz) { require('node:fs').appendFileSync(require('node:path').join(raiz, 'estudio/formulario.md'), 'migrado\\n'); } };`;
+  const migracion = `module.exports = { descripcion: 'm', migrar(raiz) { require('node:fs').appendFileSync(require('node:path').join(raiz, 'estudio/mapa-del-curso.md'), 'migrado\\n'); } };`;
   const { raiz, origen } = cursoYOrigen({ migracion });
   assert.equal(cli(['--ver', '--origen', origen], raiz), 0);
   assert.match(salida(), /Tienes la 1\.0\.0; hay una 2\.0\.0/);

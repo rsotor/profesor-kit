@@ -70,6 +70,96 @@ function markdownAuditoria(raiz) {
   return lineas.join('\n');
 }
 
+// Dentro de una tabla, una barra sin escapar (de un alias de enlace o de texto libre) descuadra la fila.
+const enCelda = texto => (texto || '').replace(/\|/g, '\\|');
+// Un enlace con alias dentro de una tabla necesita la barra escapada (regla de AGENTS.md: "para que se vea
+// bien en Obsidian"); fuera de una tabla, no.
+const enlaceConcepto = (slug, titulo, enTabla = false) => `[[${slug}${enTabla ? '\\|' : '|'}${enCelda(titulo)}]]`;
+
+// La sección "## La fórmula" de una nota de concepto, o null si no la tiene: la plantilla dice que se borra
+// la sección entera cuando el concepto no tiene fórmula.
+function seccionFormula(texto) {
+  const m = /^## La fórmula\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(texto);
+  const cuerpo = m ? m[1].trim() : '';
+  return cuerpo || null;
+}
+
+// Una fórmula por concepto que la tiene, con el bloque para agrupar (el primer valor de `bloques:`).
+function formulas(raiz) {
+  const lista = [];
+  for (const slug of v.listarConceptos(raiz)) {
+    const texto = leer(raiz, `conceptos/${slug}.md`);
+    const cuerpo = seccionFormula(texto);
+    if (!cuerpo) continue;
+    const fm = v.leerFrontmatter(texto) || {};
+    const bloque = Array.isArray(fm.bloques) && fm.bloques.length ? String(fm.bloques[0]) : null;
+    lista.push({ slug, bloque, titulo: indice.tituloDe(texto, slug), cuerpo });
+  }
+  return lista;
+}
+// estudio/formulario.md: todas las fórmulas del curso, agrupadas por bloque, con enlace a cada concepto.
+function markdownFormulario(raiz) {
+  const lista = formulas(raiz);
+  const lineas = ['# Formulario', '', '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Reúne la sección "La fórmula" de cada',
+    '> concepto que la tiene, agrupadas por bloque, para repasar antes del examen.', ''];
+  if (!lista.length) { lineas.push('Ninguna fórmula todavía.', ''); return lineas.join('\n'); }
+  const porBloque = new Map();
+  for (const f of lista) { const k = f.bloque ? `Bloque ${f.bloque}` : 'Sin bloque'; if (!porBloque.has(k)) porBloque.set(k, []); porBloque.get(k).push(f); }
+  for (const [bloque, items] of [...porBloque.entries()].sort()) {
+    lineas.push(`## ${bloque}`, '');
+    for (const f of items) lineas.push(`### ${enlaceConcepto(f.slug, f.titulo)}`, '', f.cuerpo, '');
+  }
+  return lineas.join('\n');
+}
+
+// La sección "## Practícalo" de una nota de concepto, sin la línea del enlace (empieza por →): solo el texto
+// de "qué cambiar y qué debería sorprender" (lo que pide la plantilla de concepto).
+function loQueSeDescubre(texto) {
+  const m = /^## Practícalo\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(texto);
+  if (!m) return '';
+  return m[1].split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('→') && !/^<.*>$/.test(l)).join(' ');
+}
+
+// El fichero real del ejercicio dentro de estudio/ejercicios/ (puede estar en una subcarpeta de unidad, si
+// organizar.js ya lo colocó), con su ruta relativa a esa carpeta: desde ahí enlaza _index.md.
+function ficheroDeEjercicio(raiz, slug) {
+  const dir = path.join(v.baseAlumno(raiz), 'ejercicios');
+  const [abs] = v.recorrer(dir, n => n === `${slug}.html` || n === `${slug}.md`);
+  return abs ? v.aPosix(path.relative(dir, abs)) : null;
+}
+
+// Un ejercicio por concepto que lo declara (`ejercicio:` en su frontmatter). Si el mismo ejercicio lo declaran
+// varios conceptos, hay una fila por cada uno: cada uno "descubre" algo distinto (regla de /ejercicio, paso 6).
+function ejercicios(raiz) {
+  const lista = [];
+  for (const slug of v.listarConceptos(raiz)) {
+    const texto = leer(raiz, `conceptos/${slug}.md`);
+    const fm = v.leerFrontmatter(texto) || {};
+    if (!fm.ejercicio) continue;
+    lista.push({
+      concepto: slug, titulo: indice.tituloDe(texto, slug), ejercicio: fm.ejercicio,
+      ruta: ficheroDeEjercicio(raiz, fm.ejercicio), descubre: loQueSeDescubre(texto),
+    });
+  }
+  return lista;
+}
+// estudio/ejercicios/_index.md: qué practica cada ejercicio, en las dos tablas que pide la skill /ejercicio.
+function markdownEjercicios(raiz) {
+  const lista = ejercicios(raiz);
+  const lineas = ['# Índice de ejercicios', '', '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Reúne, desde el frontmatter de cada',
+    '> concepto y los ficheros de `estudio/ejercicios/`, qué practica cada ejercicio.', ''];
+  if (!lista.length) { lineas.push('Ningún ejercicio todavía.', ''); return lineas.join('\n'); }
+  const enlaceEjercicio = e => e.ruta ? `[${enCelda(e.ejercicio.replace(/-/g, ' '))}](${e.ruta})` : `\`${e.ejercicio}\` (no se encuentra el fichero)`;
+  lineas.push('## Por ejercicio', '', '| Ejercicio | Concepto | Lo que se descubre fallándolo |', '|---|---|---|');
+  for (const e of [...lista].sort((a, b) => a.ejercicio.localeCompare(b.ejercicio) || a.concepto.localeCompare(b.concepto))) {
+    lineas.push(`| ${enlaceEjercicio(e)} | ${enlaceConcepto(e.concepto, e.titulo, true)} | ${enCelda(e.descubre)} |`);
+  }
+  lineas.push('', '## Por concepto', '', '| Concepto | Ejercicio | Lo que se descubre fallándolo |', '|---|---|---|');
+  for (const e of lista) lineas.push(`| ${enlaceConcepto(e.concepto, e.titulo, true)} | ${enlaceEjercicio(e)} | ${enCelda(e.descubre)} |`);
+  lineas.push('');
+  return lineas.join('\n');
+}
+
 // La sección "Estado" de la portada del curso (README.md), calculada desde el disco para que esté siempre al día.
 function estadoDelCurso(raiz, hoy = new Date().toISOString().slice(0, 10)) {
   const base = v.baseAlumno(raiz);
@@ -121,4 +211,5 @@ function markdownPendientes(raiz) {
 
 module.exports = {
   escaparRegex, pendientes, markdownPendientes, auditorias, markdownAuditoria, estadoDelCurso, actualizarEstadoReadme,
+  formulas, markdownFormulario, ejercicios, markdownEjercicios,
 };

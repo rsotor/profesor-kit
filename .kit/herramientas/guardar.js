@@ -4,7 +4,7 @@ const g = require('./lib/git');
 const { leerAjustes } = require('./lib/vault');
 const fs = require('node:fs');
 const { comprobar } = require('./comprobar');
-const { pendientes, markdownPendientes, markdownAuditoria, actualizarEstadoReadme } = require('./lib/generados');
+const { pendientes, markdownPendientes, markdownAuditoria, markdownFormulario, markdownEjercicios, actualizarEstadoReadme } = require('./lib/generados');
 const { CARPETA_ALUMNO } = require('./lib/vault');
 const indice = require('./lib/indice');
 
@@ -28,12 +28,19 @@ function anotarEnDiario(raiz, mensaje, hoy = new Date().toISOString().slice(0, 1
 function regenerarGenerados(raiz) {
   const base = path.join(raiz, CARPETA_ALUMNO);
   const escribirSiCambia = (fichero, texto) => {
-    if (!fs.existsSync(fichero) || fs.readFileSync(fichero, 'utf8') !== texto) fs.writeFileSync(fichero, texto);
+    if (!fs.existsSync(fichero) || fs.readFileSync(fichero, 'utf8') !== texto) {
+      fs.mkdirSync(path.dirname(fichero), { recursive: true });
+      fs.writeFileSync(fichero, texto);
+    }
   };
   for (const [rel, pie] of indice.piesDeSesion(raiz)) {
     const fichero = path.join(base, ...rel.split('/'));
     escribirSiCambia(fichero, indice.ponerPie(fs.readFileSync(fichero, 'utf8'), pie));
   }
+  // Antes que inicio.md: "Otras hojas" mira si formulario.md existe en disco, y tiene que verlo ya escrito
+  // la primera vez que se genera (si no, la próxima vez que se guarde cambiaría solo por eso).
+  escribirSiCambia(path.join(base, 'formulario.md'), markdownFormulario(raiz));
+  escribirSiCambia(path.join(base, 'ejercicios', '_index.md'), markdownEjercicios(raiz));
   escribirSiCambia(path.join(base, indice.INICIO), indice.markdownInicio(raiz, { pendientes: pendientes(raiz).length }));
   escribirSiCambia(path.join(base, 'pendientes.md'), markdownPendientes(raiz));
   escribirSiCambia(path.join(base, 'auditoria-del-material.md'), markdownAuditoria(raiz));

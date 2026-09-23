@@ -12,7 +12,6 @@ const BASE = {
   'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n# Intro\n\n- [[alfa]] — nuevo\n',
   'estudio/progreso.md': '# Progreso\n\n| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[alfa]] | ⬜ | ⬜ |\n',
   'estudio/mapa-del-curso.md': '# Mapa\n\n- [[s01-intro]]\n',
-  'estudio/formulario.md': '# Formulario\n',
   'README.md': '# Curso de prueba\n',
   'estudio/inbox/.gitkeep': '', 'estudio/ejercicios/.gitkeep': '', 'estudio/examenes/.gitkeep': '',
   'estudio/flashcards/.gitkeep': '', 'estudio/repasos/.gitkeep': '',
