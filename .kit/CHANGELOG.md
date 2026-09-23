@@ -29,6 +29,18 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - **Hace falta Node 24 o superior** (es el que se instala hoy por defecto). Si tienes uno más viejo, tu profesor
   te lo dice al comprobar la instalación y lo actualiza contigo.
 - Windows ya está probado (con Codex). Linux no está soportado.
+- **Tu profesor se revisa antes de guardar**: avisa si una nota no cabe en una pantalla, si a un concepto le
+  falta el ejemplo, si una sesión se quedó sin su auditoría o sus preguntas para pensar, si hay más o menos
+  flashcards de las que pediste, o si una pregunta de examen en realidad son dos. Lo arregla antes de guardar; si
+  decide dejar alguno, te dice por qué.
+- **Modelo recomendado.** La guía dice qué modelo conviene usar con tu asistente (con Claude, Sonnet): hace bien
+  el trabajo sin gastarte la cuota. Si no lo estás usando, tu profesor te lo dice una vez al configurar o al
+  preparar una clase.
+- **Si usas otro asistente** (Codex u otro), tu profesor deja su configuración escrita en tu curso, donde nunca se
+  pisa al actualizar, y con tu sí la propone al kit para que al siguiente alumno le cueste menos. Gemini deja de
+  estar soportado: no se podía probar.
+- **Si ya tenías tu curso** con otro asistente que no es Claude: dile a tu profesor "adáptate a mi asistente" y
+  pasa lo que montó al principio al formato nuevo.
 - **Si ya tenías tu curso:** si alguna de esas dos notas tenía algo escrito que tu profesor no habría
   generado, se conserva tal cual, con el nombre **formulario-anterior** o **ejercicios/_index-anterior**; la
   próxima vez que guardes, tu profesor deja ahí la versión generada.

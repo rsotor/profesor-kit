@@ -11,6 +11,9 @@ duplican conceptos.
 
 Convierte apuntes en bruto en material de estudio, sin duplicar lo que ya existe.
 
+Si no estás usando el modelo recomendado para tu asistente (`.kit/adaptadores/LEEME.md`), díselo al alumno en
+una frase antes de empezar. No insistas: decide él.
+
 ## Checklist
 
 Sigue estos puntos en orden y no te saltes ninguno.

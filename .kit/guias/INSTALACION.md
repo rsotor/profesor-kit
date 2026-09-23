@@ -43,6 +43,8 @@ tu curso. Por eso guarda cada cosa que termina, y por eso al saludarte te dice p
 > - El programa **Obsidian**, también gratis, que es donde leerás tus apuntes. No hace falta que lo
 >   instales tú: lo hace tu profesor durante la instalación.
 > - Unos **30 minutos**.
+> - Si tu asistente deja elegir modelo, usa el **[modelo recomendado](../adaptadores/LEEME.md)** (con
+>   Claude, Sonnet): hace bien el trabajo sin gastarte la cuota.
 > - Probado en **Mac** y en **Windows**. Si algo falla, tu profesor te ayudará a contarlo para que se
 >   arregle.
 

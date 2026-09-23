@@ -30,8 +30,8 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §4.2 `diario.md` con `\n` fijo | 1 (adelantado) | ✅ 0.21.0 | `anotarEnDiario()` en `guardar.js` usa el fin de línea que ya tenga el fichero. Test en `tests/guardar.test.js` |
 | **Nuevo** Los tests dejaban sus cursos de prueba en la carpeta temporal | — | ✅ 0.21.0 | ~29.600 carpetas (5,3 GB). `tests/ayuda.js` → `temporal()` registra cada carpeta y la borra al acabar el proceso, también las renombradas. Todos los tests la usan; regla en `CONTRIBUTING.md`. Las antiguas se borraron a mano |
 | §5.1 `.gitignore` en el motor se reemplazaba | 1 | ✅ 0.20.0 | `.gitignore` sigue en `motor.json` (si saliera, el `actualizar.js` viejo de los cursos lo borraría), pero `actualizar.js` lo trata como `SE_FUSIONAN`: `fusionarGitignore()` añade al final las reglas del kit que falten bajo `# Reglas del kit añadidas al actualizar a la X`, sin tocar las del alumno ni el fin de línea. **Ojo:** la actualización 0.19→0.20 la hace el código viejo y lo sustituye entero una última vez (avisado en el CHANGELOG). Test en `tests/actualizar.test.js` |
-| §5.2 `ESTANDARES.md` es un encargo, no un adaptador | 2 | ⏳ abierto | Rutas de Codex/Gemini: TBD, confirmar en su documentación |
-| §5.3 Claude-ismos · calidad dependiente del modelo | 2 | ⏳ abierto | = P1 |
+| §5.2 `ESTANDARES.md` es un encargo, no un adaptador | 2 | ✅ 0.21.0 | Formato de adaptador por asistente (`.kit/adaptadores/<llm>.json`: `comando`, `skills`, `puente`, `permisos`, `probado`, `modelo_recomendado`), documentado en `ESTANDARES.md`. Solo existe el de Claude Code (el de Codex llegará por issue `[adaptador] codex-cli`, con datos reales). `lib/vault.js` → `leerAdaptador()`: el local del curso (`config/adaptador-llm.json`) manda y nunca se pisa al actualizar. `instalar-skills.js`, `crear-atajo.js` y `diagnostico.js` lo usan; el diagnóstico comprueba que las skills existen de verdad y, sin adaptador, avisa sin bloquear. Flujo de devolución al kit: issue por defecto (el alumno no puede escribir en el kit), PR si sabe y quiere. **Gemini retirado** del kit (`GEMINI.md`, `gemini-cli`, `.gemini/skills/`). **Modelo recomendado** en el adaptador y en la tabla legible `.kit/adaptadores/LEEME.md` (enlazada desde la guía y las skills `/configurar` y `/sesion`); `tests/adaptadores.test.js` exige que coincidan. Claude: Sonnet (prueba completa del 2026-09-21), Opus opcional |
+| §5.3 Claude-ismos · calidad dependiente del modelo | 2 | ✅ 0.21.0 | Restos quitados en `/sesion`, `/examen` y `/repaso` ("Sin Artifact", "Crea una tarea por cada punto", "sin cargar ninguna skill de diseño"). La dependencia del modelo se cubre con P1 (revisor pedagógico) y con el modelo recomendado (§5.2) |
 | §6.1 `CONTRIBUTING.md` decía privado y sin protección | 1 | ✅ 0.20.0 | Reescrito: flujo con releases, "Las dos barreras de `main`" neutro respecto a la visibilidad, tabla de fuentes de verdad con `docs/auditoria/` en vez de `docs/superpowers/` |
 | §6.1 `README.md` y plantilla de PR decían CI con Mac | 1 | ✅ 0.20.0 | Corregidos (Linux y Windows), `npm test`, releases, lista completa de lo que se borra al crear un curso |
 | §6.1 `INSTALACION.md` habla de invitación al repo privado | — | ⏳ decisión | Sin tocar hasta decidir público/privado. Si queda público: quitar el paso 1.3-1.4 y la frase del 404 |
@@ -42,6 +42,7 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §7 Releases | 1 | ✅ 0.20.0 | Ver §2.2 |
 | §7 Curso de referencia en el CI | 2 | ⏳ abierto | Después de P1 |
 | §7 `.superpowers/sdd/` en el árbol de trabajo | — | ⏳ abierto | Ignorado por su propio `.gitignore`; sin decidir si se saca |
+| §8.1 P1 Lint pedagógico | 2 | ✅ 0.21.0 | Seis avisos en `comprobar.js` (nunca bloquean): `nota-larga` (60 líneas de contenido por defecto, o el número de `longitud_nota`), `concepto-sin-ejemplo`, `sesion-incompleta` (por sección), `flashcards-fuera-de-rango` (`flashcards_por_sesion`), `requiere-vacio` (dificultad 3), `pregunta-doble` (heurística prudente: solo dos `?` en una pregunta numerada con su `✍️`). `AGENTS.md`: se arreglan antes de guardar salvo motivo, que se le dice al alumno. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Tests en `tests/revisor-pedagogico.test.js` |
 | §8.1 P2 Más ficheros vivos generados | 2 | ✅ 0.21.0 | `guardar.js` genera ahora `estudio/formulario.md` (fórmulas por bloque) y `estudio/ejercicios/_index.md` (qué practica cada ejercicio, desde `ejercicio:` y `## Practícalo`); `mapa-del-curso.md` se queda solo para la cobertura del material, como ya decía la skill. Migración `004-…` conserva con otro nombre lo que un curso ya tuviera escrito a mano y no coincida con lo generado. Ver `lib/generados.js`, `tests/generados.test.js` Las notas `-anterior` se quedan como están, sin paso de revisión: decisión de Roberto (hay pocos cursos afectados) |
 | §8 Resto de propuestas P1, P3-P8 y E1-E9 | 2 y 3 | ⏳ abierto | Siguiente: P1 (lint pedagógico) y P3 (calentamiento), bloque 2 |
 
@@ -282,7 +283,9 @@ sobreviven, pero cualquier otro destino, y cualquier línea del alumno, no. **Ar
 del motor y se fusiona (añadir lo que falte, como hace `aplicarAjustes` con Obsidian), o el kit escribe un
 `.gitignore` propio dentro de `.kit/` e incluye desde el de la raíz.
 
-### 5.2 🟡 `ESTANDARES.md` es un encargo, no un adaptador
+### 5.2 🟡 → ✅ `ESTANDARES.md` es un encargo, no un adaptador
+
+> ✅ **Arreglado en 0.21.0.** Formato de adaptador por asistente; el kit trae el de Claude y cada asistente nuevo escribe el suyo en su curso y lo devuelve al kit con una issue. El diagnóstico comprueba las skills de verdad. Gemini retirado. Modelo recomendado por asistente (Claude: Sonnet) en `.kit/adaptadores/LEEME.md`. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 28 líneas que dicen "averigua en tu documentación oficial en qué carpeta buscas skills". Un modelo que
 alucina una ruta deja el curso sin skills y `diagnostico.js` lo da por bueno si existe
@@ -301,7 +304,9 @@ No invento las rutas: hay que confirmarlas en la documentación de cada uno y pr
 `ESTANDARES.md` queda para el LLM que no esté en la tabla, y `diagnostico.js` comprueba ficheros reales,
 no una nota.
 
-### 5.3 🟡 Claude-ismos y dependencia del modelo
+### 5.3 🟡 → ✅ Claude-ismos y dependencia del modelo
+
+> ✅ **Arreglado en 0.21.0.** Restos de Claude quitados de las skills. La calidad ya no depende solo del modelo: revisor pedagógico (P1) en `comprobar.js` y modelo recomendado. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
 - Restos de Claude en las skills: "Sin Artifact" (`examen`, `repaso`), "Crea una tarea por cada punto"
   (`sesion`, es TodoWrite), "lánzalo en segundo plano" (instalación). Inofensivos, pero delatan.

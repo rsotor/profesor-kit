@@ -17,6 +17,7 @@ te da un permiso) lo lee de un fichero con esta forma:
 | `puente` | Fichero que lees por defecto si no lees `AGENTS.md` directamente | lees `AGENTS.md` nativo | `"CLAUDE.md"` |
 | `permisos` | `{ "fichero": …, "formato": … }`: dónde y cómo se expresa "puede ejecutar `node .kit/herramientas/*` sin preguntar" | no tienes lista de permisos | `{ "fichero": ".claude/settings.json", "formato": "…" }` |
 | `probado` | En qué sistema y cuándo lo comprobaste de verdad (no basta con leer tu documentación) | nunca | `"macOS · Claude Code CLI · 2026-09-23"` |
+| `modelo_recomendado` | `{ modelo, por_que, comprobado }`: el modelo con el que el kit hace bien el trabajo sin gastar cuota de más, por qué, y cuándo se comprobó. Va también como fila en `.kit/adaptadores/LEEME.md` (un test exige que coincidan) | si aún no lo sabes: lo dices en la issue | `{ "modelo": "Sonnet", … }` |
 
 Vive en dos sitios posibles, y las herramientas del kit (`instalar-skills.js`, `crear-atajo.js`,
 `diagnostico.js`) miran primero el segundo:

@@ -10,6 +10,10 @@ escribes su fichero y marcas el bloque en `config/ajustes.json` → `configuraci
 
 ## Antes de empezar
 
+Si no estás usando el modelo recomendado para tu asistente (`.kit/adaptadores/LEEME.md`), díselo al alumno en
+una frase al empezar: esta sesión decide cómo será todo su curso. No insistas: decide él.
+
+
 Lee `config/ajustes.json`. Si algún bloque de `configuracion` ya está en `true`, dile al alumno
 por dónde ibais y sigue desde el primero en `false`. No repitas preguntas ya contestadas.
 
