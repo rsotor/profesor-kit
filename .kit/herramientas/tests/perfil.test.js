@@ -38,7 +38,7 @@ test('tieneContenido: una tabla con solo cabecera está vacía; con una fila, no
   assert.equal(perfil.tieneContenido('- una línea'), true);
 });
 
-test('intentosDe: lee el histórico, acepta coma decimal e ignora notas que no son número', () => {
+test('intentosDe: lee el histórico, con coma decimal y con "7/10"', () => {
   const texto = [
     '# Examen', '', '## Histórico de intentos', '',
     '| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |', '|---|---|---|---|---|---|---|',
@@ -50,6 +50,7 @@ test('intentosDe: lee el histórico, acepta coma decimal e ignora notas que no s
   assert.deepEqual(perfil.intentosDe(texto), [
     { intento: 1, fecha: '2026-10-01', nota: 4 },
     { intento: 2, fecha: '2026-10-09', nota: 6.5 },
+    { intento: 3, fecha: '2026-10-12', nota: 7 },
   ]);
 });
 
@@ -146,4 +147,60 @@ test('markdownPerfil: curso recién instalado, sin alumno.md ni profesor.md ni e
   const md = perfil.markdownPerfil(raiz);
   assert.equal((md.match(/Todavía nada/g) || []).length >= 4, true);
   assert.match(md, /### Conceptos, por bloque/);   // progreso.md de la base tiene [[alfa]] ⬜
+});
+
+// --- Revisión de la 0.23.0 ------------------------------------------------------------------------------
+
+const exa = (fm, historico = '') => `---\ntipo: examen\n${fm}\n---\n# Examen\n${historico ? `\n## Histórico de intentos\n\n| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |\n|---|---|---|---|---|---|---|\n${historico}\n` : ''}`;
+
+test('examen-suspenso: una versión nueva aprobada apaga el suspenso de la anterior', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen-2026-10-01.md': exa('unidad: 01\nfecha: 2026-10-01\nnota: 0,5'),
+    'estudio/examenes/01-examen-2026-10-08.md': exa('unidad: 01\nfecha: 2026-10-08\nnota: 8\nversion: 2\nanterior: "[[examenes/01-examen-2026-10-01]]"'),
+  });
+  assert.deepEqual(perfil.senales(raiz).filter(s => s.tipo === 'examen-suspenso'), []);
+  assert.match(perfil.markdownPerfil(raiz), /versión anterior/);
+});
+
+test('examen-suspenso: un examen posterior aprobado que cubre la unidad lo apaga; uno que no la cubre, no', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-02-examen-2026-10-01.md': exa('unidad: 01-02\nfecha: 2026-10-01\nnota: 3'),
+    'estudio/examenes/01-examen-2026-10-09.md': exa('unidad: 01\nfecha: 2026-10-09\nnota: 7'),
+    'estudio/examenes/02-examen-2026-10-10.md': exa('unidad: 02\nfecha: 2026-10-10\nnota: 2'),
+  });
+  assert.deepEqual(perfil.senales(raiz).filter(s => s.tipo === 'examen-suspenso').map(s => s.examen), ['examenes/02-examen-2026-10-10.md']);
+});
+
+test('intentos: "7/10" se lee; y el frontmatter manda sobre un último intento que no se entiende', () => {
+  assert.deepEqual(perfil.intentosDe(exa('', '| 1 | 2026-10-01 | 4 | 1 | 1 | 1 | 0 |\n| 2 | 2026-10-05 | 7/10 | 1 | 1 | 1 | 0 |')).map(i => i.nota), [4, 7]);
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen-2026-10-01.md': exa('unidad: 01\nfecha: 2026-10-05\nnota: 7\nintentos: 2', '| 1 | 2026-10-01 | 4 | 1 | 1 | 1 | 0 |\n| 2 | 2026-10-05 | siete | 1 | 1 | 1 | 0 |'),
+  });
+  assert.deepEqual(perfil.examenesConIntentos(raiz)[0].intentos.map(i => i.nota), [4, 7]);
+  assert.deepEqual(perfil.senales(raiz).filter(s => s.tipo === 'examen-suspenso'), []);
+});
+
+test('leerDudas: [[slug|alias]] sin escapar y el número con texto detrás no pierden la fila', () => {
+  const raiz = cursoTemporal({ 'config/alumno.md': '# A\n\n## Registro de dudas\n\n| Concepto | Nº de dudas | Última |\n|---|---|---|\n'
+    + '| [[liquidez|Liquidez]] | 3 | 2026-10-01 |\n| inflacion | 3 (01-01, 01-02) | 2026-10-02 |\n' });
+  assert.deepEqual(perfil.leerDudas(raiz).map(d => [d.concepto, d.veces]), [['inflacion', 3], ['liquidez', 3]]);
+  assert.doesNotMatch(perfil.markdownPerfil(raiz).replace(/\\\|/g, ''), /\[\[[^\]]*\|/, 'en la hoja, el | del alias va escapado');
+});
+
+test('tercer-tropiezo: si la nota se reescribió después de la última duda, ya no salta', () => {
+  const { iniciarGit, git } = require('./ayuda');
+  const raiz = cursoTemporal({ 'config/alumno.md': '# A\n\n## Registro de dudas\n\n| Concepto | Nº de dudas | Última |\n|---|---|---|\n| alfa | 3 | 2000-01-01 |\n' });
+  iniciarGit(raiz);
+  assert.deepEqual(perfil.senales(raiz).filter(s => s.tipo === 'tercer-tropiezo'), [], 'la nota (guardada hoy) es posterior a la duda');
+  require('node:fs').writeFileSync(require('node:path').join(raiz, 'config', 'alumno.md'),
+    '# A\n\n## Registro de dudas\n\n| Concepto | Nº de dudas | Última |\n|---|---|---|\n| alfa | 3 | 2999-01-01 |\n');
+  git(raiz, 'commit', '-qam', 'duda nueva');
+  assert.equal(perfil.senales(raiz).filter(s => s.tipo === 'tercer-tropiezo').length, 1, 'duda posterior a la última reescritura');
+});
+
+test('conceptosPorBloque: "Bloque 10" va después de "Bloque 2"', () => {
+  const nota = b => `---\ntipo: concepto\nalias: []\nbloques: [${b}]\n---\n# X\n\n## El ejemplo\n\nUno.\n`;
+  const raiz = cursoTemporal({ 'estudio/conceptos/diez.md': nota(10), 'estudio/conceptos/dos.md': nota(2),
+    'estudio/progreso.md': '# P\n\n| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[diez]] | ⬜ | ⬜ |\n| [[dos]] | ⬜ | ⬜ |\n' });
+  assert.deepEqual(perfil.conceptosPorBloque(raiz).map(([b]) => b), ['Bloque 2', 'Bloque 10']);
 });
