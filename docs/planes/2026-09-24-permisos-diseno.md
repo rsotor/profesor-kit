@@ -73,7 +73,27 @@ Una herramienta nueva, `permisos.js`, que sabe **qué** hay que permitir (lo dec
 | P3 | ¿Se permite `python3` (u otro comando genérico) para leer material? | **No**: se sustituye por una herramienta del kit (P8) | Aceptarlo es darle vía libre a cualquier programa |
 | P4 | ¿P8 (leer PPTX, Excel…) entra en la misma versión? | **Sí**, en la 0.24.0 | Sin P8, los `python3` siguen preguntando y el alumno no nota la mejora entera |
 
-## 5. Lo que hay que probar antes de programar
+## 5. Probado en el Mac con Claude Code (2026-09-24)
+
+Copia de un curso real, con solo los ajustes del curso (`--setting-sources project,local`, como un alumno: sin los
+ajustes personales del mantenedor, cuyo modo automático dejaba pasar `python3`). Configuración propuesta:
+
+- raíz: `.claude/settings.json` con `defaultMode: "acceptEdits"` y la lista de herramientas del kit;
+- `estudio/.claude/settings.json` con `defaultMode: "acceptEdits"`, `additionalDirectories: [".."]`, la lista de
+  herramientas del kit y `git status/log/diff`.
+
+| Tarea | Hoy, desde la raíz | Hoy, desde `estudio/` | Propuesta (los dos sitios) |
+|---|---|---|---|
+| Editar una nota de `estudio/` | pregunta | pregunta | **no pregunta** |
+| Editar `config/alumno.md` | pregunta | pregunta | **no pregunta** |
+| `node .kit/herramientas/comprobar.js` | no pregunta | pregunta | **no pregunta** |
+| `git status`, `git log` | no pregunta | pregunta | **no pregunta** |
+| `python3 …` | se deniega | se deniega | **se deniega** (a propósito) |
+| Escribir fuera del curso | se deniega | se deniega | **se deniega** (a propósito) |
+
+Peticiones de lo que sí debe pasar: de 2 a 0 desde la terminal y de 5 a 0 desde Obsidian.
+
+## 6. Lo que falta probar antes de programar
 
 - Codex en Windows: reglas `allow` para `node .kit/herramientas/…` y `git`, desde la terminal y desde Claudian, y si
   el entorno restringido deja ejecutarlos (la #36 dice que no los dejaba).
