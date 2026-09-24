@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./vault');
 const { leerEstructura, unidadDe } = require('../organizar');
+const repaso = require('./repaso');
 
 const INICIO = 'inicio.md';
 const APROBADO_POR_DEFECTO = 5;
@@ -152,11 +153,15 @@ function leerAprobado(raiz) {
 const textoNota = (e, aprobado) =>
   `📝 ${e.nota.toFixed(1).replace('.', ',')}${e.nota < aprobado ? ' suspenso' : ''} (${e.fecha})`;
 
-function enlace(s, enTabla = false) {
+function aliasDe(s) {
   const clases = s.clases.join('-');
   // Si el centro ya pone el título en la etiqueta ("Clase 1.1 · El dinero…"), no se repite.
   const conTitulo = clases.toLowerCase().includes(s.titulo.toLowerCase()) ? clases : `${clases ? clases + ' ' : ''}${s.titulo}`;
-  const alias = conTitulo.replace(/[[\]|\\]/g, '').trim();
+  return conTitulo.replace(/[[\]|\\]/g, '').trim();
+}
+
+function enlace(s, enTabla = false) {
+  const alias = aliasDe(s);
   return `[[${s.id}${enTabla ? '\\|' : '|'}${alias}]]`;
 }
 
@@ -208,7 +213,27 @@ function estructuraSegura(raiz) {
   try { return leerEstructura(raiz); } catch { return null; }   // una estructura rota no puede impedir guardar
 }
 
-function markdownInicio(raiz, { pendientes = 0 } = {}) {
+// E1: las flashcards que tocan, en dos tramos de fechas. El enlace va al fichero de flashcards (con su carpeta: se
+// llama igual que la sesión) y lleva el nombre de la sesión.
+function lineasRepaso(raiz, hoy, sesiones) {
+  const tramos = repaso.tramos(raiz, hoy);
+  if (!tramos.length) return [];
+  const porId = new Map(sesiones.map(s => [s.id, s]));
+  const nombre = fichero => {
+    const s = porId.get(path.posix.basename(fichero, '.md'));
+    return s ? aliasDe(s) : path.posix.basename(fichero, '.md');
+  };
+  const l = ['🗂️ Flashcards para repasar:'];
+  for (const t of tramos) {
+    const n = t.ficheros.reduce((a, f) => a + f.n, 0);
+    const cuando = t.desde ? `Del ${repaso.corta(t.desde)} al ${repaso.corta(t.hasta)}` : `Hasta el ${repaso.corta(t.hasta)}`;
+    const enlaces = t.ficheros.map(f => `[[${f.fichero.replace(/\.md$/, '')}|${nombre(f.fichero)}]] (${f.n})`).join(' · ');
+    l.push(`- ${cuando} · ${n} tarjeta${n === 1 ? '' : 's'}: ${enlaces}`);
+  }
+  return [...l, ''];
+}
+
+function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().slice(0, 10) } = {}) {
   const base = v.baseAlumno(raiz);
   const sesiones = leerSesiones(raiz).sort(compararSesiones);
   const progreso = leerProgreso(raiz);
@@ -227,6 +252,7 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
   if (sesiones.length) {
     const siguiente = sesiones.find(s => !s.estudiada);
     l.push(siguiente ? `👉 Sigue por aquí: ${enlace(siguiente)}` : '👉 Has estudiado todas las sesiones procesadas.', '');
+    l.push(...lineasRepaso(raiz, hoy, sesiones));
     l.push(`Estudiadas ${sesiones.filter(s => s.estudiada).length} de ${sesiones.length} · Pendientes abiertos: ${pendientes} → [[pendientes]]`, '');
     posLogros = l.length;
   } else {

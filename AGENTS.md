@@ -40,7 +40,7 @@ README.md                                                            ← DATOS: 
   `estudio/auditoria-del-material.md` (las auditorías de todas las sesiones: míralo antes de auditar una clase, y si un
   error ya salió, dilo —"la misma hoja que en la 1.2"—) · `estudio/mi-perfil.md` (lo que el alumno ve de sí mismo, sacado
   de `config/alumno.md` y `config/profesor.md`, y su evolución: si dice que algo no es verdad, corrígelo en
-  `config/alumno.md` con la prueba `corrección del alumno, <fecha>`).
+  `config/alumno.md` con la prueba `corrección del alumno, <fecha>`) · las casillas ✅/❌ de las flashcards (repaso).
 - **Si el alumno ha movido el curso a otra carpeta** y su atajo ha dejado de abrirlo:
   `node .kit/herramientas/crear-atajo.js --nombre <su palabra> --actualizar`.
 - **Si falta algo** (`comprobar.js` da `pieza-ausente`: alguien borró o movió una carpeta o un fichero),
@@ -210,7 +210,7 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
 
 4. **Calentamiento, en los casos 1 y 3, y en el 2 si el alumno se queda:** dos preguntas de lo que ya vio y
    necesita la sesión siguiente (salen de `requiere:` de sus conceptos y de `estudio/progreso.md` — lo flojo o sin
-   evaluar primero; reglas de "Cuando preguntas para medir"). Se puede saltar ("ahora no"); las respuestas
+   evaluar primero, y las flashcards que ya tocan: marca su casilla ✅/❌; reglas de "Cuando preguntas para medir"). Se puede saltar ("ahora no"); las respuestas
    cuentan como prueba y mueven `estudio/progreso.md`. **Si lo salta tres veces seguidas**, deja de ofrecerlo y
    apúntalo en `config/alumno.md` (sección "## Calentamiento"; créala si no existe).
    Si en cualquier momento pide "hazme unas preguntas" o "¿repasamos?", es esto mismo, en el chat: no es `/examen`

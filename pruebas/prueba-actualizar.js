@@ -19,6 +19,7 @@ const { spawnSync } = require('node:child_process');
 const crypto = require('node:crypto');
 const { carpetaTemporal, borrar, copiar, iniciarGit, ejecutarNodo, comprobarJson } = require('./lib/montaje');
 const { sinPie } = require('../.kit/herramientas/lib/indice');
+const { sinCasillas } = require('../.kit/herramientas/lib/repaso');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
 const EJEMPLO_REL = path.join('pruebas', 'curso-ejemplo');
@@ -77,7 +78,8 @@ function huellaDatos(raiz) {
         if (e.isDirectory()) { if (e.name !== '.obsidian') recorrer(abs); continue; }
         const rel = path.relative(raiz, abs).split(path.sep).join('/');
         const bytes = fs.readFileSync(abs);
-        const contenido = rel.endsWith('.md') ? sinPie(bytes.toString('utf8')) : bytes;
+        // Sin lo que escribe guardar.js dentro de las notas: el pie de las sesiones y las casillas del repaso.
+        const contenido = rel.endsWith('.md') ? sinCasillas(sinPie(bytes.toString('utf8'))) : bytes;
         const dato = { tamano: bytes.length, hash: crypto.createHash('sha256').update(contenido).digest('hex') };
         if (rel === DIARIO || rel === AJUSTES) dato.texto = bytes.toString('utf8');
         huella.set(rel, dato);

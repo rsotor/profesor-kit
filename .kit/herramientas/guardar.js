@@ -10,6 +10,7 @@ const { pendientes, markdownPendientes, markdownAuditoria, markdownFormulario, m
 const { CARPETA_ALUMNO } = require('./lib/vault');
 const indice = require('./lib/indice');
 const perfil = require('./lib/perfil');
+const repaso = require('./lib/repaso');
 
 const DIARIO_CABECERA = `# Diario del curso
 
@@ -31,7 +32,7 @@ function anotarEnDiario(raiz, mensaje, hoy = new Date().toISOString().slice(0, 1
 // Lo que se escribe solo en cada guardado. Va ANTES de comprobar: así un curso al que aún le falta inicio.md no se
 // queda sin poder guardar, y lo generado se comprueba en el mismo guardado. Solo se escribe lo que cambia: si no,
 // un curso quieto parecería tener cambios.
-function regenerarGenerados(raiz) {
+function regenerarGenerados(raiz, hoy = new Date().toISOString().slice(0, 10)) {
   const base = path.join(raiz, CARPETA_ALUMNO);
   const escribirSiCambia = (fichero, texto) => {
     if (!fs.existsSync(fichero) || fs.readFileSync(fichero, 'utf8') !== texto) {
@@ -39,6 +40,12 @@ function regenerarGenerados(raiz) {
       fs.writeFileSync(fichero, texto);
     }
   };
+  // E1: las tarjetas se mueven de caja en el curso, nunca en una copia de preparación en segundo plano: chocaría con
+  // el curso al juntar, y lo que la copia trae (una clase nueva) aún no está estudiado. Se hace al juntar.
+  const rama = g.intentarGit(raiz, ['rev-parse', '--abbrev-ref', 'HEAD']);
+  if (!(rama.ok && rama.salida.trim().startsWith('preparacion/'))) {
+    repaso.procesar(raiz, { hoy, estudiadas: new Set(indice.leerSesiones(raiz).filter(s => s.estudiada).map(s => s.id)) });
+  }
   for (const [rel, pie] of indice.piesDeSesion(raiz)) {
     const fichero = path.join(base, ...rel.split('/'));
     escribirSiCambia(fichero, indice.ponerPie(fs.readFileSync(fichero, 'utf8'), pie));
@@ -48,7 +55,7 @@ function regenerarGenerados(raiz) {
   escribirSiCambia(path.join(base, 'formulario.md'), markdownFormulario(raiz));
   escribirSiCambia(path.join(base, perfil.PERFIL), perfil.markdownPerfil(raiz));
   escribirSiCambia(path.join(base, 'ejercicios', '_index.md'), markdownEjercicios(raiz));
-  escribirSiCambia(path.join(base, indice.INICIO), indice.markdownInicio(raiz, { pendientes: pendientes(raiz).length }));
+  escribirSiCambia(path.join(base, indice.INICIO), indice.markdownInicio(raiz, { pendientes: pendientes(raiz).length, hoy }));
   escribirSiCambia(path.join(base, 'pendientes.md'), markdownPendientes(raiz));
   escribirSiCambia(path.join(base, 'auditoria-del-material.md'), markdownAuditoria(raiz));
 }
@@ -107,7 +114,7 @@ function subirSiProcede(raiz, informe, { ejecutarGh } = {}) {
 
 function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
   if (!g.esRepo(raiz)) return { guardado: false, motivo: 'sin-repo', subido: false, informe: comprobar(raiz) };
-  regenerarGenerados(raiz);
+  regenerarGenerados(raiz, hoy);
   const informe = comprobar(raiz);
   if (informe.errores.length && !permitirErrores) return { guardado: false, motivo: 'errores', subido: false, informe };
   // La portada solo cambia de fecha si hay algo más que guardar: si no, un curso quieto parecería tener cambios.

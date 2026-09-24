@@ -270,3 +270,15 @@ test('enlace: si la etiqueta de la clase ya lleva el título, no lo repite', () 
   assert.equal(ix.enlace(s), '[[01-01-01-dinero|Clase 1.1 · El dinero y sus funciones]]');
   assert.equal(ix.enlace({ ...s, clases: ['1.1'] }), '[[01-01-01-dinero|1.1 El dinero y sus funciones]]');
 });
+
+// E1 · Repaso espaciado: en inicio, lo que toca en dos tramos de fechas (inicio solo cambia al guardar).
+test('inicio: flashcards para repasar por tramos, con enlace al fichero y el nombre de su sesión', () => {
+  const raiz = cursoConIndice({ 'config/repaso.json': JSON.stringify({ version: 1, tarjetas: {
+    a: { caja: 1, proxima: '2026-09-24', fichero: 'flashcards/modulo-01/01-02-01-interes.md' },
+    b: { caja: 1, proxima: '2026-09-25', fichero: 'flashcards/modulo-01/01-02-01-interes.md' },
+    c: { caja: 2, proxima: '2026-09-30', fichero: 'flashcards/modulo-01/01-02-04-van.md' },
+  } }) });
+  const md = ix.markdownInicio(raiz, { hoy: '2026-09-24' });
+  assert.match(md, /👉 Sigue por aquí[^\n]*\n\n🗂️ Flashcards para repasar:\n- Hasta el 26\/9 · 2 tarjetas: \[\[flashcards\/modulo-01\/01-02-01-interes\|1\.2\.1 Interés\]\] \(2\)\n- Del 27\/9 al 3\/10 · 1 tarjeta: \[\[flashcards\/modulo-01\/01-02-04-van\|1\.2\.4 VAN y TIR\]\] \(1\)\n/);
+  assert.doesNotMatch(ix.markdownInicio(cursoConIndice(), { hoy: '2026-09-24' }), /Flashcards para repasar/);
+});

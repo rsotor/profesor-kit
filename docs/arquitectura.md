@@ -81,6 +81,7 @@ el alumno/instalador a través del LLM.
 | `git.js` | Envoltorio fino sobre `git` (estado, commit, identidad, remoto), sobre `proceso.js` |
 | `indice.js` | Calcula `estudio/inicio.md` y el pie de navegación de cada sesión, a partir de las sesiones, el progreso y los exámenes en disco; por módulo, conceptos dominados y "🏁 superado" (se quita con `progreso_en_inicio: no` en `config/profesor.md`) |
 | `generados.js` | Calcula el resto de ficheros que escribe `guardar.js`: pendientes, auditoría del material, formulario, índice de ejercicios y la sección "Estado" del README |
+| `repaso.js` | E1, repaso espaciado (Leitner, cinco cajas: 1, 3, 7, 14 y 30 días). `guardar.js` pone casillas ✅/❌ debajo de cada flashcard de una sesión estudiada, mueve de caja lo marcado y escribe `config/repaso.json`; nunca en una copia de preparación (`preparacion/<id>`), se hace al juntar. `indice.js` enseña en inicio lo que toca en dos tramos de fechas. Migración `006-…` para los cursos que ya existen |
 | `perfil.js` | Calcula `estudio/mi-perfil.md` (copia secciones de `config/alumno.md` y `config/profesor.md` y la evolución) y las señales que da `estado.js` |
 | `secretos.js` | Escanea los ficheros candidatos a `git` en busca de patrones de tokens y claves conocidos |
 | `obsidian.js` | Aplica los ajustes recomendados de Obsidian sin pisar los del alumno, y descarga complementos verificados por sha256 |

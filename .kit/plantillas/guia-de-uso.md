@@ -19,7 +19,9 @@ te cuesta, cómo vas en los exámenes), con la prueba de cada cosa. Si algo no e
 2. Lee la sesión. Sus conceptos están enlazados: haz clic en cada uno. Para volver, la flecha **←** de arriba a
    la izquierda.
 3. En el apartado **Material** de la sesión están sus **flashcards** (tápate la respuesta y contesta de cabeza)
-   y su **ejercicio**, si lo tiene (los interactivos se abren en tu navegador).
+   y su **ejercicio**, si lo tiene (los interactivos se abren en tu navegador). Cuando hayas estudiado la sesión,
+   cada tarjeta lleva debajo ✅ *la sabía* y ❌ *no la sabía*: marca una. Las que sabes vuelven cada vez más tarde;
+   las que no, al día siguiente. En **inicio** verás cuáles te tocan.
 4. Cuando la hayas estudiado, **marca la casilla "estudiada"**: está arriba del todo de la nota, en el recuadro
    de propiedades. Un clic y queda marcada.
 5. Al final de la sesión tienes **← anterior · 🏠 Inicio · siguiente →**. Pulsa **siguiente** y sigues el
