@@ -119,9 +119,13 @@ Cuando te dé las respuestas:
    - acertó el mecanismo → `teoría ✅` · acertó el cálculo o supo aplicarlo → `aplicación ✅`
    - falló → `🟡`; falló por segunda vez → `🔴` (y entonces también el paso 3)
 6. **Guarda el intento aparte**, en `## Histórico de intentos` al final de la nota (créala la primera vez):
-   - una fila en `| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |`;
+   - una fila en `| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |` (la nota, un número sobre
+     10, como en el frontmatter: `6,5`, no `6,5/10`);
    - un bloque plegado `> [!example]- Intento N · <fecha> · tus respuestas y la corrección` con el veredicto y la
-     tabla `| # | Tu respuesta | Resultado | Por qué |`, con sus respuestas **literales**.
+     tabla `| # | Tu respuesta | Resultado | Por qué |`, con sus respuestas **literales**. La celda Resultado
+     **empieza siempre** por una de estas tres etiquetas, y detrás lo que quieras: `✅ Correcta` · `⚠️ Le falta:
+     <qué>` · `❌ Incorrecta` (también para una en blanco: `❌ Incorrecta (en blanco)`). Son los tres veredictos
+     de "Cuando preguntas para medir"; las herramientas leen la etiqueta.
 7. **Frontmatter:** `nota:` y `fecha:` son las de **este** intento (`nota` sobre 10, un número: `2`, nunca
    `2/10`); `intentos:` sube en uno.
 

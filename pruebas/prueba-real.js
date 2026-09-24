@@ -257,6 +257,15 @@ function pasoRepaso(ctx, examenModulo) {
 
 // Cómo quedó mi-perfil.md y qué señales da estado.js, con el motor del propio curso montado.
 function resumenPerfil(destino) {
+  try {
+    return calcularResumenPerfil(destino);
+  } catch (error) {
+    // Al final de una prueba de una hora, un fallo aquí no puede dejarla sin RESUMEN.md.
+    return { existe: false, conContenido: 0, total: 0, senales: [`no se pudo calcular: ${error.message}`] };
+  }
+}
+
+function calcularResumenPerfil(destino) {
   const f = path.join(destino, 'estudio', 'mi-perfil.md');
   const senales = require(path.join(destino, '.kit', 'herramientas', 'estado.js')).calcularEstado(destino).senales || [];
   if (!fs.existsSync(f)) return { existe: false, conContenido: 0, total: 0, senales: senales.map(s => `${s.tipo}: ${s.detalle}`) };
@@ -366,8 +375,12 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     const [claseEnSegundoPlano, ...otrasEnSegundoPlano] = clasesEnSegundoPlano;
 
     for (const clase of clasesModuloDelExamen) {
+      const ficheroProgreso = path.join(destino, 'estudio', 'progreso.md');
+      const progresoAntes = fs.existsSync(ficheroProgreso) ? fs.readFileSync(ficheroProgreso, 'utf8') : '';
       ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
-      if (clase.trampa && !sinLlm) ejecutarPaso(pasos, `material con órdenes (${clase.id})`, () => p.comprobarTrampa(destino, { id: clase.id, concepto: clase.trampa.concepto }));
+      if (clase.trampa && !sinLlm) {
+        ejecutarPaso(pasos, `material con órdenes (${clase.id})`, () => p.comprobarTrampa(destino, { id: clase.id, concepto: clase.trampa.concepto, progresoAntes }));
+      }
     }
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
     ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));

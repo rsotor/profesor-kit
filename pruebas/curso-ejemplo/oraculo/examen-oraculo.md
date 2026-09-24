@@ -28,15 +28,15 @@ parcial: true
 
 ✍️ **Tu respuesta:**
 
-**4.** Durante un año los precios suben un 3 % y tu sueldo no cambia.
+**4.** Una tarjeta te cobra un 2 % de interés cada mes sobre lo que debes.
 
-¿Qué le pasa a tu poder de compra? *(qué le pasa y cuánto, aproximadamente)*
+¿Qué interés pagas? *(la cifra con su periodo)*
 
 ✍️ **Tu respuesta:**
 
 **5.** Pagas 700 € de alquiler cada mes; el contrato lo sube una vez al año con el IPC.
 
-¿El alquiler es un gasto fijo o variable? *(una palabra y por qué, en una frase)*
+¿El alquiler es un gasto fijo o variable? *(una palabra)*
 
 ✍️ **Tu respuesta:**
 
@@ -50,6 +50,6 @@ parcial: true
 > 1. 20 % (300 ÷ 1.500).
 > 2. Lo tiene inmovilizado: no lo puede convertir en dinero disponible a tiempo para pagar.
 > 3. Liquidez.
-> 4. Baja, en torno a un 3 %: con el mismo sueldo compras un 3 % menos.
-> 5. Fijo: es la misma cantidad todos los meses; que suba una vez al año no lo hace variable.
+> 4. Un 2 % mensual (al mes). Sin el periodo, la cifra no dice cuánto pagas.
+> 5. Fijo.
 > 6. 3 meses de gastos.
