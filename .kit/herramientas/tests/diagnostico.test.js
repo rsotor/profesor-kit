@@ -119,7 +119,7 @@ test('con la nota vieja (config/adaptacion-llm.md) y sin el JSON nuevo, el aviso
 test('otro LLM con adaptador propio del curso (config/adaptador-llm.json): comprueba su carpeta de skills de verdad', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado({ llm: 'codex-cli' });
   fs.rmSync(path.join(raiz, '.claude'), { recursive: true });
-  escribir(raiz, { 'config/adaptador-llm.json': JSON.stringify({ comando: 'codex', skills: '.codex/skills', puente: null, permisos: null, probado: 'Windows · 2026-09-23' }) });
+  escribir(raiz, { 'config/adaptador-llm.json': JSON.stringify({ id: 'codex-cli', comando: 'codex', skills: '.codex/skills', puente: null, permisos: null, probado: 'Windows · 2026-09-23' }) });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), ['skills']);
   escribir(raiz, { '.codex/skills/sesion/SKILL.md': 'x' });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), []);

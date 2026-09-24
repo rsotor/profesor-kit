@@ -1,4 +1,6 @@
 {
+  "schema_version": 1,
+  "id": "claude-code",
   "comando": "claude",
   "skills": ".claude/skills",
   "puente": "CLAUDE.md",
@@ -26,7 +28,20 @@
   "prompt_por_stdin": true,
   "modelo_recomendado": {
     "modelo": "Sonnet",
+    "id": "sonnet",
     "por_que": "Probado con todas las skills en un curso completo (configurar, sesión, dudas, examen y ejercicio). Opus es opcional para una clase muy densa si sobra cuota: gasta mucha más.",
     "comprobado": "2026-09-21"
-  }
+  },
+  "soporte": [
+    {
+      "sistema": "macOS",
+      "estado": "probado",
+      "evidencia": "prueba real completa 12/12 · corrección 6/6 · 2026-09-24"
+    },
+    {
+      "sistema": "Windows",
+      "estado": "experimental",
+      "evidencia": "sin prueba en Windows con Claude Code"
+    }
+  ]
 }

@@ -71,6 +71,12 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   // que las skills existen de verdad en su carpeta. Sin adaptador para este LLM, no se puede verificar:
   // es un aviso, no un ✗, y dice cómo resolverlo.
   const adaptador = v.leerAdaptador(raiz, ajustes.llm);
+  // Un adaptador del curso de otro asistente (o sin id) no se usa: se dice, para que no parezca que se aplica.
+  const delCurso = v.leerAdaptadorDelCurso(raiz);
+  if (delCurso && delCurso.id !== ajustes.llm) {
+    anota('adaptador-del-curso', false, 'El adaptador propio del curso es de este asistente',
+      `config/adaptador-llm.json ${delCurso.id ? `es de "${delCurso.id}"` : 'no dice de qué asistente es (falta "id")'} y el curso usa "${ajustes.llm}": no se aplica. Si es de este, pon "id": "${ajustes.llm}"; si no, bórralo.`, false);
+  }
   if (adaptador && adaptador.skills) {
     anota('skills', existe(`${adaptador.skills}/sesion/SKILL.md`), 'Skills instaladas', 'Ejecuta instalar-skills.js (paso 6).');
   } else {

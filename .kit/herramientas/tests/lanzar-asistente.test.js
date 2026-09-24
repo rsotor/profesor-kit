@@ -60,3 +60,10 @@ test('lanzarAsistente en Windows real: un .cmd con espacios en la ruta recibe su
   assert.equal(recibido.entrada.replace(/\r\n/g, '\n'), PROMPT_PELIGROSO);
   assert.doesNotMatch(r.stdout || '', /MARCA_AUDITORIA/);
 });
+
+test('comoLanzar: el modelo va tal cual (sin minúsculas); sin modelo, se quita --model y el asistente usa el suyo (H09)', () => {
+  const conModelo = comoLanzar({ comando: 'x', segundoPlano: ['-p', '--model', '{modelo}', '--otra'], promptPorStdin: true, prompt: 'p', modelo: 'GPT-5.1-Codex', plataforma: 'darwin' });
+  assert.deepEqual(conModelo.args, ['-p', '--model', 'GPT-5.1-Codex', '--otra']);
+  const sin = comoLanzar({ comando: 'x', segundoPlano: ['-p', '--model', '{modelo}', '--otra'], promptPorStdin: true, prompt: 'p', modelo: null, plataforma: 'darwin' });
+  assert.deepEqual(sin.args, ['-p', '--otra']);
+});

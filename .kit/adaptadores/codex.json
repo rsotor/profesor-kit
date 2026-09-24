@@ -1,4 +1,6 @@
 {
+  "schema_version": 1,
+  "id": "codex",
   "comando": "codex",
   "skills": ".agents/skills",
   "puente": null,
@@ -9,5 +11,17 @@
   "aceptar_una_vez": {
     "pendiente": "https://github.com/rsotor/profesor-kit/issues/42"
   },
-  "probado": "Windows 11 · Codex CLI 0.155.1 · 2026-09-23"
+  "probado": "Windows 11 · Codex CLI 0.155.1 · 2026-09-23",
+  "soporte": [
+    {
+      "sistema": "Windows",
+      "estado": "con-limitaciones",
+      "evidencia": "instalación y skills probadas · Codex CLI 0.155.1 · 2026-09-23; sin permisos de una vez ni segundo plano (issue #42)"
+    },
+    {
+      "sistema": "macOS",
+      "estado": "experimental",
+      "evidencia": "sin prueba en macOS con Codex"
+    }
+  ]
 }

@@ -98,7 +98,7 @@ test('un curso que ya tenía errores se actualiza igual (no empeora)', () => {
 
 test('.kit/adaptadores/ viaja con el motor; config/adaptador-llm.json (local, del alumno) no se toca', () => {
   const v = require('../lib/vault');
-  const local = JSON.stringify({ comando: 'codex-beta', skills: '.mi-carpeta/skills' });
+  const local = JSON.stringify({ id: 'claude-code', comando: 'codex-beta', skills: '.mi-carpeta/skills' });
   const { raiz, origen } = montar({ extraCurso: { 'config/adaptador-llm.json': local } });
   assert.ok(fs.existsSync(path.join(origen, '.kit', 'adaptadores', 'claude-code.json')), 'el kit real trae el adaptador de Claude Code');
   assert.equal(actualizar({ raiz, origen }).actualizado, true);
@@ -346,4 +346,20 @@ test('compara qué errores hay, no cuántos: arreglar uno y romper otro distinto
   assert.equal(r.motivo, 'revertido');
   assert.match(r.detalle, /mapa-del-curso/);
   assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
+});
+
+test('migración 005: el adaptador propio del curso gana el id de su asistente; sin tocar nada más, y es idempotente', () => {
+  const m = require('../migraciones/005-adaptador-con-id');
+  const raiz = cursoTemporal({ 'config/ajustes.json': JSON.stringify({ llm: 'codex-cli', version_datos: 4 }),
+    'config/adaptador-llm.json': JSON.stringify({ comando: 'codex', skills: '.agents/skills' }, null, 2) });
+  m.migrar(raiz);
+  m.migrar(raiz);
+  assert.deepEqual(JSON.parse(leer(raiz, 'config/adaptador-llm.json')), { id: 'codex-cli', comando: 'codex', skills: '.agents/skills' });
+  const conId = cursoTemporal({ 'config/adaptador-llm.json': '{"id":"otro","comando":"x"}' });
+  m.migrar(conId);
+  assert.equal(leer(conId, 'config/adaptador-llm.json'), '{"id":"otro","comando":"x"}', 'si ya lo tiene, no se toca');
+  const roto = cursoTemporal({ 'config/adaptador-llm.json': '{ roto' });
+  m.migrar(roto);
+  assert.equal(leer(roto, 'config/adaptador-llm.json'), '{ roto', 'uno roto no se arregla a ciegas: lo dice diagnostico.js');
+  m.migrar(cursoTemporal());   // sin adaptador propio: nada
 });

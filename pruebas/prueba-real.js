@@ -43,9 +43,9 @@ function modeloRecomendado(destino) {
   const ajustes = leerJson(path.join(destino, 'config', 'ajustes.json'));
   const llm = ajustes.llm || 'claude-code';
   for (const ruta of [path.join(destino, 'config', 'adaptador-llm.json'), path.join(destino, '.kit', 'adaptadores', `${llm}.json`)]) {
-    if (fs.existsSync(ruta)) { const a = leerJson(ruta); if (a.modelo_recomendado) return a.modelo_recomendado.modelo; }
+    if (fs.existsSync(ruta)) { const a = leerJson(ruta); if (a.modelo_recomendado) return a.modelo_recomendado.id || a.modelo_recomendado.modelo; }
   }
-  return 'sonnet';
+  return 'sonnet';   // la prueba real solo sabe lanzar claude (issue #39, H09: pendiente con otro asistente)
 }
 
 // Como en el ordenador de un alumno (prueba real del 2026-09-24, 7/12): el alumno acepta una vez que confía en la
@@ -410,7 +410,7 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
   const nombre = leerJson(path.join(datosCurso, 'config', 'ajustes.json')).nombre_curso;
   const { destino, motor } = montarCurso({ trabajo, datosCurso, nombre });
   try {
-    const modelo = (modeloArg || modeloRecomendado(destino)).toLowerCase();
+    const modelo = modeloArg || modeloRecomendado(destino);
     const ctx = { destino, sinLlm, modelo, limiteMs, datosCurso };
     const pasos = [];
 

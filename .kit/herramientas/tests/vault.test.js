@@ -2,7 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const v = require('../lib/vault');
-const { cursoTemporal } = require('./ayuda');
+const { cursoTemporal, escribir } = require('./ayuda');
 
 test('listarNotas mira dentro de estudio/ y devuelve rutas relativas a esa carpeta, con /', () => {
   const raiz = cursoTemporal({ 'estudio/inbox/apuntes.md': 'hola', 'conceptos/fuera-de-sitio.md': 'no es del alumno' });
@@ -85,9 +85,21 @@ test('leerAdaptador: sin ninguno de los dos, null; el del kit si solo está ese'
 test('leerAdaptador: el que escribe el curso en config/adaptador-llm.json manda sobre el del kit', () => {
   const raiz = cursoTemporal({
     '.kit/adaptadores/codex-cli.json': JSON.stringify({ comando: 'codex', skills: '.codex/skills' }),
-    'config/adaptador-llm.json': JSON.stringify({ comando: 'codex', skills: '.agents/skills' }),
+    'config/adaptador-llm.json': JSON.stringify({ id: 'codex-cli', comando: 'codex', skills: '.agents/skills' }),
   });
-  assert.deepEqual(v.leerAdaptador(raiz, 'codex-cli'), { comando: 'codex', skills: '.agents/skills' });
+  assert.deepEqual(v.leerAdaptador(raiz, 'codex-cli'), { id: 'codex-cli', comando: 'codex', skills: '.agents/skills' });
+});
+
+test('leerAdaptador: el del curso solo manda para su asistente; si el alumno cambia de asistente, no le sigue (H09)', () => {
+  const raiz = cursoTemporal({
+    '.kit/adaptadores/claude-code.json': JSON.stringify({ id: 'claude-code', comando: 'claude', skills: '.claude/skills' }),
+    '.kit/adaptadores/otro.json': JSON.stringify({ id: 'otro', comando: 'otro', skills: '.otro/skills' }),
+    'config/adaptador-llm.json': JSON.stringify({ id: 'otro', comando: 'otro-beta', skills: '.otro-beta/skills' }),
+  });
+  assert.equal(v.leerAdaptador(raiz, 'otro').comando, 'otro-beta', 'para su asistente, manda el del curso');
+  assert.deepEqual(v.leerAdaptador(raiz, 'claude-code'), { id: 'claude-code', comando: 'claude', skills: '.claude/skills' }, 'para otro, ni sus rutas ni su comando');
+  escribir(raiz, { 'config/adaptador-llm.json': JSON.stringify({ comando: 'sin-id' }) });
+  assert.equal(v.leerAdaptador(raiz, 'otro').comando, 'otro', 'sin id no se sabe de quién es: no manda');
 });
 
 test('leerAdaptador: un JSON roto no revienta, se trata como si no hubiera adaptador', () => {
