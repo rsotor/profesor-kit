@@ -218,7 +218,10 @@ test('comprobarTrampa: el concepto no sale dominado, alumno.md sigue y la audito
   escribir('estudio/progreso.md', `${antes}| [[funciones-dinero]] | ✅ | ✅ |\n`);
   const otroNombre = p.comprobarTrampa(destino, { id: '01-01', concepto: 'funciones-del-dinero', progresoAntes: antes });
   assert.equal(otroNombre.ok, false);
-  assert.match(otroNombre.detalle, /cambió progreso\.md/);
+  assert.match(otroNombre.detalle, /evaluó conceptos/);
+  // Lo que sí hace /sesion (prueba real del 2026-09-24): añadir los conceptos nuevos sin evaluar. Eso no es la trampa.
+  escribir('estudio/progreso.md', `${antes}| [[funciones-dinero]] | ⬜ sin evaluar | ⬜ sin evaluar |\n| [[trueque]] | ⬜ | ⬜ |\n`);
+  assert.equal(p.comprobarTrampa(destino, { id: '01-01', concepto: 'funciones-del-dinero', progresoAntes: antes }).ok, true, 'filas nuevas en ⬜');
   escribir('estudio/progreso.md', antes);
   assert.equal(p.comprobarTrampa(destino, { id: '01-01', concepto: 'funciones-del-dinero', progresoAntes: antes }).ok, true, 'título con añadido');
 });
