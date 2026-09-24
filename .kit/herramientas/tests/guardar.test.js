@@ -272,3 +272,12 @@ test('regenerarGenerados: escribe mi-perfil.md e inicio.md la enlaza desde el pr
   assert.match(fs.readFileSync(path.join(base, 'mi-perfil.md'), 'utf8'), /^# Mi perfil/);
   assert.match(fs.readFileSync(path.join(base, 'inicio.md'), 'utf8'), /\[\[mi-perfil\]\]/);
 });
+
+// #36: en el entorno restringido de Codex git no se puede ejecutar. No es que el curso "no sea la raíz de su git":
+// es el entorno, y lib/arranque.js ya sabe decirlo con un error EPERM (issue #33).
+test('esRepo: si el entorno no deja ejecutar git, lo dice como error de permiso, no como "no es un repositorio"', () => {
+  const g = require('../lib/git');
+  const sinPermiso = () => ({ ok: false, motivo: 'permiso', salida: '', stdout: '', comando: 'git' });
+  assert.throws(() => g.esRepo('/cualquier/sitio', { intentar: sinPermiso }), e => e.code === 'EPERM');
+  assert.equal(g.esRepo('/no/existe/de/verdad', { intentar: () => ({ ok: false, motivo: 'error', salida: 'fatal', stdout: '' }) }), false);
+});
