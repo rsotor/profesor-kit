@@ -106,11 +106,11 @@ pueden dar por buena una clase que no se ha preparado o perder una corrección s
 
 | ID | Decisión | Recomendación |
 |---|---|---|
-| **D1** | ¿Arreglar los fallos (0.22.2 y 0.22.3) antes de mi perfil? | **Sí.** Son fallos de datos y ya hay alumnos usándolo |
-| **D2** | ¿Segundo plano activo hasta la 0.22.3? | **Sí**, ver 2.2 |
-| **D3** | ¿Responder a la issue #39 con este plan y abrir una issue por hallazgo? | **Sí, un comentario con la tabla** y una issue solo cuando se empiece cada una (si no, 12 issues abiertas sin mover) |
+| **D1** | ¿Arreglar los fallos (0.22.2 y 0.22.3) antes de mi perfil? | ✅ **Sí** (Roberto, 2026-09-24) |
+| **D2** | ¿Segundo plano activo hasta la 0.22.3? | ✅ **Sí**, y la 0.22.3 el mismo día (Roberto, 2026-09-24) |
+| **D3** | ¿Responder a la issue #39 con este plan y abrir una issue por hallazgo? | ✅ Hecho: comentario con la tabla; se comenta allí al cerrar cada versión |
 | **D4** | Licencia: `package.json` dice `UNLICENSED` y el repo es público | Decidirlo antes de la 1.0.0 o de aceptar contribuciones de fuera. No bloquea nada ahora |
-| **D5** | ¿Qué hace falta para la 1.0.0? | Propuesta: 0.22.2 + 0.22.3 + la prueba real que mide la corrección (H08) en verde con dos asistentes |
+| **D5** | ¿Qué hace falta para la 1.0.0? | ✅ **Decidido (Roberto, 2026-09-24):** cerrar todos los fallos y problemas y tener una versión estable y auditada. Entonces se publica la 1.0.0 |
 
 ---
 
@@ -128,6 +128,6 @@ pueden dar por buena una clase que no se ha preparado o perder una corrección s
 | Versión | Estado | Notas |
 |---|---|---|
 | 0.22.1 | ✅ publicada | #35 cerrada; `diagnostico.js` avisa de la raíz del git (#36) |
-| 0.22.2 | ⏳ | |
+| 0.22.2 | ✅ publicada (#40) | #38, H01, H02, H03, H07, H10 (CI). La línea de `/sesion` sobre el título `## El ejemplo` a secas queda para la 0.23.0 (tocar una skill exige prueba real) |
 | 0.22.3 | ⏳ | |
 | 0.23.0 | ⏳ | Plan de mi perfil pendiente de revisar |
