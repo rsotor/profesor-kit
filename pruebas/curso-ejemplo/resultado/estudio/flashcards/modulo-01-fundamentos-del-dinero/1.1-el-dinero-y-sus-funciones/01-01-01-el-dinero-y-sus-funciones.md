@@ -6,21 +6,21 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 
 > Se responde mentalmente antes de desplegar.
 
-**Nombra las tres funciones del dinero.**
+**¿Cuáles son las tres funciones del dinero? Di qué hace cada una en una frase.**
 > [!success]- Respuesta
-> Medio de cambio, unidad de cuenta y depósito de valor.
+> Medio de cambio (se acepta a cambio de cualquier bien), unidad de cuenta (pone precio a todo con la misma vara) y depósito de valor (se guarda hoy para usar más adelante).
 
-**¿Qué es la doble coincidencia de deseos y por qué hunde el trueque?**
+**Un pescador dice "esta caja vale 40,00 €" sin decir a cuántas gallinas equivale. ¿Qué función usa?**
 > [!success]- Respuesta
-> Que cada parte quiera justo lo que ofrece la otra, y en el mismo momento. Si no coinciden, no hay trato.
+> Unidad de cuenta.
 
-**Sube el precio del café por una mala cosecha. ¿Es inflación?**
+**Una tienda sube el café de 1,50 € a 1,80 € por una mala cosecha y no cambia nada más. ¿Es inflación? ¿Por qué?**
 > [!success]- Respuesta
-> No. Es la subida de una cosa concreta. Inflación es que sube el nivel general de precios, de casi todo a la vez.
+> No. Sube un solo precio. Inflación es una subida general y sostenida del nivel de precios.
 
-**¿Por qué un piso es poco líquido aunque valga mucho?**
+**¿Qué es más líquido, un piso o 300,00 € en la cartera? ¿Por qué?**
 > [!success]- Respuesta
-> Porque venderlo bien lleva meses, y con prisa se pierde valor.
+> Los 300,00 € en la cartera: se gastan al instante. Un piso tarda meses en venderse bien.
 
 ---
-Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]
+Conceptos que cubren: [[trueque]] · [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]

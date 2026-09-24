@@ -318,3 +318,13 @@ test('validarMotor: rechaza "\\", ".git" y datos del alumno escritos con otras m
   }
   assert.doesNotThrow(() => validarMotor(['AGENTS.md', '.kit', '.claude/settings.json']));
 });
+
+test('el guardado final usa el guardar.js del motor nuevo, no el que ya estaba cargado (los generados nuevos salen ya)', () => {
+  const { raiz, origen } = montar();
+  // El guardar.js de la v2 deja una marca: si el guardado final la trae, lo hizo el código nuevo.
+  fs.appendFileSync(path.join(origen, '.kit', 'herramientas', 'guardar.js'),
+    "\nconst guardarV2 = module.exports.guardar;\nmodule.exports.guardar = o => { fs.writeFileSync(path.join(o.raiz, 'estudio', 'marca-v2.md'), 'v2\\n'); return guardarV2(o); };\n");
+  assert.equal(actualizar({ raiz, origen }).actualizado, true);
+  assert.equal(git(raiz, 'show', 'HEAD:estudio/marca-v2.md'), 'v2');
+  assert.equal(git(raiz, 'status', '--porcelain'), '');
+});

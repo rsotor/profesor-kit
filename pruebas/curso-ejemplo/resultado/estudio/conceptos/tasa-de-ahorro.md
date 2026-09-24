@@ -1,44 +1,47 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
-visto_en: [01-02-01-presupuesto-personal]
-dificultad: 3
+bloques: ["Módulo 1"]
+visto_en: ["01-02-01-presupuesto-personal"]
+dificultad: 2
 requiere: [presupuesto]
-alias: [tasa de ahorro mensual]
-tags: [presupuesto, ahorro]
+alias: [porcentaje de ahorro]
+tags: []
 ---
 # Tasa de ahorro
 
-> **En una frase:** la parte de lo que ganas que te queda, en vez de la cifra absoluta.
+> **En una frase:** la parte de lo que ingresas que te queda al acabar el mes, expresada en tanto por ciento, para poder comparar personas o meses con ingresos distintos.
 
 ## El problema
 
-"Ahorro 655,00 € al mes" no dice si es mucho: depende de cuánto ganas. Dos personas con sueldos distintos no se pueden comparar con cifras absolutas.
+Ahorrar 200,00 € no dice nada por sí solo: es mucho si ingresas 1.000,00 € y poco si ingresas
+5.000,00 €. La cifra absoluta no se puede comparar.
 
 ## El ejemplo
 
-Con 1.850,00 € de ingresos y 655,00 € de ahorro, te queda un 35,4 % mensual de lo que entra. Otra persona que ingresa 3.000,00 € y ahorra 700,00 € ahorra más euros, pero su tasa es 23,3 % mensual: tú ahorras una parte mayor.
+Persona A: ingresa 1.000,00 €, ahorra 200,00 €. Persona B: ingresa 4.000,00 €, ahorra 400,00 €.
+B ahorra más euros, pero A guarda **20 % mensual** de lo que gana y B solo **10 % mensual**. A ahorra
+mejor en proporción.
 
 ## La fórmula
 
-$$ \text{tasa de ahorro} = \frac{A}{I} \times 100 $$
+$$ \text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100 $$
 
-$A$ es el ahorro del mes e $I$ los ingresos del mes. Se mide sobre el mes, por eso se dice "mensual". Con las cifras de clase: 655,00 ÷ 1.850,00 × 100 ≈ **35,4 % mensual**.
+El ahorro del mes (ver [[presupuesto]]) dividido entre lo que ingresaste ese mes; multiplicar por 100
+lo convierte en tanto por ciento. Siempre se dice de qué periodo es: aquí, de un mes.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Dividir entre los gastos en vez de entre los ingresos. Con 655,00 € y 1.195,00 € de gastos saldría 54,8 % mensual, una cifra que no dice qué parte de lo que ganas te queda.
-
-## Visto desde tus ingresos irregulares
-
-> [!info] Ampliación fuera de los apuntes
-> Tu tasa cambia cada mes porque cambian los ingresos aunque los gastos sean los mismos. Mírala sobre la media de varios meses, no sobre un mes suelto.
+> Comparar la tasa de un mes con la de otro sin fijarse en que los ingresos cambiaron. Si facturas
+> mucho un mes, la tasa sube aunque tus gastos sean los de siempre.
 
 ## Relacionados
 
-- [[presupuesto]] — de donde sale el ahorro del mes
-- [[gastos-fijos-y-variables]] — lo que resta a los ingresos
+- [[presupuesto]] — de ahí sale el ahorro del mes
+
+> [!info] Ampliación fuera de los apuntes
+> **Visto desde tus ingresos irregulares:** tu tasa saltará de un mes a otro. Mírala sobre varios
+> meses (con el ingreso medio), no sobre el mejor ni el peor.
 
 ## Historial
 

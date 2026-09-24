@@ -131,6 +131,14 @@ test('pregunta-doble: dos signos de interrogación en la misma pregunta, aviso',
   assert.match(a[0].detalle, /2 signos/);
 });
 
+// issue #39, H08: los exámenes numeran las preguntas en negrita ("**1.**"); también cuentan.
+test('pregunta-doble: con la numeración en negrita ("**1.**") también avisa', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\n---\n# Examen\n\n**1.** ¿Qué es alfa? ¿Por qué importa?\n\n✍️ **Tu respuesta:**\n',
+  });
+  assert.equal(avisos(raiz, 'pregunta-doble').length, 1);
+});
+
 test('pregunta-doble: una sola pregunta, no avisa', () => {
   const raiz = cursoTemporal({
     'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\n---\n# Examen\n\n1. ¿Qué es alfa?\n\n✍️ **Tu respuesta:**\n',
@@ -172,4 +180,49 @@ test('falta-info-mal-usado: sin "## El error típico" no avisa; con una ampliaci
       + '## El ejemplo\n\nUno.\n\n## El error típico\n\n> [!info] Ampliación fuera de los apuntes\n> Confundir alfa con beta.\n',
   });
   assert.equal(avisos(raiz, 'falta-info-mal-usado').length, 0);
+});
+
+// --- mi-perfil.md y la revisión de avisos (tarea 12 del plan 0.23.0) ---------------------------------------
+
+test('enlace-roto-en-perfil: un enlace roto en mi-perfil.md es un aviso, no un error, y dice dónde se corrige', () => {
+  const raiz = cursoTemporal({ 'config/alumno.md': '# A\n\n## Cómo explicarle\n\nMira [[no-existe]] y [[alfa]].\n' });
+  require('../guardar').regenerarGenerados(raiz);
+  const informe = comprobar(raiz);
+  assert.equal(informe.errores.filter(e => /perfil/.test(e.fichero)).length, 0);
+  const a = avisos(raiz, 'enlace-roto-en-perfil');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /\[\[no-existe\]\].*config\//);
+});
+
+test('comprobar.js --revisado apunta la fecha y cuántos avisos hay en config/revision-avisos.json', () => {
+  const { cli } = require('../comprobar');
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const raiz = cursoTemporal();
+  const log = console.log;
+  console.log = () => {};
+  try { cli(['--revisado'], raiz); } finally { console.log = log; }
+  const r = JSON.parse(fs.readFileSync(path.join(raiz, 'config', 'revision-avisos.json'), 'utf8'));
+  assert.match(r.fecha, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal(r.avisos, comprobar(raiz).avisos.length);
+});
+
+test('comprobar.js --revisado: con --json imprime el informe, y con errores sale con 1', () => {
+  const { cli } = require('../comprobar');
+  const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n# S\n\n[[no-existe]]\n' });
+  const salidas = [];
+  const log = console.log;
+  console.log = x => salidas.push(String(x));
+  let codigo;
+  try { codigo = cli(['--revisado', '--json'], raiz); } finally { console.log = log; }
+  assert.equal(codigo, 1);
+  assert.ok(salidas.some(s => s.startsWith('{') && JSON.parse(s).errores.length > 0));
+});
+
+test('no-se-vera-bien también mira mi-perfil.md, como aviso que remite a config/', () => {
+  const raiz = cursoTemporal({ 'config/alumno.md': '# A\n\n## Cómo explicarle\n\nLa cuenta es $10 € + 5 €$.\n' });
+  require('../guardar').regenerarGenerados(raiz);
+  const a = avisos(raiz, 'no-se-vera-bien').filter(x => x.fichero === 'mi-perfil.md');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /config\//);
 });

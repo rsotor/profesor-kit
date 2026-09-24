@@ -57,7 +57,7 @@ el alumno/instalador a través del LLM.
 
 | Fichero | Qué hace | Quién la llama |
 |---|---|---|
-| `estado.js` | La foto del curso al abrir (plan 0.22, §3.1): material nuevo en `inbox/` sin procesar, siguiente sesión y sesiones preparadas sin estudiar, sesiones en 🔁, preparaciones en segundo plano (en curso, terminadas sin juntar, fallidas o interrumpidas si el proceso ya no existe) y el caso sugerido (1/2/3) | `AGENTS.md`, "Al empezar cada sesión" |
+| `estado.js` | La foto del curso al abrir (plan 0.22, §3.1): material nuevo en `inbox/` sin procesar, siguiente sesión y sesiones preparadas sin estudiar, sesiones en 🔁, preparaciones en segundo plano (en curso, terminadas sin juntar, fallidas o interrumpidas si el proceso ya no existe) y el caso sugerido (1/2/3), y las señales de que algo no funciona (`lib/perfil.js#senales`) | `AGENTS.md`, "Al empezar cada sesión" |
 | `comprobar.js` | Valida el curso entero (estructura, enlaces, secretos, "se verá bien", lint pedagógico, propiedades no estándar) y devuelve `{ errores, avisos }` | Todas las skills de trabajo antes de guardar; internamente `guardar.js`, `actualizar.js` y `diagnostico.js` |
 | `guardar.js` | Regenera los ficheros derivados, comprueba, hace `commit` (y `push` si procede) | Toda skill de trabajo al terminar (`sesion`, `dudas`, `examen`, `ejercicio`, `repaso`, `configurar`, `actualizar`) |
 | `actualizar.js` | Descarga la última release publicada, sustituye el motor, aplica migraciones pendientes y reinstala skills; vuelve atrás si algo empeora | Skill `/actualizar`; `--comprobar` lo lanza AGENTS.md al empezar cada sesión (silencioso, una vez al día) |
@@ -81,6 +81,7 @@ el alumno/instalador a través del LLM.
 | `git.js` | Envoltorio fino sobre `git` (estado, commit, identidad, remoto), sobre `proceso.js` |
 | `indice.js` | Calcula `estudio/inicio.md` y el pie de navegación de cada sesión, a partir de las sesiones, el progreso y los exámenes en disco |
 | `generados.js` | Calcula el resto de ficheros que escribe `guardar.js`: pendientes, auditoría del material, formulario, índice de ejercicios y la sección "Estado" del README |
+| `perfil.js` | Calcula `estudio/mi-perfil.md` (copia secciones de `config/alumno.md` y `config/profesor.md` y la evolución) y las señales que da `estado.js` |
 | `secretos.js` | Escanea los ficheros candidatos a `git` en busca de patrones de tokens y claves conocidos |
 | `obsidian.js` | Aplica los ajustes recomendados de Obsidian sin pisar los del alumno, y descarga complementos verificados por sha256 |
 
@@ -90,10 +91,11 @@ el alumno/instalador a través del LLM.
 
 1. El **pie de navegación** de cada sesión (`indice.piesDeSesion` → `indice.ponerPie`).
 2. `estudio/formulario.md` — **antes** que `inicio.md` porque "Otras hojas" mira si ya existe en disco.
-3. `estudio/ejercicios/_index.md`.
-4. `estudio/inicio.md` (`indice.markdownInicio`).
-5. `estudio/pendientes.md`.
-6. `estudio/auditoria-del-material.md`.
+3. `estudio/mi-perfil.md` (`perfil.markdownPerfil`) — también antes que `inicio.md`.
+4. `estudio/ejercicios/_index.md`.
+5. `estudio/inicio.md` (`indice.markdownInicio`).
+6. `estudio/pendientes.md`.
+7. `estudio/auditoria-del-material.md`.
 
 Después de regenerar, se llama a `comprobar(raiz)`. **Por qué generar antes de comprobar** (comentario
 literal del código): así un curso al que aún le falta `inicio.md` no se queda sin poder guardar, y lo
@@ -282,7 +284,7 @@ toca el perfil de la shell o el `PATH`.
 
 El resto son unitarios por fichero (`vault.test.js`, `indice.test.js`, `generados.test.js`,
 `organizar.test.js`, `actualizar.test.js`, `guardar.test.js`, `comprobar-estructura.test.js`,
-`comprobar-avisos.test.js`, `revisor-pedagogico.test.js`, `propiedades.test.js`, `secretos.test.js`,
+`comprobar-avisos.test.js`, `revisor-pedagogico.test.js`, `perfil.test.js`, `propiedades.test.js`, `secretos.test.js`,
 `adaptadores.test.js`, `diagnostico.test.js`, `crear-atajo.test.js`, `instalar-skills.test.js`,
 `reparar.test.js`, `issue.test.js`, `obsidian.test.js`, `release-notas.test.js`, `cli.test.js`).
 
@@ -307,8 +309,8 @@ código — y por eso es la única que usa un LLM de verdad y nunca corre en el 
   `config/` ya configurado (como lo dejaría `/configurar`) y valores **no por defecto** a propósito
   (lente activada, marcador de dudas distinto, `flashcards_por_sesion` fijo, `estructura.json` con
   submódulos, `patrones_prohibidos`): así la prueba real ejercita rutas que un curso recién instalado no
-  toca. `clases.json` y `alumno/respuestas-examen.md` son metadatos del ejecutor (qué clases procesar y en
-  qué orden, cómo "contestar" el examen), no datos del curso.
+  toca. `clases.json` y `alumno/perfil.md` son metadatos del ejecutor (qué clases procesar y en
+  qué orden; quién contesta el examen: el alumno simulado), no datos del curso.
 - `pruebas/lib/montaje.js` monta, en una carpeta temporal autolimpiable, un curso de verdad: el motor de
   la copia de trabajo actual + `preparar-curso.js --subir no` + los datos de `curso-ejemplo/` encima +
   `git init` + `instalar-skills.js`. Lo comparten `prueba-real.js` y `prueba-actualizar.js`.

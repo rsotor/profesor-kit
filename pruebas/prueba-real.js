@@ -15,7 +15,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { borrar, montarCurso, comprobarJson } = require('./lib/montaje');
+const { borrar, montarCurso, comprobarJson, carpetaTemporal } = require('./lib/montaje');
 const p = require('./lib/pasos');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
@@ -33,7 +33,7 @@ function comando(comando_, args) {
 // Sondear sin gastar CPU mientras se espera a que termine algo en segundo plano.
 function dormir(ms) { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms); }
 function preparar(ctx, ...args) {
-  const r = spawnSync(process.execPath, [path.join(ctx.destino, '.kit', 'herramientas', 'preparar.js'), ...args], { cwd: ctx.destino, encoding: 'utf8' });
+  const r = spawnSync(process.execPath, [path.join(ctx.destino, '.kit', 'herramientas', 'preparar.js'), ...args], { cwd: ctx.destino, encoding: 'utf8', env: entornoDeAlumno() });
   return { ok: !r.error && r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
 }
 
@@ -48,16 +48,55 @@ function modeloRecomendado(destino) {
   return 'sonnet';
 }
 
+// Como en el ordenador de un alumno (prueba real del 2026-09-24, 7/12): el alumno acepta una vez que confía en la
+// carpeta del curso y desde entonces se aplican sus reglas (.claude/settings.json); una carpeta temporal nueva no es
+// de confianza y Claude Code las ignora. Se las pasamos al lanzarlo (--allowedTools, al final: admite varias), y sin
+// las variables de la sesión que lanza la prueba, que cambian cómo pide permisos.
+// La salida en JSON trae qué se denegó (permission_denials): sin eso, un paso que se quedó sin hacer por un permiso
+// solo se podía adivinar (prueba real del 2026-09-24).
+function argsClaude({ prompt, modelo, permitidas }) {
+  const args = ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none', '--output-format', 'json'];
+  return permitidas.length ? [...args, '--allowedTools', ...permitidas] : args;
+}
+const VARIABLES_DE_SESION = /^(CLAUDECODE|CLAUDE_CODE_[A-Z_]+|CLAUDE_EFFORT|CLAUDE_JOB_DIR|CLAUDE_PID)$/;
+function entornoDeAlumno(entorno = process.env) {
+  return Object.fromEntries(Object.entries(entorno).filter(([k]) => !VARIABLES_DE_SESION.test(k)));
+}
+function reglasDelCurso(cwd) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(cwd, '.claude', 'settings.json'), 'utf8')).permissions.allow || [];
+  } catch { return []; }
+}
+
+// El texto de la respuesta y lo que se denegó, de la salida JSON de claude -p. Si no hay JSON (claude falló antes de
+// empezar), el texto tal cual: es lo que hay que leer para saber qué pasó.
+function leerSalidaClaude(stdout) {
+  const linea = String(stdout || '').split('\n').reverse().find(l => l.trim().startsWith('{'));
+  let json;
+  try { json = linea && JSON.parse(linea); } catch { json = null; }
+  if (!json || typeof json !== 'object') return { texto: String(stdout || '').trim(), denegaciones: [] };
+  const denegaciones = (json.permission_denials || []).map(d => {
+    const e = d.tool_input || {};
+    return { herramienta: d.tool_name, detalle: String(e.command || e.file_path || e.path || JSON.stringify(e)).slice(0, 300) };
+  });
+  return { texto: String(json.result ?? '').trim(), denegaciones };
+}
+
+// Las denegaciones del paso que se está ejecutando: invocarClaude las apunta aquí y ejecutarPaso se las lleva.
+let denegacionesDelPaso = [];
+
 function invocarClaude({ prompt, modelo, cwd, limiteMs }) {
   const inicio = Date.now();
-  const r = spawnSync('claude', ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none'], {
-    cwd, encoding: 'utf8', timeout: limiteMs, maxBuffer: 64 * 1024 * 1024,
+  const r = spawnSync('claude', argsClaude({ prompt, modelo, permitidas: reglasDelCurso(cwd) }), {
+    cwd, encoding: 'utf8', timeout: limiteMs, maxBuffer: 64 * 1024 * 1024, env: entornoDeAlumno(),
   });
   const duracionMs = Date.now() - inicio;
   const agotado = !!(r.error && r.error.code === 'ETIMEDOUT');
+  const { texto, denegaciones } = leerSalidaClaude(r.stdout);
+  denegacionesDelPaso.push(...denegaciones);
   return {
-    ok: !agotado && r.status === 0, duracionMs, codigo: r.status, agotado,
-    salida: ((r.stdout || '') + (r.stderr || '')).trim(),
+    ok: !agotado && r.status === 0, duracionMs, codigo: r.status, agotado, denegaciones,
+    salida: [texto, (r.stderr || '').trim()].filter(Boolean).join('\n'),
   };
 }
 
@@ -65,11 +104,12 @@ function invocarClaude({ prompt, modelo, cwd, limiteMs }) {
 // anota como fallo de ESE paso y la prueba sigue con los demás. Nunca deja de escribir el resumen.
 function ejecutarPaso(pasos, nombre, fn) {
   const inicio = Date.now();
+  denegacionesDelPaso = [];
   try {
     const r = fn() || {};
-    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: r.ok === null ? null : r.ok !== false, detalle: r.detalle || 'ok', salidaLlm: r.salidaLlm });
+    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: r.ok === null ? null : r.ok !== false, detalle: r.detalle || 'ok', salidaLlm: r.salidaLlm, denegaciones: denegacionesDelPaso });
   } catch (error) {
-    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: false, detalle: `error: ${error.message}` });
+    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: false, detalle: `error: ${error.message}`, denegaciones: denegacionesDelPaso });
   }
 }
 
@@ -164,11 +204,35 @@ function pasoExamenGenerar(ctx, examenModulo) {
   return { ok: true, detalle: `examen escrito: ${path.relative(ctx.destino, fichero)}`, salidaLlm: r.salida };
 }
 
+// El alumno simulado (plan 0.22, 5b.4): otra llamada sin conversación, desde una carpeta vacía (no puede abrir el
+// examen con las soluciones), que recibe el examen limpio y el perfil y devuelve sus respuestas en JSON.
+function pasoExamenContestar(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: no hay nada que contestar' };
+  const examen = p.examenSinSoluciones(fs.readFileSync(ctx.ficheroExamen, 'utf8'));
+  const n = p.contarHuecos(examen);
+  const perfil = fs.readFileSync(path.join(ctx.datosCurso, 'alumno', 'perfil.md'), 'utf8');
+  const vacia = carpetaTemporal();
+  try {
+    const r = invocarClaude({ prompt: p.promptAlumnoSimulado(perfil, examen, n), modelo: ctx.modelo, cwd: vacia, limiteMs: ctx.limiteMs });
+    if (!r.ok) return { ok: false, detalle: `claude falló haciendo de alumno (código ${r.codigo})`, salidaLlm: r.salida };
+    const respuestas = p.leerRespuestas(r.salida);
+    if (!respuestas) return { ok: false, detalle: 'el alumno simulado no devolvió el JSON de respuestas', salidaLlm: r.salida };
+    const puesto = p.ponerRespuestas(ctx.ficheroExamen, respuestas);
+    if (!puesto.ok) return { ok: false, detalle: `el alumno simulado dio ${puesto.respuestas} respuestas para ${puesto.huecos} preguntas`, salidaLlm: r.salida };
+    return { ok: true, detalle: `${puesto.huecos} preguntas contestadas por el alumno simulado, ${puesto.enBlanco} en blanco` };
+  } finally {
+    borrar(vacia);
+  }
+}
+
+// Fuera de aquí, el alumno simulado o la corrección no se portaron como se esperaba.
+const NOTA_MIN = 3;
+const NOTA_MAX = 8;
+
 function pasoExamenCorregir(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: se omite la corrección' };
-  const tabla = fs.readFileSync(path.join(ctx.datosCurso, 'alumno', 'respuestas-examen.md'), 'utf8');
-  const contadas = p.rellenarRespuestasExamen(ctx.ficheroExamen, tabla);
   const progresoAntes = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const r = invocarClaude({
     prompt: `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
@@ -181,13 +245,38 @@ function pasoExamenCorregir(ctx, examenModulo) {
   const historico = /## Histórico de intentos/.test(texto);
   const progresoDespues = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const progresoMovido = progresoAntes !== progresoDespues;
-  const ok = !!nota && historico && progresoMovido;
+  const valor = nota ? Number(nota[1].replace(',', '.')) : null;
+  const enMargen = valor !== null && valor >= NOTA_MIN && valor <= NOTA_MAX;
+  const ok = !!nota && historico && progresoMovido && enMargen;
   return {
     ok,
-    detalle: `respuestas preparadas: ${JSON.stringify(contadas)} · nota: ${nota ? nota[1] : 'no encontrada'} · `
+    detalle: `nota: ${nota ? nota[1] : 'no encontrada'} (margen esperado ${NOTA_MIN}-${NOTA_MAX}: ${enMargen ? 'sí' : 'no'}) · `
       + `histórico de intentos: ${historico ? 'sí' : 'no'} · progreso.md movido: ${progresoMovido ? 'sí' : 'no'}`,
     salidaLlm: r.salida,
   };
+}
+
+// La corrección, medida (issue #39, H08): un test fijo con las respuestas ya escritas y, para cada una, el veredicto
+// que tendría que dar el profesor según "Cuando preguntas para medir" (AGENTS.md). Solo vale 6 de 6.
+function pasoCorreccionOraculo(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const dirOraculo = path.join(ctx.datosCurso, 'oraculo');
+  const esperado = JSON.parse(fs.readFileSync(path.join(dirOraculo, 'esperado.json'), 'utf8'));
+  const hoy = new Date().toISOString().slice(0, 10);
+  const carpeta = ctx.ficheroExamen ? path.dirname(ctx.ficheroExamen) : path.join(ctx.destino, 'estudio', 'examenes');
+  fs.mkdirSync(carpeta, { recursive: true });
+  const fichero = path.join(carpeta, `01-examen-${hoy}-correccion.md`);
+  fs.writeFileSync(fichero, fs.readFileSync(path.join(dirOraculo, 'examen-oraculo.md'), 'utf8').replace('{{fecha}}', hoy));
+  const puesto = p.ponerRespuestas(fichero, esperado.map(e => e.respuesta));
+  if (!puesto.ok) return { ok: false, detalle: `el test fijo tiene ${puesto.huecos} huecos y ${puesto.respuestas} respuestas preparadas` };
+  const r = invocarClaude({
+    prompt: `He terminado el test ${path.basename(fichero)}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
+    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+  });
+  if (!r.ok) return { ok: false, detalle: `claude falló al corregir el test fijo (código ${r.codigo})`, salidaLlm: r.salida };
+  const c = p.compararVeredictos(esperado, p.leerVeredictos(fs.readFileSync(fichero, 'utf8')));
+  ctx.correccion = c;
+  return { ok: c.bien === c.total, detalle: `corrección: ${c.bien}/${c.total} veredictos como se esperaban${c.fallos.length ? ` · ${c.fallos.join(' · ')}` : ''}`, salidaLlm: c.fallos.length ? r.salida : undefined };
 }
 
 function pasoRepaso(ctx, examenModulo) {
@@ -206,6 +295,27 @@ function pasoRepaso(ctx, examenModulo) {
   };
 }
 
+// Cómo quedó mi-perfil.md y qué señales da estado.js, con el motor del propio curso montado.
+function resumenPerfil(destino) {
+  try {
+    return calcularResumenPerfil(destino);
+  } catch (error) {
+    // Al final de una prueba de una hora, un fallo aquí no puede dejarla sin RESUMEN.md.
+    return { existe: false, conContenido: 0, total: 0, senales: [`no se pudo calcular: ${error.message}`] };
+  }
+}
+
+function calcularResumenPerfil(destino) {
+  const f = path.join(destino, 'estudio', 'mi-perfil.md');
+  const senales = require(path.join(destino, '.kit', 'herramientas', 'estado.js')).calcularEstado(destino).senales || [];
+  if (!fs.existsSync(f)) return { existe: false, conContenido: 0, total: 0, senales: senales.map(s => `${s.tipo}: ${s.detalle}`) };
+  const partes = fs.readFileSync(f, 'utf8').split(/^## /m).slice(1);
+  return {
+    existe: true, total: partes.length, conContenido: partes.filter(x => !/Todavía nada/.test(x)).length,
+    senales: senales.map(s => `${s.tipo}: ${s.detalle}`),
+  };
+}
+
 function contarNotas(destino, carpeta, ext) {
   const dir = path.join(destino, 'estudio', carpeta);
   if (!fs.existsSync(dir)) return 0;
@@ -221,11 +331,17 @@ function agruparPorRegla(lista) {
   return [...grupos.entries()].sort((a, b) => b[1].length - a[1].length);
 }
 
-function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos }) {
+function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos, perfil, correccion, commit }) {
   const l = [];
   l.push('# Resultado de la prueba real del profesor', '');
   if (sinLlm) l.push('> **Modo `--sin-llm`: no se ha ejecutado ningún LLM real.** Solo se ha montado el curso y probado', '> el propio ejecutor. Ejecuta `npm run prueba-real` (sin ese flag) para una prueba de verdad.', '');
   l.push(`- **Fecha:** ${fecha}`, `- **Versión del kit:** ${version}`, `- **Modelo:** ${modelo}`, '');
+  // Línea fija que lee .github/cambio-grande.js: no se cambia su forma sin cambiar allí la expresión.
+  const hechos = pasos.filter(x => x.ok !== null);
+  const c = correccion || { bien: 0, total: 0 };
+  l.push(`Resultado: ${hechos.filter(x => x.ok).length}/${hechos.length} pasos bien · corrección ${c.bien}/${c.total} · commit ${commit || 'desconocido'}`, '');
+  const denegados = pasos.flatMap(x => (x.denegaciones || []).map(d => ({ paso: x.paso, ...d })));
+  l.push(`Permisos denegados: ${denegados.length}`, '');
 
   l.push('## Pasos', '', '| Paso | Resultado | Duración | Qué se comprobó |', '|---|---|---|---|');
   for (const paso of pasos) {
@@ -239,6 +355,19 @@ function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conte
   if (fallidos.length) {
     l.push('## Lo que respondió el asistente en los pasos que fallaron', '');
     for (const x of fallidos) l.push(`### ${x.paso}`, '', '```text', String(x.salidaLlm).slice(-4000).replace(/```/g, "'''"), '```', '');
+  }
+
+  // Cada permiso denegado es un paso que el profesor quiso hacer a mano y no pudo: con un alumno delante, una petición.
+  l.push('## Permisos denegados', '');
+  if (!denegados.length) l.push('- Ninguno.');
+  for (const d of denegados) l.push(`- **${d.paso}** · ${d.herramienta}: \`${String(d.detalle).replace(/`/g, "'").replace(/\s+/g, ' ')}\``);
+  l.push('');
+
+  l.push('## Mi perfil', '');
+  if (!perfil) l.push('- No calculado.', '');
+  else {
+    l.push(perfil.existe ? `- \`mi-perfil.md\`: ${perfil.conContenido} de ${perfil.total} secciones con contenido` : '- `mi-perfil.md`: **no existe**');
+    l.push(perfil.senales.length ? `- Señales de \`estado.js\`: ${perfil.senales.join(' · ')}` : '- Señales de `estado.js`: ninguna', '');
   }
 
   l.push('## `comprobar.js`', '', `- **${informe.errores.length} error(es)** · **${informe.avisos.length} aviso(s)**`, '');
@@ -293,17 +422,27 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     const clasesEnSegundoPlano = clases.clases.filter(c => !c.id.startsWith(prefijoExamen));
     const [claseEnSegundoPlano, ...otrasEnSegundoPlano] = clasesEnSegundoPlano;
 
-    for (const clase of clasesModuloDelExamen) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+    for (const clase of clasesModuloDelExamen) {
+      const ficheroProgreso = path.join(destino, 'estudio', 'progreso.md');
+      const progresoAntes = fs.existsSync(ficheroProgreso) ? fs.readFileSync(ficheroProgreso, 'utf8') : '';
+      ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+      if (clase.trampa && !sinLlm) {
+        ejecutarPaso(pasos, `material con órdenes (${clase.id})`, () => p.comprobarTrampa(destino, { id: clase.id, concepto: clase.trampa.concepto, progresoAntes }));
+      }
+    }
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
     ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));
     ejecutarPaso(pasos, '/ejercicio', () => pasoEjercicio(ctx));
     ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
+    ejecutarPaso(pasos, '/examen (contestar)', () => pasoExamenContestar(ctx));
     ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
+    ejecutarPaso(pasos, '/examen (corrección con veredictos esperados)', () => pasoCorreccionOraculo(ctx));
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --juntar ${claseEnSegundoPlano.id}`, () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano));
     for (const clase of otrasEnSegundoPlano) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
     ejecutarPaso(pasos, '/repaso', () => pasoRepaso(ctx, clases.examen_modulo));
 
     const informe = comprobarJson(destino);
+    const perfil = resumenPerfil(destino);
     const conteos = {
       conceptos: contarNotas(destino, 'conceptos', ['.md']),
       sesiones: contarNotas(destino, 'sesiones', ['.md']),
@@ -322,7 +461,8 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     fs.copyFileSync(path.join(destino, 'config', 'alumno.md'), path.join(resultadoDir, 'config', 'alumno.md'));
     const resumen = markdownResumen({
       fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
-      modelo, sinLlm, pasos, informe, conteos,
+      modelo, sinLlm, pasos, informe, conteos, perfil, correccion: ctx.correccion,
+      commit: (spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: trabajo, encoding: 'utf8' }).stdout || '').trim(),
     });
     fs.writeFileSync(path.join(resultadoDir, 'RESUMEN.md'), resumen);
 
@@ -359,4 +499,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla };
+module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla, argsClaude, entornoDeAlumno, leerSalidaClaude };

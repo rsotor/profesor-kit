@@ -21,11 +21,22 @@ const RESUMEN = 'pruebas/curso-ejemplo/resultado/RESUMEN.md';
 const DE_PRUEBA = /Modo `--sin-llm`/;
 // `alDia`: el RESUMEN.md es de un commit posterior (o el mismo) al último que cambió cómo trabaja el profesor.
 // Sin esto, un resumen hecho al principio del PR taparía un cambio de skill hecho después.
+// `completo`: la línea que escribe prueba-real.js#markdownResumen dice que todos los pasos salieron bien y que la
+// corrección dio todos los veredictos esperados (issue #39, H08). Un resumen vacío, a medias o con un paso mal
+// no demuestra nada.
+const LINEA_RESULTADO = /^Resultado: (\d+)\/(\d+) pasos bien · corrección (\d+)\/(\d+) · commit \S+$/m;
+function resultadoCompleto(resumen) {
+  const m = LINEA_RESULTADO.exec(resumen);
+  if (!m) return false;
+  const [pasosBien, pasos, veredictosBien, veredictos] = m.slice(1).map(Number);
+  return pasos > 0 && pasosBien === pasos && veredictos > 0 && veredictosBien === veredictos;
+}
 function evaluar(ficheros, resumen = '', alDia = true) {
   const tocaComportamiento = ficheros.some(TOCA_COMPORTAMIENTO);
   const tocaResumen = ficheros.includes(RESUMEN);
   const resumenReal = tocaResumen && !DE_PRUEBA.test(resumen);
-  return { ok: !tocaComportamiento || (resumenReal && alDia), tocaComportamiento, tocaResumen, resumenReal, alDia };
+  const completo = resultadoCompleto(resumen);
+  return { ok: !tocaComportamiento || (resumenReal && completo && alDia), tocaComportamiento, tocaResumen, resumenReal, completo, alDia };
 }
 
 function ficherosCambiados(ramaBase, raiz = RAIZ) {
@@ -64,7 +75,8 @@ function cli(args) {
     console.error(
       'Este PR cambia cómo trabaja el profesor (toca .kit/skills/, AGENTS.md o .kit/plantillas/) pero no '
       + `trae ${RESUMEN} de una prueba real${r.tocaResumen && !r.resumenReal ? ' (el que trae es de --sin-llm)' : ''}`
-      + `${r.resumenReal && !r.alDia ? ` hecha después del último cambio (${orden.comportamiento.slice(0, 7)}): el que trae es anterior` : ''}.\n\n`
+      + `${r.resumenReal && !r.alDia ? ` hecha después del último cambio (${orden.comportamiento.slice(0, 7)}): el que trae es anterior` : ''}`
+      + `${r.resumenReal && !r.completo ? ' que saliera entera bien: su línea "Resultado:" dice que algún paso o algún veredicto falló, o no la tiene' : ''}.\n\n`
       + 'Ejecuta `npm run prueba-real` en tu Mac, revisa el resumen y súbelo con este PR.',
     );
     return 1;

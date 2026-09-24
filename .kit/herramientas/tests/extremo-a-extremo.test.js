@@ -28,10 +28,17 @@ const ejecutar = (cmd, args, cwd = curso) => {
 const herramienta = (nombre, ...args) => ejecutar(process.execPath, [path.join(curso, '.kit', 'herramientas', `${nombre}.js`), ...args]);
 const leer = rel => fs.readFileSync(path.join(curso, ...rel.split('/')), 'utf8');
 
-test('1. crear el curso desde la plantilla (clon del kit) y prepararlo', () => {
-  const clon = ejecutar('git', ['clone', '-q', KIT, curso], casa);
-  assert.equal(clon.codigo, 0, clon.salida);
-  for (const [k, v] of [['user.name', 'Alumna E2E'], ['user.email', 'e2e@example.com'], ['commit.gpgsign', 'false']]) ejecutar('git', ['config', k, v]);
+// El curso sale de la carpeta de trabajo del kit, no de un `git clone` (que solo trae lo ya guardado): así el test
+// prueba el kit tal como está en disco, igual que `actualizar --origen KIT` en el paso 7. Con un clon, cualquier
+// cambio sin commit (subir .kit/VERSION antes de guardar, por ejemplo) hacía que el paso 7 viera "una versión nueva".
+test('1. crear el curso desde la plantilla (copia de la carpeta de trabajo del kit) y prepararlo', () => {
+  const fuera = new Set(['.git', 'node_modules', '.preparacion', 'pruebas-local']);
+  fs.cpSync(KIT, curso, { recursive: true, filter: src => !fuera.has(path.relative(KIT, src).split(path.sep)[0]) });
+  for (const args of [['init', '-q', '-b', 'main'], ['config', 'user.name', 'Alumna E2E'], ['config', 'user.email', 'e2e@example.com'],
+    ['config', 'commit.gpgsign', 'false'], ['add', '-A'], ['commit', '-q', '-m', 'plantilla']]) {
+    const r = ejecutar('git', args);
+    assert.equal(r.codigo, 0, r.salida);
+  }
   const r = herramienta('preparar-curso', '--subir', 'no', '--nombre', 'Curso de extremo a extremo');
   assert.equal(r.codigo, 0, r.salida);
   assert.match(r.salida, /Curso preparado/);

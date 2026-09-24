@@ -265,3 +265,35 @@ test('destinoSeguro: una carpeta del disco vale; en GitHub, solo si es privado y
   assert.match(destinoSeguro('https://github.com/rsotor/profesor-kit.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PRIVATE' })).motivo, /kit/);
   assert.match(destinoSeguro('https://gitlab.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true })).motivo, /GitHub/);
 });
+
+test('regenerarGenerados: escribe mi-perfil.md e inicio.md la enlaza desde el primer guardado', () => {
+  const raiz = cursoTemporal();
+  const base = path.join(raiz, 'estudio');
+  assert.match(fs.readFileSync(path.join(base, 'mi-perfil.md'), 'utf8'), /^# Mi perfil/);
+  assert.match(fs.readFileSync(path.join(base, 'inicio.md'), 'utf8'), /\[\[mi-perfil\]\]/);
+});
+
+// #36: en el entorno restringido de Codex git no se puede ejecutar. No es que el curso "no sea la raíz de su git":
+// es el entorno, y lib/arranque.js ya sabe decirlo con un error EPERM (issue #33).
+test('esRepo: si el entorno no deja ejecutar git, lo dice como error de permiso, no como "no es un repositorio"', () => {
+  const g = require('../lib/git');
+  const sinPermiso = () => ({ ok: false, motivo: 'permiso', salida: '', stdout: '', comando: 'git' });
+  assert.throws(() => g.esRepo('/cualquier/sitio', { intentar: sinPermiso }), e => e.code === 'EPERM');
+  assert.equal(g.esRepo('/no/existe/de/verdad', { intentar: () => ({ ok: false, motivo: 'error', salida: 'fatal', stdout: '' }) }), false);
+});
+
+test('--empezar deja la línea "en curso" en el diario, sin guardar nada; el guardado de después la cierra', () => {
+  const { cli } = require('../guardar');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  const diario = path.join(raiz, 'config', 'diario.md');
+  const hoy = new Date().toISOString().slice(0, 10);
+  const antes = git(raiz, 'rev-parse', 'HEAD');
+  assert.equal(cli(['--empezar', 'procesar la clase 3'], raiz), 0);
+  assert.match(fs.readFileSync(diario, 'utf8'), new RegExp(`- ${hoy} · en curso: procesar la clase 3\\n$`));
+  assert.equal(git(raiz, 'rev-parse', 'HEAD'), antes, 'no hace commit: se guarda con el trabajo');
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nx\n' });
+  guardar({ raiz, mensaje: 'sesion(s03): tema', hoy });
+  assert.match(fs.readFileSync(diario, 'utf8'), /en curso: procesar la clase 3\n- \d{4}-\d{2}-\d{2} · sesion\(s03\): tema\n$/);
+  assert.equal(cli(['--empezar'], raiz), 2, 'sin qué, no escribe nada');
+});

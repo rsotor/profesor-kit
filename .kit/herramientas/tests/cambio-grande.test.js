@@ -6,19 +6,22 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const { evaluar, cli, ficherosCambiados, TOCA_COMPORTAMIENTO, RESUMEN } = require('../../../.github/cambio-grande');
 
+// Un resumen de una prueba real que salió entera bien (la línea que escribe prueba-real.js#markdownResumen).
+const BUENO = '# Prueba real\n\nResultado: 15/15 pasos bien · corrección 6/6 · commit abc1234\n';
+
 test('evaluar: PR que no toca skills/AGENTS.md/plantillas no necesita el resumen', () => {
   const r = evaluar(['.kit/herramientas/comprobar.js', 'docs/arquitectura.md']);
-  assert.deepEqual(r, { ok: true, tocaComportamiento: false, tocaResumen: false, resumenReal: false, alDia: true });
+  assert.deepEqual(r, { ok: true, tocaComportamiento: false, tocaResumen: false, resumenReal: false, completo: false, alDia: true });
 });
 
 test('evaluar: toca una skill y NO trae el resumen → falla', () => {
   const r = evaluar(['.kit/skills/sesion/SKILL.md']);
-  assert.deepEqual(r, { ok: false, tocaComportamiento: true, tocaResumen: false, resumenReal: false, alDia: true });
+  assert.deepEqual(r, { ok: false, tocaComportamiento: true, tocaResumen: false, resumenReal: false, completo: false, alDia: true });
 });
 
 test('evaluar: toca AGENTS.md pero SÍ trae el resumen → pasa', () => {
-  const r = evaluar(['AGENTS.md', RESUMEN], '# Prueba real\n\nModelo: sonnet\n');
-  assert.deepEqual(r, { ok: true, tocaComportamiento: true, tocaResumen: true, resumenReal: true, alDia: true });
+  const r = evaluar(['AGENTS.md', RESUMEN], BUENO);
+  assert.deepEqual(r, { ok: true, tocaComportamiento: true, tocaResumen: true, resumenReal: true, completo: true, alDia: true });
 });
 
 test('evaluar: toca una plantilla, sin resumen → falla', () => {
@@ -58,11 +61,11 @@ test('evaluar: un RESUMEN.md hecho con --sin-llm no cuenta como prueba real', ()
   const deMentira = '# Prueba real\n\n> **Modo `--sin-llm`: no se ha ejecutado ningún LLM real.**\n';
   const r = evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], deMentira);
   assert.deepEqual([r.ok, r.tocaResumen, r.resumenReal], [false, true, false]);
-  assert.equal(evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], '# Prueba real\n\nModelo: sonnet\n').ok, true);
+  assert.equal(evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], BUENO).ok, true);
 });
 
 test('evaluar: un resumen real pero anterior al último cambio de skill no cuenta', () => {
-  const r = evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], '# Prueba real\n', false);
+  const r = evaluar(['.kit/skills/sesion/SKILL.md', RESUMEN], BUENO, false);
   assert.deepEqual([r.ok, r.resumenReal, r.alDia], [false, true, false]);
 });
 
@@ -81,4 +84,15 @@ test('resumenAlDia: mira el orden de los commits del PR, no solo que el resumen 
   assert.equal(resumenAlDia('main', repo).alDia, true, 'prueba después del cambio');
   commit({ 'AGENTS.md': 'otra regla' }, 'otro cambio');
   assert.equal(resumenAlDia('main', repo).alDia, false, 'un cambio posterior deja la prueba vieja');
+});
+
+// issue #39, H08: un resumen vacío, o de una prueba con algún paso mal o con la corrección por debajo de 6/6, no pasa.
+test('evaluar: el resumen tiene que decir que todo salió bien, con la corrección entera', () => {
+  const con = linea => evaluar(['AGENTS.md', RESUMEN], `# Prueba real\n\n${linea}\n`);
+  assert.equal(evaluar(['AGENTS.md', RESUMEN], '').ok, false, 'vacío');
+  assert.equal(con('Modelo: sonnet').ok, false, 'sin la línea de resultado');
+  assert.equal(con('Resultado: 14/15 pasos bien · corrección 6/6 · commit abc1234').ok, false, 'un paso mal');
+  assert.equal(con('Resultado: 15/15 pasos bien · corrección 5/6 · commit abc1234').ok, false, 'corrección incompleta');
+  assert.equal(con('Resultado: 15/15 pasos bien · corrección 0/0 · commit abc1234').ok, false, 'sin corrección');
+  assert.equal(con('Resultado: 15/15 pasos bien · corrección 6/6 · commit abc1234').ok, true);
 });

@@ -6,21 +6,21 @@ sesion: 01-02-01-presupuesto-personal
 
 > Se responde mentalmente antes de desplegar.
 
-**Facturas por tu cuenta y tus ingresos varían cada mes. ¿Con qué cifra haces el presupuesto?**
+**Todos los meses gastas algo en ocio. ¿Es un gasto fijo? ¿Por qué?**
 > [!success]- Respuesta
-> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
+> No, es variable. Que lo gastes siempre no lo hace fijo: la cifra la decides tú cada mes.
 
-**Todos los meses gastas algo en ocio. ¿Es un gasto fijo?**
+**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso montas el presupuesto?**
 > [!success]- Respuesta
-> No. Es variable: la cifra exacta la decides tú cada mes. Fijo es lo que no decides este mes, como el alquiler.
+> Con la media de los últimos 6-12 meses, no con el mejor mes.
 
-**¿Cómo se calcula la tasa de ahorro y por qué sirve más que el ahorro en euros?**
+**Ingresas 1.000,00 € y ahorras 200,00 €. ¿Cuál es tu tasa de ahorro?**
 > [!success]- Respuesta
-> Ahorro del mes ÷ ingresos del mes × 100. Permite comparar entre personas con ingresos distintos, cosa que la cifra absoluta no permite.
+> 200 ÷ 1.000 × 100 = 20 % mensual.
 
-**¿Cuántos meses de gastos conviene tener de colchón financiero siendo freelance?**
+**Gastas 800,00 € al mes. ¿Cuánto es un colchón de 6 meses?**
 > [!success]- Respuesta
-> 5-6 meses, frente a los 3 de quien tiene nómina fija.
+> 800,00 € × 6 = 4.800,00 €.
 
 ---
 Conceptos que cubren: [[presupuesto]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

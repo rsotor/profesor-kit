@@ -21,8 +21,9 @@ lo dice, pregunta qué bloques.
 
 **"Lo que me falta".** Si pide un test "de lo que me falta" de una unidad o sesión, el alcance son **solo** los
 conceptos de esas sesiones que en `estudio/progreso.md` no tienen la teoría en ✅ (es lo que `estudio/inicio.md`
-enseña como "📝 faltan N"). 3-5 preguntas, las justas para cubrirlos. Es un examen **parcial**: mueve
-`estudio/progreso.md`, pero no pone nota a la unidad.
+enseña como "📝 faltan N"). 3-5 preguntas, las justas para cubrirlos. Es un **test**, no un examen: mueve
+`estudio/progreso.md`, pero no pone nota a la unidad. Al alumno llámalo siempre así, "test" (en su frontmatter
+lleva `parcial: true`, que es solo el nombre interno).
 
 ### 2. Componer el test
 
@@ -40,14 +41,19 @@ sube a 35 %.
 
 15-20 preguntas por bloque del temario. Mezcla:
 
-- **Opción múltiple** — con distractores que sean el error típico de la nota, no opciones
-  absurdas. Un distractor tonto no enseña nada.
+- **Opción múltiple** — con distractores que sean el error típico de la nota o **el concepto cercano con el que
+  se confunde**, no opciones absurdas. Un distractor tonto no enseña nada.
+- **"¿Cuál de los dos?"** — un caso concreto y dos conceptos que se parecen: que diga cuál es y por qué. Es lo
+  que más se parece a un examen tipo test de verdad.
 - **Cálculo** (si el curso tiene cálculo) — números inventados y redondos, que salgan a mano.
 - **"Explica por qué"** — respuesta corta. Es donde se ve si entendió o memorizó.
 
 Cada pregunta, con las reglas de "Cuando preguntas para medir" (`AGENTS.md`): una cosa por pregunta, el caso
 antes que la pregunta, y entre paréntesis qué respuesta espera. En las de "explica por qué", di cuánto:
 *(en 2-3 líneas)*.
+
+**Mide entender y distinguir, no memorizar la letra** ("Cuando preguntas para medir", `AGENTS.md`): ninguna
+pregunta pide copiar una definición del material.
 
 **Todas las preguntas salen de las notas del curso.** Nada de material que no haya visto: el
 examen mide lo estudiado, no lo que "debería" saber.
@@ -65,7 +71,7 @@ Con este frontmatter, que es lo que lee `estudio/inicio.md`:
     unidad: 01-02          # prefijo de la unidad; si abarca varias, lista: [01-02, 01-03]
     fecha: 2026-10-02
     nota:                  # sobre 10; se rellena al corregir
-    parcial: true          # solo en los de "lo que me falta"
+    parcial: true          # solo en los tests de "lo que me falta"
     ---
 
 La carpeta es la de la unidad más amplia que contenga todo el alcance; sin estructura, directamente en
@@ -113,9 +119,13 @@ Cuando te dé las respuestas:
    - acertó el mecanismo → `teoría ✅` · acertó el cálculo o supo aplicarlo → `aplicación ✅`
    - falló → `🟡`; falló por segunda vez → `🔴` (y entonces también el paso 3)
 6. **Guarda el intento aparte**, en `## Histórico de intentos` al final de la nota (créala la primera vez):
-   - una fila en `| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |`;
+   - una fila en `| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |` (la nota, un número sobre
+     10, como en el frontmatter: `6,5`, no `6,5/10`);
    - un bloque plegado `> [!example]- Intento N · <fecha> · tus respuestas y la corrección` con el veredicto y la
-     tabla `| # | Tu respuesta | Resultado | Por qué |`, con sus respuestas **literales**.
+     tabla `| # | Tu respuesta | Resultado | Por qué |`, con sus respuestas **literales**. La celda Resultado
+     **empieza siempre** por una de estas tres etiquetas, y detrás lo que quieras: `✅ Correcta` · `⚠️ Le falta:
+     <qué>` · `❌ Incorrecta` (también para una en blanco: `❌ Incorrecta (en blanco)`). Son los tres veredictos
+     de "Cuando preguntas para medir"; las herramientas leen la etiqueta.
 7. **Frontmatter:** `nota:` y `fecha:` son las de **este** intento (`nota` sobre 10, un número: `2`, nunca
    `2/10`); `intentos:` sube en uno.
 
@@ -123,7 +133,7 @@ Cuando te dé las respuestas:
    frontmatter del examen, esos tres campos son los únicos que le tocan.
 8. **Limpia el examen:** cada `✍️ **Tu respuesta:**` vuelve a quedar vacío. Las preguntas, las cifras, el orden
    de las opciones y las soluciones **no cambian**: al repetirlo, el alumno compara intento a intento.
-9. **Si aprueba** (y no es parcial), marca `estudiada: true` en las notas de sesión que cubría el examen: las de
+9. **Si aprueba** (y no es un test), marca `estudiada: true` en las notas de sesión que cubría el examen: las de
    su unidad y las de todas las unidades que cuelgan de ella. Es la única vez que el profesor marca esa casilla.
 10. Guarda:
 
@@ -153,6 +163,9 @@ preguntar en ese examen. Lo que conteste va a `config/profesor.md` → **Histori
 No es un paso fijo ni un bloqueo: es lo que haces cuando **los datos lo piden**. Señales: un concepto
 acumula fallos o dudas (`config/alumno.md`, `estudio/progreso.md` en 🔴), un examen sale mal en general,
 varias notas del mismo bloque han necesitado reescritura, o el alumno dice que algo le estorba. Entonces:
+
+Empieza por `node .kit/herramientas/estado.js --json` → `senales`: ahí están ya calculadas (examen suspendido,
+nota que baja entre intentos, concepto en 🔴, tercera duda). No sustituyen tu juicio, te dicen dónde mirar.
 
 - **Qué cambiar aquí, para este alumno y este temario:** ajustes concretos en `config/profesor.md` (largo,
   orden, tipo de ejemplo, peso de la lente…), con su sí. Cada alumno y cada curso son distintos: lo que

@@ -1,65 +1,85 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
-visto_en: [01-02-01-presupuesto-personal]
+bloques: ["Módulo 1"]
+visto_en: ["01-02-01-presupuesto-personal"]
 dificultad: 3
-requiere: [presupuesto, liquidez]
-alias: [fondo de emergencia, colchón]
-tags: [presupuesto, ahorro]
-ejercicio: 01-02-01-colchon-financiero
+requiere: [liquidez, presupuesto]
+alias: [fondo de emergencia, colchón, meses de gastos cubiertos]
+tags: []
+ejercicio: 01-02-01-colchon-en-un-mes-flojo
 ---
 # Colchón financiero
 
-> **En una frase:** dinero líquido guardado aparte para cubrir tus gastos si un mes se factura poco o pasa un imprevisto.
+> **En una frase:** dinero líquido guardado aparte para cubrir tus gastos si un mes ingresas poco o surge un imprevisto, y que se mide en meses de gastos cubiertos.
 
 ## El problema
 
-Un mes flojo o un imprevisto (una avería, una factura inesperada) no espera a que tengas ahorros. Sin reserva, se paga con deudas o se dejan de pagar cosas.
+Un mes entran menos ingresos de lo previsto, o se estropea algo. Sin reserva, esos gastos se pagan
+con deuda o dejando de pagar otra cosa.
 
 ## El ejemplo
 
-Con 1.195,00 € de gastos al mes, un colchón de 3 meses son 3 × 1.195,00 € = **3.585,00 €**. Se mide en "meses de gastos cubiertos". Es el primer objetivo, antes de ahorrar para otra cosa.
+Tus gastos son de 800,00 € al mes. Un colchón de 3 meses son 800,00 € × 3 = **2.400,00 €**. Tiene
+que ser dinero [[liquidez|líquido]]: si lo necesitas en un mes flojo, no puedes esperar a vender nada.
+
+Con ingresos irregulares se apunta más alto: **5-6 meses** en vez de 3. Con 800,00 € de gastos, 6
+meses son 4.800,00 €.
 
 ## La fórmula
 
-$$ \text{colchón} = \text{meses a cubrir} \times \text{gastos del mes} $$
+$$ \text{colchón objetivo} = \text{gastos mensuales} \times \text{meses que quieres cubrir} $$
+
+Los gastos de un mes por el número de meses de margen que buscas.
 
 ## El error típico
 
-> [!info] Ampliación fuera de los apuntes
-> Guardarlo donde no se puede sacar a tiempo (ver [[liquidez]]): un colchón que tarda semanas en convertirse en dinero no cubre el mes flojo.
+Ahorrar para otra cosa antes de tener colchón. Según la clase, el colchón es el primer objetivo: sin
+él, un mes flojo te obliga a tocar lo que apartaste para otro fin.
 
 ## Practícalo
 
-→ **[Colchón financiero: ¿aguanta la racha?](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero.html)**
+→ **[El colchón en un mes flojo](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-en-un-mes-flojo.html)**
 
-Mueve lo que facturas en los meses flojos y cuántos meses seguidos dura la racha, y decide si el colchón llega. Lo que debería sorprender: los "meses de gastos cubiertos" son el peor caso (facturar cero); en cuanto entra algo, el colchón dura más meses de los que dice la cifra.
+Mueve los gastos, el colchón, lo que ingresas en un mes flojo y cuántos meses seguidos dura. Lo que
+debería sorprender es que si en el mes flojo aún ingresas algo, el colchón dura más meses que
+"colchón ÷ gastos".
 
-## Visto desde tus ingresos irregulares
+→ **[¿Cuánto paga el colchón?](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-cuanto-paga-el-colchon.html)**
 
-Para quien tiene nómina fija, 3 meses; para un freelance, la clase recomienda apuntar más alto: **5-6 meses**. Con los gastos del ejemplo, 6 meses serían 6 × 1.195,00 € = 7.170,00 €.
+Tres casos con opciones: en cada uno cambia lo que ingresas en el mes flojo. Lo que debería sorprender
+es que "colchón ÷ gastos" solo da la respuesta cuando no entra nada.
+
+> [!info] Ampliación fuera de los apuntes
+> **Visto desde tus ingresos irregulares:** tu colchón no tiene que cubrir el gasto entero, sino la
+> diferencia entre lo que gastas y lo que ese mes llega a entrar. Por eso el ejercicio deja mover el
+> ingreso del mes flojo.
 
 ## Relacionados
 
 - [[liquidez]] — el colchón tiene que poder gastarse ya
-- [[presupuesto]] — de donde salen los gastos del mes
-- [[inflacion]] — un colchón quieto pierde poder de compra
+- [[presupuesto]] — de él salen los gastos mensuales que hay que cubrir
+- [[gastos-fijos-y-variables]] — los fijos son lo que sí o sí hay que cubrir
+- [[inflacion]] — un colchón parado pierde poder de compra con el tiempo
 
 ## Historial
 
 - **01-02-01-presupuesto-personal** · primera vez
 
-> [!question]- Duda · 2026-09-23
+> [!question]- Duda · 2026-09-24
 > no entiendo bien esta parte, ¿me lo explicas con otro ejemplo?
 >
-> **Respuesta:** un ejemplo distinto, con meses de facturación. Gastas 1.195,00 € al mes y tienes un colchón de 3.585,00 € (3 meses cubiertos).
+> **Respuesta:** Otro caso, ahora de un mes flojo de verdad. Tus gastos son de 1.000,00 € al mes y en
+> un mes flojo solo facturas 400,00 €.
 >
-> | Mes | Facturas | Gastos | Diferencia | Colchón que queda |
-> |---|---|---|---|---|
-> | Enero | 2.400,00 € | 1.195,00 € | +1.205,00 € | 3.585,00 € (no se toca) |
-> | Febrero | 600,00 € | 1.195,00 € | −595,00 € | 2.990,00 € |
-> | Marzo | 0,00 € (un cliente paga tarde) | 1.195,00 € | −1.195,00 € | 1.795,00 € |
+> | | Importe |
+> |---|---|
+> | Gastos del mes | 1.000,00 € |
+> | Lo que entra ese mes | 400,00 € |
+> | Lo que falta (lo que tiene que pagar el colchón) | **600,00 €** |
 >
-> En febrero y marzo el colchón paga lo que no entró, y no hace falta pedir dinero prestado. Con lo que queda (1.795,00 €) aún cubres 1.795,00 € ÷ 1.195,00 € ≈ 1,5 meses. Por eso a un freelance le piden más meses: los meses flojos pueden encadenarse.
-
-**TODO:** la duda dice "esta parte" y no señala cuál; he respondido con un ejemplo nuevo del concepto entero. Preguntar al alumno qué párrafo o fórmula era, por si hace falta otra explicación.
+> Con un colchón de 3.000,00 €, no te dura 3.000,00 € ÷ 1.000,00 € = 3 meses, sino
+> 3.000,00 € ÷ 600,00 € = **5 meses flojos seguidos**. El colchón no paga el gasto entero: paga solo
+> lo que los ingresos no llegan a cubrir.
+>
+> **TODO:** la duda no dice a qué parte se refiere ("esta parte"). He explicado la idea central con un
+> ejemplo nuevo; si era la fórmula, la liquidez o el ejercicio, dime cuál y lo reescribo.

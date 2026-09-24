@@ -10,6 +10,9 @@ el temario entero, por módulos, con lo que ya has estudiado y lo que te queda.
 **Déjala fijada** para que se abra siempre: haz clic en **inicio**, y luego clic derecho en su pestaña (la
 etiqueta de arriba, donde pone *inicio*) → **Fijar**. Aparece una chincheta. Ya está.
 
+Desde **inicio** llegas también a **mi-perfil**: lo que tu profesor sabe de ti (cómo te explica y por qué, qué
+te cuesta, cómo vas en los exámenes), con la prueba de cada cosa. Si algo no es verdad, díselo y lo corrige.
+
 ## 2. Estudiar, sin necesitar a tu profesor
 
 1. En **inicio**, haz clic en **👉 Sigue por aquí**. Es la primera sesión que aún no has estudiado.

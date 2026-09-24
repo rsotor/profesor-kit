@@ -1,38 +1,40 @@
 ---
 tipo: concepto
-bloques: [modulo-02]
-visto_en: [02-01-01-interes-simple-y-compuesto]
+bloques: ["Módulo 2"]
+visto_en: ["02-01-01-interes-simple-y-compuesto"]
 dificultad: 1
 requiere: []
-alias: [capital, tipo de interés, tasa de interés, interés]
-tags: [interes, ahorro]
+alias: [capital, capital inicial, tipo de interés, tasa de interés]
+tags: []
 ---
 # Capital y tipo de interés
 
-> **En una frase:** el capital es el dinero del que partes, y el tipo de interés es el precio de tenerlo prestado durante un tiempo, siempre dicho con su periodo.
+> **En una frase:** el capital es el dinero del que partes, y el tipo de interés es el precio de tenerlo prestado durante un tiempo, dicho siempre con su periodo.
 
 ## El problema
 
-Si le dejas 1.000,00 € a alguien, o los metes en un depósito, ese dinero trabaja para otro durante un tiempo. Hace falta una forma de poner precio a ese favor.
+Si alguien te presta 1.000,00 €, no te lo presta gratis: quiere algo a cambio por no poder usarlo
+mientras tanto. Y si tú depositas 1.000,00 € en un banco, es el banco quien te paga por usarlos. Hace
+falta un nombre para el dinero de partida y otro para lo que cuesta.
 
 ## El ejemplo
 
-Depositas 1.000,00 € en un banco que te paga 5 % anual. Los 1.000,00 € son el **capital**. El 5 % anual es el **tipo de interés**: por cada año que el banco tiene tu dinero, te paga el 5 % anual de esa cantidad, es decir, 50,00 €.
+Depositas 1.000,00 € en una cuenta que paga un 5 % anual. Esos **1.000,00 €** son el capital. Ese
+**5 % anual** es el tipo de interés: por cada 100,00 € que tengas allí un año, cobras 5,00 €.
 
-## El nombre
-
-- **Capital** (`C`): la cantidad de partida, lo que se presta, se deposita o se invierte.
-- **Tipo de interés** (`i`): el precio de ese dinero, en tanto por ciento **y con su periodo**.
+Si la cuenta dijera 5 % mensual, serían 5,00 € cada mes, es decir, 60,00 € al año por cada 100,00 €.
+La misma cifra, un resultado muy distinto.
 
 ## El error típico
 
-Decir un tanto por ciento sin periodo. No es lo mismo un 5 % anual que un 5 % mensual: con el segundo, el dinero crece muchísimo más deprisa. En este curso, un tipo de interés sin periodo no vale.
+Leer solo la cifra ("un cinco por ciento") sin fijarse en el periodo. Un 5 % anual y un 5 % mensual no se parecen en nada. En este
+curso, una tasa sin su periodo no es un dato.
 
 ## Relacionados
 
-- [[interes-simple]] — cómo se calculan los intereses sin reinvertirlos
+- [[interes-simple]] — cómo se calculan los intereses sobre el capital sin reinvertirlos
 - [[interes-compuesto]] — cómo se calculan reinvirtiéndolos
-- [[inflacion]] — la otra cara del dinero en el tiempo: la subida de precios
+- [[inflacion]] — otra tasa anual: la que le quita compra al capital parado
 
 ## Historial
 

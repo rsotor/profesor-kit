@@ -265,6 +265,7 @@ test('ficheroResoluble: los generados y los pies de sesión sí, el contenido de
   assert.equal(ficheroResoluble('estudio/ejercicios/_index.md'), true);
   assert.equal(ficheroResoluble('estudio/sesiones/01-01-intro.md'), true);
   assert.equal(ficheroResoluble('README.md'), true);
+  assert.equal(ficheroResoluble('estudio/mi-perfil.md'), true);
   assert.equal(ficheroResoluble('estudio/conceptos/velocidad-media.md'), false);
   assert.equal(ficheroResoluble('config/diario.md'), false);   // ese lo resuelve el driver union, no esto
 });

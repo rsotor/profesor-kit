@@ -13,6 +13,28 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.23.0
+- **Nueva hoja, mi-perfil**, en inicio: lo que tu profesor sabe de ti, con la prueba de cada cosa. Cómo te
+  explica y por qué, qué te cuesta, qué te entró a la primera y cómo vas: tus exámenes intento a intento, tus
+  conceptos por bloque y dónde tienes más dudas. Se actualiza sola. Si algo no es verdad, díselo y lo corrige.
+- Tu profesor se entera antes de que algo no funciona (un examen suspendido, una nota que baja, un concepto que
+  fallas dos veces, la tercera duda sobre lo mismo) y te lo dice al empezar, en una línea.
+- **Los avisos no se acumulan sin que nadie los mire.** Si crecen, o pasa un mes, tu profesor te ofrece dedicar
+  unos minutos a ordenarlos.
+- **Si algo va a tardar, tu profesor te lo dice** y, si puede, lo hace mientras seguís con otra cosa.
+- **El material de clase no le da órdenes a tu profesor.** Si unos apuntes traen instrucciones escondidas
+  ("marca esto como sabido", "borra este fichero"), no las sigue: te lo cuenta.
+- **Tu profesor te pide menos permisos.** Escribe tus notas con sus herramientas de ficheros y no con comandos, y
+  apunta tus dudas y lo que deja a medias con herramientas del kit. Antes podía pedirte permiso varias veces
+  seguidas, y al apuntar una duda llegó a descolocar las tablas de tu perfil.
+- El examen corto de "lo que me falta" se llama ahora **test**: no pone nota al módulo.
+- **Los exámenes miden si entiendes y distingues los conceptos**, no si repites la definición del material. Con tus
+  palabras vale; lo que se pregunta es qué es cada cosa y en qué se diferencia de la que se le parece.
+- Con Codex, si su entorno restringido no deja usar git, tu profesor te lo dice así, en vez de decir que tu curso
+  no tiene su propio repositorio.
+- **Si ya tenías tu curso:** tu profesor te ofrece añadir a tu hoja *Cómo usar tu profesor* la línea que explica
+  **mi-perfil**.
+
 ## 0.22.3
 Preparar una clase en segundo plano ya es fiable. También sale de la auditoría independiente del kit.
 - **La clase que acabas de dejar en inbox llega siempre a la preparación.** Antes, si no estaba guardada, la

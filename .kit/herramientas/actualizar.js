@@ -155,7 +155,9 @@ function actualizar({ raiz, origen }) {
     return { actualizado: false, motivo: 'revertido', de, a, migraciones: hechas, detalle: error.message };
   }
 
-  guardar({ raiz, mensaje: `kit: actualizado a ${a}`, permitirErrores: true });
+  // Con el guardar.js del motor nuevo, como las migraciones: el importado arriba es el de la versión vieja, y
+  // regeneraría inicio.md y compañía como los hacía ella (sin mi-perfil al pasar a la 0.23.0, prueba-actualizar).
+  require(path.join(raiz, '.kit', 'herramientas', 'guardar.js')).guardar({ raiz, mensaje: `kit: actualizado a ${a}`, permitirErrores: true });
   return { actualizado: true, de, a, migraciones: hechas };
 }
 

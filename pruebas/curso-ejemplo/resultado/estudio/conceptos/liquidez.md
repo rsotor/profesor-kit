@@ -1,11 +1,11 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
-visto_en: [01-01-01-el-dinero-y-sus-funciones]
-dificultad: 1
+bloques: ["Módulo 1"]
+visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
+dificultad: 2
 requiere: [funciones-del-dinero]
-alias: [liquidez de un activo]
-tags: [dinero, ahorro]
+alias: [líquido, poco líquido]
+tags: []
 ---
 # Liquidez
 
@@ -13,39 +13,35 @@ tags: [dinero, ahorro]
 
 ## El problema
 
-Tener valor no basta: hay que poder usarlo cuando hace falta. Un piso vale mucho, pero no sirve para pagar la compra de mañana.
+Tener valor guardado no basta: si lo necesitas mañana y no puedes convertirlo en dinero sin
+malvenderlo, no te sirve.
 
 ## El ejemplo
 
-Tienes 200,00 € en la cartera y un portátil que vale 200,00 €. Mañana necesitas pagar 200,00 €:
+- El dinero en la cartera es **totalmente líquido**: lo gastas al instante.
+- Un piso es **muy poco líquido**: venderlo bien lleva meses, y si vendes con prisa aceptas menos.
 
-| | Se gasta ya | Riesgo de perder valor por las prisas |
-|---|---|---|
-| Cartera | Sí, al instante | Ninguno |
-| Portátil | Solo si lo vendes | Alto: con prisa te pueden ofrecer menos |
-
-El dinero de la cartera es totalmente líquido. Un piso es muy poco líquido: venderlo bien lleva meses.
-
-> [!info] Ampliación fuera de los apuntes
-> Las cifras del portátil son inventadas para el ejemplo. La clase solo compara la cartera con el piso.
+Si mañana tienes que pagar una factura de 300,00 €, la cartera resuelve el problema; el piso, no.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Pensar que "valer mucho" es lo mismo que "ser líquido". Un piso vale más que un móvil y es mucho menos líquido.
-
-## Visto desde tus ingresos irregulares
+> Creer que "líquido" significa "valioso". Un piso vale mucho y es poco líquido; 20,00 € en la
+> cartera valen poco y son totalmente líquidos. Son dos preguntas distintas: cuánto vale, y en cuánto
+> tiempo y con qué pérdida se convierte en dinero.
 
 > [!info] Ampliación fuera de los apuntes
-> El dinero que reservas para un mes flojo tiene que ser líquido, porque lo vas a necesitar cuando toca, no cuando te convenga vender.
+> **Visto desde tus ingresos irregulares:** el dinero que apartas para los meses flojos debería ser
+> muy líquido, porque lo vas a necesitar justo cuando no facturas.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero es líquido porque es medio de cambio
-- [[inflacion]] — el otro factor al guardar dinero
-
-En el módulo 2 se comparará ahorrar (muy líquido) con invertir (a veces, menos líquido).
+- [[funciones-del-dinero]] — el depósito de valor solo sirve si se puede gastar cuando hace falta
+- [[inflacion]] — el enemigo de guardar dinero; la liquidez es su ventaja
 
 ## Historial
 
 - **01-01-01-el-dinero-y-sus-funciones** · primera vez
+
+**TODO:** las diapositivas anuncian que en el módulo 2 se compara ahorrar (muy líquido) con invertir
+(a veces, menos líquido). Añadir el ejemplo del alumno cuando se procese ese módulo.

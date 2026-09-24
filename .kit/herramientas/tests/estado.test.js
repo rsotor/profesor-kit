@@ -152,3 +152,48 @@ test('lo que ya se está preparando (o está preparado sin juntar) no es materia
   const e = calcularEstado(raiz);
   assert.deepEqual(e.materialNuevo, ['inbox/clase4.pdf'], 'solo la interrumpida vuelve a ser material por preparar');
 });
+
+test('senales: van en el JSON y una por línea en el texto', () => {
+  const raiz = raizAlDia({
+    'estudio/progreso.md': '# Progreso\n\n| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[alfa]] | 🔴 falló dos veces | ⬜ |\n',
+  });
+  const estado = calcularEstado(raiz);
+  assert.deepEqual(estado.senales.map(s => s.tipo), ['concepto-rojo']);
+  const r = spawnSync(process.execPath, [require('node:path').join(__dirname, '..', 'estado.js'), '--raiz', raiz], { encoding: 'utf8' });
+  assert.match(r.stdout, /Señal \(concepto-rojo\): alfa: falló dos veces \(teoría\)/);
+});
+
+test('senales: sin nada que decir, lista vacía y "Señales: ninguna"', () => {
+  const raiz = raizAlDia();
+  assert.deepEqual(calcularEstado(raiz).senales, []);
+  const r = spawnSync(process.execPath, [require('node:path').join(__dirname, '..', 'estado.js'), '--raiz', raiz], { encoding: 'utf8' });
+  assert.match(r.stdout, /Señales: ninguna/);
+});
+
+// Tarea 12 del plan 0.23.0 (Roberto: "no bloquear, pero revisar cada cierto tiempo, porque la bola crece").
+test('senalAvisos: 10 más que en la última revisión, o 30 días con avisos; si no, nada', () => {
+  const { senalAvisos } = require('../estado');
+  assert.equal(senalAvisos(null, 9, '2026-10-01'), null, 'sin revisión, menos de 10');
+  assert.match(senalAvisos(null, 12, '2026-10-01').detalle, /12 avisos/);
+  assert.equal(senalAvisos({ fecha: '2026-09-25', avisos: 20 }, 25, '2026-10-01'), null, 'crecen poco y hace poco');
+  assert.match(senalAvisos({ fecha: '2026-09-25', avisos: 20 }, 30, '2026-10-01').detalle, /10 más que en la última revisión/);
+  assert.match(senalAvisos({ fecha: '2026-08-01', avisos: 5 }, 5, '2026-10-01').detalle, /desde el 2026-08-01/);
+  assert.equal(senalAvisos({ fecha: '2026-08-01', avisos: 5 }, 0, '2026-10-01'), null, 'sin avisos no hay nada que revisar');
+  assert.equal(senalAvisos(null, 12, '2026-10-01').tipo, 'avisos-acumulados');
+});
+
+test('senalAvisos: sin ninguna revisión, cuenta desde el primer guardado del curso', () => {
+  const { senalAvisos } = require('../estado');
+  assert.equal(senalAvisos(null, 5, '2026-10-01', '2026-09-20'), null, 'curso reciente');
+  assert.match(senalAvisos(null, 5, '2026-10-01', '2026-08-01').detalle, /desde el 2026-08-01/);
+});
+
+test('estado: si comprobar revienta (una carpeta llamada "x.md"), el arranque sigue; solo falta esa señal', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const raiz = raizAlDia();
+  fs.mkdirSync(path.join(raiz, 'estudio', 'conceptos', 'raro.md'));
+  const estado = calcularEstado(raiz);
+  assert.ok([1, 2, 3].includes(estado.caso));
+  assert.ok(Array.isArray(estado.senales));
+});

@@ -33,14 +33,21 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   anota('acceso-al-kit', sesion && ejecutar('gh', ['api', `repos/${motor.repo}`, '--jq', '.name'], raiz).ok, 'Acceso al kit (para recibir mejoras)',
     'No se puede leer el kit en GitHub: comprueba la conexión a internet y la sesión (gh auth status).');
 
-  anota('identidad-git', g.esRepo(raiz) && g.tieneIdentidad(raiz), 'Git sabe quién eres', 'Configura user.name y user.email en este curso (paso 4 de la guía).');
+  // En un entorno restringido que no deja ejecutar git (#36), se dice en una línea y se sigue con lo demás.
+  let repo = null;
+  try { repo = g.esRepo(raiz); } catch (error) { if (error.code !== 'EPERM') throw error; }
+  if (repo === null) {
+    anota('entorno-git', false, 'El entorno deja ejecutar git',
+      'Tu asistente está en un entorno restringido que no deja ejecutar git: autoriza la ejecución fuera de ese entorno y repite el diagnóstico.');
+  }
+  anota('identidad-git', repo === true && g.tieneIdentidad(raiz), 'Git sabe quién eres', 'Configura user.name y user.email en este curso (paso 4 de la guía).');
 
   // El chat de Obsidian (Claudian) abre el asistente en la bóveda, no en la raíz del curso. Codex busca AGENTS.md
   // y las skills hacia arriba solo hasta la raíz del git: si esa raíz no es la del curso, allí no es el profesor
   // (issue #36). Se mira desde la bóveda, que es desde donde lo lanza Claudian.
   const boveda = existe(v.CARPETA_ALUMNO) ? path.join(raiz, v.CARPETA_ALUMNO) : raiz;
   const gitEnBoveda = fs.existsSync(path.join(boveda, '.git'));
-  anota('raiz-del-git', g.esRepo(raiz) && !gitEnBoveda, 'El curso es la raíz de su repositorio git',
+  anota('raiz-del-git', repo === true && !gitEnBoveda, 'El curso es la raíz de su repositorio git',
     gitEnBoveda
       ? `La carpeta ${v.CARPETA_ALUMNO} tiene su propio git (${v.CARPETA_ALUMNO}/.git): así, el asistente abierto desde Obsidian no encuentra al profesor. Si nadie lo usa aparte, bórralo; si guarda historial que el alumno quiere, pregúntale antes.`
       : 'El curso no tiene su propio repositorio git: sin él no se guarda nada y, desde Obsidian, el asistente no encuentra al profesor. Ejecuta git init en la carpeta del curso y guarda con guardar.js.');
@@ -50,7 +57,7 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   const ajustes = v.leerAjustes(raiz);
 
   if (ajustes.subir_a_github === true) {
-    const url = g.esRepo(raiz) ? g.urlOrigen(raiz) : null;
+    const url = repo === true ? g.urlOrigen(raiz) : null;
     const propio = Boolean(url) && !url.includes(motor.repo);
     anota('copia-en-github', propio, 'Tu curso tiene su copia en GitHub', 'El curso no tiene remoto propio: créalo con gh repo create --private (paso 3).');
     if (propio) {

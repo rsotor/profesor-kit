@@ -15,7 +15,8 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §2.2 Motor desde `main`, sin etiquetas | 1 | ✅ 0.20.0 | `actualizar.js`: `etiquetaPublicada()` lee la última release (`gh api …/releases/latest`), `descargar()` clona con `--branch vX.Y.Z`, `versionPublicada()` (aviso diario) sale de ahí. `.github/workflows/release.yml` crea la release en cada merge que sube `.kit/VERSION`, con las notas de `.github/release-notas.js` (sección del CHANGELOG). Flujo y paso manual en `CONTRIBUTING.md` (paso 6). Comprobado: `v0.20.0` creada sola al mezclar #30 |
 | §2.2 `enforce_admins` desactivado · sin firma del motor | — | ✅ 2026-09-23 | Con el sí de Roberto, `enforce_admins` activado: `main` exige `tests-ok` también al dueño. Firmar releases: no vale la pena mientras el repo tenga un solo mantenedor |
 | §2.3 Complementos de Obsidian sin fijar | 1 (adelantado) | ✅ 0.20.0 | `lib/obsidian.js`: cada complemento lleva `version` y sha256 por fichero (terminal 3.27.2, code-files 1.1.9, claudian 2.3.3); `descargarDeGitHub` baja esa versión, verifica el hash y rechaza lo que no coincide; `AbortSignal.timeout(120 s)`. Subir de versión: `CONTRIBUTING.md`, último apartado. Tests nuevos en `tests/obsidian.test.js` |
-| §2.3 (TBD) Claudian y la clave de API | — | ⏳ abierto | Sin comprobar. Toca a la hoja del alumno si pide clave |
+| §2.3 (TBD) Claudian y la clave de API | — | ⏳ abierto | Según su README usa el asistente ya instalado (Claude Code o Codex) con la suscripción; clave de API solo como alternativa. Sin probar en la 2.3.3 |
+| **Nuevo** Claudian no es el profesor | #36 | ⏳ falta confirmarlo en Windows | Claudian abre el asistente en `estudio/`. **Claude Code funciona**: busca `CLAUDE.md` y las skills en las carpetas superiores (visto en las transcripciones de un curso real). **Codex busca solo hasta la raíz del git**: sin git en el curso, o con un git propio en `estudio/`, no ve `AGENTS.md` ni las skills (probado con `codex debug prompt-input`). La estructura del kit sirve con los dos, así que las pruebas A y B sobran. En la 0.22.1, `diagnostico.js` avisa si la raíz del git no es la del curso. **Claudian es imprescindible** (Roberto) |
 | §2.4 Inyección por la ruta del curso en el atajo | 1 (adelantado) | ✅ 0.20.0 | `crear-atajo.js`: `RUTA_PELIGROSA` rechaza `"`, `$`, `%`, acento grave y saltos de línea con motivo `ruta-no-valida` y explicación en llano. Test en `tests/crear-atajo.test.js` |
 | §3.2 Sin `package.json` | 1 (adelantado) | ✅ 0.20.0 | `package.json` mínimo: `private`, `engines >=22`, `npm test`, `npm run test:cobertura`, `npm run comprobar`. `preparar-curso.js` lo borra en los cursos (`SOLO_DEL_KIT`) |
 | §3.2 Sin linter · líneas largas | 3+ | ✅ 0.21.0 | ESLint como devDependency solo del repo del kit (`preparar-curso.js` lo borra en los cursos, junto con `node_modules/`), `eslint.config.js` en la raíz con `no-unused-vars`, `no-undef`, `eqeqeq`, `prefer-const` y `max-len` 160 (ignora cadenas/comentarios largos y los `assert.match` de los tests). `npm run lint`, paso de CI solo en el job Linux Node 24 |
@@ -45,7 +46,11 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §7 Bus factor 1 | — | ✅ mitigado | No se arregla del todo; `docs/arquitectura.md` (§6.3) permite que otra persona o un LLM entienda el kit sin haberlo visto |
 | §8.1 P1 Lint pedagógico | 2 | ✅ 0.21.0 | Seis avisos en `comprobar.js` (nunca bloquean): `nota-larga` (60 líneas de contenido por defecto, o el número de `longitud_nota`), `concepto-sin-ejemplo`, `sesion-incompleta` (por sección), `flashcards-fuera-de-rango` (`flashcards_por_sesion`), `requiere-vacio` (dificultad 3), `pregunta-doble` (heurística prudente: solo dos `?` en una pregunta numerada con su `✍️`). `AGENTS.md`: se arreglan antes de guardar salvo motivo, que se le dice al alumno. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Tests en `tests/revisor-pedagogico.test.js` |
 | §8.1 P2 Más ficheros vivos generados | 2 | ✅ 0.21.0 | `guardar.js` genera ahora `estudio/formulario.md` (fórmulas por bloque) y `estudio/ejercicios/_index.md` (qué practica cada ejercicio, desde `ejercicio:` y `## Practícalo`); `mapa-del-curso.md` se queda solo para la cobertura del material, como ya decía la skill. Migración `004-…` conserva con otro nombre lo que un curso ya tuviera escrito a mano y no coincida con lo generado. Ver `lib/generados.js`, `tests/generados.test.js` Las notas `-anterior` se quedan como están, sin paso de revisión: decisión de Roberto (hay pocos cursos afectados) |
-| §8 Resto de propuestas P1, P3-P8 y E1-E9 | 2 y 3 | ⏳ abierto | Siguiente: P1 (lint pedagógico) y P3 (calentamiento), bloque 2 |
+| §8.1 P4 + §8.2 E4 Evolución con datos y mi perfil | 3 | ✅ 0.23.0 | `lib/perfil.js`, `estudio/mi-perfil.md` (generado por `guardar.js`), señales en `estado.js` (`examen-suspenso`, `nota-baja`, `concepto-rojo`, `tercer-tropiezo`); tests en `tests/perfil.test.js`. Especificación: `docs/planes/2026-09-23-mi-perfil-y-evolucion.md` |
+| Plan 0.22 5b.4 Alumno simulado | — | ✅ 0.23.0 | `pruebas/lib/pasos.js`, paso `/examen (contestar)` |
+| §8.1 P7 Examen oficial | — | ⏳ decidido, sin empezar | Roberto: más abierto que "examen oficial". Habrá cursos con examen del centro claro, otros internos o de temario y otros libres sin certificación. El profesor pide al alumno un ejemplo o las preguntas que tenga y construye con eso el simulacro del final. Pasa a "examen final a medida" |
+| §8.1 P8 Material que no es PDF | — | ⏳ decidido, sin empezar | Roberto recibe PDF, PPTX, fotos o capturas, Excel, audio o vídeo y documentos de texto (Word/Docs). Deja de ser TBD: hay que cubrirlos |
+| §8 Resto de propuestas P5, P6 y E1-E3, E5-E9 | 3+ | ⏳ abierto | P6 espera al primer módulo real. E1-E9 sin revisar todavía |
 
 Alcance: seguridad · calidad del código y de los tests · multiplataforma · multi-LLM · documentación ·
 agilidad del proceso · y, sobre todo, **qué le vendría bien al kit en las próximas iteraciones**, para el
@@ -402,7 +407,7 @@ mejor al profesor; después las que hacen mejor al alumno. Al final, el orden qu
 
 ### 8.1 Para el profesor: calidad del material, facilidad al enseñar, evolución con el curso
 
-> Estado: **P1 y P2 hechos** en 0.21.0 · **P3 hecho** en 0.22.0 · P4 a P8 **pendientes** de revisar con Roberto.
+> Estado: **P1 y P2 hechos** en 0.21.0 · **P3 hecho** en 0.22.0 · **P4 hecho** en 0.23.0 · P5 a P8 en el plan de acción (`docs/planes/2026-09-24-plan-de-accion.md`).
 
 > ✅ **P1 hecho en 0.21.0.** Seis avisos en `comprobar.js`: `nota-larga`, `concepto-sin-ejemplo`, `sesion-incompleta`, `flashcards-fuera-de-rango`, `requiere-vacio` y `pregunta-doble`. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
@@ -477,7 +482,7 @@ traiga el material de los cursos reales.
 
 ### 8.2 Para el alumno: aprender mejor, entender mejor, seguir motivado
 
-> Estado: E1 a E9 **pendientes** de revisar con Roberto.
+> Estado: **E4 hecho** en 0.23.0 · el resto, en el plan de acción (`docs/planes/2026-09-24-plan-de-accion.md`).
 
 **E1 · Repaso espaciado (M).** Las flashcards existen y se leen una vez. Lo que fija el conocimiento es
 volver a ellas a intervalos crecientes. Dos formas:
