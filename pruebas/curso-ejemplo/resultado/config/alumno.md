@@ -31,17 +31,17 @@
 
 ## Conceptos que costaron
 
-- **colchon-financiero** — pidió otro ejemplo sin decir qué parte no entendía; se le dio uno con tres meses de facturación irregular en tabla. Falta ver si lo desbloqueó. — *duda en conceptos/colchon-financiero.md, 2026-09-23*
+- **Colchón financiero:** pidió otro ejemplo sin decir qué parte no entendía. Se le dio uno con meses de
+  facturación irregular; falta saber si lo desbloqueó. — *duda en conceptos/colchon-financiero.md, 2026-09-24*
+- **Gastos fijos y variables:** clasificó el alquiler (700 €, con subida anual por IPC) como variable, y es
+  fijo: la cifra no la decide él cada mes. Un solo fallo, aún no es error repetido. — *examen:
+  01-examen-2026-09-24-correccion, pregunta 5*
+- **Periodo de un interés:** dio "2 %" sin decir que es mensual cuando la pregunta pedía la cifra con su
+  periodo. Un solo caso. — *examen: 01-examen-2026-09-24-correccion, pregunta 4*
 
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
-
-- **funciones-del-dinero** — en las preguntas 1, 2 y 3 no elige ni nombra la función que se pedía: lista las tres. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
-- **presupuesto** — en las preguntas 8, 9 y 10 no da la cifra ni el significado que se pedían. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
-- **tasa-de-ahorro** — en las preguntas 13, 14 y 15 define el concepto pero no calcula el porcentaje ni elige opción. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
-- **colchon-financiero** — en las preguntas 16 a 20 describe algo distinto ("la tele nueva") o repite otro texto; no da ninguna cifra. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
-- **TODO:** las respuestas de ese examen son casi todas un mismo texto repetido bajo preguntas distintas. Puede ser un pegado por error y no falta de conocimiento; confirmar con el alumno antes de dar estos fallos por reales. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-23.md, intento 1*
 
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
@@ -51,11 +51,10 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-09-23 · sesión 01-01-01, `estudiada: sí` |
+| estudiada | sí | marcada (true) | 2 | 2026-09-24 · sesión 01-02-01, reescrita en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-09-23 · conceptos/colchon-financiero.md |
-| sesión 01-01-01 (relación con el módulo) | 1 | 2026-09-23 · sesiones/…/01-01-01-el-dinero-y-sus-funciones.md |
+| colchon-financiero | 1 | 2026-09-24 |

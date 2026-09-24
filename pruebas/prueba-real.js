@@ -33,7 +33,7 @@ function comando(comando_, args) {
 // Sondear sin gastar CPU mientras se espera a que termine algo en segundo plano.
 function dormir(ms) { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms); }
 function preparar(ctx, ...args) {
-  const r = spawnSync(process.execPath, [path.join(ctx.destino, '.kit', 'herramientas', 'preparar.js'), ...args], { cwd: ctx.destino, encoding: 'utf8' });
+  const r = spawnSync(process.execPath, [path.join(ctx.destino, '.kit', 'herramientas', 'preparar.js'), ...args], { cwd: ctx.destino, encoding: 'utf8', env: entornoDeAlumno() });
   return { ok: !r.error && r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
 }
 
@@ -48,10 +48,28 @@ function modeloRecomendado(destino) {
   return 'sonnet';
 }
 
+// Como en el ordenador de un alumno (prueba real del 2026-09-24, 7/12): el alumno acepta una vez que confía en la
+// carpeta del curso y desde entonces se aplican sus reglas (.claude/settings.json); una carpeta temporal nueva no es
+// de confianza y Claude Code las ignora. Se las pasamos al lanzarlo (--allowedTools, al final: admite varias), y sin
+// las variables de la sesión que lanza la prueba, que cambian cómo pide permisos.
+function argsClaude({ prompt, modelo, permitidas }) {
+  const args = ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none'];
+  return permitidas.length ? [...args, '--allowedTools', ...permitidas] : args;
+}
+const VARIABLES_DE_SESION = /^(CLAUDECODE|CLAUDE_CODE_[A-Z_]+|CLAUDE_EFFORT|CLAUDE_JOB_DIR|CLAUDE_PID)$/;
+function entornoDeAlumno(entorno = process.env) {
+  return Object.fromEntries(Object.entries(entorno).filter(([k]) => !VARIABLES_DE_SESION.test(k)));
+}
+function reglasDelCurso(cwd) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(cwd, '.claude', 'settings.json'), 'utf8')).permissions.allow || [];
+  } catch { return []; }
+}
+
 function invocarClaude({ prompt, modelo, cwd, limiteMs }) {
   const inicio = Date.now();
-  const r = spawnSync('claude', ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none'], {
-    cwd, encoding: 'utf8', timeout: limiteMs, maxBuffer: 64 * 1024 * 1024,
+  const r = spawnSync('claude', argsClaude({ prompt, modelo, permitidas: reglasDelCurso(cwd) }), {
+    cwd, encoding: 'utf8', timeout: limiteMs, maxBuffer: 64 * 1024 * 1024, env: entornoDeAlumno(),
   });
   const duracionMs = Date.now() - inicio;
   const agotado = !!(r.error && r.error.code === 'ETIMEDOUT');
@@ -451,4 +469,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla };
+module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla, argsClaude, entornoDeAlumno };

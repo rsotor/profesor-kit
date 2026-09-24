@@ -235,3 +235,16 @@ test('la clase 01-01 del curso de ejemplo lleva la trampa, y clases.json dice qu
   assert.match(texto, new RegExp(conTrampa.trampa.concepto));
   assert.match(texto, /config\/alumno\.md/);
 });
+
+// Prueba real del 2026-09-24 (7/12): en una carpeta temporal en la que nunca se ha confiado, Claude Code ignora las
+// reglas de .claude/settings.json del curso, y el profesor se quedaba sin poder escribir ni guardar. Un alumno acepta
+// esa confianza una vez; la prueba le pasa las mismas reglas al lanzarlo, y sin las variables de la sesión que la lanza.
+test('argsClaude: las reglas del curso van en --allowedTools, al final; entornoDeAlumno quita las variables de la sesión', () => {
+  const { argsClaude, entornoDeAlumno } = require('../../../pruebas/prueba-real');
+  const args = argsClaude({ prompt: 'hola', modelo: 'sonnet', permitidas: ['Bash(node .kit/herramientas/guardar.js *)', 'Bash(git status *)'] });
+  assert.deepEqual(args.slice(0, 3), ['-p', 'hola', '--model']);
+  assert.deepEqual(args.slice(-3), ['--allowedTools', 'Bash(node .kit/herramientas/guardar.js *)', 'Bash(git status *)']);
+  assert.ok(!argsClaude({ prompt: 'x', modelo: 'm', permitidas: [] }).includes('--allowedTools'));
+  const env = entornoDeAlumno({ PATH: '/bin', HOME: '/h', CLAUDECODE: '1', CLAUDE_CODE_CHILD_SESSION: '1', CLAUDE_CODE_SESSION_ID: 'x', CLAUDE_PID: '9' });
+  assert.deepEqual(Object.keys(env).sort(), ['HOME', 'PATH']);
+});
