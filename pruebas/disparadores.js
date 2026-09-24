@@ -7,6 +7,7 @@
 //   npm run disparadores                        # todas las frases, con el modelo recomendado del adaptador
 //   npm run disparadores -- --solo 3            # las 3 primeras (para probar el lanzador sin gastar)
 //   npm run disparadores -- --modelo haiku
+//   npm run disparadores -- --frase "¿qué es la liquidez?" --veces 3   # repetir una que falló (no escribe el resultado)
 //
 // Cada frase corre sin permisos para escribir (se deniegan sin preguntar) y se corta en cuanto elige: la primera
 // skill que usa, o ninguna si contesta sin skill o pasa LIMITE_HERRAMIENTAS herramientas sin usar una. Solo sabe
@@ -112,7 +113,7 @@ function datosDelCurso() {
   return datos;
 }
 
-async function ejecutar({ modelo, solo }) {
+async function ejecutar({ modelo, solo, frase, veces = 1 }) {
   const destino = carpetaTemporal();
   const datos = datosDelCurso();
   try {
@@ -120,6 +121,10 @@ async function ejecutar({ modelo, solo }) {
     modelo = modelo || modeloRecomendado(destino);
     let frases = JSON.parse(fs.readFileSync(FRASES, 'utf8')).frases;
     if (solo) frases = frases.slice(0, solo);
+    if (frase) {
+      const conocida = frases.find(f => f.frase === frase);
+      frases = Array.from({ length: veces }, () => ({ frase, esperada: conocida ? conocida.esperada : null }));
+    }
     const resultados = new Array(frases.length);
     let siguiente = 0;
     const trabajador = async () => {
@@ -135,7 +140,7 @@ async function ejecutar({ modelo, solo }) {
       fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
       modelo, resultados,
     });
-    fs.writeFileSync(RESULTADO, md);
+    if (!frase) fs.writeFileSync(RESULTADO, md);   // repetir una frase suelta no pisa la medición completa
     return md;
   } finally {
     borrar(destino);
@@ -149,7 +154,7 @@ async function cli(args) {
     console.error('No encuentro `claude`: esta medición necesita el asistente instalado y con sesión.');
     return 1;
   }
-  const md = await ejecutar({ modelo: valor('--modelo'), solo: Number(valor('--solo')) || 0 });
+  const md = await ejecutar({ modelo: valor('--modelo'), solo: Number(valor('--solo')) || 0, frase: valor('--frase'), veces: Number(valor('--veces')) || 1 });
   console.log('\n' + md.split('\n').slice(0, 20).join('\n') + `\nResultado completo: ${path.relative(RAIZ_KIT, RESULTADO)}`);
   return 0;
 }

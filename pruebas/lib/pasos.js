@@ -256,6 +256,54 @@ function verificarCorreccionTest(destino, ficheroExamen, contestacion) {
   };
 }
 
+// --- Examen de referencia del centro (decisión del mantenedor, 2026-09-24) -----------------------------
+
+// Lo que config/examenes.json tiene que respetar tras leer un examen de referencia del centro: lo que el
+// texto declara manda (nunca al revés) y nada de lo que no declara se inventa — ni en el tipo que toca
+// (aquí, `modulo`, según lo que pide el fixture) ni en los demás tipos, que no deberían tocarse.
+const CLAVES_TIPO_VALIDAS = new Set(['preguntas', 'aprobado', 'escalones']);
+
+function referenciaCoherente(destino, textoReferencia) {
+  const f = path.join(destino, 'config', 'examenes.json');
+  let cfg;
+  try { cfg = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (error) {
+    return { ok: false, detalle: `config/examenes.json no es JSON válido: ${error.message}` };
+  }
+  const opciones = Number((/(\d+)\s+opciones por pregunta/.exec(textoReferencia) || [])[1]) || null;
+  const sinResta = /no resta puntos por fallar/.test(textoReferencia);
+  const aprobado = Number((/aprueba con (\d+)\s+aciertos de \d+/.exec(textoReferencia) || [])[1]) || null;
+  const modulo = ((cfg.tipos || {}).modulo) || {};
+  const problemas = [];
+  if (opciones && cfg.opciones !== opciones) problemas.push(`opciones: ${cfg.opciones} (el test declara ${opciones})`);
+  if (sinResta && cfg.resta_fallo !== 0) problemas.push(`resta_fallo: ${cfg.resta_fallo} (el test no resta)`);
+  if (aprobado && modulo.aprobado !== aprobado) problemas.push(`tipos.modulo.aprobado: ${modulo.aprobado} (el test declara ${aprobado})`);
+  for (const [nombre, tipo] of Object.entries(cfg.tipos || {})) {
+    const extra = Object.keys(tipo || {}).filter(k => !CLAVES_TIPO_VALIDAS.has(k));
+    if (extra.length) problemas.push(`tipos.${nombre}: claves inventadas (${extra.join(', ')})`);
+  }
+  return problemas.length
+    ? { ok: false, detalle: problemas.join(' · ') }
+    : { ok: true, detalle: `config/examenes.json coherente con la referencia (opciones ${cfg.opciones}, resta_fallo ${cfg.resta_fallo}, modulo.aprobado ${modulo.aprobado})` };
+}
+
+// El examen que se escriba a partir de ahí tiene que respetar, pregunta a pregunta, el número de opciones
+// que declara su propia clave — lo que "Examen de referencia del centro" tenía que fijar en
+// config/examenes.json antes de escribirlo.
+function formatoDeOpciones(destino, ficheroExamen) {
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  let clave;
+  try { clave = examenesLib.leerClave(destino, relExamen); } catch (error) {
+    return { ok: false, detalle: `no se pudo leer la clave: ${error.message}` };
+  }
+  const lineas = fs.readFileSync(ficheroExamen, 'utf8').replace(/\r\n/g, '\n').split('\n');
+  const preguntas = casillasDeExamen(lineas);
+  const esperado = Number(clave.opciones) || 0;
+  const malas = preguntas.filter(pr => pr.opciones.length !== esperado);
+  return malas.length
+    ? { ok: false, detalle: `${malas.length} de ${preguntas.length} pregunta(s) no tienen las ${esperado} opciones de la clave` }
+    : { ok: true, detalle: `las ${preguntas.length} preguntas tienen ${esperado} opciones, como la clave` };
+}
+
 // --- La corrección, medida (issue #39, H08) ---------------------------------------------------------------
 
 // El veredicto de una celda "Resultado" de la tabla de un intento, en los tres de "Cuando preguntas para medir"
@@ -345,4 +393,5 @@ module.exports = {
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
   casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
+  referenciaCoherente, formatoDeOpciones,
 };

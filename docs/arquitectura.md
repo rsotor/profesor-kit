@@ -318,19 +318,27 @@ código — y por eso es la única que usa un LLM de verdad y nunca corre en el 
   submódulos, `patrones_prohibidos`): así la prueba real ejercita rutas que un curso recién instalado no
   toca. `clases.json` y `alumno/perfil.md` son metadatos del ejecutor (qué clases procesar y en qué orden;
   el perfil, para el oráculo del formato libre), no datos del curso. `estudio/inbox/` trae también un
-  examen tipo test de ejemplo, "material del centro" que el alumno pudo traer (`/configurar`, bloque A: si
-  llega uno así, ajusta `config/examenes.json` a sus opciones y su aprobado).
+  examen tipo test de ejemplo, "material del centro" que el alumno pudo traer en cualquier momento del curso
+  (skill `/examen`, "Examen de referencia del centro"; `/configurar`, bloque A, remite ahí): si llega uno
+  así, la skill ajusta `config/examenes.json` a sus opciones, si resta y cuánto, y su aprobado, sin inventar
+  lo que el ejemplo no diga.
 - `pruebas/lib/montaje.js` monta, en una carpeta temporal autolimpiable, un curso de verdad: el motor de
   la copia de trabajo actual + `preparar-curso.js --subir no` + los datos de `curso-ejemplo/` encima +
   `git init` + `instalar-skills.js`. Lo comparten `prueba-real.js` y `prueba-actualizar.js`.
 - `pruebas/prueba-real.js` (`npm run prueba-real`) monta el curso y lanza `claude -p` (una sesión nueva
   por paso) por las cinco skills de trabajo en orden, simulando al alumno entre medias (dudas, casilla
-  "a su manera"). El examen que genera `/examen` es tipo test: sus casillas las marca
-  `pruebas/lib/pasos.js#contestarExamenTest`, con un patrón determinista (no un LLM: la clave vive fuera
-  de la bóveda, así que un alumno simulado no tendría nada que "contestar" de verdad) leyendo la clave real
-  para poder calcular de antemano la nota exacta que `examen.js --corregir` tiene que sacar y comprobarla
-  sin margen. El oráculo de la corrección (`pruebas/curso-ejemplo/oraculo/`) sigue midiendo el formato
-  libre de antes, con un examen fijo de respuestas ya escritas. Las clases del módulo del examen se
+  "a su manera"). Antes de generar el examen del módulo hay un paso "/examen (referencia del centro)": el
+  alumno simulado deja el test de autoevaluación del centro (ya en `estudio/inbox/` desde el montaje) y pide
+  que sus exámenes se parezcan; se comprueba en disco, sin LLM, que `config/examenes.json` sigue siendo
+  JSON válido y coherente con lo que ese test declara, sin valores inventados
+  (`pruebas/lib/pasos.js#referenciaCoherente`). El examen que genera `/examen` es tipo test: sus casillas
+  las marca `pruebas/lib/pasos.js#contestarExamenTest`, con un patrón determinista (no un LLM: la clave vive
+  fuera de la bóveda, así que un alumno simulado no tendría nada que "contestar" de verdad) leyendo la clave
+  real para poder calcular de antemano la nota exacta que `examen.js --corregir` tiene que sacar y
+  comprobarla sin margen; también se comprueba que el examen generado respeta, pregunta a pregunta, el
+  número de opciones de su propia clave (`#formatoDeOpciones`). El oráculo de la corrección
+  (`pruebas/curso-ejemplo/oraculo/`) sigue midiendo el formato libre de antes, con un examen fijo de
+  respuestas ya escritas. Las clases del módulo del examen se
   procesan en primer plano; la que no hace falta para ese examen se lanza con `preparar.js --lanzar` en segundo plano justo antes de
   `/dudas`, sigue corriendo durante `/ejercicio` y el examen, y se junta con `--juntar` en cuanto el
   examen está corregido — el caso de verdad con choques posibles (plan 0.22, §4). Guarda el resultado en

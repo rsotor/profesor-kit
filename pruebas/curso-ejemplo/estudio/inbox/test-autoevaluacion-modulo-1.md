@@ -1,8 +1,9 @@
 # Test de autoevaluación · Módulo 1 (material del centro)
 
 > Lo he encontrado en la plataforma del curso, en la sección de "autoevaluación" del módulo 1. Es un test de
-> opción múltiple, cuatro opciones cada pregunta, una sola correcta. Lo dejo tal cual lo exportaron (PDF a
-> texto), con la clave de soluciones al final, como venía.
+> opción múltiple: 4 opciones por pregunta (a, b, c, d), una sola correcta, y no resta puntos por fallar. Se
+> aprueba con 6 aciertos de 10. Lo dejo tal cual lo exportaron (PDF a texto), con la clave de soluciones al
+> final, como venía, para que tus exámenes se parezcan a este.
 
 1. Antes de que existiera el dinero, dos personas querían intercambiar bienes pero no llegaban a un acuerdo
    porque ninguna quería en ese momento lo que ofrecía la otra. ¿Qué problema del trueque es ese?

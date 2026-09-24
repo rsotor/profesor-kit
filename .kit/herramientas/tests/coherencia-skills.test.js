@@ -72,7 +72,7 @@ test('las propiedades de frontmatter que citan las skills y AGENTS.md las lee al
 
   // Propiedades que un alumno o el LLM leen directamente en la nota (histórico de intentos, versión
   // anterior, dependencias de un concepto): no las calcula ninguna herramienta, y está bien que así sea.
-  const SOLO_SE_LEEN_EN_LA_NOTA = new Set(['anterior', 'intentos', 'requiere', 'version']);
+  const SOLO_SE_LEEN_EN_LA_NOTA = new Set(['anterior', 'intentos', 'requiere', 'version', 'referencia']);
 
   const propiedades = new Set();
   for (const doc of DOCS) {

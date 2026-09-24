@@ -202,6 +202,30 @@ function pasoEjercicio(ctx) {
   return { ok: r.ok, detalle: r.ok ? `ejercicio pedido sobre "${slug}" (código ${r.codigo})` : `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
 }
 
+// El fichero del test de autoevaluación del centro que ya trae pruebas/curso-ejemplo/estudio/inbox/
+// (montarCurso lo copia entero desde el principio: no hace falta dejarlo caer a mitad de prueba).
+const REFERENCIA_CENTRO = 'test-autoevaluacion-modulo-1.md';
+
+// Un paso antes de generar el examen: el alumno deja en el inbox el test de autoevaluación del centro
+// para que los exámenes del profesor se parezcan (decisión del mantenedor, 2026-09-24: "Examen de
+// referencia del centro" en la skill /examen). La comprobación es en disco, sin LLM: config/examenes.json
+// sigue siendo JSON válido y coherente con lo que ese test declara (número de opciones, si resta y el
+// aprobado), sin valores inventados que el test no dé.
+function pasoExamenReferencia(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const origen = path.join(ctx.datosCurso, 'estudio', 'inbox', REFERENCIA_CENTRO);
+  const r = invocarClaude({
+    prompt: `Te dejo en estudio/inbox/${REFERENCIA_CENTRO} el test de autoevaluación del módulo 1 del centro. `
+      + 'Quiero que mis próximos exámenes se parezcan a este en formato: sigue "Examen de referencia del '
+      + `centro" de la skill /examen y ajusta config/examenes.json a lo que declara, sin inventar nada que no diga. ${PROMPT_COMUN}`,
+    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+  });
+  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const v = p.referenciaCoherente(ctx.destino, fs.readFileSync(origen, 'utf8'));
+  if (v.ok) ctx.referenciaCentro = true;
+  return { ok: v.ok, detalle: v.detalle, salidaLlm: v.ok ? undefined : r.salida };
+}
+
 function pasoExamenGenerar(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   const r = invocarClaude({
@@ -212,7 +236,10 @@ function pasoExamenGenerar(ctx, examenModulo) {
   const fichero = p.examenMasReciente(ctx.destino);
   if (!fichero) return { ok: false, detalle: 'claude terminó pero no hay ningún examen en estudio/examenes/', salidaLlm: r.salida };
   ctx.ficheroExamen = fichero;
-  return { ok: true, detalle: `examen escrito: ${path.relative(ctx.destino, fichero)}`, salidaLlm: r.salida };
+  // El examen tiene que respetar el formato fijado en config/examenes.json (nº de opciones por pregunta,
+  // según su propia clave): lo que el paso de la referencia del centro tenía que dejar listo antes.
+  const formato = p.formatoDeOpciones(ctx.destino, fichero);
+  return { ok: formato.ok, detalle: `examen escrito: ${path.relative(ctx.destino, fichero)} · ${formato.detalle}`, salidaLlm: r.salida };
 }
 
 // examen v1 (tipo test): la clave vive fuera de la bóveda, así que un alumno simulado con LLM no puede verla
@@ -420,6 +447,7 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
     ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));
     ejecutarPaso(pasos, '/ejercicio', () => pasoEjercicio(ctx));
+    ejecutarPaso(pasos, '/examen (referencia del centro)', () => pasoExamenReferencia(ctx));
     ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
     ejecutarPaso(pasos, '/examen (contestar)', () => pasoExamenContestar(ctx));
     ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));

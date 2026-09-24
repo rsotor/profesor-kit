@@ -1,6 +1,6 @@
 ---
 name: examen
-description: Use when the student wants an exam or test to check what they have mastered, including the final exam or the next step of it. Triggers on "/examen", "vamos a validar los bloques 1 y 2", "ponme un test", "prepárame el examen", "examen final", "vamos a prepararnos", "quiero hacer el siguiente escalón". Not for two or three quick questions in the chat ("hazme unas preguntas"), which is the warm-up in conversation, no skill.
+description: Use when the student wants an exam or test to check what they have mastered, including the final exam, the next step of it, or a reference exam from the school to match its format. Triggers on "/examen", "vamos a validar los bloques 1 y 2", "ponme un test", "prepárame el examen", "examen final", "vamos a prepararnos", "quiero hacer el siguiente escalón", "te dejo un examen de otros años", "este es el modelo de examen de la certificación", "te dejo el examen de referencia del centro". Not for two or three quick questions in the chat ("hazme unas preguntas"), which is the warm-up in conversation, no skill.
 ---
 
 # Modo examen
@@ -28,6 +28,9 @@ que pida o el momento:
 | "quiero examinarme de todo el trimestre" | `trimestre` | Rara vez lo ofreces tú: casi siempre lo pide el alumno |
 | "examen final", "vamos a prepararnos" | `final` | Todas las sesiones del curso estudiadas, o a 30 días o menos de la fecha de examen de `config/curso.md` (## Fechas) |
 
+**Si solo pregunta** ("¿cuándo puedo hacer el examen final?", "¿cuántas preguntas tiene?"), contéstale con esta tabla
+y `config/examenes.json` y ofrécelo; no escribas ningún examen hasta que diga que sí.
+
 **El examen final es aparte.** No pone nota a ninguna unidad, no marca `estudiada`, no cuenta para el 🏁 de
 `estudio/inicio.md` ni para "mi perfil". Se puede pedir sin haber hecho los exámenes de módulo — puedes
 decir que lo desaconsejas ("todavía no has hecho el examen del módulo 2; puedes ir al final igual, pero
@@ -41,6 +44,10 @@ aprobarlo; solo entonces se pasa al siguiente.
 **Si el alumno quiere cambiar la configuración** ("que el examen del módulo sean 20 preguntas", "que reste
 medio punto por fallo"), edítala en `config/examenes.json` con tu herramienta de ficheros. Solo afecta a los
 exámenes que se creen desde ahora: los ya escritos guardan su propia configuración en su clave (más abajo).
+
+**Si el alumno trae un examen de referencia del centro** (de otros años, el modelo de la certificación, un
+test de autoevaluación de la plataforma…), sigue "Examen de referencia del centro" más abajo antes de seguir
+con este apartado.
 
 ## 2. Alcance
 
@@ -195,6 +202,30 @@ intentos y la nota puede ser memoria (propónlo; decide él), o si toca repetir 
 suspendió: crea un fichero nuevo en la misma carpeta, con `version: 2` (3, 4…) y `anterior:` con el enlace
 a la versión anterior en el frontmatter. Mismos conceptos y reparto, **otras cifras y otro orden de
 opciones**, clave rehecha. Su histórico empieza vacío; la versión anterior no se toca.
+
+## Examen de referencia del centro
+
+Si el alumno trae un examen o test de referencia del centro (de otros años, el modelo de la certificación,
+un test de autoevaluación de la plataforma…), en cualquier momento del curso — no hace falta esperar a
+`/configurar` — trátalo así:
+
+1. **Léelo entero y actualiza `config/examenes.json`** con lo que declare: número de opciones, si resta los
+   fallos y cuánto, número de preguntas, tiempo y el aprobado, si lo dice. Ajusta el tipo que corresponda
+   (normalmente `modulo`; crea o ajusta uno con nombre propio como `certificacion` si el ejemplo es del
+   examen final o de la certificación). **Lo que el ejemplo no diga, no se inventa:** se queda el valor que
+   ya había, y se lo dices al alumno.
+2. **Úsalo como modelo de estilo** — cómo formula las preguntas, su nivel — nunca copiando sus preguntas
+   tal cual como si fueran tuyas. Si reutilizas una pregunta real del centro, márcala como del centro en la
+   explicación de la clave (apartado 4).
+3. **Deja constancia de la referencia** en el examen que generes a partir de ahí: `referencia:` en su
+   frontmatter (el nombre del fichero de origen), o en la clave.
+4. **Solo afecta a los exámenes que se creen desde ahora**: cambiar `config/examenes.json` no toca los que
+   ya existen — cada examen guarda su propia configuración en su clave (apartado 4).
+
+**Al preparar un examen final o de certificación, pide referencias si no las tienes.** Pregúntalo una vez,
+sin insistir: "¿tienes algún examen de otros años o el modelo de la certificación? así el mío se parece más
+al oficial". Si no tiene ninguno, sigue con el formato por defecto de `config/examenes.json` y dile que,
+sin una referencia real, no puedes garantizar que se parezca al oficial.
 
 ## Al cerrar, una línea más
 

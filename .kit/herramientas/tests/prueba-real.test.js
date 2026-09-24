@@ -353,6 +353,71 @@ test('verificarCorreccionTest: una nota distinta de la esperada no pasa', () => 
   assert.match(r.detalle, /NO coincide/);
 });
 
+// --- Examen de referencia del centro (decisión del mantenedor, 2026-09-24) -----------------------------
+
+const TEXTO_REFERENCIA = 'Es un test de opción múltiple: 4 opciones por pregunta (a, b, c, d), una sola '
+  + 'correcta, y no resta puntos por fallar. Se aprueba con 6 aciertos de 10.';
+
+function escribirExamenesJson(destino, datos) {
+  fs.mkdirSync(path.join(destino, 'config'), { recursive: true });
+  fs.writeFileSync(path.join(destino, 'config', 'examenes.json'), JSON.stringify(datos));
+}
+
+test('referenciaCoherente: ok cuando config/examenes.json respeta lo que declara el test', () => {
+  const destino = temporal('referencia-centro-');
+  escribirExamenesJson(destino, { opciones: 4, resta_fallo: 0, tipos: { modulo: { preguntas: 15, aprobado: 6 } } });
+  const r = p.referenciaCoherente(destino, TEXTO_REFERENCIA);
+  assert.equal(r.ok, true, r.detalle);
+  assert.match(r.detalle, /opciones 4, resta_fallo 0, modulo\.aprobado 6/);
+});
+
+test('referenciaCoherente: detecta cuando el JSON no respeta lo que el test declara', () => {
+  const destino = temporal('referencia-centro-');
+  escribirExamenesJson(destino, { opciones: 5, resta_fallo: 0.5, tipos: { modulo: { preguntas: 15, aprobado: 7 } } });
+  const r = p.referenciaCoherente(destino, TEXTO_REFERENCIA);
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /opciones: 5 \(el test declara 4\)/);
+  assert.match(r.detalle, /resta_fallo: 0\.5 \(el test no resta\)/);
+  assert.match(r.detalle, /tipos\.modulo\.aprobado: 7 \(el test declara 6\)/);
+});
+
+test('referenciaCoherente: no deja pasar valores inventados en otros tipos', () => {
+  const destino = temporal('referencia-centro-');
+  escribirExamenesJson(destino, { opciones: 4, resta_fallo: 0, tipos: { modulo: { preguntas: 15, aprobado: 6 }, trimestre: { preguntas: 40, tiempo: 60 } } });
+  const r = p.referenciaCoherente(destino, TEXTO_REFERENCIA);
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /tipos\.trimestre: claves inventadas \(tiempo\)/);
+});
+
+test('referenciaCoherente: config/examenes.json roto no revienta, lo dice', () => {
+  const destino = temporal('referencia-centro-');
+  fs.mkdirSync(path.join(destino, 'config'), { recursive: true });
+  fs.writeFileSync(path.join(destino, 'config', 'examenes.json'), '{ esto no es json');
+  const r = p.referenciaCoherente(destino, TEXTO_REFERENCIA);
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /no es JSON válido/);
+});
+
+test('formatoDeOpciones: ok cuando cada pregunta tiene las opciones que declara la clave', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  const r = p.formatoDeOpciones(destino, ficheroExamen);
+  assert.equal(r.ok, true, r.detalle);
+  assert.match(r.detalle, /5 preguntas tienen 4 opciones/);
+});
+
+test('formatoDeOpciones: detecta cuando el examen no respeta el número de opciones de la clave', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  const rutaClave = path.join(destino, 'config', 'claves', '01-examen-2026-10-02.json');
+  const clave = JSON.parse(fs.readFileSync(rutaClave, 'utf8'));
+  clave.opciones = 3;
+  fs.writeFileSync(rutaClave, JSON.stringify(clave));
+  const r = p.formatoDeOpciones(destino, ficheroExamen);
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /5 de 5 pregunta\(s\) no tienen las 3 opciones de la clave/);
+});
+
 test('markdownResumen: sección de permisos denegados, por paso; sin ninguno, lo dice', () => {
   const base = { fecha: '2026-10-01', version: '0.23.0', modelo: 'sonnet', sinLlm: false, informe: { errores: [], avisos: [] },
     conteos: { conceptos: 0, sesiones: 0, flashcards: 0, ejercicios: 0, examenes: 0, repasos: 0, todo: 0, faltaInfo: 0, dudaPendiente: 0 } };
