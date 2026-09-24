@@ -311,7 +311,8 @@ lo mismo a mano dos veces · un paso de la instalación no encaja con este siste
 mejora que valdría para **cualquier** alumno. No escales lo que es de este curso (errores del material, del
 temario, del centro) ni de este alumno.
 
-Cómo se abre la issue (con `issue.js` y el sí del alumno): `.kit/guias/feedback-al-kit.md`.
+Cómo se abre la issue (con `issue.js` y el sí del alumno): `.kit/guias/feedback-al-kit.md`. Si te corrige qué skill
+tocaba, o usas una con una frase que no se parece a sus ejemplos: `.kit/guias/cuando-pide-a-su-manera.md`.
 
 ## Si el alumno cambia de asistente
 
