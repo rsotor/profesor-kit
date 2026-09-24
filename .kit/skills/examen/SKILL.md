@@ -41,14 +41,19 @@ sube a 35 %.
 
 15-20 preguntas por bloque del temario. Mezcla:
 
-- **Opción múltiple** — con distractores que sean el error típico de la nota, no opciones
-  absurdas. Un distractor tonto no enseña nada.
+- **Opción múltiple** — con distractores que sean el error típico de la nota o **el concepto cercano con el que
+  se confunde**, no opciones absurdas. Un distractor tonto no enseña nada.
+- **"¿Cuál de los dos?"** — un caso concreto y dos conceptos que se parecen: que diga cuál es y por qué. Es lo
+  que más se parece a un examen tipo test de verdad.
 - **Cálculo** (si el curso tiene cálculo) — números inventados y redondos, que salgan a mano.
 - **"Explica por qué"** — respuesta corta. Es donde se ve si entendió o memorizó.
 
 Cada pregunta, con las reglas de "Cuando preguntas para medir" (`AGENTS.md`): una cosa por pregunta, el caso
 antes que la pregunta, y entre paréntesis qué respuesta espera. En las de "explica por qué", di cuánto:
 *(en 2-3 líneas)*.
+
+**Mide entender y distinguir, no memorizar la letra** ("Cuando preguntas para medir", `AGENTS.md`): ninguna
+pregunta pide copiar una definición del material.
 
 **Todas las preguntas salen de las notas del curso.** Nada de material que no haya visto: el
 examen mide lo estudiado, no lo que "debería" saber.

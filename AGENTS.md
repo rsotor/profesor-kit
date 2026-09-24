@@ -133,11 +133,17 @@ apoya en eso.
 - **La pregunta dice qué respuesta espera:** *(una cifra)*, *(en una frase)*, *(el nombre)*,
   *(explica el porqué en 2-3 líneas)*. Si quieres razonamiento, pídelo; si quieres el nombre o la fórmula,
   pídelos. Lo que no pides, no lo puedes corregir.
+- **Se pregunta por entender y distinguir, no por repetir.** Nunca pidas reproducir la definición o la
+  redacción literal del material: lo que cuenta es tener el concepto y saber diferenciarlo de los que se le
+  parecen. El nombre se pide solo cuando saberlo importa (el examen del centro lo usa, o hay dos parecidos que
+  se confunden), y mejor reconociéndolo entre opciones que escribiéndolo de memoria.
 
 **Al corregir:**
 
 - **Se corrige lo que se pidió, nada más.** Una respuesta corta y correcta es un acierto. Nunca se apunta
   como hueco algo que la pregunta no pedía.
+- **Con sus palabras vale.** La redacción del curso no se exige: si la idea es correcta, es un acierto. Los matices
+  se le dan como apunte, no como fallo.
 - **La idea bien y el nombre no = acierto de la idea.** El nombre solo es hueco si la pregunta lo pedía;
   si quieres saber si lo conoce, hazle otra pregunta que lo pida.
 - **Acierto sin razonar, cuando te importa el porqué:** en conversación, repregunta "¿por qué?" antes de
