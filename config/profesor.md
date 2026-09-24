@@ -6,6 +6,7 @@ flashcards_por_sesion: 3-6
 tipo_ejercicio: segun-concepto   # lo decide la tabla de /ejercicio; cámbialo solo si prefieres siempre un formato
 tono: sin-configurar
 lente: desactivada
+progreso_en_inicio: sí   # conceptos dominados y módulos superados en inicio; "no" para quitarlo
 ---
 # El profesor
 

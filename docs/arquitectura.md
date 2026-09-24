@@ -79,7 +79,7 @@ el alumno/instalador a través del LLM.
 | `arranque.js` | Punto de entrada común: atrapa una excepción inesperada; si es del sistema (`EACCES`/`EPERM`/`EIO`: permiso denegado; `ENOENT`: comando inexistente) lo explica como tal, y solo si no lo es le dice al LLM que abra una issue |
 | `proceso.js` | Lanza un proceso externo (`git`, `gh`, `node`, `powershell`) y clasifica por qué falló (`ok` / `permiso` / `no-existe` / `fallo`), para que ningún mensaje se quede vacío o con "undefined" cuando el proceso ni llega a arrancar. Lo usan `git.js`, `actualizar.js`, `crear-atajo.js`, `diagnostico.js` e `issue.js` |
 | `git.js` | Envoltorio fino sobre `git` (estado, commit, identidad, remoto), sobre `proceso.js` |
-| `indice.js` | Calcula `estudio/inicio.md` y el pie de navegación de cada sesión, a partir de las sesiones, el progreso y los exámenes en disco |
+| `indice.js` | Calcula `estudio/inicio.md` y el pie de navegación de cada sesión, a partir de las sesiones, el progreso y los exámenes en disco; por módulo, conceptos dominados y "🏁 superado" (se quita con `progreso_en_inicio: no` en `config/profesor.md`) |
 | `generados.js` | Calcula el resto de ficheros que escribe `guardar.js`: pendientes, auditoría del material, formulario, índice de ejercicios y la sección "Estado" del README |
 | `perfil.js` | Calcula `estudio/mi-perfil.md` (copia secciones de `config/alumno.md` y `config/profesor.md` y la evolución) y las señales que da `estado.js` |
 | `secretos.js` | Escanea los ficheros candidatos a `git` en busca de patrones de tokens y claves conocidos |

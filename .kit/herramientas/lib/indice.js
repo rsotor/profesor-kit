@@ -99,6 +99,9 @@ function leerProgreso(raiz) {
 }
 
 // Lo que el profesor tiene probado de una sesión. Un concepto está probado con la teoría en ✅ y nada fallado.
+// Dominado: la teoría en ✅ y nada fallado. La misma vara que "superada" en una sesión.
+const dominado = e => e.teoria === '✅' && !FALLADO(e.aplicacion);
+
 function estadoProfesor(conceptos, progreso) {
   const estados = conceptos.map(c => progreso.get(c) || SIN_EVALUAR);
   if (estados.some(e => FALLADO(e.teoria) || FALLADO(e.aplicacion))) return { marca: 'repasar' };
@@ -131,6 +134,15 @@ function notaDeUnidad(prefijo, examenes) {
   return validos.length ? validos[validos.length - 1] : null;
 }
 
+// E3: el progreso de inicio (conceptos dominados y módulos superados) se quita con `progreso_en_inicio: no` en
+// config/profesor.md. Por defecto, sí.
+function progresoEnInicio(raiz) {
+  const f = path.join(raiz, 'config', 'profesor.md');
+  const fm = fs.existsSync(f) ? v.leerFrontmatter(fs.readFileSync(f, 'utf8')) : null;
+  const valor = fm ? fm.progreso_en_inicio : undefined;
+  return !(valor === false || /^(no|false)$/i.test(String(valor ?? '').trim()));
+}
+
 function leerAprobado(raiz) {
   const f = path.join(raiz, 'config', 'curso.md');
   const fm = fs.existsSync(f) ? v.leerFrontmatter(fs.readFileSync(f, 'utf8')) : null;
@@ -141,7 +153,10 @@ const textoNota = (e, aprobado) =>
   `📝 ${e.nota.toFixed(1).replace('.', ',')}${e.nota < aprobado ? ' suspenso' : ''} (${e.fecha})`;
 
 function enlace(s, enTabla = false) {
-  const alias = `${s.clases.length ? s.clases.join('-') + ' ' : ''}${s.titulo}`.replace(/[[\]|\\]/g, '').trim();
+  const clases = s.clases.join('-');
+  // Si el centro ya pone el título en la etiqueta ("Clase 1.1 · El dinero…"), no se repite.
+  const conTitulo = clases.toLowerCase().includes(s.titulo.toLowerCase()) ? clases : `${clases ? clases + ' ' : ''}${s.titulo}`;
+  const alias = conTitulo.replace(/[[\]|\\]/g, '').trim();
   return `[[${s.id}${enTabla ? '\\|' : '|'}${alias}]]`;
 }
 
@@ -199,7 +214,10 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
   const progreso = leerProgreso(raiz);
   const examenes = leerExamenes(raiz);
   const aprobado = leerAprobado(raiz);
+  const conProgreso = progresoEnInicio(raiz);
   const estado = new Map(sesiones.map(s => [s.id, estadoProfesor(s.conceptos, progreso)]));
+  let posLogros = -1;
+  const logros = [];
   const l = [`# ${v.leerAjustes(raiz).nombre_curso || 'Mi curso'}`, '',
     '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Cuando estudies una sesión, marca la casilla',
     '> **estudiada** arriba de su nota; aquí se verá la próxima vez que trabajes con tu profesor.', ''];
@@ -210,6 +228,7 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
     const siguiente = sesiones.find(s => !s.estudiada);
     l.push(siguiente ? `👉 Sigue por aquí: ${enlace(siguiente)}` : '👉 Has estudiado todas las sesiones procesadas.', '');
     l.push(`Estudiadas ${sesiones.filter(s => s.estudiada).length} de ${sesiones.length} · Pendientes abiertos: ${pendientes} → [[pendientes]]`, '');
+    posLogros = l.length;
   } else {
     l.push('Todavía no hay clases procesadas: deja el material de la primera en **inbox** y díselo a tu profesor.', '');
   }
@@ -247,10 +266,17 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
       // Comportamiento normal para módulos con sesiones
       const partes = [u.titulo || path.posix.basename(u.carpeta).replace(/-/g, ' ')];
       partes.push(`${todas.filter(s => s.estudiada).length}/${todas.length} estudiadas`);
+      const conceptos = [...new Set(todas.flatMap(s => s.conceptos))];
+      if (conProgreso && nivel === 0 && conceptos.length) {
+        partes.push(`${conceptos.filter(c => dominado(progreso.get(c) || SIN_EVALUAR)).length}/${conceptos.length} conceptos dominados`);
+      }
       const examen = notaDeUnidad(u.prefijo, examenes);
       if (examen) partes.push(textoNota(examen, aprobado));
       else if (nivel === 0) {
         partes.push(todas.every(s => s.estudiada) ? 'listo para el examen del módulo: pídeselo a tu profesor' : 'sin examen de módulo');
+      }
+      if (conProgreso && nivel === 0 && examen && examen.nota >= aprobado) {
+        logros.push(`🏁 ${partes[0]} superado el ${examen.fecha} con un ${examen.nota.toFixed(1).replace('.', ',')}`);
       }
       l.push(`${'#'.repeat(Math.min(nivel + 2, 6))} ${partes.join(' · ')}`, '');
       if (u.sesiones.length) l.push(...tabla(u.sesiones));
@@ -260,6 +286,8 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
     if (sueltas.length) l.push('## Sin unidad', '', ...tabla(sueltas));
   }
 
+  if (logros.length && posLogros >= 0) l.splice(posLogros, 0, ...logros, '');
+
   const hojas = OTRAS_HOJAS.filter(h => fs.existsSync(path.join(base, `${h}.md`)));
   if (hojas.length) l.push(`Otras hojas: ${hojas.map(h => `[[${h}]]`).join(' · ')}`, '');
   return l.join('\n');
@@ -267,6 +295,6 @@ function markdownInicio(raiz, { pendientes = 0 } = {}) {
 
 module.exports = {
   INICIO, leerSesiones, compararSesiones, ordenAmbiguo, leerProgreso, estadoProfesor,
-  leerExamenes, notaDeUnidad, leerAprobado, enlace, tituloDe, markdownInicio,
+  leerExamenes, notaDeUnidad, leerAprobado, progresoEnInicio, enlace, tituloDe, markdownInicio,
   MARCA_INICIO, MARCA_FIN, pieDeSesion, ponerPie, marcadoresRotos, piesDeSesion, sinPie,
 };

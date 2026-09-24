@@ -1,6 +1,6 @@
 ---
 name: dudas
-description: Use when the student has doubts, either left as markers in their notes while studying alone or asked right now in the chat about a concept. Triggers on "/dudas", "tengo dudas", "tengo una duda de <concepto>", "no entiendo <concepto>", "he dejado comentarios", "resuelve mis dudas", "revisa lo que he anotado".
+description: Use when the student has doubts, either left as markers in their notes while studying alone or asked right now in the chat about a concept. Triggers on "/dudas", "tengo dudas", "tengo una duda de este concepto", "no entiendo el interés compuesto", "he dejado comentarios", "resuelve mis dudas", "revisa lo que he anotado".
 ---
 
 # Resolver las dudas pendientes

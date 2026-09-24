@@ -1,6 +1,6 @@
 ---
 name: examen
-description: Use when the student wants a written exam or test to check what they have mastered across topic blocks. Triggers on "/examen", "vamos a validar los bloques 1 y 2", "ponme un test", "prepárame el examen". Not for two or three quick questions in the chat ("hazme unas preguntas"): that is the warm-up in conversation, no skill.
+description: Use when the student wants a written exam or test to check what they have mastered across topic blocks. Triggers on "/examen", "vamos a validar los bloques 1 y 2", "ponme un test", "prepárame el examen". Not for two or three quick questions in the chat ("hazme unas preguntas"), which is the warm-up in conversation, no skill.
 ---
 
 # Modo examen
