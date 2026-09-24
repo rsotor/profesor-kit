@@ -204,6 +204,11 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
    **la primera** en una línea, con lo que propones: "este concepto ya lleva tres dudas, ¿lo vemos desde otro
    ángulo?". Una línea, no un sermón. Las demás, cuando venga a cuento.
 
+   Con **`avisos-acumulados`** (los avisos de `comprobar.js` han crecido, o llevan un mes sin revisarse), ofrécele
+   en una frase dedicar unos minutos a ordenarlos. Los avisos no bloquean, pero si nadie los mira la bola crece.
+   Al terminar la revisión: `node .kit/herramientas/comprobar.js --revisado`. Si dice que no, no insistas en esta
+   sesión.
+
    Si hay una preparación **terminada sin juntar** o **interrumpida**, eso va antes que nada: dile que la
    clase ya está lista (o que se quedó a medias porque el ordenador se apagó o se durmió) y ofrécele juntarla
    (`node .kit/herramientas/preparar.js --juntar <id>`) o, si se interrumpió, volver

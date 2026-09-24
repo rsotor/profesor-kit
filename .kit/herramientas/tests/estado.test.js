@@ -169,3 +169,15 @@ test('senales: sin nada que decir, lista vacía y "Señales: ninguna"', () => {
   const r = spawnSync(process.execPath, [require('node:path').join(__dirname, '..', 'estado.js'), '--raiz', raiz], { encoding: 'utf8' });
   assert.match(r.stdout, /Señales: ninguna/);
 });
+
+// Tarea 12 del plan 0.23.0 (Roberto: "no bloquear, pero revisar cada cierto tiempo, porque la bola crece").
+test('senalAvisos: 10 más que en la última revisión, o 30 días con avisos; si no, nada', () => {
+  const { senalAvisos } = require('../estado');
+  assert.equal(senalAvisos(null, 9, '2026-10-01'), null, 'sin revisión, menos de 10');
+  assert.match(senalAvisos(null, 12, '2026-10-01').detalle, /12 avisos/);
+  assert.equal(senalAvisos({ fecha: '2026-09-25', avisos: 20 }, 25, '2026-10-01'), null, 'crecen poco y hace poco');
+  assert.match(senalAvisos({ fecha: '2026-09-25', avisos: 20 }, 30, '2026-10-01').detalle, /10 más que en la última revisión/);
+  assert.match(senalAvisos({ fecha: '2026-08-01', avisos: 5 }, 5, '2026-10-01').detalle, /desde el 2026-08-01/);
+  assert.equal(senalAvisos({ fecha: '2026-08-01', avisos: 5 }, 0, '2026-10-01'), null, 'sin avisos no hay nada que revisar');
+  assert.equal(senalAvisos(null, 12, '2026-10-01').tipo, 'avisos-acumulados');
+});

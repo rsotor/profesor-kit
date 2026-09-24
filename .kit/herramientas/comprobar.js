@@ -18,22 +18,41 @@ const existe = (raiz, rel) => fs.existsSync(path.join(v.baseAlumno(raiz), ...rel
 // (por eso no están en GENERADOS_CON_ENLACES), pero sí los enlaza `inicio.md`.
 const BASENAMES_GENERADOS = () => new Set([...v.GENERADOS_CON_ENLACES.map(f => path.basename(f, '.md')), 'pendientes', 'auditoria-del-material']);
 
-function comprobarEnlaces(raiz, notas, informe) {
-  const nombres = new Set(
-    v.recorrer(v.baseAlumno(raiz), n => n.endsWith('.md'), FUERA_DE_ENLACES).map(r => path.basename(r, '.md'))
-  );
+// Los [[enlaces]] de una nota que no llevan a ningún sitio.
+function enlacesRotos(raiz, nota, nombres) {
+  const rotos = [];
+  for (const m of v.sinCodigo(leer(raiz, nota)).matchAll(/\[\[([^\]]+)\]\]/g)) {
+    const destino = m[1].split(/\\?\|/)[0].split('#')[0].trim();
+    if (!destino) continue;
+    const ext = path.posix.extname(destino);
+    const ok = ext && ext !== '.md'
+      ? existe(raiz, destino)
+      : existe(raiz, destino.replace(/\.md$/, '') + '.md') || nombres.has(path.posix.basename(destino, '.md'));
+    if (!ok) rotos.push(destino);
+  }
+  return rotos;
+}
+
+function nombresDeNotas(raiz) {
+  const nombres = new Set(v.recorrer(v.baseAlumno(raiz), n => n.endsWith('.md'), FUERA_DE_ENLACES).map(r => path.basename(r, '.md')));
   for (const generado of BASENAMES_GENERADOS()) nombres.add(generado);
+  return nombres;
+}
+
+function comprobarEnlaces(raiz, notas, informe) {
+  const nombres = nombresDeNotas(raiz);
   for (const nota of notas) {
-    const texto = v.sinCodigo(leer(raiz, nota));
-    for (const m of texto.matchAll(/\[\[([^\]]+)\]\]/g)) {
-      const destino = m[1].split(/\\?\|/)[0].split('#')[0].trim();
-      if (!destino) continue;
-      const ext = path.posix.extname(destino);
-      const ok = ext && ext !== '.md'
-        ? existe(raiz, destino)
-        : existe(raiz, destino.replace(/\.md$/, '') + '.md') || nombres.has(path.posix.basename(destino, '.md'));
-      if (!ok) informe.errores.push({ regla: 'enlace-roto', fichero: nota, detalle: `[[${destino}]] no existe` });
-    }
+    for (const destino of enlacesRotos(raiz, nota, nombres)) informe.errores.push({ regla: 'enlace-roto', fichero: nota, detalle: `[[${destino}]] no existe` });
+  }
+}
+
+// mi-perfil.md copia texto de config/: un enlace roto allí no bloquea el guardado (nadie edita esa hoja), pero se ve
+// como aviso para arreglarlo en su origen (desviación 4 del plan de mi perfil; se revisa con los demás avisos).
+function comprobarEnlacesDelPerfil(raiz, informe) {
+  if (!existe(raiz, 'mi-perfil.md')) return;
+  for (const destino of enlacesRotos(raiz, 'mi-perfil.md', nombresDeNotas(raiz))) {
+    informe.avisos.push({ regla: 'enlace-roto-en-perfil', fichero: 'mi-perfil.md',
+      detalle: `[[${destino}]] no existe: viene de config/alumno.md o config/profesor.md, corrígelo allí` });
   }
 }
 
@@ -499,6 +518,7 @@ function comprobar(raiz) {
   comprobarPreguntaDoble(raiz, informe);
   comprobarObsidianVeEjercicios(raiz, informe);
   comprobarAjustes(raiz, informe);
+  comprobarEnlacesDelPerfil(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;
 }
@@ -513,9 +533,22 @@ function imprimir(informe) {
 }
 
 // Devuelve el código de salida. `raizPorDefecto` es la carpeta del curso al que pertenece esta herramienta.
+// --revisado: el profesor ha repasado los avisos con el alumno. Se apunta cuándo y cuántos había, y estado.js avisa
+// cuando vuelvan a crecer (señal `avisos-acumulados`).
+function apuntarRevision(raiz, avisos, hoy = new Date().toISOString().slice(0, 10)) {
+  fs.mkdirSync(path.join(raiz, 'config'), { recursive: true });
+  fs.writeFileSync(path.join(raiz, 'config', 'revision-avisos.json'), JSON.stringify({ fecha: hoy, avisos }, null, 2) + '\n');
+}
+
 function cli(args, raizPorDefecto) {
   const i = args.indexOf('--raiz');
-  const informe = comprobar(i >= 0 ? path.resolve(args[i + 1]) : raizPorDefecto);
+  const raiz = i >= 0 ? path.resolve(args[i + 1]) : raizPorDefecto;
+  const informe = comprobar(raiz);
+  if (args.includes('--revisado')) {
+    apuntarRevision(raiz, informe.avisos.length);
+    console.log(`Revisión apuntada: ${informe.avisos.length} aviso(s) en config/revision-avisos.json.`);
+    return 0;
+  }
   if (args.includes('--json')) console.log(JSON.stringify(informe));
   else imprimir(informe);
   return informe.errores.length ? 1 : 0;

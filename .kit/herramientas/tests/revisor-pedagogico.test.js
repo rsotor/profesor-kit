@@ -181,3 +181,28 @@ test('falta-info-mal-usado: sin "## El error típico" no avisa; con una ampliaci
   });
   assert.equal(avisos(raiz, 'falta-info-mal-usado').length, 0);
 });
+
+// --- mi-perfil.md y la revisión de avisos (tarea 12 del plan 0.23.0) ---------------------------------------
+
+test('enlace-roto-en-perfil: un enlace roto en mi-perfil.md es un aviso, no un error, y dice dónde se corrige', () => {
+  const raiz = cursoTemporal({ 'config/alumno.md': '# A\n\n## Cómo explicarle\n\nMira [[no-existe]] y [[alfa]].\n' });
+  require('../guardar').regenerarGenerados(raiz);
+  const informe = comprobar(raiz);
+  assert.equal(informe.errores.filter(e => /perfil/.test(e.fichero)).length, 0);
+  const a = avisos(raiz, 'enlace-roto-en-perfil');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /\[\[no-existe\]\].*config\//);
+});
+
+test('comprobar.js --revisado apunta la fecha y cuántos avisos hay en config/revision-avisos.json', () => {
+  const { cli } = require('../comprobar');
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const raiz = cursoTemporal();
+  const log = console.log;
+  console.log = () => {};
+  try { cli(['--revisado'], raiz); } finally { console.log = log; }
+  const r = JSON.parse(fs.readFileSync(path.join(raiz, 'config', 'revision-avisos.json'), 'utf8'));
+  assert.match(r.fecha, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal(r.avisos, comprobar(raiz).avisos.length);
+});

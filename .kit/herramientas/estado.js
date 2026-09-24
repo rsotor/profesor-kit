@@ -4,6 +4,7 @@ const path = require('node:path');
 const v = require('./lib/vault');
 const indice = require('./lib/indice');
 const perfil = require('./lib/perfil');
+const { comprobar } = require('./comprobar');
 
 // La foto del curso al abrir (plan 0.22, §3.1): lo que el arranque necesita para confirmar con el alumno
 // si toca estudiar lo ya preparado, esperar a que se prepare lo nuevo, o repasar mientras se prepara.
@@ -62,6 +63,25 @@ function leerPreparaciones(raiz) {
 
 // El caso sugerido (tabla del plan §2): 1 si no hay material nuevo; si lo hay, 3 cuando queda algo por
 // estudiar de lo ya preparado o algo en 🔁 (atrasado), y 2 en el resto (al día).
+// Avisos que crecen (plan 0.23.0, tarea 12): no bloquean, pero se revisan cada cierto tiempo. Señal si hay al menos
+// 10 más que en la última revisión (`comprobar.js --revisado`), o si han pasado 30 días desde ella y sigue habiendo.
+const AVISOS_DE_MAS = 10;
+const DIAS_SIN_REVISAR = 30;
+function leerRevision(raiz) {
+  try { return JSON.parse(fs.readFileSync(path.join(raiz, 'config', 'revision-avisos.json'), 'utf8')); } catch { return null; }
+}
+function senalAvisos(revision, avisos, hoy = new Date().toISOString().slice(0, 10)) {
+  const antes = revision && Number.isInteger(revision.avisos) ? revision.avisos : 0;
+  const desde = revision && revision.fecha ? ` desde el ${revision.fecha}` : '';
+  if (avisos - antes >= AVISOS_DE_MAS) {
+    const cuando = revision && revision.fecha ? ` (del ${revision.fecha})` : '';
+    return { tipo: 'avisos-acumulados', detalle: `${avisos} avisos, ${avisos - antes} más que en la última revisión${cuando}` };
+  }
+  const dias = revision && revision.fecha ? (Date.parse(hoy) - Date.parse(revision.fecha)) / 86400000 : 0;
+  if (avisos > 0 && dias >= DIAS_SIN_REVISAR) return { tipo: 'avisos-acumulados', detalle: `${avisos} avisos sin revisar${desde}` };
+  return null;
+}
+
 function calcularEstado(raiz) {
   const preparaciones = leerPreparaciones(raiz);
   // Lo que ya está en una preparación en marcha o terminada (sin juntar todavía) no es material nuevo: si lo
@@ -83,7 +103,7 @@ function calcularEstado(raiz) {
     enRepaso,
     preparaciones,
     caso,
-    senales: perfil.senales(raiz),
+    senales: [...perfil.senales(raiz), senalAvisos(leerRevision(raiz), comprobar(raiz).avisos.length)].filter(Boolean),
   };
 }
 
@@ -118,4 +138,4 @@ function cli(args, raizPorDefecto) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'estado.js');
 
-module.exports = { materialNuevo, pidVivo, leerPreparaciones, calcularEstado, imprimir, cli };
+module.exports = { materialNuevo, pidVivo, leerPreparaciones, calcularEstado, imprimir, cli, senalAvisos };
