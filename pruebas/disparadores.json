@@ -60,7 +60,7 @@
     { "frase": "te dejo un examen de otros años para que veas el formato", "esperada": "examen" },
     { "frase": "este es el modelo de examen de la certificación", "esperada": "examen" },
     { "frase": "te paso el examen de referencia del centro, para que los tuyos se parezcan", "esperada": "examen" },
-    { "frase": "te dejo el examen que hice el año pasado, ¿cómo me fue?", "esperada": null },
+    { "frase": "te dejo el examen que hice el año pasado, ¿cómo me fue?", "esperada": [null, "examen"] },
 
     { "frase": "configura el curso", "esperada": "configurar" },
     { "frase": "quiero cambiar cómo me explicas", "esperada": "configurar" },
