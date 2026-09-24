@@ -1,68 +1,60 @@
 ---
 tipo: concepto
-bloques: ["2.1"]
-visto_en: ["02-01-01-interes-simple-y-compuesto"]
-dificultad: 2
-requiere: [interes-simple]
-alias: [interés compuesto, interés sobre interés]
-tags: []
-ejercicio: 02-01-01-cuando-se-dobla
+bloques: [2]
+visto_en: [02-01-01-interes-simple-y-compuesto]
+dificultad: 3
+requiere: [interes-simple, tipo-de-interes]
+alias: [interés sobre interés]
+tags: [interes, ahorro]
+ejercicio: 02-01-01-interes-simple-y-compuesto
 ---
 # Interés compuesto
 
-> **En una frase:** Con interés compuesto, los intereses de cada periodo se suman al capital y generan intereses ellos también, así que el dinero crece cada vez más deprisa.
+> **En una frase:** los intereses de cada periodo se suman al capital y generan intereses a su vez ("interés sobre interés"), así que el dinero crece cada vez más rápido.
 
 ## El problema
 
-En el interés simple, los intereses que cobras cada año se quedan parados: no trabajan. Si los sumas al
-capital, el año siguiente el interés se calcula sobre una cifra mayor.
+Con interés simple, los intereses ganados se quedan quietos y no trabajan. Si se reinvierten, el capital de partida de cada año es mayor, y por tanto los intereses también.
 
 ## El ejemplo
 
-Los mismos 1.000,00 € al 5 % anual durante 3 años, ahora compuesto.
+Repaso rápido del [[interes-simple]]: 1.000,00 € al 5 % anual durante 3 años daban 1.150,00 €.
 
-| Año | Capital al empezar | Interés del año | Capital al final |
+Ahora **compuesto**, mismo capital, mismo tipo, mismo plazo:
+
+| Año | Capital al empezar | Interés del año (5 % anual) | Capital al acabar |
 |---|---|---|---|
 | 1 | 1.000,00 € | 50,00 € | 1.050,00 € |
 | 2 | 1.050,00 € | 52,50 € | 1.102,50 € |
-| 3 | 1.102,50 € | 55,13 € | 1.157,63 € |
+| 3 | 1.102,50 € | 55,13 € | **1.157,63 €** |
 
-Con simple eran 1.150,00 €. Diferencia: **7,63 €**. A 3 años parece poco, pero el interés del año 3
-(55,13 €) ya es mayor que el del año 1 (50,00 €), y esa distancia se va abriendo cada vez más rápido.
+Frente a los 1.150,00 € del simple: **7,63 € más**. Poco a 3 años, pero la ventaja crece cada vez más rápido con el tiempo. Es la parte que sorprende la primera vez.
 
 ## La fórmula
 
 $$ C_f = C \cdot (1 + i)^n $$
 
-`n` es el número de periodos de capitalización (si el tipo es anual, en años). En el ejemplo:
-1.000,00 × 1,05³ = 1.000,00 × 1,157625 = **1.157,63 €**.
+`C` es el capital inicial, `i` el tipo en tanto por uno y `n` el número de periodos de capitalización (si `i` es anual, `n` en años). Aquí: 1.000,00 × 1,05³ = 1.000,00 × 1,157625 = 1.157,63 €.
 
 ## El error típico
 
-> [!info] Ampliación fuera de los apuntes
-> Calcular el interés de un año y multiplicarlo por `n` (eso es interés simple). También: creer que la
-> ventaja es grande a plazos cortos; a 3 años son 7,63 €, y es a 30 años cuando pesa.
+Pensar que "compuesto" es simplemente "un poco más". Al principio se parecen mucho; la diferencia está en el ritmo: el simple suma la misma cantidad cada año y el compuesto suma una cantidad mayor cada año.
 
 ## Practícalo
 
-→ **[¿Cuándo se dobla?](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-cuando-se-dobla.html)**
+→ **[[ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto|Simple frente a compuesto: qué pasa al alargar el plazo]]**
 
-Desde este concepto: cambia el tipo y los años y mira en qué momento el capital compuesto llega al doble,
-mientras el simple aún va por detrás. Lo que debería sorprender es lo lejos que queda el simple.
+Duplica los años y mira si la diferencia entre los dos se duplica.
 
-## Visto desde tus ingresos irregulares
-
-El colchón de un freelance ([[colchon-financiero]]) es dinero que se queda quieto meses. Si esos euros están
-en algo que paga un tipo anual y capitaliza, crecen sin que hagas nada; si están en el cajón, no. A qué
-tipo conviene dejarlo, **TODO:** el curso aún no lo ha explicado.
+> [!tip] Visto desde tus ingresos irregulares
+> Un mes bueno, el dinero que apartas y dejas quieto empieza a ganar intereses sobre intereses desde ese mes. Cuanto antes entra, más tiempo trabaja: aportar en el mes bueno pesa más que esperar a "regularizar" al final del año.
 
 ## Relacionados
 
 - [[interes-simple]] — el punto de comparación
 - [[capitalizacion]] — cada cuánto se suman los intereses al capital
 - [[regla-del-72]] — atajo para saber cuándo se dobla
-- [[inflacion]] — el mismo efecto acumulado, pero restando poder de compra
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez

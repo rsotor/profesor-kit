@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple frente a compuesto: qué pasa al alargar el plazo</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.5; }
+  h1 { font-size: 1.3rem; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; }
+  h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+  label { display: block; margin: 0.6rem 0 0.1rem; }
+  input[type=range] { width: 100%; }
+  button { margin: 0.3rem 0.3rem 0.3rem 0; padding: 0.5rem 0.8rem; font: inherit; cursor: pointer; }
+  table { border-collapse: collapse; width: 100%; margin-top: 0.5rem; }
+  td, th { border: 1px solid #8884; padding: 0.3rem 0.5rem; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+</style>
+</head>
+<body>
+<h1>Simple frente a compuesto: qué pasa al alargar el plazo</h1>
+<p>Conceptos: interés simple e interés compuesto. Mueve las condiciones, contesta primero y mira después.</p>
+
+<section>
+  <h2>1. Condiciones</h2>
+  <label for="capital">Capital: <b id="capital-v"></b></label>
+  <input type="range" id="capital" min="500" max="5000" step="100" value="1000">
+  <label for="tipo">Tipo de interés: <b id="tipo-v"></b></label>
+  <input type="range" id="tipo" min="1" max="10" step="1" value="5">
+  <label for="anios">Plazo: <b id="anios-v"></b></label>
+  <input type="range" id="anios" min="2" max="15" step="1" value="3">
+</section>
+
+<section>
+  <h2>2. Reto</h2>
+  <p id="reto"></p>
+  <button data-r="menos">Menos del doble</button>
+  <button data-r="doble">Justo el doble</button>
+  <button data-r="mas">Más del doble</button>
+</section>
+
+<section>
+  <h2>3. Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué, con las cifras de estas condiciones.</div>
+</section>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function euros(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+  function simple(c, i, n) { return c * (1 + i * n); }
+  function compuesto(c, i, n) { return c * Math.pow(1 + i, n); }
+
+  // Misma lógica que usa el botón: la diferencia compuesto - simple, ¿al doble de plazo es menos, el doble o más del doble?
+  window.verificar = function (caso) {
+    var c = Number(caso.capital), i = Number(caso.tipo) / 100, n = Number(caso.anios);
+    var d1 = compuesto(c, i, n) - simple(c, i, n);
+    var d2 = compuesto(c, i, 2 * n) - simple(c, i, 2 * n);
+    var razon = d2 / d1;
+    if (Math.abs(razon - 2) < 1e-9) return 'doble';
+    return razon > 2 ? 'mas' : 'menos';
+  };
+
+  function leer() { return { capital: $('capital').value, tipo: $('tipo').value, anios: $('anios').value }; }
+
+  function pintar() {
+    var s = leer();
+    $('capital-v').textContent = euros(Number(s.capital));
+    $('tipo-v').textContent = s.tipo + ' % anual';
+    $('anios-v').textContent = s.anios + ' años';
+    $('reto').textContent = 'Con estas condiciones, la diferencia entre lo que da el compuesto y lo que da el simple a ' +
+      s.anios + ' años, ¿cuánto crece si el plazo pasa a ' + (2 * s.anios) + ' años? (elige una)';
+    $('explicacion').textContent = 'Elige una respuesta y aquí verás por qué, con las cifras de estas condiciones.';
+  }
+
+  function responder(r) {
+    var s = leer(), c = Number(s.capital), i = Number(s.tipo) / 100, n = Number(s.anios);
+    var ok = window.verificar(s);
+    var d1 = compuesto(c, i, n) - simple(c, i, n);
+    var d2 = compuesto(c, i, 2 * n) - simple(c, i, 2 * n);
+    var html = (r === ok ? '<b>Correcto.</b> ' : '<b>No: era «' + { menos: 'menos del doble', doble: 'justo el doble', mas: 'más del doble' }[ok] + '».</b> ') +
+      'La diferencia pasa de ' + euros(d1) + ' a ' + euros(d2) + ' (' + (d2 / d1).toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ' veces). ' +
+      'El simple suma cada año lo mismo; el compuesto suma cada año un poco más que el anterior, y esa ventaja se acumula.' +
+      '<table><tr><th>Plazo</th><th>Simple</th><th>Compuesto</th></tr>' +
+      '<tr><td>' + n + ' años</td><td>' + euros(simple(c, i, n)) + '</td><td>' + euros(compuesto(c, i, n)) + '</td></tr>' +
+      '<tr><td>' + (2 * n) + ' años</td><td>' + euros(simple(c, i, 2 * n)) + '</td><td>' + euros(compuesto(c, i, 2 * n)) + '</td></tr></table>';
+    $('explicacion').innerHTML = html;
+  }
+
+  ['capital', 'tipo', 'anios'].forEach(function (id) { $(id).addEventListener('input', pintar); });
+  Array.prototype.forEach.call(document.querySelectorAll('button[data-r]'), function (b) {
+    b.addEventListener('click', function () { responder(b.getAttribute('data-r')); });
+  });
+  pintar();
+})();
+</script>
+</body>
+</html>

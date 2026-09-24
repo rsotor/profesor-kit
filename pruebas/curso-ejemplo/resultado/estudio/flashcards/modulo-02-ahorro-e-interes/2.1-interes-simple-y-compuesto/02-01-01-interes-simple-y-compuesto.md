@@ -7,22 +7,21 @@ sesion: 02-01-01-interes-simple-y-compuesto
 > El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
 > y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**¿Por qué decir solo «un interés del cinco por ciento» no es una información completa?**
+**Un banco te ofrece "un cinco por ciento". ¿Qué le falta a esa frase para poder compararla?**
 > [!success]- Respuesta
-> Falta el periodo: 5 % anual y 5 % mensual son cosas muy distintas. Un tipo siempre se dice con su periodo.
+> El periodo: un 5 % anual y un 5 % mensual no se parecen en nada.
 
-**¿Qué diferencia hay entre interés simple e interés compuesto?**
+**1.000,00 € al 5 % anual durante 3 años: ¿cuánto dan a interés simple y cuánto a compuesto?**
 > [!success]- Respuesta
-> En el simple los intereses se calculan siempre sobre el capital inicial. En el compuesto se suman al capital
-> y generan intereses ellos también.
+> Simple: 1.150,00 €. Compuesto: 1.157,63 €. Diferencia de 7,63 €.
 
-**1.000,00 € al 5 % anual durante 3 años: ¿cuánto queda con interés simple y cuánto con compuesto?**
+**¿Por qué el compuesto crece cada vez más rápido y el simple no?**
 > [!success]- Respuesta
-> Simple: 1.150,00 €. Compuesto: 1.157,63 €. La diferencia (7,63 €) crece con los años.
+> El simple calcula siempre sobre el capital inicial; el compuesto suma los intereses al capital y estos generan más intereses.
 
-**Con la regla del 72, ¿cuántos años tarda en doblarse un capital al 6 % anual, y para qué interés vale?**
+**Al 6 % anual, ¿en cuántos años se dobla un capital a interés compuesto y con qué regla lo calculas a ojo?**
 > [!success]- Respuesta
-> 72 ÷ 6 = 12 años, aproximadamente. Solo vale para interés compuesto, y es una aproximación (el exacto son 11,9 años).
+> Unos 12 años: regla del 72, 72 ÷ 6. Es una aproximación (exacto: 11,9 años).
 
 ---
-Conceptos que cubren: [[capital-y-tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[regla-del-72]]
+Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[regla-del-72]]

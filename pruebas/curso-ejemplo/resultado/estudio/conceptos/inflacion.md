@@ -1,47 +1,46 @@
 ---
 tipo: concepto
-bloques: ["1.1"]
-visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
+bloques: [1]
+visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
 alias: [subida general de precios]
-tags: []
+tags: [dinero, precios]
+ejercicio: 01-01-01-inflacion
 ---
 # Inflación
 
-> **En una frase:** La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-El dinero guardado debería conservar su valor (depósito de valor). Si los precios suben, no lo conserva:
-la cifra es la misma, pero compra menos.
+El dinero guardado debería mantener su valor (es el *depósito de valor*, ver [[funciones-del-dinero]]). Si los precios de casi todo suben a la vez, lo guardado compra cada vez menos, aunque la cifra no cambie.
 
 ## El ejemplo
 
-Con una inflación de 3 % anual, una cesta de la compra que hoy cuesta 100,00 € costará 103,00 € dentro de
-un año. Al revés: tus 100,00 € de hoy, dentro de un año, comprarán lo que hoy compran unos 97,00 €.
+Con una inflación de un 3 % anual, 100,00 € de hoy valen, en compra real, unos 97,00 € del año que viene. La cifra sigue siendo 100,00 €; lo que ha bajado es lo que se puede comprar con ella.
+
+> [!info] Ampliación fuera de los apuntes
+> Los apuntes dicen "unos 97 €". La cuenta exacta es 100,00 € ÷ 1,03 = 97,09 €. La diferencia es de 0,09 € y no cambia la idea.
 
 ## El error típico
 
-Confundir dos cosas:
+Confundir "sube el precio de una cosa" con "inflación". Un café puede subir por moda o por escasez de café: eso es una subida puntual. Inflación es cuando sube el **nivel general** de precios, de casi todo a la vez.
 
-| Situación | ¿Es inflación? |
-|---|---|
-| Sube el precio de una cosa concreta (por moda o por escasez de esa cosa) | No |
-| Sube el nivel general de precios, de casi todo a la vez | Sí |
+## Practícalo
 
-## Visto desde tus ingresos irregulares
+→ **[[ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion|Inflación: qué pasa con lo guardado]]**
 
-> [!info] Ampliación fuera de los apuntes
-> Un colchón para los meses flojos, guardado en efectivo, es justo el dinero que la inflación va
-> recortando: la cifra no baja, pero cada año cubre un poco menos de gasto. Cuánto colchón necesitas se
-> verá en el presupuesto (1.2); aquí solo el aviso de que guardarlo quieto no es gratis.
+Cambia la tasa de inflación anual y mira cuánto se pierde; después, separa qué es inflación y qué es una subida puntual.
+
+> [!tip] Visto desde tus ingresos irregulares
+> Si guardas dinero para los meses flojos, la inflación se lo come poco a poco: 500,00 € en el cajón no compran lo mismo a fin de año que a principios. Es un motivo para no dejar el colchón parado sin más, y se retoma en el módulo 2.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la inflación es el fallo del depósito de valor
-- [[liquidez]] — el otro lado de guardar dinero: qué tan rápido se puede usar
+- [[funciones-del-dinero]] — la inflación hace fallar el depósito de valor
+- [[liquidez]] — el otro factor de guardar dinero: lo fácil que es usarlo
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

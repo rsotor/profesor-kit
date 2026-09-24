@@ -29,7 +29,7 @@ intentos: 1
 
 ✍️ **Tu respuesta:**
 
-**4.** Una tarjeta te cobra un 2 por ciento de interés cada mes sobre lo que debes.
+**4.** Una tarjeta te cobra un 2 % mensual de interés sobre lo que debes.
 
 ¿Qué interés pagas? *(la cifra con su periodo)*
 
@@ -48,7 +48,7 @@ intentos: 1
 ✍️ **Tu respuesta:**
 
 > [!success]- Soluciones
-> 1. 20 por ciento (300 ÷ 1.500).
+> 1. 20 % mensual (300 ÷ 1.500).
 > 2. Lo tiene inmovilizado: no lo puede convertir en dinero disponible a tiempo para pagar.
 > 3. Liquidez.
 > 4. Un 2 % mensual (al mes). Sin el periodo, la cifra no dice cuánto pagas.
@@ -63,15 +63,15 @@ intentos: 1
 
 > [!example]- Intento 1 · 2026-09-24 · tus respuestas y la corrección
 >
-> ✅ Dominado → tasa-de-ahorro (el cálculo), liquidez (la idea: dinero atado que no llega a tiempo)
-> ⚠️ Hay que repasar → liquidez (el nombre, que la pregunta 3 pedía) y el periodo de una tasa (pregunta 4: falta «mensual»)
-> 🔴 Vuelve a la nota → gastos-fijos-y-variables — segundo fallo seguido: el alquiler es fijo aunque suba una vez al año con el IPC. Sigue sin estar el criterio «se repite con casi la misma cifra sin que tú decidas nada»
+> ✅ Dominado → tasa-de-ahorro
+> ⚠️ Hay que repasar → gastos-fijos-y-variables (1 fallo: alquiler con subida anual), colchon-financiero (1 sin contestar), liquidez (idea bien, sin el nombre), tasa de interés con periodo (falta el periodo)
+> 🔴 Vuelve a la nota → ninguno (ningún concepto con 2 o más fallos en este test)
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20 por ciento | ✅ Correcta | 300 ÷ 1.500 = 20 por ciento. La pregunta pedía una cifra, y la dio bien. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Con sus palabras: el dinero está inmovilizado en el piso y no llega a tiempo. Es exactamente la idea. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre | Describe bien lo que le falta al piso (poder venderlo rápido), pero la pregunta pedía el nombre del concepto: liquidez. La idea está; el nombre no. |
-> | 4 | 2 por ciento (sin periodo) | ⚠️ Le falta: el periodo | El 2 por ciento es correcto, pero la pregunta pedía la cifra con su periodo: un 2 % mensual. Sin el periodo, la cifra no dice cuánto pagas. Es el mismo hueco que en las preguntas 15 y 16 del examen del módulo 1. |
-> | 5 | Variable. | ❌ Incorrecta | Es fijo. Que el contrato lo actualice con el IPC una vez al año no lo convierte en variable: durante el año se repite con la misma cifra y no decides nada tú. Variable es lo que decides cada mes (ocio, comida). |
-> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | En blanco: no se puede decir si lo sabe. La respuesta era 3 meses de gastos con nómina fija (5-6 con ingresos irregulares, según la nota colchon-financiero). |
+> | 1 | 20 por ciento | ✅ Correcta | 20 % mensual = 300 ÷ 1.500. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no llega a tiempo: es justo lo que se pedía. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre (liquidez) | La idea es correcta (no lo puede vender rápido), pero la pregunta pedía el nombre del concepto y da una descripción. Nombre: liquidez. |
+> | 4 | 2 por ciento, sin periodo | ⚠️ Le falta: el periodo (mensual) | La cifra es correcta, pero la pregunta pedía la cifra con su periodo: un 2 % mensual. Sin periodo no dice cuánto pagas (regla del curso). |
+> | 5 | Variable. | ❌ Incorrecta | Es un gasto fijo: se repite cada mes con la misma cifra y no depende de ti; que se actualice una vez al año con el IPC no lo convierte en variable. |
+> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin contestar. El curso recomienda 3 meses de gastos con nómina fija (5-6 si los ingresos son irregulares). |

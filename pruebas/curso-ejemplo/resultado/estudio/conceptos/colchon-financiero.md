@@ -1,78 +1,58 @@
 ---
 tipo: concepto
-bloques: ["1.2"]
-visto_en: ["01-02-01-presupuesto-personal"]
+bloques: [1]
+visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
-requiere: [presupuesto, liquidez, gastos-fijos-y-variables]
-alias: [colchón, fondo de emergencia]
-tags: []
-ejercicio: 01-02-01-colchon-racha-floja
+requiere: [presupuesto-personal, liquidez]
+alias: [meses de gastos cubiertos]
+tags: [presupuesto, ahorro]
+ejercicio: 01-02-01-colchon-financiero
 ---
 # Colchón financiero
 
-> **En una frase:** Dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o llega un imprevisto, medido en meses de gastos.
+> **En una frase:** dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o llega un imprevisto; se mide en meses de gastos cubiertos.
 
 ## El problema
 
-Un mes sin ingresos o un imprevisto obliga a endeudarte o a vender algo con prisas. El colchón evita esa
-situación.
+Un mes flojo o un imprevisto obligan a gastar dinero que no entra. Sin reserva, no hay de dónde sacarlo. Por eso el colchón es el primer objetivo, antes de ahorrar para otra cosa.
 
 ## El ejemplo
 
-Con los 1.195,00 € de gastos del mes de clase, un colchón de 3 meses son 3 × 1.195,00 € = **3.585,00 €**.
-
-Uno de 6 meses serían 7.170,00 €.
-
-> [!warning] Cifra en revisión
-> Con los gastos de la hoja (1.222,00 €), 3 meses serían 3.666,00 €. Ver **Pendiente** de la sesión.
+Con 1.195,00 € de gastos al mes, un colchón de 3 meses son 3 × 1.195,00 € = **3.585,00 €**. Tiene que ser dinero [[liquidez|líquido]]: que se pueda usar ya, sin perder valor por las prisas.
 
 ## La fórmula
 
-$$ \text{colchón} = \text{meses de cobertura} \times \text{gastos mensuales} $$
+$$ \text{colchón} = \text{meses a cubrir} \times \text{gastos del mes} $$
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Guardarlo en algo que no se pueda usar ya (poca [[liquidez]]): un colchón que hay que vender para usarlo
-> no cumple su función. Y guardarlo quieto lo recorta la [[inflacion]]; eso se verá en el módulo 2.
+> Contar los meses con los ingresos en vez de con los gastos. El colchón cubre lo que sale, no lo que entraba.
 
 ## Practícalo
 
-→ **[Una racha floja](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-racha-floja.html)**
+→ **[[ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero.html|Colchón financiero: cuánto aguanta en una racha floja]]**
 
-Mueve lo que facturas en los meses flojos y la duración de la racha. Lo que debería sorprender: el colchón
-dura más meses de los que dice su cobertura, porque solo tapa la diferencia entre gastos y facturación, no
-los gastos enteros.
+Mueve los gastos y lo que facturas en el mes flojo, y mira cuánto dura el colchón: descubre que su tamaño depende de los gastos, y su duración, de lo que facturas.
 
-## Visto desde tus ingresos irregulares
+Para cuánto tarda en llenarse, el caso 3 de [[ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal|Presupuesto: qué cambia con un mes flojo]].
 
-Con nómina fija se recomiendan unos 3 meses; con ingresos irregulares, 5-6 meses (dato de la clase). La
-razón: un mes flojo no es raro en tu caso, es lo esperable.
+> [!tip] Visto desde tus ingresos irregulares
+> La clase apunta más alto para quien tiene ingresos irregulares: 5-6 meses en vez de 3. Con los gastos del ejemplo serían entre 5.975,00 € y 7.170,00 €.
 
 ## Relacionados
 
-- [[liquidez]] — el colchón tiene que poder gastarse ya
-- [[gastos-fijos-y-variables]] — de ellos sale la cifra mensual a cubrir
-- [[inflacion]] — lo que le pasa al dinero guardado quieto
+- [[liquidez]] — el colchón tiene que ser dinero que se pueda usar ya
+- [[gastos-fijos-y-variables]] — de ahí sale el gasto mensual que se cubre
+- [[presupuesto-personal]] — de donde sale el ahorro que lo llena
 
 ## Historial
 
-- **01-02-01** · primera vez
+- **01-02-01-presupuesto-personal** · primera vez
 
 > [!question]- Duda · 2026-09-24
 > no entiendo bien esta parte, ¿me lo explicas con otro ejemplo?
 >
-> **Respuesta:** no decías qué parte, así que va otro ejemplo de la idea entera, con tu caso. Supón unos
-> gastos de **1.000,00 €** al mes y un colchón de 5 meses: 5 × 1.000,00 € = **5.000,00 €**.
+> **Respuesta:** Otro ejemplo, con un mes flojo de verdad. Gastas 1.195,00 € al mes y un mes facturas solo 600,00 €. Te faltan 1.195,00 € − 600,00 € = **595,00 €**, y salen del colchón. Con un colchón de 3.585,00 € (3 meses de gastos) aguantarías más de 6 meses así (3.585,00 € ÷ 595,00 € ≈ 6,03). Fíjate en que el colchón se mide con lo que **gastas**, no con lo que facturas: por eso un mes de 600,00 € no lo hace más pequeño.
 >
-> | Mes | Facturas | Gastas | Sale del colchón | Colchón que queda |
-> |---|---|---|---|---|
-> | Bueno | 1.800,00 € | 1.000,00 € | 0,00 € | 5.000,00 € |
-> | Sin facturar | 0,00 € | 1.000,00 € | 1.000,00 € | 4.000,00 € |
-> | Flojo | 400,00 € | 1.000,00 € | 600,00 € | 3.400,00 € |
->
-> El colchón no se gasta en los meses buenos: solo tapa la diferencia en los flojos. Tras esos dos
-> meses te quedan 3.400,00 €, es decir, 3,4 meses de gastos todavía cubiertos.
->
-> **TODO:** preguntar al alumno qué parte concreta de la nota no se entiende (la fórmula, el ejemplo de
-> 3.585,00 € o el aviso de "Cifra en revisión"), para reexplicarla si esto no bastó.
+> **TODO:** la duda no decía qué parte no quedaba clara. Si era otra (la fórmula, el "líquido" o el 5-6 meses), dime cuál y la reexplico.

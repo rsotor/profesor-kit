@@ -1,47 +1,40 @@
 ---
 tipo: concepto
-bloques: ["1.1"]
-visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
-dificultad: 1
+bloques: [1]
+visto_en: [01-01-01-el-dinero-y-sus-funciones]
+dificultad: 2
 requiere: [funciones-del-dinero]
-alias: [líquido]
-tags: []
+alias: []
+tags: [dinero, ahorro]
 ---
 # Liquidez
 
-> **En una frase:** Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor no basta: hay que poder usarlo cuando hace falta. Algo que vale mucho pero tarda meses en
-venderse no sirve para pagar una factura de mañana.
+Tener valor guardado no basta: hay que poder usarlo cuando hace falta. Si lo que tienes tarda meses en convertirse en dinero, o solo lo vendes bien esperando, no te sirve para una urgencia.
 
 ## El ejemplo
 
-| Lo que tienes | Cuánto tardas en gastarlo | Liquidez |
-|---|---|---|
-| 50,00 € en la cartera | Al instante | Total |
-| Un piso | Meses, si quieres venderlo bien | Muy poca |
+- El dinero en la cartera es totalmente líquido: se gasta al instante.
+- Un piso es muy poco líquido: venderlo bien lleva meses.
 
-Si tuvieras que vender el piso en una semana, tendrías que bajar el precio: perderías valor por las prisas.
+Si mañana necesitas 300,00 €, la cartera resuelve el problema hoy; el piso, no.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundir "vale mucho" con "es líquido". Un piso vale mucho y es poco líquido; 50,00 € valen poco y son
-> totalmente líquidos. Son dos preguntas distintas.
+> Pensar que "tener valor" y "tener liquidez" son lo mismo. Un piso vale mucho, pero no puedes pagar el súper con él. Que algo valga dinero no dice cuánto tardas en tenerlo en la mano.
 
-## Visto desde tus ingresos irregulares
-
-> [!info] Ampliación fuera de los apuntes
-> Un mes flojo te exige dinero disponible ya, no dentro de unos meses. Por eso el colchón para esos meses
-> tiene que ser líquido; en el módulo 2 se compara con lo que rinde cada opción.
+> [!tip] Visto desde tus ingresos irregulares
+> En un mes flojo hay que pagar igual el alquiler. Por eso, para el colchón que cubre esos meses, cuenta lo rápido que puedes usarlo, no solo cuánto suma. Los apuntes lo dejan para el módulo 2, al comparar ahorrar (muy líquido) con invertir (a veces, menos líquido).
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero es lo más líquido que existe
-- [[inflacion]] — el otro riesgo de guardar dinero
+- [[funciones-del-dinero]] — el depósito de valor solo sirve si puedes usarlo
+- [[inflacion]] — el "enemigo" de guardar; la liquidez es su ventaja
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

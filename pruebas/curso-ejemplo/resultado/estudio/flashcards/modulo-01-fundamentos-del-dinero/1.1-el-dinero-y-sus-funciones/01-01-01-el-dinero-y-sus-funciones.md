@@ -7,21 +7,37 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 > El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
 > y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**El pescador vende su caja por 40,00 €, sin decir a cuántas gallinas equivale. ¿Qué función del dinero está usando? *(el nombre)***
+**Un café cuesta 1,50 € y un corte de pelo 12,00 €, y puedes compararlos sin hablar de gallinas. ¿Qué función del dinero es?**
 > [!success]- Respuesta
-> Unidad de cuenta: pone precio a todo con la misma vara de medir, y así se pueden comparar cosas distintas.
+> Unidad de cuenta: todo tiene precio con la misma vara de medir.
 
-**Guardas 100,00 € y un año después los precios generales han subido. ¿Cuál de las tres funciones del dinero falla? *(el nombre)***
-> [!success]- Respuesta
-> El depósito de valor: la cifra es la misma, pero compra menos.
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 24/9*
 
-**Sube el precio del aguacate por una mala cosecha, y nada más sube. ¿Es inflación? *(sí o no, y por qué en una frase)***
+**¿Qué problema del trueque resuelve el dinero como medio de cambio?**
 > [!success]- Respuesta
-> No. La inflación es la subida del nivel general de precios, de casi todo a la vez; esto es escasez de una sola cosa.
+> La doble coincidencia de deseos: el vendedor ya no tiene que querer justo lo que tú ofreces.
 
-**Tienes 50,00 € en la cartera y un coche. ¿Cuál es más líquido, y por qué? *(en una frase)***
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 24/9*
+
+**Sube el café de 1,50 € a 1,80 € y todo lo demás cuesta igual. ¿Es inflación? ¿Por qué?**
 > [!success]- Respuesta
-> Los 50,00 €: se gastan al instante. El coche te obligaría a venderlo, y con prisas perderías valor.
+> No. Es una subida puntual. La inflación es la subida general y sostenida del nivel de precios.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 24/9*
+
+**Tienes 300,00 € en la cartera y un piso. ¿Cuál es más líquido y por qué?**
+> [!success]- Respuesta
+> La cartera: se gasta al instante. El piso vale más, pero venderlo bien lleva meses.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 24/9*
 
 ---
 Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]

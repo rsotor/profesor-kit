@@ -17,19 +17,16 @@ slug | definición en una frase | bloques | dif | alias: sinónimos, nombre en o
 ## Conceptos
 
 ```
-capital-y-tipo-de-interes | El capital es el dinero de partida; el tipo de interés es el precio de tenerlo prestado durante un tiempo, y siempre se dice con su periodo. | 2.1 | 2 | alias: capital, tipo de interés, tasa de interés, precio del dinero
-capitalizacion | La capitalización es cada cuánto se suman los intereses al capital; cuanto más a menudo, más rápido crece el dinero. | 2.1 | 2 | alias: frecuencia de capitalización, capitalización mensual
-colchon-financiero | Dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o llega un imprevisto, medido en meses de gastos. | 1.2 | 2 | alias: colchón, fondo de emergencia
-funciones-del-dinero | El dinero sirve para tres cosas a la vez: medio de cambio, unidad de cuenta y depósito de valor. | 1.1 | 2 | alias: tres funciones del dinero, medio de cambio, unidad de cuenta, depósito de valor
-gastos-fijos-y-variables | Un gasto es fijo si se repite cada mes con casi la misma cifra sin que decidas nada; es variable si la cifra la decides tú ese mes. | 1.2 | 2 | alias: gastos fijos, gastos variables, fijos y variables
-inflacion | La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy. | 1.1 | 2 | alias: subida general de precios
-ingreso-medio | Si tus ingresos cambian de un mes a otro, se presupuesta con la media de los últimos 6-12 meses, no con el mejor mes. | 1.2 | 2 | alias: ingreso medio, ingresos irregulares, media de ingresos
-interes-compuesto | Con interés compuesto, los intereses de cada periodo se suman al capital y generan intereses ellos también, así que el dinero crece cada vez más deprisa. | 2.1 | 2 | alias: interés compuesto, interés sobre interés
-interes-simple | Con interés simple, los intereses se calculan siempre sobre el capital inicial y no se reinvierten, así que el dinero crece en línea recta. | 2.1 | 2 | alias: interés simple
-liquidez | Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas. | 1.1 | 1 | alias: líquido
-masa-monetaria | El M1 mide la cantidad de dinero en manos del público; es un indicador que sale en las noticias económicas. | 1.1 | 2 | alias: M1
-presupuesto | Apuntar lo que entra y lo que sale cada mes; lo que sobra es el ahorro del mes. | 1.2 | 2 | alias: presupuesto personal, ahorro del mes
-regla-del-72 | Un atajo para saber, sin calculadora, cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual. | 2.1 | 2 | alias: regla del 72, regla de 72
-tasa-de-ahorro | La parte de lo que ganas que te queda; sirve para comparar a personas con ingresos distintos. | 1.2 | 2 | alias: tasa de ahorro mensual
-trueque | Intercambiar un bien por otro directamente, sin dinero de por medio; solo funciona si cada parte quiere justo lo que la otra ofrece. | 1.1 | 1 | alias: doble coincidencia de deseos, intercambio directo
+funciones-del-dinero | el dinero sirve para tres cosas a la vez: cambiar cosas (medio de cambio), ponerles precio (unidad de cuenta) y guardar valor para más adelante (depósito de valor). | 1 | 2 | alias: medio de cambio, unidad de cuenta, depósito de valor, trueque
+inflacion | la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy. | 1 | 2 | alias: subida general de precios
+liquidez | lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas. | 1 | 2 | alias:
+presupuesto-personal | apuntar lo que entra y lo que sale cada mes; lo que sobra es el ahorro del mes. | 1 | 2 | alias: ahorro del mes, ingreso medio
+gastos-fijos-y-variables | los fijos se repiten cada mes con (casi) la misma cifra y no dependen de ti; los variables cambian según lo que decidas gastar. | 1 | 2 | alias: gastos fijos, gastos variables
+tasa-de-ahorro | la parte de lo que ingresas que te queda como ahorro, para poder comparar entre meses o entre personas con ingresos distintos. | 1 | 2 | alias:
+colchon-financiero | dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o llega un imprevisto; se mide en meses de gastos cubiertos. | 1 | 2 | alias: meses de gastos cubiertos
+tipo-de-interes | el precio del dinero: lo que se paga (o se cobra) por tener dinero prestado durante un tiempo, dicho siempre con su periodo; el capital es el dinero de partida sobre el que se calcula. | 2 | 2 | alias: capital, tasa de interés, precio del dinero
+interes-simple | los intereses se calculan siempre sobre el capital inicial y no se reinvierten, así que el dinero crece en línea recta. | 2 | 2 | alias:
+interes-compuesto | los intereses de cada periodo se suman al capital y generan intereses a su vez ("interés sobre interés"), así que el dinero crece cada vez más rápido. | 2 | 3 | alias: interés sobre interés
+capitalizacion | cada cuánto se suman los intereses al capital; cuanto más frecuente, más rápido crece el dinero. | 2 | 2 | alias: capitalización mensual, frecuencia de capitalización
+regla-del-72 | una cuenta rápida, sin calculadora, de cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual. | 2 | 2 | alias:
 ```

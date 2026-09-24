@@ -104,7 +104,9 @@ pesan causas entre sí, no hay ningún número que mover—.
    decide la respuesta correcta como `window.verificar = function (caso) {...}` — la misma que ya usa el
    botón, con los mismos campos que sus controles (mismos ids) — y barre casos con
    `node .kit/herramientas/verificar-ejercicio.js <ejercicio.html> --barrer 2000` (o `--casos <casos.json>` con
-   casos a mano, cada uno con su `esperado` si lo sabes). Comprueba que no hay excepciones, casos degenerados
+   casos a mano, cada uno con su `esperado` si lo sabes). Los casos a mano van en
+   `config/casos/<ejercicio>.json`, fuera de su bóveda, y **se quedan**: sirven para volver a comprobarlo si
+   cambias el ejercicio. No los borres (`rm` se deniega). Comprueba que no hay excepciones, casos degenerados
    ni empates entre lo que sale y lo que marca correcto. No lo compruebes con un script propio: se deniega
    igual que el `sed … node --check` de antes.
 4. Antes de cerrar, comprueba que la moraleja del ejercicio es la misma que la de la nota.

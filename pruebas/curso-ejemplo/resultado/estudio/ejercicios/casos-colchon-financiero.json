@@ -1,0 +1,7 @@
+[
+  {"gas": 1195, "mes": 3, "fac": 0, "esperado": "justo"},
+  {"gas": 1195, "mes": 3, "fac": 600, "esperado": "mas"},
+  {"gas": 1195, "mes": 3, "fac": 1190, "esperado": "mas"},
+  {"gas": 1195, "mes": 3, "fac": 1195, "esperado": "nunca"},
+  {"gas": 1195, "mes": 3, "fac": 2400, "esperado": "nunca"}
+]
