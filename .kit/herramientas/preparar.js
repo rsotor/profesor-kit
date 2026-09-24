@@ -136,13 +136,10 @@ function trabajar(raiz, id) {
     const ajustes = v.leerAjustes(raiz);
     const adaptador = v.leerAdaptador(raiz, ajustes.llm);
     const modelo = ((adaptador.modelo_recomendado && adaptador.modelo_recomendado.modelo) || 'sonnet').toLowerCase();
-    const prompt = construirPrompt(estado.ficheros, id);
-    const args = adaptador.segundo_plano.map(a => a.replace('{prompt}', prompt).replace('{modelo}', modelo));
-
-    // En Windows, el comando del adaptador suele ser un .cmd: solo se puede lanzar con `shell: true`. Con
-    // shell:true, Node escapa cada argumento por su cuenta (también las comillas del prompt).
-    const opciones = { cwd: dir, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, shell: process.platform === 'win32' };
-    const r = spawnSync(adaptador.comando, args, opciones);
+    const plan = comoLanzar({ comando: adaptador.comando, segundoPlano: adaptador.segundo_plano, promptPorStdin: adaptador.prompt_por_stdin === true,
+      prompt: construirPrompt(estado.ficheros, id), modelo });
+    if (plan.error) throw new Error(plan.error);
+    const r = lanzarAsistente(plan, dir);
     const ok = !r.error && r.status === 0;
     const salida = ((r.stdout || '') + (r.stderr || '') + (r.error ? `\n${r.error.message}` : '')).trim();
     fs.writeFileSync(registro, `${salida}\n`);
@@ -151,6 +148,48 @@ function trabajar(raiz, id) {
     try { fs.writeFileSync(registro, `Fallo inesperado preparando la clase: ${error.message}\n`); } catch { /* nada que hacer */ }
     try { actualizarEstado(dir, { fin: new Date().toISOString(), resultado: 'fallida' }); } catch { /* estado.json ni existía */ }
   }
+}
+
+// --- Cómo se lanza el asistente (issue #39, H01) ------------------------------------------------------
+
+// El prompt lleva nombres de ficheros del alumno: nunca pasa por una shell. Con `prompt_por_stdin` en el
+// adaptador va por la entrada estándar y los argumentos son solo valores fijos del adaptador más el modelo.
+// Sin shell, Node pasa cada argumento tal cual. La excepción es Windows con un comando `.cmd`/`.bat` (así se
+// instalan muchos asistentes con npm): solo se puede lanzar con cmd.exe, y entonces se exige que todos los
+// argumentos sean limpios (sin espacios, comillas ni & | < > ^ % !), cosa que un prompt nunca es.
+const ARGUMENTO_LIMPIO = /^[\w.:=/@+\\-]+$/;
+
+function resolverEnWindows(comando, entorno) {
+  if (path.isAbsolute(comando)) return comando;
+  const extensiones = ['', ...(entorno.PATHEXT || '.COM;.EXE;.BAT;.CMD').split(';').filter(Boolean)];
+  for (const dir of (entorno.PATH || entorno.Path || '').split(path.delimiter).filter(Boolean)) {
+    for (const ext of extensiones) {
+      const candidato = path.join(dir, comando + ext.toLowerCase());
+      if (fs.existsSync(candidato) && fs.statSync(candidato).isFile()) return candidato;
+    }
+  }
+  return comando;
+}
+
+function comoLanzar({ comando, segundoPlano, promptPorStdin, prompt, modelo, plataforma = process.platform, entorno = process.env }) {
+  if (!ARGUMENTO_LIMPIO.test(modelo)) return { error: `el modelo del adaptador no es válido: ${JSON.stringify(modelo)}` };
+  if (promptPorStdin && segundoPlano.some(a => a.includes('{prompt}'))) {
+    return { error: 'el adaptador tiene prompt_por_stdin y a la vez {prompt} en segundo_plano: el prompt va por uno de los dos sitios, no por los dos' };
+  }
+  const args = segundoPlano.map(a => a.replace('{modelo}', modelo).replace('{prompt}', prompt));
+  const entrada = promptPorStdin ? prompt : undefined;
+  if (plataforma !== 'win32') return { ejecutable: comando, args, entrada };
+  const resuelto = resolverEnWindows(comando, entorno);
+  if (!/\.(cmd|bat)$/i.test(resuelto)) return { ejecutable: resuelto, args, entrada };
+  if (!args.every(a => ARGUMENTO_LIMPIO.test(a)) || /["%&|<>^!]/.test(resuelto)) {
+    return { error: `en Windows, ${path.basename(resuelto)} solo se puede lanzar con argumentos fijos y limpios: pon prompt_por_stdin en el adaptador y quita {prompt} de segundo_plano` };
+  }
+  return { ejecutable: entorno.ComSpec || 'cmd.exe', args: ['/d', '/s', '/c', `""${resuelto}" ${args.join(' ')}"`], literal: true, entrada };
+}
+
+function lanzarAsistente(plan, cwd) {
+  return spawnSync(plan.ejecutable, plan.args, { cwd, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024,
+    input: plan.entrada === undefined ? '' : plan.entrada, windowsVerbatimArguments: plan.literal === true, shell: false });
 }
 
 // --- Juntar --------------------------------------------------------------------------------------------
@@ -335,6 +374,7 @@ function cli(args, raiz) {
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'preparar.js');
 
 module.exports = {
+  comoLanzar, lanzarAsistente,
   juntarPorFilas,
   lanzar, trabajar, juntar, cli, todasLasPreparaciones, formatearEstado, ficheroResoluble, pidVivo, descartarCopia,
   construirPrompt, dirDe, ramaDe,
