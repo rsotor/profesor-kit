@@ -40,6 +40,24 @@ Todo está también en la sección 0 de `docs/auditoria/2026-09-23-auditoria-del
    ¿encuentra las skills?, ¿`guardar.js` funciona? Cerrar la #36 con lo que salga.
 2. Actualizar el curso de Roberto a la 0.22.1 (con su profesor: `/actualizar`).
 
+## Pendiente sin decidir: permisos al trabajar desde Obsidian
+
+**Visto el 2026-09-23** al actualizar el curso de Roberto desde Claudian: decenas de peticiones de permiso parecidas.
+
+- Claudian abre el asistente en `estudio/`. Claude Code, desde ahí, solo aplica `estudio/.claude/settings.json`: la
+  lista de herramientas que el kit pone en la raíz no cuenta, y todo lo de fuera de `estudio/` (`config/`, `.kit/`)
+  pregunta. El modo normal de Claudian es `acceptEdits`, así que las notas de `estudio/` no preguntaban.
+- Los comandos improvisados (`python3`, `sed`, `cat`, `pdftotext`) preguntan siempre. Un comodín para ellos
+  (`python3 *`) equivale a darle vía libre: descartado.
+- Probado y válido **solo para Claude Code**: `estudio/.claude/settings.json` con `additionalDirectories: [".."]` y la
+  lista de herramientas del kit → cero permisos pedidos.
+
+**Decisión de Roberto:** no se hace un ajuste solo para Claude Code. Tiene que ser igual para todos: el alumno
+acepta una vez y el profesor puede editar todas sus notas y sesiones. Idea a pensar: que el profesor, cuando vea
+que le piden demasiados permisos, delegue en "su servicio técnico", que lo configura para el entorno de ese
+alumno (encaja con el campo `permisos` del adaptador de cada asistente, que hoy solo cubre la terminal).
+Relacionado: menos comandos improvisados (`AGENTS.md` y P8, lectura de PPTX y Excel con una herramienta del kit).
+
 ## Después: P4 + E4 y alumno simulado
 
 - Especificación aprobada: `docs/planes/2026-09-23-mi-perfil-y-evolucion.md`.
