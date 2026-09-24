@@ -491,11 +491,16 @@ function preguntasDeExamen(texto) {
 // preguntas pegadas. No se intenta detectar la unión con "y" sin un segundo `?` — da demasiados falsos
 // positivos en texto de dominio ("¿cuánto mide el lado de un cuadrado de 20 m² de área?" es una sola
 // pregunta, con una "y" perfectamente normal en el dato) y aquí conviene más callar que avisar de más.
+// Una opción de respuesta ("- a) …" del formato libre, "- [ ] a) …" del tipo test): su texto no es del
+// enunciado, así que un "?" ahí no cuenta como una segunda pregunta.
+const ES_OPCION = l => /^-\s*(\[[ xX]\]\s*)?[a-zA-Z]\)/.test(l.trim());
+
 function comprobarPreguntaDoble(raiz, informe) {
   for (const abs of v.recorrer(path.join(v.baseAlumno(raiz), 'examenes'), n => n.endsWith('.md'))) {
     const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
     for (const pregunta of preguntasDeExamen(fs.readFileSync(abs, 'utf8'))) {
-      const signos = (pregunta.match(/\?/g) || []).length;
+      const enunciado = pregunta.split('\n').filter(l => !ES_OPCION(l)).join('\n');
+      const signos = (enunciado.match(/\?/g) || []).length;
       if (signos >= 2) {
         const resumen = pregunta.replace(/\s+/g, ' ').trim().slice(0, 70);
         informe.avisos.push({ regla: 'pregunta-doble', fichero: rel, detalle: `"${resumen}…" tiene ${signos} signos de interrogación — probablemente son dos preguntas pegadas: sepáralas` });

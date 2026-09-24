@@ -171,6 +171,23 @@ test('examen-suspenso: un examen posterior aprobado que cubre la unidad lo apaga
   assert.deepEqual(perfil.senales(raiz).filter(s => s.tipo === 'examen-suspenso').map(s => s.examen), ['examenes/02-examen-2026-10-10.md']);
 });
 
+test('examen-suspenso: un examen final solo lo sustituye otro de su mismo escalón, no uno de módulo ni de otro escalón', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/final-1.md': exa('unidad: 01\nfecha: 2026-10-01\nnota: 4\ntipo_examen: final\nescalon: 1\naprobado: 7'),
+    'estudio/examenes/final-2.md': exa('unidad: 01\nfecha: 2026-10-05\nnota: 9\ntipo_examen: final\nescalon: 2\naprobado: 8'),
+    'estudio/examenes/01-examen-modulo.md': exa('unidad: 01\nfecha: 2026-10-06\nnota: 8'),
+  });
+  const suspensos = perfil.senales(raiz).filter(s => s.tipo === 'examen-suspenso').map(s => s.examen);
+  assert.deepEqual(suspensos, ['examenes/final-1.md'], 'ni el examen de módulo ni el escalón 2 apagan el escalón 1');
+});
+
+test('nombreExamen: el final se ve como tal en mi-perfil, no mezclado con los de módulo', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/final-1.md': exa('unidad: 01\nfecha: 2026-10-01\nnota: 8\ntipo_examen: final\nescalon: 1\naprobado: 7'),
+  });
+  assert.match(perfil.markdownPerfil(raiz), /Examen final \(escalón 1\)/);
+});
+
 test('intentos: "7/10" se lee; y el frontmatter manda sobre un último intento que no se entiende', () => {
   assert.deepEqual(perfil.intentosDe(exa('', '| 1 | 2026-10-01 | 4 | 1 | 1 | 1 | 0 |\n| 2 | 2026-10-05 | 7/10 | 1 | 1 | 1 | 0 |')).map(i => i.nota), [4, 7]);
   const raiz = cursoTemporal({

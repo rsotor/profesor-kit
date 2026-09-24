@@ -146,6 +146,14 @@ test('pregunta-doble: una sola pregunta, no avisa', () => {
   assert.equal(avisos(raiz, 'pregunta-doble').length, 0);
 });
 
+test('pregunta-doble: un "?" dentro de una opción no cuenta, solo los del enunciado', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\n---\n# Examen\n\n'
+      + '1. ¿Qué es alfa?\n\n- a) Una letra?\n- b) Un número\n\n✍️ **Tu respuesta:**\n',
+  });
+  assert.equal(avisos(raiz, 'pregunta-doble').length, 0);
+});
+
 test('pregunta-doble: sin la línea "✍️ **Tu respuesta:**" no sigue el formato de la skill, y no se cuenta (heurística conservadora)', () => {
   const raiz = cursoTemporal({
     'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\n---\n# Examen\n\n1. ¿Qué es alfa? ¿Por qué importa?\n',

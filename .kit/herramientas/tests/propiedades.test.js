@@ -18,6 +18,12 @@ test('lo que el kit escribe y lo que escribe Obsidian al marcar una casilla pasa
   assert.deepEqual(revisarPropiedades(fm('nota: 7,5\nestudiada: TRUE')), [], 'la coma decimal y las mayúsculas se aceptan');
 });
 
+test('aprobado y escalon (examen tipo test): mismas reglas que nota y intentos', () => {
+  assert.deepEqual(revisarPropiedades(fm('aprobado: 7\nescalon: 2')), []);
+  assert.deepEqual(motivos(fm('aprobado: 7/10')), [[2, 'aprobado: 7/10']]);
+  assert.deepEqual(motivos(fm('escalon: 1.5')), [[2, 'escalon: 1.5']]);
+});
+
 test('señala lo que el alumno escribe a su manera, con la línea del fichero', () => {
   assert.deepEqual(motivos(fm('tipo: sesion\nestudiada: sí')), [[3, 'estudiada: sí']]);
   assert.deepEqual(motivos(fm('estudiada: ok')), [[2, 'estudiada: ok']], 'cualquier forma, no una lista cerrada');

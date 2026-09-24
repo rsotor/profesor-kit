@@ -4,9 +4,9 @@ const path = require('node:path');
 const v = require('./vault');
 const { leerEstructura, unidadDe } = require('../organizar');
 const repaso = require('./repaso');
+const libExamenes = require('./examenes');
 
 const INICIO = 'inicio.md';
-const APROBADO_POR_DEFECTO = 5;
 const OTRAS_HOJAS = ['mi-perfil', 'mapa-del-curso', 'progreso', 'formulario', 'test-inicial', 'como-usar-tu-profesor'];
 const MARCA = { repasar: () => '🔁 repasar', superada: () => '✅ superada', faltan: e => `📝 faltan ${e.faltan}`, vacio: () => '' };
 
@@ -123,14 +123,20 @@ function leerExamenes(raiz) {
       fecha: /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : null,
       nota: v.numero(fm.nota),
       parcial: v.esCierto(fm.parcial),
+      tipoExamen: fm.tipo_examen ? String(fm.tipo_examen) : null,
+      escalon: v.numero(fm.escalon),
+      aprobado: libExamenes.aprobadoDeExamen(raiz, fm),
     };
   });
 }
 
-// La nota de una unidad es la de su último examen completo: nunca la media, que castiga haber mejorado.
-function notaDeUnidad(prefijo, examenes) {
-  const validos = examenes
-    .filter(e => !e.parcial && e.nota !== null && e.fecha && e.unidades.includes(prefijo))
+// La nota de una unidad es la de su último examen de módulo completo: nunca la media, que castiga haber
+// mejorado. Un examen final o de trimestre no es "de módulo" (esDeModulo, lib/examenes.js): abarca otro alcance
+// y no pone nota a una unidad sola.
+const deModulo = e => libExamenes.esDeModulo({ tipo_examen: e.tipoExamen, escalon: e.escalon });
+function notaDeUnidad(prefijo, listaExamenes) {
+  const validos = listaExamenes
+    .filter(e => !e.parcial && deModulo(e) && e.nota !== null && e.fecha && e.unidades.includes(prefijo))
     .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.rel.localeCompare(b.rel));
   return validos.length ? validos[validos.length - 1] : null;
 }
@@ -144,14 +150,23 @@ function progresoEnInicio(raiz) {
   return !(valor === false || /^(no|false)$/i.test(String(valor ?? '').trim()));
 }
 
+// El aprobado "global" de antes de examenes.json: solo lo usan examen.js y perfil.js cuando el examen no trae
+// nada propio (formato libre, de curso viejo). lib/examenes.js es ahora el único sitio que sabe resolverlo.
 function leerAprobado(raiz) {
-  const f = path.join(raiz, 'config', 'curso.md');
-  const fm = fs.existsSync(f) ? v.leerFrontmatter(fs.readFileSync(f, 'utf8')) : null;
-  return v.numero(fm && fm.aprobado) ?? APROBADO_POR_DEFECTO;
+  return libExamenes.aprobadoDeExamen(raiz, {});
 }
 
-const textoNota = (e, aprobado) =>
-  `📝 ${e.nota.toFixed(1).replace('.', ',')}${e.nota < aprobado ? ' suspenso' : ''} (${e.fecha})`;
+const textoNota = e =>
+  `📝 ${e.nota.toFixed(1).replace('.', ',')}${e.nota < e.aprobado ? ' suspenso' : ''} (${e.fecha})`;
+
+// La línea del examen final para inicio.md: sin exámenes finales (nadie ha creado ninguno), no sale.
+function lineaExamenFinal(raiz, listaExamenes) {
+  const finales = listaExamenes.filter(e => e.escalon !== null);
+  if (!finales.length) return null;
+  const info = libExamenes.infoFinal(raiz, finales);
+  if (info.pendiente === null) return `🎯 Examen final superado el ${info.fechaSuperado}`;
+  return `🎯 Examen final: escalón ${info.pendiente} de ${info.total} (aprobado: ${(info.aprobado * 10).toFixed(0)}%)`;
+}
 
 function aliasDe(s) {
   const clases = s.clases.join('-');
@@ -238,7 +253,6 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
   const sesiones = leerSesiones(raiz).sort(compararSesiones);
   const progreso = leerProgreso(raiz);
   const examenes = leerExamenes(raiz);
-  const aprobado = leerAprobado(raiz);
   const conProgreso = progresoEnInicio(raiz);
   const estado = new Map(sesiones.map(s => [s.id, estadoProfesor(s.conceptos, progreso)]));
   let posLogros = -1;
@@ -246,6 +260,9 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
   const l = [`# ${v.leerAjustes(raiz).nombre_curso || 'Mi curso'}`, '',
     '> Lo genera tu profesor cada vez que guarda: **no lo edites**. Cuando estudies una sesión, marca la casilla',
     '> **estudiada** arriba de su nota; aquí se verá la próxima vez que trabajes con tu profesor.', ''];
+
+  const finalLinea = lineaExamenFinal(raiz, examenes);
+  if (finalLinea) l.push(finalLinea, '');
 
   const repasar = sesiones.filter(s => estado.get(s.id).marca === 'repasar');
   if (repasar.length) l.push('🔁 Para repasar:', ...repasar.map(s => `- ${enlace(s)}`), '');
@@ -297,11 +314,11 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
         partes.push(`${conceptos.filter(c => dominado(progreso.get(c) || SIN_EVALUAR)).length}/${conceptos.length} conceptos dominados`);
       }
       const examen = notaDeUnidad(u.prefijo, examenes);
-      if (examen) partes.push(textoNota(examen, aprobado));
+      if (examen) partes.push(textoNota(examen));
       else if (nivel === 0) {
         partes.push(todas.every(s => s.estudiada) ? 'listo para el examen del módulo: pídeselo a tu profesor' : 'sin examen de módulo');
       }
-      if (conProgreso && nivel === 0 && examen && examen.nota >= aprobado) {
+      if (conProgreso && nivel === 0 && examen && examen.nota >= examen.aprobado) {
         logros.push(`🏁 ${partes[0]} superado el ${examen.fecha} con un ${examen.nota.toFixed(1).replace('.', ',')}`);
       }
       l.push(`${'#'.repeat(Math.min(nivel + 2, 6))} ${partes.join(' · ')}`, '');
@@ -321,6 +338,6 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
 
 module.exports = {
   INICIO, leerSesiones, compararSesiones, ordenAmbiguo, leerProgreso, estadoProfesor,
-  leerExamenes, notaDeUnidad, leerAprobado, progresoEnInicio, enlace, tituloDe, markdownInicio,
+  leerExamenes, notaDeUnidad, leerAprobado, lineaExamenFinal, progresoEnInicio, enlace, tituloDe, markdownInicio,
   MARCA_INICIO, MARCA_FIN, pieDeSesion, ponerPie, marcadoresRotos, piesDeSesion, sinPie,
 };

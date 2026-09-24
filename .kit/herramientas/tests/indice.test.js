@@ -119,6 +119,47 @@ test('leerAprobado: 5 por defecto, o el aprobado: de config/curso.md', () => {
   assert.equal(ix.leerAprobado(cursoTemporal({ 'config/curso.md': '---\nestado: configurado\naprobado: 6\n---\n# C\n' })), 6);
 });
 
+test('notaDeUnidad: un examen final o de trimestre no cuenta como examen de módulo', () => {
+  const raiz = cursoConIndice({
+    'estudio/examenes/01-02-final.md': examen('01-02', '2026-10-01', '9', 'tipo_examen: final\nescalon: 1\n'),
+    'estudio/examenes/01-02-trimestre.md': examen('01-02', '2026-10-02', '8', 'tipo_examen: trimestre\n'),
+  });
+  const ex = ix.leerExamenes(raiz);
+  assert.equal(ix.notaDeUnidad('01-02', ex), null);
+});
+
+test('leerExamenes: aprobado por examen (su propio aprobado:, o el de config/curso.md por defecto)', () => {
+  const raiz = cursoConIndice({
+    'config/curso.md': '---\naprobado: 6\n---\n# C\n',
+    'estudio/examenes/01-02-examen.md': examen('01-02', '2026-10-01', '7'),
+    'estudio/examenes/01-02-final.md': examen('01-02', '2026-10-01', '9', 'tipo_examen: final\nescalon: 1\naprobado: 7\n'),
+  });
+  const ex = ix.leerExamenes(raiz);
+  assert.equal(ex.find(e => e.rel.endsWith('01-02-examen.md')).aprobado, 6);
+  assert.equal(ex.find(e => e.rel.endsWith('01-02-final.md')).aprobado, 7);
+});
+
+test('lineaExamenFinal: sin exámenes finales, nada; con uno suspenso, el escalón sigue pendiente', () => {
+  const raiz = cursoTemporal();
+  assert.equal(ix.lineaExamenFinal(raiz, []), null);
+  const finales = [{ rel: 'examenes/final-1.md', escalon: 1, nota: 5, aprobado: 7, fecha: '2026-11-01' }];
+  assert.match(ix.lineaExamenFinal(raiz, finales), /🎯 Examen final: escalón 1 de 4 \(aprobado: 70%\)/);
+});
+
+test('lineaExamenFinal: el último escalón aprobado, la fecha en que se superó', () => {
+  const raiz = cursoTemporal();
+  const finales = [1, 2, 3, 4].map(n => ({ rel: `examenes/final-${n}.md`, escalon: n, nota: 10, aprobado: 7, fecha: `2026-11-0${n}` }));
+  assert.equal(ix.lineaExamenFinal(raiz, finales), '🎯 Examen final superado el 2026-11-04');
+});
+
+test('inicio: examen final pendiente sale como una línea, arriba', () => {
+  const raiz = cursoConIndice({
+    'estudio/examenes/final-1.md': examen('01', '2026-10-05', '6', 'tipo_examen: final\nescalon: 1\naprobado: 7\n'),
+  });
+  const md = ix.markdownInicio(raiz);
+  assert.match(md, /🎯 Examen final: escalón 1 de 4 \(aprobado: 70%\)/);
+});
+
 test('inicio: sigue por aquí, contadores, temario entero y tabla con alias escapado', () => {
   const md = ix.markdownInicio(cursoConIndice(), { pendientes: 3 });
   assert.match(md, /^# Inversión\n/);

@@ -382,3 +382,21 @@ test('migración 006: las flashcards de las sesiones estudiadas entran en el rep
   m.migrar(raiz);
   assert.equal(leer(raiz, 'estudio/flashcards/01-a.md'), despues);
 });
+
+test('migración 007: config/examenes.json con los valores por defecto; el aprobado de módulo hereda el de curso.md; idempotente y no lo toca', () => {
+  const m = require('../migraciones/007-examenes-json');
+  const raiz = cursoTemporal({ 'config/curso.md': '---\naprobado: 7\n---\n# Curso\n' });
+  m.migrar(raiz);
+  const cfg = JSON.parse(leer(raiz, 'config/examenes.json'));
+  assert.equal(cfg.tipos.modulo.aprobado, 7);
+  assert.equal(cfg.tipos.final.escalones.length, 4);
+  assert.equal(leer(raiz, 'config/curso.md'), '---\naprobado: 7\n---\n# Curso\n', 'curso.md no se toca');
+
+  const sinAprobado = cursoTemporal();
+  m.migrar(sinAprobado);
+  assert.equal(JSON.parse(leer(sinAprobado, 'config/examenes.json')).tipos.modulo.aprobado, 5);
+
+  fs.writeFileSync(path.join(raiz, 'config', 'examenes.json'), JSON.stringify({ opciones: 9 }));
+  m.migrar(raiz);
+  assert.equal(JSON.parse(leer(raiz, 'config/examenes.json')).opciones, 9, 'ya existía: no se toca');
+});
