@@ -31,7 +31,8 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
   Obsidian, y lo abres con doble clic.
 - **Puedes aceptar los permisos una sola vez.** Con tu sí, tu profesor edita tus notas y usa sus herramientas sin
   preguntarte a cada paso, solo dentro de tu curso (también desde Obsidian). Lo puedes quitar cuando quieras.
-  Con Claude Code; con Codex, en cuanto lo hayamos probado.
+  Con Claude Code y con Codex.
+- **Con Codex, tu profesor ya puede preparar una clase en segundo plano** mientras seguís con otra cosa.
 - **Cuando tu profesor prepara una clase en segundo plano, trabaja sin internet**: nada de lo que lee en tu
   material puede salir de tu ordenador ni traerle instrucciones de fuera.
 - **Si ya tenías tu curso:** tu profesor te ofrece aceptar los permisos una vez (`permisos.js --ver` y, con tu sí,

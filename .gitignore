@@ -5,6 +5,8 @@
 
 # El sí del alumno a los permisos (permisos.js): es de este ordenador, no del curso ni del motor.
 **/.claude/settings.local.json
+.codex/config.toml
+.codex/rules/profesor-kit.rules
 
 # Secretos: nunca entran en el repo
 .env

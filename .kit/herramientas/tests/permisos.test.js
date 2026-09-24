@@ -69,7 +69,50 @@ test('un settings.local.json que no es JSON válido no se pisa: se dice y no se 
   assert.ok(!fs.existsSync(path.join(raiz, '.claude', 'settings.local.json')), 'ni la raíz: todo o nada');
 });
 
-test('con un asistente que aún no sabe hacerlo (Codex), lo dice con su issue y no toca nada', () => {
+test('Codex: .codex/config.toml (la raíz del curso escribible, sin red) y reglas del proyecto; python pregunta', () => {
+  const raiz = curso({ llm: 'codex', extra: { '.kit/adaptadores/codex.json': JSON.stringify({ id: 'codex', comando: 'codex', aceptar_una_vez: { tipo: 'codex' } }) } });
+  assert.equal(estado(raiz).aplicado, false);
+  aplicar(raiz);
+  const config = fs.readFileSync(path.join(raiz, '.codex', 'config.toml'), 'utf8');
+  assert.match(config, /^# profesor-kit/);
+  assert.match(config, /^sandbox_mode = "workspace-write"$/m);
+  assert.match(config, /^approval_policy = "on-request"$/m);
+  assert.match(config, /\[sandbox_workspace_write\]\nwritable_roots = \['[^']+'\]\nnetwork_access = false/);
+  assert.ok(config.includes(`'${raiz}'`), 'la raíz de este curso, en este ordenador');
+  assert.ok(!/danger|never|full-access/.test(config), 'nunca el modo sin preguntar');
+  const reglas = fs.readFileSync(path.join(raiz, '.codex', 'rules', 'profesor-kit.rules'), 'utf8');
+  assert.match(reglas, /prefix_rule\(pattern=\["node", "\.kit\/herramientas\/comprobar\.js"\], decision="allow"\)/);
+  assert.match(reglas, /prefix_rule\(pattern=\["node", "\.\.\/\.kit\/herramientas\/guardar\.js"\], decision="allow"\)/);
+  assert.match(reglas, /prefix_rule\(pattern=\["git", "status"\], decision="allow"\)/);
+  assert.match(reglas, /prefix_rule\(pattern=\["python3"\], decision="prompt"\)/);
+  assert.doesNotMatch(reglas, /vault/);
+  assert.equal(estado(raiz).aplicado, true);
+  fs.rmSync(path.join(raiz, '.codex', 'rules', 'profesor-kit.rules'));
+  assert.equal(estado(raiz).parcial, true, 'uno sin el otro: a medias');
+  aplicar(raiz);
+  quitar(raiz);
+  assert.ok(!fs.existsSync(path.join(raiz, '.codex', 'config.toml')));
+  assert.ok(!fs.existsSync(path.join(raiz, '.codex', 'rules', 'profesor-kit.rules')));
+  assert.equal(estado(raiz).aplicado, false);
+});
+
+test('Codex: un .codex/config.toml que no escribió el kit no se pisa ni se borra', () => {
+  const suyo = 'model = "otro"\n';
+  const raiz = curso({ llm: 'codex', extra: { '.kit/adaptadores/codex.json': JSON.stringify({ id: 'codex', aceptar_una_vez: { tipo: 'codex' } }), '.codex/config.toml': suyo } });
+  assert.throws(() => aplicar(raiz), /\.codex\/config\.toml.*tuyo/);
+  assert.ok(!fs.existsSync(path.join(raiz, '.codex', 'rules', 'profesor-kit.rules')), 'todo o nada');
+  quitar(raiz);
+  assert.equal(fs.readFileSync(path.join(raiz, '.codex', 'config.toml'), 'utf8'), suyo);
+});
+
+test('una ruta con comilla simple va en una cadena TOML con escapes', () => {
+  const { cadenaToml } = require('../permisos');
+  assert.equal(cadenaToml('C:\\Users\\ana\\curso'), "'C:\\Users\\ana\\curso'");
+  assert.equal(cadenaToml("/Users/o'neil/curso"), '"/Users/o\'neil/curso"');
+  assert.equal(cadenaToml('C:\\a\'b'), '"C:\\\\a\'b"');
+});
+
+test('con un asistente que aún no sabe hacerlo, lo dice con su issue y no toca nada', () => {
   const raiz = curso({ llm: 'codex' });
   const e = estado(raiz);
   assert.equal(e.soportado, false);

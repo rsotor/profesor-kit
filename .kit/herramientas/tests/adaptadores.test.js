@@ -70,3 +70,24 @@ test('la matriz de soporte de LEEME.md dice lo mismo que los adaptadores', () =>
   const esperada = adaptadores.flatMap(([id, a]) => a.soporte.map(s => [id, s.sistema, s.estado, s.evidencia]));
   assert.deepEqual(matriz.sort(), esperada.sort());
 });
+
+// En Windows, un asistente instalado con npm es un .cmd, y solo se puede lanzar con argumentos limpios (sin comillas
+// ni metacaracteres de cmd): el segundo plano de cada adaptador tiene que poder lanzarse así.
+test('el segundo plano de cada adaptador se puede lanzar en Windows aunque su comando sea un .cmd', () => {
+  const { comoLanzar } = require('../preparar');
+  const bin = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'kit-cmd-'));
+  for (const [id, a] of adaptadores.filter(([, x]) => x.segundo_plano)) {
+    fs.writeFileSync(path.join(bin, `${a.comando}.cmd`), '@echo off');
+    const plan = comoLanzar({ comando: a.comando, segundoPlano: a.segundo_plano, promptPorStdin: a.prompt_por_stdin === true, prompt: 'p',
+      modelo: (a.modelo_recomendado && a.modelo_recomendado.id) || null, plataforma: 'win32', entorno: { PATH: bin, PATHEXT: '.CMD' } });
+    assert.equal(plan.error, undefined, `${id}: ${plan.error}`);
+    assert.equal(a.prompt_por_stdin, true, `${id}: el prompt, por la entrada estándar`);
+  }
+});
+
+test('el segundo plano de Codex va sin red: sandbox de escritura, sin búsqueda web y sin la configuración del usuario (issue #42)', () => {
+  const a = Object.fromEntries(adaptadores).codex;
+  assert.deepEqual(a.segundo_plano.slice(0, 4), ['exec', '--ephemeral', '--sandbox', 'workspace-write']);
+  assert.ok(a.segundo_plano.includes('web_search=disabled') && a.segundo_plano.includes('--ignore-user-config'));
+  assert.ok(!a.segundo_plano.some(x => /danger|bypass|full-access/.test(x)));
+});

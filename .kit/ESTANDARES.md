@@ -30,8 +30,9 @@ solo cuando aplican — no los inventes si no los tienes comprobados.
 Claude Code acepta un patrón con comodín (`Bash(node .kit/herramientas/<nombre>.js *)`) en un único
 fichero de proyecto. **No des por hecho que tu asistente hace lo mismo.** Codex CLI, por ejemplo:
 
-- Guarda las reglas en un fichero **de usuario**, fuera del curso (`~/.codex/rules/default.rules`), no
-  en un fichero del proyecto.
+- Lee las reglas del fichero **de usuario** (`~/.codex/rules/default.rules`) y, si la carpeta del curso es de
+  confianza, también las del proyecto, en `.codex/rules/` (comprobado con Codex CLI 0.156.1, issue #42). Así las
+  escribe `permisos.js --aplicar`, dentro del curso.
 - No entiende un comodín para "todo lo que empiece por `node .kit/herramientas/`": cada herramienta
   necesita su propia línea, con el patrón exacto:
 
