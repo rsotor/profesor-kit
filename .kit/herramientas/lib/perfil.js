@@ -103,7 +103,9 @@ function conceptosPorBloque(raiz) {
   for (const [slug, estado] of indice.leerProgreso(raiz)) {
     const f = path.join(base, 'conceptos', `${slug}.md`);
     const fm = fs.existsSync(f) ? v.leerFrontmatter(fs.readFileSync(f, 'utf8')) || {} : {};
-    const bloque = Array.isArray(fm.bloques) && fm.bloques.length ? `Bloque ${fm.bloques[0]}` : 'Sin bloque';
+    // Un número ("2") sale como "Bloque 2"; un nombre ("modulo-01") sale tal cual, sin "Bloque" delante.
+    const primero = Array.isArray(fm.bloques) && fm.bloques.length ? String(fm.bloques[0]) : null;
+    const bloque = primero === null ? 'Sin bloque' : /^\d/.test(primero) ? `Bloque ${primero}` : primero;
     if (!bloques.has(bloque)) bloques.set(bloque, { teoria: cero(), aplicacion: cero() });
     bloques.get(bloque).teoria[estado.teoria]++;
     bloques.get(bloque).aplicacion[estado.aplicacion]++;

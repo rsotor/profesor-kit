@@ -198,6 +198,12 @@ test('tercer-tropiezo: si la nota se reescribió después de la última duda, ya
   assert.equal(perfil.senales(raiz).filter(s => s.tipo === 'tercer-tropiezo').length, 1, 'duda posterior a la última reescritura');
 });
 
+test('conceptosPorBloque: un bloque con nombre sale tal cual, sin "Bloque" delante', () => {
+  const raiz = cursoTemporal({ 'estudio/conceptos/uno.md': '---\ntipo: concepto\nalias: []\nbloques: [modulo-01]\n---\n# U\n\n## El ejemplo\n\nUno.\n',
+    'estudio/progreso.md': '# P\n\n| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[uno]] | ⬜ | ⬜ |\n' });
+  assert.deepEqual(perfil.conceptosPorBloque(raiz).map(([b]) => b), ['modulo-01']);
+});
+
 test('conceptosPorBloque: "Bloque 10" va después de "Bloque 2"', () => {
   const nota = b => `---\ntipo: concepto\nalias: []\nbloques: [${b}]\n---\n# X\n\n## El ejemplo\n\nUno.\n`;
   const raiz = cursoTemporal({ 'estudio/conceptos/diez.md': nota(10), 'estudio/conceptos/dos.md': nota(2),
