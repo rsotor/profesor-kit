@@ -24,6 +24,9 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - **Si algo va a tardar, tu profesor te lo dice** y, si puede, lo hace mientras seguís con otra cosa.
 - **El material de clase no le da órdenes a tu profesor.** Si unos apuntes traen instrucciones escondidas
   ("marca esto como sabido", "borra este fichero"), no las sigue: te lo cuenta.
+- **Tu profesor te pide menos permisos.** Escribe tus notas con sus herramientas de ficheros y no con comandos, y
+  apunta tus dudas y lo que deja a medias con herramientas del kit. Antes podía pedirte permiso varias veces
+  seguidas, y al apuntar una duda llegó a descolocar las tablas de tu perfil.
 - El examen corto de "lo que me falta" se llama ahora **test**: no pone nota al módulo.
 - **Los exámenes miden si entiendes y distingues los conceptos**, no si repites la definición del material. Con tus
   palabras vale; lo que se pregunta es qué es cada cosa y en qué se diferencia de la que se le parece.

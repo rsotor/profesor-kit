@@ -129,9 +129,19 @@ const EXPLICACION = {
   'sin-repo': 'La carpeta del curso no es la raíz de su propio repositorio git (no tiene uno, o está dentro de otro): no se toca nada. Ejecuta node .kit/herramientas/diagnostico.js para ver cómo arreglarlo.',
 };
 
+// `--empezar "<qué>"`: la línea "en curso" del diario, antes de algo de varios pasos. Sin commit: se guarda con el
+// trabajo. La escribe la herramienta y no el profesor a mano: con `echo >>` pide permiso, y sin nadie delante (la
+// prueba real, el segundo plano) se deniega y el paso se queda sin hacer.
 function cli(args, raiz) {
+  if (args[0] === '--empezar') {
+    const que = (args[1] || '').trim();
+    if (!que) { console.error('Uso: node .kit/herramientas/guardar.js --empezar "<qué vas a hacer>"'); return 2; }
+    anotarEnDiario(raiz, `en curso: ${que}`);
+    console.log(`Anotado en el diario: en curso: ${que}.`);
+    return 0;
+  }
   const mensaje = args[0];
-  if (!mensaje) { console.error('Uso: node .kit/herramientas/guardar.js "<mensaje>"'); return 2; }
+  if (!mensaje) { console.error('Uso: node .kit/herramientas/guardar.js "<mensaje>"  ·  --empezar "<qué>"'); return 2; }
   const r = guardar({ raiz, mensaje });
   if (!r.guardado) { console.log(EXPLICACION[r.motivo]); return r.motivo === 'sin-cambios' ? 0 : 1; }
   console.log(r.subido ? 'Guardado y subido a GitHub.' : `Guardado en local. No se ha subido: ${r.motivoSubida}.`);

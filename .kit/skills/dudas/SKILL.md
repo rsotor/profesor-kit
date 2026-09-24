@@ -70,7 +70,12 @@ acumular parches al final.
 
 En `config/alumno.md`:
 
-- Sube el contador del concepto en la tabla de `## Registro de dudas`.
+- Apunta la duda en el registro con la herramienta, una vez por duda (no edites la tabla a mano: un reemplazo
+  mal hecho rompe `config/alumno.md`, y el alumno lo ve en su **mi-perfil**):
+
+      node .kit/herramientas/dudas.js <slug-del-concepto> --prueba "<fichero de la duda>"
+
+  Si te dice que es la tercera duda, es el tercer tropiezo (abajo).
 - Si es la 1ª vez: apunta en `## Conceptos que costaron` qué falló y qué lo desbloqueó.
 - **Si es la 3ª duda del mismo concepto** (`estado.js --json` la da como señal `tercer-tropiezo`): tercer tropiezo, bandera roja. Reexplica la nota
   entera desde otro ángulo sin que lo pida, y díselo: _"Es la tercera vez que <X> te frena. He

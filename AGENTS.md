@@ -163,7 +163,8 @@ apoya en eso.
   ángulo sin esperar a que lo pida, y se lo dices. `estado.js` te lo recuerda con la señal `tercer-tropiezo`.
 - **Cambios de estilo:** si la prueba contradice `config/profesor.md`, lo **propones** con la
   prueba delante. Solo lo cambias con su sí, y lo anotas en el historial de ese fichero.
-- `estudio/progreso.md` solo cambia con respuestas del alumno. Nunca al procesar una sesión.
+- `estudio/progreso.md` solo cambia con respuestas del alumno. Al procesar una sesión solo se añaden las filas
+  de sus conceptos nuevos, en ⬜ (sin evaluar); nunca se mueve el estado de una que ya estaba.
 - **El profesor también evoluciona, cuando hay señal.** Tras un examen puedes ofrecer dos preguntas (qué ayudó,
   qué estorbó), que él puede saltarse. Y cuando los datos digan que algo no funciona (fallos repetidos,
   dudas sobre lo mismo, un examen malo), revisas cómo explicas: lo de este alumno va a `config/profesor.md`
@@ -278,6 +279,8 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Al empezar cada sesión, para saber cómo está el curso | `node .kit/herramientas/estado.js` (`--json` para el detalle) |
 | Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
+| Antes de algo de varios pasos (la línea "en curso" del diario) | `node .kit/herramientas/guardar.js --empezar "<qué>"` |
+| Para apuntar una duda en el registro de `config/alumno.md` | `node .kit/herramientas/dudas.js <concepto> --prueba "<fichero>"` |
 | Para deshacer el último guardado | `node .kit/herramientas/deshacer.js` (antes, `--ver` para enseñar qué cambiaría) |
 | Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
@@ -289,13 +292,18 @@ Se ejecutan siempre así, con `/`, también en Windows:
 **Guardar es parte del trabajo, no un extra al final.** Cada cosa terminada y comprobada se guarda en el
 momento (una sesión procesada, una tanda de dudas, un examen corregido, un cambio en `config/`), aunque
 el alumno no lo pida y aunque no sea una skill: si has tocado un fichero del curso, termina con
-`guardar.js`. Antes de empezar algo que lleve varios pasos (procesar una clase, un examen), añade a
-`config/diario.md` una línea `- <fecha> · en curso: <qué>`: si la ventana se cierra a medias, la sesión
-siguiente sabrá qué pasó. `guardar.js` añade solo la línea de cierre. Cuando el alumno se despida, mira
+`guardar.js`. Antes de empezar algo que lleve varios pasos (procesar una clase, un examen),
+`guardar.js --empezar "<qué>"` deja en `config/diario.md` la línea **en curso**: si la ventana se cierra a medias,
+la sesión siguiente sabrá qué pasó. `guardar.js` añade solo la línea de cierre. Cuando el alumno se despida, mira
 `git status`: si queda algo sin guardar, guárdalo o dile qué se queda a medias.
 
 Nunca hagas `git add`, `git commit` ni `git push` a mano: `guardar.js` es quien decide si se puede
 subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no bloquean.
+
+**Los ficheros se crean y se editan con las herramientas de ficheros de tu asistente, nunca con comandos de
+shell** (`cat >`, `echo >>`, `sed -i`, `python`, `node -e`…). Cada comando pide permiso al alumno, y sin nadie
+delante (el segundo plano) se deniega y el paso se queda sin hacer. Lo que sí es un comando son las
+herramientas del kit de esta tabla: si hay una para lo que vas a hacer, úsala en vez de editar a mano.
 
 Mensajes de guardado: `sesion(<id>): <tema>` · `dudas: N resueltas` · `examen: <alcance>` ·
 `ejercicio: <concepto>` · `repaso: <alcance>` · `config: <qué cambió>`.

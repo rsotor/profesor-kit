@@ -52,8 +52,10 @@ function modeloRecomendado(destino) {
 // carpeta del curso y desde entonces se aplican sus reglas (.claude/settings.json); una carpeta temporal nueva no es
 // de confianza y Claude Code las ignora. Se las pasamos al lanzarlo (--allowedTools, al final: admite varias), y sin
 // las variables de la sesión que lanza la prueba, que cambian cómo pide permisos.
+// La salida en JSON trae qué se denegó (permission_denials): sin eso, un paso que se quedó sin hacer por un permiso
+// solo se podía adivinar (prueba real del 2026-09-24).
 function argsClaude({ prompt, modelo, permitidas }) {
-  const args = ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none'];
+  const args = ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none', '--output-format', 'json'];
   return permitidas.length ? [...args, '--allowedTools', ...permitidas] : args;
 }
 const VARIABLES_DE_SESION = /^(CLAUDECODE|CLAUDE_CODE_[A-Z_]+|CLAUDE_EFFORT|CLAUDE_JOB_DIR|CLAUDE_PID)$/;
@@ -66,6 +68,23 @@ function reglasDelCurso(cwd) {
   } catch { return []; }
 }
 
+// El texto de la respuesta y lo que se denegó, de la salida JSON de claude -p. Si no hay JSON (claude falló antes de
+// empezar), el texto tal cual: es lo que hay que leer para saber qué pasó.
+function leerSalidaClaude(stdout) {
+  const linea = String(stdout || '').split('\n').reverse().find(l => l.trim().startsWith('{'));
+  let json;
+  try { json = linea && JSON.parse(linea); } catch { json = null; }
+  if (!json || typeof json !== 'object') return { texto: String(stdout || '').trim(), denegaciones: [] };
+  const denegaciones = (json.permission_denials || []).map(d => {
+    const e = d.tool_input || {};
+    return { herramienta: d.tool_name, detalle: String(e.command || e.file_path || e.path || JSON.stringify(e)).slice(0, 300) };
+  });
+  return { texto: String(json.result ?? '').trim(), denegaciones };
+}
+
+// Las denegaciones del paso que se está ejecutando: invocarClaude las apunta aquí y ejecutarPaso se las lleva.
+let denegacionesDelPaso = [];
+
 function invocarClaude({ prompt, modelo, cwd, limiteMs }) {
   const inicio = Date.now();
   const r = spawnSync('claude', argsClaude({ prompt, modelo, permitidas: reglasDelCurso(cwd) }), {
@@ -73,9 +92,11 @@ function invocarClaude({ prompt, modelo, cwd, limiteMs }) {
   });
   const duracionMs = Date.now() - inicio;
   const agotado = !!(r.error && r.error.code === 'ETIMEDOUT');
+  const { texto, denegaciones } = leerSalidaClaude(r.stdout);
+  denegacionesDelPaso.push(...denegaciones);
   return {
-    ok: !agotado && r.status === 0, duracionMs, codigo: r.status, agotado,
-    salida: ((r.stdout || '') + (r.stderr || '')).trim(),
+    ok: !agotado && r.status === 0, duracionMs, codigo: r.status, agotado, denegaciones,
+    salida: [texto, (r.stderr || '').trim()].filter(Boolean).join('\n'),
   };
 }
 
@@ -83,11 +104,12 @@ function invocarClaude({ prompt, modelo, cwd, limiteMs }) {
 // anota como fallo de ESE paso y la prueba sigue con los demás. Nunca deja de escribir el resumen.
 function ejecutarPaso(pasos, nombre, fn) {
   const inicio = Date.now();
+  denegacionesDelPaso = [];
   try {
     const r = fn() || {};
-    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: r.ok === null ? null : r.ok !== false, detalle: r.detalle || 'ok', salidaLlm: r.salidaLlm });
+    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: r.ok === null ? null : r.ok !== false, detalle: r.detalle || 'ok', salidaLlm: r.salidaLlm, denegaciones: denegacionesDelPaso });
   } catch (error) {
-    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: false, detalle: `error: ${error.message}` });
+    pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: false, detalle: `error: ${error.message}`, denegaciones: denegacionesDelPaso });
   }
 }
 
@@ -318,6 +340,8 @@ function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conte
   const hechos = pasos.filter(x => x.ok !== null);
   const c = correccion || { bien: 0, total: 0 };
   l.push(`Resultado: ${hechos.filter(x => x.ok).length}/${hechos.length} pasos bien · corrección ${c.bien}/${c.total} · commit ${commit || 'desconocido'}`, '');
+  const denegados = pasos.flatMap(x => (x.denegaciones || []).map(d => ({ paso: x.paso, ...d })));
+  l.push(`Permisos denegados: ${denegados.length}`, '');
 
   l.push('## Pasos', '', '| Paso | Resultado | Duración | Qué se comprobó |', '|---|---|---|---|');
   for (const paso of pasos) {
@@ -332,6 +356,12 @@ function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conte
     l.push('## Lo que respondió el asistente en los pasos que fallaron', '');
     for (const x of fallidos) l.push(`### ${x.paso}`, '', '```text', String(x.salidaLlm).slice(-4000).replace(/```/g, "'''"), '```', '');
   }
+
+  // Cada permiso denegado es un paso que el profesor quiso hacer a mano y no pudo: con un alumno delante, una petición.
+  l.push('## Permisos denegados', '');
+  if (!denegados.length) l.push('- Ninguno.');
+  for (const d of denegados) l.push(`- **${d.paso}** · ${d.herramienta}: \`${String(d.detalle).replace(/`/g, "'").replace(/\s+/g, ' ')}\``);
+  l.push('');
 
   l.push('## Mi perfil', '');
   if (!perfil) l.push('- No calculado.', '');
@@ -469,4 +499,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla, argsClaude, entornoDeAlumno };
+module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla, argsClaude, entornoDeAlumno, leerSalidaClaude };

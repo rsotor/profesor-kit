@@ -281,3 +281,19 @@ test('esRepo: si el entorno no deja ejecutar git, lo dice como error de permiso,
   assert.throws(() => g.esRepo('/cualquier/sitio', { intentar: sinPermiso }), e => e.code === 'EPERM');
   assert.equal(g.esRepo('/no/existe/de/verdad', { intentar: () => ({ ok: false, motivo: 'error', salida: 'fatal', stdout: '' }) }), false);
 });
+
+test('--empezar deja la línea "en curso" en el diario, sin guardar nada; el guardado de después la cierra', () => {
+  const { cli } = require('../guardar');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  const diario = path.join(raiz, 'config', 'diario.md');
+  const hoy = new Date().toISOString().slice(0, 10);
+  const antes = git(raiz, 'rev-parse', 'HEAD');
+  assert.equal(cli(['--empezar', 'procesar la clase 3'], raiz), 0);
+  assert.match(fs.readFileSync(diario, 'utf8'), new RegExp(`- ${hoy} · en curso: procesar la clase 3\\n$`));
+  assert.equal(git(raiz, 'rev-parse', 'HEAD'), antes, 'no hace commit: se guarda con el trabajo');
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nx\n' });
+  guardar({ raiz, mensaje: 'sesion(s03): tema', hoy });
+  assert.match(fs.readFileSync(diario, 'utf8'), /en curso: procesar la clase 3\n- \d{4}-\d{2}-\d{2} · sesion\(s03\): tema\n$/);
+  assert.equal(cli(['--empezar'], raiz), 2, 'sin qué, no escribe nada');
+});

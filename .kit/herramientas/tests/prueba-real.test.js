@@ -248,3 +248,33 @@ test('argsClaude: las reglas del curso van en --allowedTools, al final; entornoD
   const env = entornoDeAlumno({ PATH: '/bin', HOME: '/h', CLAUDECODE: '1', CLAUDE_CODE_CHILD_SESSION: '1', CLAUDE_CODE_SESSION_ID: 'x', CLAUDE_PID: '9' });
   assert.deepEqual(Object.keys(env).sort(), ['HOME', 'PATH']);
 });
+
+test('argsClaude pide la salida en JSON; leerSalidaClaude saca el texto y lo que se denegó', () => {
+  const { argsClaude, leerSalidaClaude } = require('../../../pruebas/prueba-real');
+  const args = argsClaude({ prompt: 'x', modelo: 'm', permitidas: [] });
+  assert.equal(args[args.indexOf('--output-format') + 1], 'json');
+  const json = JSON.stringify({ type: 'result', result: 'hecho', permission_denials: [
+    { tool_name: 'Bash', tool_use_id: 't1', tool_input: { command: 'echo "- en curso" >> config/diario.md', description: 'x' } },
+    { tool_name: 'Write', tool_use_id: 't2', tool_input: { file_path: '/tmp/curso/estudio/examenes/01.md', content: 'largo' } },
+  ] });
+  assert.deepEqual(leerSalidaClaude(`aviso previo\n${json}\n`), {
+    texto: 'hecho',
+    denegaciones: [
+      { herramienta: 'Bash', detalle: 'echo "- en curso" >> config/diario.md' },
+      { herramienta: 'Write', detalle: '/tmp/curso/estudio/examenes/01.md' },
+    ],
+  });
+  assert.deepEqual(leerSalidaClaude('no es json'), { texto: 'no es json', denegaciones: [] }, 'si no hay JSON, el texto tal cual');
+});
+
+test('markdownResumen: sección de permisos denegados, por paso; sin ninguno, lo dice', () => {
+  const base = { fecha: '2026-10-01', version: '0.23.0', modelo: 'sonnet', sinLlm: false, informe: { errores: [], avisos: [] },
+    conteos: { conceptos: 0, sesiones: 0, flashcards: 0, ejercicios: 0, examenes: 0, repasos: 0, todo: 0, faltaInfo: 0, dudaPendiente: 0 } };
+  const con = markdownResumen({ ...base, pasos: [
+    { paso: '/dudas', ok: true, duracionMs: 1000, detalle: 'ok', denegaciones: [{ herramienta: 'Bash', detalle: 'sed -i s/1/2/ config/alumno.md' }] },
+    { paso: '/ejercicio', ok: true, duracionMs: 1000, detalle: 'ok', denegaciones: [] },
+  ] });
+  assert.match(con, /Permisos denegados: 1/);
+  assert.match(con, /## Permisos denegados\n\n- \*\*\/dudas\*\* · Bash: `sed -i s\/1\/2\/ config\/alumno\.md`\n/);
+  assert.match(markdownResumen({ ...base, pasos: [] }), /## Permisos denegados\n\n- Ninguno\.\n/);
+});
