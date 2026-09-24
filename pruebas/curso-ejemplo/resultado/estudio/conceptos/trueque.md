@@ -1,41 +1,44 @@
 ---
 tipo: concepto
-bloques: ["Módulo 1"]
+bloques: ["1.1"]
 visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
 dificultad: 1
 requiere: []
-alias: [doble coincidencia de deseos, barter]
+alias: [doble coincidencia de deseos, intercambio directo]
 tags: []
 ---
 # Trueque
 
-> **En una frase:** intercambiar bienes directamente, sin dinero de por medio; solo funciona si cada parte quiere justo lo que la otra ofrece.
+> **En una frase:** Intercambiar un bien por otro directamente, sin dinero de por medio; solo funciona si cada parte quiere justo lo que la otra ofrece.
 
 ## El problema
 
-Sin dinero, para conseguir algo tienes que ofrecer a cambio algo que el otro quiera, y en ese momento.
-Ese requisito se llama **doble coincidencia de deseos** y es lo que hace el trueque tan poco práctico.
+Antes de que existiera el dinero, cada trato dependía de una casualidad: que lo que tú ofrecías fuera
+justo lo que el otro quería, y en ese mismo momento.
 
 ## El ejemplo
 
-Un pastor tiene carne y quiere grano. Un agricultor tiene grano, pero esta semana no quiere carne.
-No hay trato, aunque los dos tengan algo valioso. Para cerrarlo, el pastor tendría que encontrar
-antes a alguien que quiera su carne y pague con algo que sí quiera el agricultor.
+Un pastor tiene dos gallinas y quiere un saco de grano. El agricultor tiene el grano, pero esta semana
+no quiere carne. No hay trato, aunque los dos tengan algo que el otro podría usar otro día.
 
-Cuando el trato sí sale, hay otro problema: ¿cuántas gallinas valen un saco de grano? Cada pareja de
-bienes necesita su propio "precio" (dos gallinas por un saco, pero ¿y por un corte de pelo?).
+Al pastor solo le queda buscar a otro agricultor, o esperar, o cambiar las gallinas por otra cosa que sí
+quiera el agricultor y luego cambiar eso por el grano. Cada paso cuesta tiempo.
+
+## El nombre
+
+A esa casualidad necesaria se la llama **doble coincidencia de deseos**: los dos deben querer lo que el
+otro ofrece, a la vez.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Pensar que el trueque falla porque "la gente no sabe cuánto vale cada cosa". No es eso: falla porque
-> los deseos no coinciden. Aunque todos supieran el valor de todo, el pastor seguiría sin poder pagar
-> con carne a quien no la quiere.
+> Pensar que el trueque falla porque "la gente no sabía valorar las cosas". No es eso: el fallo es de
+> coordinación (encontrar a quien quiere justo lo tuyo), no de valoración.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero resuelve este problema con tres funciones a la vez
+- [[funciones-del-dinero]] — las tres funciones con las que el dinero resuelve este problema
 
 ## Historial
 
-- **01-01-01-el-dinero-y-sus-funciones** · primera vez
+- **01-01-01** · primera vez

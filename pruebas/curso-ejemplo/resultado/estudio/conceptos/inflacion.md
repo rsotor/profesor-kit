@@ -1,57 +1,47 @@
 ---
 tipo: concepto
-bloques: ["Módulo 1"]
+bloques: ["1.1"]
 visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
 dificultad: 2
 requiere: [funciones-del-dinero]
 alias: [subida general de precios]
 tags: []
-ejercicio: 01-01-01-inflacion-o-precio-suelto
 ---
 # Inflación
 
-> **En una frase:** la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-Si el dinero pierde poder de compra con el tiempo, falla su función de depósito de valor (ver
-[[funciones-del-dinero]]): lo que guardas hoy compra menos mañana.
+El dinero guardado debería conservar su valor (depósito de valor). Si los precios suben, no lo conserva:
+la cifra es la misma, pero compra menos.
 
 ## El ejemplo
 
-Los precios suben una media del 3 % anual. Hoy tienes 100,00 € y con ellos compras una cesta de la
-compra. Dentro de un año esa cesta cuesta 103,00 €, así que tus 100,00 € ya no la cubren.
-
-Dicho al revés: tus 100,00 € de hoy valdrán, en compra real, unos 97,00 € de los de hoy. (Las
-diapositivas dan "unos 97 €".)
-
-> [!info] Ampliación fuera de los apuntes
-> Con la cuenta exacta, 100,00 € ÷ 1,03 = **97,09 €**. Los "97 €" de las diapositivas son una
-> aproximación por restar el 3 % anual a 100,00 €; la diferencia es de 0,09 €.
+Con una inflación de 3 % anual, una cesta de la compra que hoy cuesta 100,00 € costará 103,00 € dentro de
+un año. Al revés: tus 100,00 € de hoy, dentro de un año, comprarán lo que hoy compran unos 97,00 €.
 
 ## El error típico
 
-Confundir "sube el precio de una cosa" con "inflación". Un café puede subir por una mala cosecha, o unas
-zapatillas por una moda: son subidas de un precio suelto. Inflación es que suba el nivel general, casi
-todo a la vez, y de forma sostenida.
+Confundir dos cosas:
 
-## Practícalo
+| Situación | ¿Es inflación? |
+|---|---|
+| Sube el precio de una cosa concreta (por moda o por escasez de esa cosa) | No |
+| Sube el nivel general de precios, de casi todo a la vez | Sí |
 
-→ **[Inflación o precio suelto](../ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion-o-precio-suelto.html)**
-
-Cinco casos: decide si es inflación o no. Lo que debería sorprender es que una subida grande de un
-solo precio (de 80,00 € a 120,00 €) no es inflación, y una subida pequeña de casi todo, sí.
+## Visto desde tus ingresos irregulares
 
 > [!info] Ampliación fuera de los apuntes
-> **Visto desde tus ingresos irregulares:** si guardas dinero de los meses buenos para los flojos,
-> la inflación se come parte de ese colchón mientras espera. Cuanto más tiempo lo guardes, más
-> compra perderá.
+> Un colchón para los meses flojos, guardado en efectivo, es justo el dinero que la inflación va
+> recortando: la cifra no baja, pero cada año cubre un poco menos de gasto. Cuánto colchón necesitas se
+> verá en el presupuesto (1.2); aquí solo el aviso de que guardarlo quieto no es gratis.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la inflación rompe el depósito de valor
-- [[liquidez]] — la otra cara de guardar dinero
+- [[funciones-del-dinero]] — la inflación es el fallo del depósito de valor
+- [[liquidez]] — el otro lado de guardar dinero: qué tan rápido se puede usar
 
 ## Historial
 
-- **01-01-01-el-dinero-y-sus-funciones** · primera vez
+- **01-01-01** · primera vez

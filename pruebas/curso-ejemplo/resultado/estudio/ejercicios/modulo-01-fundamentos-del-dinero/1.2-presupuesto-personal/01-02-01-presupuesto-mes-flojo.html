@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Un mes flojo · Presupuesto</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: .8rem 1rem; margin: 1rem 0; }
+  h1 { font-size: 1.4rem; } h2 { font-size: 1.05rem; margin-top: 0; }
+  label { display: block; margin: .6rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem 1rem; margin: .3rem .3rem .3rem 0; cursor: pointer; }
+  .ok { color: #1a7f37; } .mal { color: #c62828; }
+</style>
+</head>
+<body>
+<h1>Un mes flojo</h1>
+<p>Practica: <em>presupuesto</em> y <em>tasa de ahorro</em>. Los gastos fijos son los de la clase (715,00 €) y no se mueven.</p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <label>Ingresos del mes: <strong id="vIng"></strong></label>
+  <input type="range" id="ing" min="800" max="3000" step="50" value="1850">
+  <label>Gastos variables del mes: <strong id="vVar"></strong></label>
+  <input type="range" id="vari" min="200" max="800" step="10" value="480">
+  <p>Gastos fijos: 715,00 € (alquiler, seguro, suscripciones).</p>
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p id="pregunta">Pulsa «Caso nuevo» para empezar. Tendrás que responder antes de ver ninguna cuenta.</p>
+  <button id="nuevo">Caso nuevo</button>
+  <div id="botones" hidden>
+    <button data-r="ahorra">Sobra dinero (ahorro positivo)</button>
+    <button data-r="pierde">Se gasta más de lo que entra</button>
+  </div>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <p id="expl">Elige una respuesta y aquí verás por qué: el ahorro del mes y su tasa de ahorro.</p>
+</section>
+
+<script>
+(function () {
+  var FIJOS = 715;
+  var casos = [
+    { ing: 1300, vari: 480 }, { ing: 1300, vari: 600 }, { ing: 1200, vari: 480 },
+    { ing: 1100, vari: 480 }, { ing: 2400, vari: 480 }, { ing: 1500, vari: 800 }
+  ];
+  var actual = null, ultimo = -1;
+  var $ = function (id) { return document.getElementById(id); };
+  var eur = function (n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; };
+  var num1 = function (n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); };
+
+  function pintar() {
+    $('vIng').textContent = eur(+$('ing').value);
+    $('vVar').textContent = eur(+$('vari').value);
+  }
+  $('ing').oninput = pintar; $('vari').oninput = pintar; pintar();
+
+  $('nuevo').onclick = function () {
+    var i; do { i = Math.floor(Math.random() * casos.length); } while (i === ultimo);
+    ultimo = i; actual = casos[i];
+    $('ing').value = actual.ing; $('vari').value = actual.vari; pintar();
+    $('pregunta').textContent = 'Este mes entran ' + eur(actual.ing) + ' y los gastos variables son ' + eur(actual.vari) +
+      '. Con los gastos fijos de siempre, ¿el mes cierra con dinero sobrante o gastando de más? (elige una opción)';
+    $('botones').hidden = false;
+    $('expl').textContent = 'Elige una respuesta y aquí verás por qué: el ahorro del mes y su tasa de ahorro.';
+  };
+
+  $('botones').onclick = function (e) {
+    var r = e.target.getAttribute('data-r');
+    if (!r || !actual) return;
+    var gastos = FIJOS + actual.vari, ahorro = actual.ing - gastos;
+    var correcta = ahorro > 0 ? 'ahorra' : 'pierde';
+    var tasa = ahorro / actual.ing * 100;
+    var acierto = r === correcta;
+    $('expl').innerHTML = '<strong class="' + (acierto ? 'ok' : 'mal') + '">' + (acierto ? 'Correcto.' : 'No.') + '</strong> ' +
+      'Gastos: ' + eur(FIJOS) + ' + ' + eur(actual.vari) + ' = ' + eur(gastos) + '. ' +
+      'Ahorro del mes: ' + eur(actual.ing) + ' − ' + eur(gastos) + ' = <strong>' + eur(ahorro) + '</strong>. ' +
+      'Tasa de ahorro: ' + num1(tasa) + ' % mensual. ' +
+      (ahorro <= 0 ? 'Los fijos no bajan cuando facturas menos, así que lo único que se puede recortar son los variables.'
+                   : 'Sobra, pero fíjate en lo pequeña que es la tasa comparada con la del ingreso medio de 1.850,00 €: baja mucho más deprisa que los ingresos.');
+  };
+})();
+</script>
+</body>
+</html>

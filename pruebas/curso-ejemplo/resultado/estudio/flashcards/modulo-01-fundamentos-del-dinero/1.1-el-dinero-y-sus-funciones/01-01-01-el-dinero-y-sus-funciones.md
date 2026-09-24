@@ -4,23 +4,24 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 ---
 # Flashcards · 01-01-01-el-dinero-y-sus-funciones
 
-> Se responde mentalmente antes de desplegar.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**¿Cuáles son las tres funciones del dinero? Di qué hace cada una en una frase.**
+**El pescador vende su caja por 40,00 €, sin decir a cuántas gallinas equivale. ¿Qué función del dinero está usando? *(el nombre)***
 > [!success]- Respuesta
-> Medio de cambio (se acepta a cambio de cualquier bien), unidad de cuenta (pone precio a todo con la misma vara) y depósito de valor (se guarda hoy para usar más adelante).
+> Unidad de cuenta: pone precio a todo con la misma vara de medir, y así se pueden comparar cosas distintas.
 
-**Un pescador dice "esta caja vale 40,00 €" sin decir a cuántas gallinas equivale. ¿Qué función usa?**
+**Guardas 100,00 € y un año después los precios generales han subido. ¿Cuál de las tres funciones del dinero falla? *(el nombre)***
 > [!success]- Respuesta
-> Unidad de cuenta.
+> El depósito de valor: la cifra es la misma, pero compra menos.
 
-**Una tienda sube el café de 1,50 € a 1,80 € por una mala cosecha y no cambia nada más. ¿Es inflación? ¿Por qué?**
+**Sube el precio del aguacate por una mala cosecha, y nada más sube. ¿Es inflación? *(sí o no, y por qué en una frase)***
 > [!success]- Respuesta
-> No. Sube un solo precio. Inflación es una subida general y sostenida del nivel de precios.
+> No. La inflación es la subida del nivel general de precios, de casi todo a la vez; esto es escasez de una sola cosa.
 
-**¿Qué es más líquido, un piso o 300,00 € en la cartera? ¿Por qué?**
+**Tienes 50,00 € en la cartera y un coche. ¿Cuál es más líquido, y por qué? *(en una frase)***
 > [!success]- Respuesta
-> Los 300,00 € en la cartera: se gastan al instante. Un piso tarda meses en venderse bien.
+> Los 50,00 €: se gastan al instante. El coche te obligaría a venderlo, y con prisas perderías valor.
 
 ---
-Conceptos que cubren: [[trueque]] · [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]
+Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]

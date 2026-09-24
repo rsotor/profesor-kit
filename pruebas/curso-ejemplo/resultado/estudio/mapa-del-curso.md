@@ -4,13 +4,14 @@
 
 | Bloque | Sesiones procesadas | Conceptos | Estado |
 |---|---|---|---|
+| 1.1 El dinero y sus funciones | 1 | 5 | Procesada; sin estudiar |
+| 1.2 Presupuesto personal | 1 | 5 | Procesada; sin estudiar |
+| 2.1 Interés simple y compuesto | 1 | 5 | Procesada; sin estudiar |
 
 ## Cobertura del material
 
-| Clase del centro | Sesión | Qué quedó | Qué falta |
-|---|---|---|---|
-| 1.1 El dinero y sus funciones | 01-01-01 | Diapositivas 2-5 en [[trueque]], [[funciones-del-dinero]], [[inflacion]], [[liquidez]] | Diapositiva 6 (patrón oro, solo título) y 7 (masa monetaria M1, una frase): FALTA INFO |
-| 1.2 Presupuesto personal | 01-02-01 | Diapositivas 1-3, 5-6 en [[presupuesto]], [[gastos-fijos-y-variables]], [[tasa-de-ahorro]], [[colchon-financiero]]; la 4 y la hoja, como auditoría | Cifra de Suscripciones (25,00 € en la diapositiva, 52,00 € en la hoja): FALTA INFO |
-| 2.1 Interés simple y compuesto | 02-01-01 | Diapositivas 1-6 en [[capital-y-tipo-de-interes]], [[interes-simple]], [[interes-compuesto]], [[capitalizacion]], [[regla-del-72]] | Cifra de la capitalización mensual (la diapositiva 4 no la da; es cálculo propio): TODO |
-
-## Sesiones
+| Clase del centro | Quedó en | Falta |
+|---|---|---|
+| Clase 1.1 · El dinero y sus funciones | 01-01-01-el-dinero-y-sus-funciones | Diapositiva 6 (patrón oro): solo traía el título. Diapositiva 7 (M1): solo la definición |
+| Clase 1.2 · Presupuesto personal (diapositivas + hoja de cálculo) | 01-02-01-presupuesto-personal | Cifra de Suscripciones sin resolver (25,00 € en la diapositiva 4 frente a 52,00 € en la hoja): FALTA INFO |
+| Clase 2.1 · Interés simple y compuesto (diapositivas) | 02-01-01-interes-simple-y-compuesto | Diapositiva 6 (resumen): repite las 2, 3 y 5, sin nota propia. Diapositiva 4 sin cifras: la cuenta de la capitalización es ampliación |

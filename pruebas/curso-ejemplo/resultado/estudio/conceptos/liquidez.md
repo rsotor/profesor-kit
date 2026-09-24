@@ -1,47 +1,47 @@
 ---
 tipo: concepto
-bloques: ["Módulo 1"]
+bloques: ["1.1"]
 visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
-dificultad: 2
+dificultad: 1
 requiere: [funciones-del-dinero]
-alias: [líquido, poco líquido]
+alias: [líquido]
 tags: []
 ---
 # Liquidez
 
-> **En una frase:** lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor guardado no basta: si lo necesitas mañana y no puedes convertirlo en dinero sin
-malvenderlo, no te sirve.
+Tener valor no basta: hay que poder usarlo cuando hace falta. Algo que vale mucho pero tarda meses en
+venderse no sirve para pagar una factura de mañana.
 
 ## El ejemplo
 
-- El dinero en la cartera es **totalmente líquido**: lo gastas al instante.
-- Un piso es **muy poco líquido**: venderlo bien lleva meses, y si vendes con prisa aceptas menos.
+| Lo que tienes | Cuánto tardas en gastarlo | Liquidez |
+|---|---|---|
+| 50,00 € en la cartera | Al instante | Total |
+| Un piso | Meses, si quieres venderlo bien | Muy poca |
 
-Si mañana tienes que pagar una factura de 300,00 €, la cartera resuelve el problema; el piso, no.
+Si tuvieras que vender el piso en una semana, tendrías que bajar el precio: perderías valor por las prisas.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que "líquido" significa "valioso". Un piso vale mucho y es poco líquido; 20,00 € en la
-> cartera valen poco y son totalmente líquidos. Son dos preguntas distintas: cuánto vale, y en cuánto
-> tiempo y con qué pérdida se convierte en dinero.
+> Confundir "vale mucho" con "es líquido". Un piso vale mucho y es poco líquido; 50,00 € valen poco y son
+> totalmente líquidos. Son dos preguntas distintas.
+
+## Visto desde tus ingresos irregulares
 
 > [!info] Ampliación fuera de los apuntes
-> **Visto desde tus ingresos irregulares:** el dinero que apartas para los meses flojos debería ser
-> muy líquido, porque lo vas a necesitar justo cuando no facturas.
+> Un mes flojo te exige dinero disponible ya, no dentro de unos meses. Por eso el colchón para esos meses
+> tiene que ser líquido; en el módulo 2 se compara con lo que rinde cada opción.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el depósito de valor solo sirve si se puede gastar cuando hace falta
-- [[inflacion]] — el enemigo de guardar dinero; la liquidez es su ventaja
+- [[funciones-del-dinero]] — el dinero es lo más líquido que existe
+- [[inflacion]] — el otro riesgo de guardar dinero
 
 ## Historial
 
-- **01-01-01-el-dinero-y-sus-funciones** · primera vez
-
-**TODO:** las diapositivas anuncian que en el módulo 2 se compara ahorrar (muy líquido) con invertir
-(a veces, menos líquido). Añadir el ejemplo del alumno cuando se procese ese módulo.
+- **01-01-01** · primera vez
