@@ -309,7 +309,7 @@ function lanzarAsistente(plan, cwd, limiteMs) {
 function generadoEntero(rel) {
   if (rel === 'estudio/ejercicios/_index.md') return true;
   const base = path.posix.basename(rel);
-  return rel.startsWith('estudio/') && !rel.startsWith('estudio/sesiones/') && ['inicio.md', 'pendientes.md', 'formulario.md', 'auditoria-del-material.md'].includes(base);
+  return rel.startsWith('estudio/') && !rel.startsWith('estudio/sesiones/') && ['inicio.md', 'pendientes.md', 'formulario.md', 'auditoria-del-material.md', 'mi-perfil.md'].includes(base);
 }
 const sinEstadoReadme = texto => texto.replace(/^## Estado\s*\n[\s\S]*?(?=^## |(?![\s\S]))/m, '## Estado\n\n');
 function parteEscrita(rel) {

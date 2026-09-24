@@ -9,6 +9,7 @@ const { comprobar } = require('./comprobar');
 const { pendientes, markdownPendientes, markdownAuditoria, markdownFormulario, markdownEjercicios, actualizarEstadoReadme } = require('./lib/generados');
 const { CARPETA_ALUMNO } = require('./lib/vault');
 const indice = require('./lib/indice');
+const perfil = require('./lib/perfil');
 
 const DIARIO_CABECERA = `# Diario del curso
 
@@ -42,9 +43,10 @@ function regenerarGenerados(raiz) {
     const fichero = path.join(base, ...rel.split('/'));
     escribirSiCambia(fichero, indice.ponerPie(fs.readFileSync(fichero, 'utf8'), pie));
   }
-  // Antes que inicio.md: "Otras hojas" mira si formulario.md existe en disco, y tiene que verlo ya escrito
+  // Antes que inicio.md: "Otras hojas" mira si formulario.md y mi-perfil.md existen en disco, y tiene que verlos ya escritos
   // la primera vez que se genera (si no, la próxima vez que se guarde cambiaría solo por eso).
   escribirSiCambia(path.join(base, 'formulario.md'), markdownFormulario(raiz));
+  escribirSiCambia(path.join(base, perfil.PERFIL), perfil.markdownPerfil(raiz));
   escribirSiCambia(path.join(base, 'ejercicios', '_index.md'), markdownEjercicios(raiz));
   escribirSiCambia(path.join(base, indice.INICIO), indice.markdownInicio(raiz, { pendientes: pendientes(raiz).length }));
   escribirSiCambia(path.join(base, 'pendientes.md'), markdownPendientes(raiz));

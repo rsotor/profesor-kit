@@ -6,7 +6,7 @@ const { leerEstructura, unidadDe } = require('../organizar');
 
 const INICIO = 'inicio.md';
 const APROBADO_POR_DEFECTO = 5;
-const OTRAS_HOJAS = ['mapa-del-curso', 'progreso', 'formulario', 'test-inicial', 'como-usar-tu-profesor'];
+const OTRAS_HOJAS = ['mi-perfil', 'mapa-del-curso', 'progreso', 'formulario', 'test-inicial', 'como-usar-tu-profesor'];
 const MARCA = { repasar: () => '🔁 repasar', superada: () => '✅ superada', faltan: e => `📝 faltan ${e.faltan}`, vacio: () => '' };
 
 // El índice del curso: estudio/inicio.md y el pie de navegación de cada sesión. Aquí solo se calcula; quien
