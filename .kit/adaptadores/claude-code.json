@@ -18,7 +18,10 @@
     "--permission-mode",
     "acceptEdits",
     "--permission-prompts",
-    "none"
+    "none",
+    "--disallowedTools",
+    "WebFetch",
+    "WebSearch"
   ],
   "prompt_por_stdin": true,
   "modelo_recomendado": {

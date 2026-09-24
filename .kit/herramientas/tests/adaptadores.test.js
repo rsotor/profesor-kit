@@ -37,3 +37,12 @@ test('la tabla de .kit/adaptadores/LEEME.md dice lo mismo que los adaptadores (n
     assert.equal(segundoPlano, a.segundo_plano ? 'sí' : 'no', `${id}: "Segundo plano"`);
   }
 });
+
+// issue #39, H11: el segundo plano trabaja sin nadie delante con material que puede traer órdenes escondidas.
+// Sin red: nada de lo que lea puede salir del ordenador ni traer instrucciones de fuera.
+test('el segundo plano de Claude Code va sin red (WebFetch y WebSearch denegados)', () => {
+  const a = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'adaptadores', 'claude-code.json'), 'utf8'));
+  const i = a.segundo_plano.indexOf('--disallowedTools');
+  assert.ok(i >= 0);
+  assert.deepEqual(a.segundo_plano.slice(i + 1), ['WebFetch', 'WebSearch'], 'al final: la lista se come lo que venga detrás');
+});
