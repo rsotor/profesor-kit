@@ -133,3 +133,45 @@ test('markdownResumen: sección Mi perfil con secciones y señales', () => {
     informe: { errores: [], avisos: [] }, conteos: {}, perfil: { existe: true, conContenido: 4, total: 5, senales: ['concepto-rojo: alfa'] } });
   assert.match(md, /## Mi perfil[\s\S]*4 de 5 secciones con contenido[\s\S]*concepto-rojo: alfa/);
 });
+
+// --- La corrección, medida (issue #39, H08) ---------------------------------------------------------------
+
+const ORACULO = path.join(__dirname, '..', '..', '..', 'pruebas', 'curso-ejemplo', 'oraculo');
+
+test('veredictoDe: los tres veredictos, escritos como los escribe el profesor', () => {
+  assert.equal(p.veredictoDe('Correcta'), 'correcta');
+  assert.equal(p.veredictoDe('✅ Bien'), 'correcta');
+  assert.equal(p.veredictoDe('Correcta, pero le falta la cifra'), 'le-falta');
+  assert.equal(p.veredictoDe('A medias'), 'le-falta');
+  assert.equal(p.veredictoDe('Incorrecta'), 'incorrecta');
+  assert.equal(p.veredictoDe('En blanco'), 'incorrecta');
+  assert.equal(p.veredictoDe('???'), null);
+});
+
+test('leerVeredictos: la tabla del último intento, pregunta a pregunta', () => {
+  const texto = [
+    '# Test', '', '## Histórico de intentos', '',
+    '> [!example]- Intento 1 · 2026-10-01 · tus respuestas y la corrección', '>',
+    '> | # | Tu respuesta | Resultado | Por qué |', '> |---|---|---|---|', '> | 1 | x | Incorrecta | y |', '',
+    '> [!example]- Intento 2 · 2026-10-05 · tus respuestas y la corrección', '>',
+    '> | # | Tu respuesta | Resultado | Por qué |', '> |---|---|---|---|',
+    '> | 1 | 20 % | Correcta | ok |', '> | 2 | Baja. | Correcta, pero le falta cuánto | falta |', '> | 3 | | En blanco | nada |',
+  ].join('\n');
+  assert.deepEqual([...p.leerVeredictos(texto)], [[1, 'correcta'], [2, 'le-falta'], [3, 'incorrecta']]);
+});
+
+test('compararVeredictos: cuenta los que coinciden y dice qué esperaba en los que no', () => {
+  const esperado = [{ id: 1, veredicto: 'correcta' }, { id: 2, veredicto: 'le-falta' }, { id: 3, veredicto: 'incorrecta' }];
+  const r = p.compararVeredictos(esperado, new Map([[1, 'correcta'], [2, 'correcta']]));
+  assert.equal(r.bien, 1);
+  assert.deepEqual(r.fallos, ['2: esperaba le-falta y puso correcta', '3: esperaba incorrecta y no se pudo leer']);
+});
+
+test('el examen del oráculo y sus veredictos esperados encajan: un hueco por pregunta, los tres veredictos', () => {
+  const examen = fs.readFileSync(path.join(ORACULO, 'examen-oraculo.md'), 'utf8');
+  const esperado = JSON.parse(fs.readFileSync(path.join(ORACULO, 'esperado.json'), 'utf8'));
+  assert.equal(p.contarHuecos(examen), esperado.length);
+  assert.deepEqual(esperado.map(e => e.id), esperado.map((_, i) => i + 1));
+  assert.deepEqual([...new Set(esperado.map(e => e.veredicto))].sort(), ['correcta', 'incorrecta', 'le-falta']);
+  assert.match(examen, /^parcial: true$/m, 'es un test: no pone nota al módulo');
+});

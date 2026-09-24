@@ -147,6 +147,43 @@ function promptAlumnoSimulado(perfil, examen, n) {
   ].join('\n');
 }
 
+// --- La corrección, medida (issue #39, H08) ---------------------------------------------------------------
+
+// El veredicto de una celda "Resultado" de la tabla de un intento, en los tres de "Cuando preguntas para medir"
+// (AGENTS.md). "Incorrecta" contiene "correcta": se mira antes. null si no se entiende.
+function veredictoDe(celda) {
+  const c = String(celda).toLowerCase();
+  if (/incorrect|\bmal\b|fall|blanco|sin respuesta|❌/.test(c)) return 'incorrecta';
+  if (/falta|medias|incomplet|⚠️|🟡/.test(c)) return 'le-falta';
+  if (/correct|\bbien\b|acierto|✅/.test(c)) return 'correcta';
+  return null;
+}
+
+// Los veredictos del último intento: la tabla `| # | Tu respuesta | Resultado | Por qué |` del último bloque
+// `> [!example]- Intento N …`. Map número de pregunta → veredicto.
+function leerVeredictos(texto) {
+  const lineas = texto.replace(/\r\n/g, '\n').split('\n');
+  const inicio = lineas.map((l, i) => (/^>\s*\[!example\]-?\s*Intento/.test(l) ? i : -1)).filter(i => i >= 0).pop();
+  const veredictos = new Map();
+  if (inicio === undefined) return veredictos;
+  for (const l of lineas.slice(inicio + 1)) {
+    if (!l.startsWith('>')) break;
+    const c = l.replace(/^>\s*/, '').split('|').map(x => x.trim());
+    if (c.length < 5 || !/^\d+$/.test(c[1])) continue;
+    veredictos.set(Number(c[1]), veredictoDe(c[3]));
+  }
+  return veredictos;
+}
+
+function compararVeredictos(esperado, veredictos) {
+  const fallos = [];
+  for (const e of esperado) {
+    const puesto = veredictos.get(e.id);
+    if (puesto !== e.veredicto) fallos.push(`${e.id}: esperaba ${e.veredicto} y ${puesto ? `puso ${puesto}` : 'no se pudo leer'}`);
+  }
+  return { bien: esperado.length - fallos.length, total: esperado.length, fallos };
+}
+
 // HTML de repaso generados en estudio/repasos/.
 function repasosGenerados(destino) {
   const dir = path.join(destino, 'estudio', 'repasos');
@@ -161,4 +198,5 @@ module.exports = {
   recorrerMd, primerConcepto, primeraSesion, insertarAntesDelPie, simularAlumnoTrasSesiones, quedaMarcador,
   conceptoConFormula, examenMasReciente, repasosGenerados,
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
+  veredictoDe, leerVeredictos, compararVeredictos,
 };

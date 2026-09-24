@@ -1,0 +1,14 @@
+[
+  { "id": 1, "caso": "respuesta corta y correcta", "respuesta": "20 %", "veredicto": "correcta",
+    "por_que": "Pedía una cifra y la cifra es correcta: una respuesta corta y correcta es un acierto." },
+  { "id": 2, "caso": "idea bien sin el nombre, cuando no se pedía", "respuesta": "Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar.", "veredicto": "correcta",
+    "por_que": "Pedía qué le pasa, en una frase; no pedía el nombre (liquidez). La idea está bien." },
+  { "id": 3, "caso": "idea bien sin el nombre, cuando se pedía", "respuesta": "Que no lo puede vender rápido para tener el dinero ya.", "veredicto": "le-falta",
+    "por_que": "Pedía el nombre del concepto (liquidez) y no lo da, aunque la idea es correcta." },
+  { "id": 4, "caso": "le falta una parte que se pedía", "respuesta": "Baja.", "veredicto": "le-falta",
+    "por_que": "Pedía qué le pasa y cuánto: acierta que baja, pero no dice cuánto (en torno a un 3 %)." },
+  { "id": 5, "caso": "error de concepto", "respuesta": "Variable, porque cada año puede subir.", "veredicto": "incorrecta",
+    "por_que": "Confunde gasto fijo con gasto variable: una cuota igual cada mes es fija aunque se actualice al año." },
+  { "id": 6, "caso": "en blanco", "respuesta": "", "veredicto": "incorrecta",
+    "por_que": "No contesta." }
+]

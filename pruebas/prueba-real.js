@@ -216,6 +216,29 @@ function pasoExamenCorregir(ctx, examenModulo) {
   };
 }
 
+// La corrección, medida (issue #39, H08): un test fijo con las respuestas ya escritas y, para cada una, el veredicto
+// que tendría que dar el profesor según "Cuando preguntas para medir" (AGENTS.md). Solo vale 6 de 6.
+function pasoCorreccionOraculo(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const dirOraculo = path.join(ctx.datosCurso, 'oraculo');
+  const esperado = JSON.parse(fs.readFileSync(path.join(dirOraculo, 'esperado.json'), 'utf8'));
+  const hoy = new Date().toISOString().slice(0, 10);
+  const carpeta = ctx.ficheroExamen ? path.dirname(ctx.ficheroExamen) : path.join(ctx.destino, 'estudio', 'examenes');
+  fs.mkdirSync(carpeta, { recursive: true });
+  const fichero = path.join(carpeta, `01-examen-${hoy}-correccion.md`);
+  fs.writeFileSync(fichero, fs.readFileSync(path.join(dirOraculo, 'examen-oraculo.md'), 'utf8').replace('{{fecha}}', hoy));
+  const puesto = p.ponerRespuestas(fichero, esperado.map(e => e.respuesta));
+  if (!puesto.ok) return { ok: false, detalle: `el test fijo tiene ${puesto.huecos} huecos y ${puesto.respuestas} respuestas preparadas` };
+  const r = invocarClaude({
+    prompt: `He terminado el test ${path.basename(fichero)}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
+    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+  });
+  if (!r.ok) return { ok: false, detalle: `claude falló al corregir el test fijo (código ${r.codigo})`, salidaLlm: r.salida };
+  const c = p.compararVeredictos(esperado, p.leerVeredictos(fs.readFileSync(fichero, 'utf8')));
+  ctx.correccion = c;
+  return { ok: c.bien === c.total, detalle: `corrección: ${c.bien}/${c.total} veredictos como se esperaban${c.fallos.length ? ` · ${c.fallos.join(' · ')}` : ''}`, salidaLlm: c.fallos.length ? r.salida : undefined };
+}
+
 function pasoRepaso(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   const antes = new Set(p.repasosGenerados(ctx.destino));
@@ -345,6 +368,7 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
     ejecutarPaso(pasos, '/examen (contestar)', () => pasoExamenContestar(ctx));
     ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
+    ejecutarPaso(pasos, '/examen (corrección con veredictos esperados)', () => pasoCorreccionOraculo(ctx));
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --juntar ${claseEnSegundoPlano.id}`, () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano));
     for (const clase of otrasEnSegundoPlano) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
     ejecutarPaso(pasos, '/repaso', () => pasoRepaso(ctx, clases.examen_modulo));
