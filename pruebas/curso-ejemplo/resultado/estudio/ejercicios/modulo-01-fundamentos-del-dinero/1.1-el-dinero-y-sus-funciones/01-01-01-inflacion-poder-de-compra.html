@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inflación y poder de compra</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8886; border-radius: 8px; padding: .8rem 1rem; margin: 1rem 0; }
+  h2 { margin: 0 0 .5rem; font-size: 1.05rem; }
+  label { display: block; margin: .6rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .4rem .9rem; margin: .3rem .3rem 0 0; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>Inflación y poder de compra</h1>
+<p>Concepto: <a href="../../../conceptos/inflacion.md">inflacion</a></p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <label for="dinero">Dinero guardado en el cajón: <strong id="dineroTxt"></strong></label>
+  <input type="range" id="dinero" min="50" max="500" step="50" value="100">
+  <label for="inflacion">Inflación anual: <strong id="inflacionTxt"></strong></label>
+  <input type="range" id="inflacion" min="0" max="10" step="1" value="3">
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p id="pregunta"></p>
+  <button type="button" data-r="menos">Compraré menos</button>
+  <button type="button" data-r="igual">Compraré lo mismo</button>
+  <button type="button" data-r="mas">Compraré más</button>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <p id="explicacion">Elige una respuesta y aquí verás por qué.</p>
+</section>
+
+<script>
+function euros(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
+
+window.verificar = function (caso) {
+  return caso.inflacion === 0 ? 'igual' : 'menos';
+};
+
+function leer() {
+  return { dinero: Number(document.getElementById('dinero').value), inflacion: Number(document.getElementById('inflacion').value) };
+}
+
+function pintar() {
+  var c = leer();
+  document.getElementById('dineroTxt').textContent = euros(c.dinero);
+  document.getElementById('inflacionTxt').textContent = c.inflacion + ' % anual';
+  document.getElementById('pregunta').textContent = 'Guardas ' + euros(c.dinero) + ' un año sin tocarlos, con una inflación de '
+    + c.inflacion + ' % anual. Dentro de un año, ¿con esos mismos euros comprarás más, lo mismo o menos que hoy? (elige una)';
+  document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+}
+
+function responder(r) {
+  var c = leer();
+  var correcta = window.verificar(c);
+  var real = c.dinero / (1 + c.inflacion / 100);
+  var txt = r === correcta ? '✔ Correcto. ' : '✘ No. ';
+  if (correcta === 'igual') {
+    txt += 'Con inflación de 0 % anual los precios no se mueven: tus ' + euros(c.dinero) + ' compran lo mismo.';
+  } else {
+    txt += 'Con inflación de ' + c.inflacion + ' % anual los precios suben y tus ' + euros(c.dinero) + ' valen en compra real '
+      + 'unos ' + euros(real) + ' de hoy (dinero ÷ (1 + inflación)). Mueve la inflación hasta 0 y verás cuándo deja de perderse.';
+  }
+  document.getElementById('explicacion').textContent = txt;
+}
+
+document.getElementById('dinero').addEventListener('input', pintar);
+document.getElementById('inflacion').addEventListener('input', pintar);
+document.querySelectorAll('button[data-r]').forEach(function (b) {
+  b.addEventListener('click', function () { responder(b.getAttribute('data-r')); });
+});
+pintar();
+</script>
+</body>
+</html>

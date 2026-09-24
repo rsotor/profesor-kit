@@ -1,42 +1,43 @@
 ---
 tipo: concepto
-bloques: [2]
+bloques: [02-01]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [interes-compuesto]
-alias: []
-tags: [interes, ahorro]
+alias: [regla del 72, regla de 72, años para doblar]
+tags: [dinero, interes]
 ---
 # Regla del 72
 
-> **En una frase:** una cuenta rápida, sin calculadora, de cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
+> **En una frase:** La regla del 72 es un atajo para calcular a ojo cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
 
 ## El problema
 
-La fórmula exacta de [[interes-compuesto]] necesita calculadora. A veces solo quieres saber "¿esto se dobla en 10 años o en 30?".
+Quieres saber cuánto tardará tu dinero en doblarse y no tienes calculadora a mano. Con la fórmula exacta necesitas potencias; con esta regla, una división.
 
 ## El ejemplo
 
-Repaso de [[interes-compuesto]]: cada año los intereses se suman al capital y generan más.
+Al **6 % anual**: 72 ÷ 6 = **12 años**, aproximadamente.
 
-Con un **6 % anual**: 72 ÷ 6 = **12 años** para doblar el dinero. Con la fórmula exacta salen **11,9 años**: la regla es una aproximación, no el resultado exacto.
+El cálculo exacto con la fórmula del [[interes-compuesto]] da 11,9 años: la regla es una aproximación, no el resultado exacto.
 
 ## La fórmula
 
-$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número}} $$
+$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual}} $$
 
-"En número" es el 6 de "6 % anual", sin el símbolo de tanto por ciento.
+El tipo anual va como número, sin el signo de tanto por ciento (6 % anual → 6).
 
 ## El error típico
 
+Tomar el resultado como exacto. Es una cifra rápida, no un cálculo.
+
 > [!info] Ampliación fuera de los apuntes
-> Usarla con interés simple: es solo del compuesto. Y es una aproximación: con un 3 % anual da 24,0 años y la fórmula exacta, 23,4.
+> Tampoco vale para el [[interes-simple]], que crece en línea recta: al 6 % anual tardaría unos 16,7 años en doblarse (100 ÷ 6), no 12.
 
 ## Relacionados
 
-- [[interes-compuesto]] — de donde sale
-- [[tipo-de-interes]] — el número que se divide
+- [[interes-compuesto]] — la fórmula exacta de la que esta regla es un atajo.
 
 ## Historial
 
-- **02-01-01-interes-simple-y-compuesto** · primera vez
+- **02-01-01** · primera vez

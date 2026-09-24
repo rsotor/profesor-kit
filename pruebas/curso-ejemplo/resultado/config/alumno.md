@@ -35,11 +35,6 @@
 
 ## Errores repetidos
 
-- **funciones-del-dinero**: falló las dos preguntas del examen que la medían. En la 1 (el problema del
-  trueque) marcó "falta de unidad de cuenta" en vez de "doble coincidencia de deseos"; en la 6 (apartar
-  dinero para usarlo más adelante) marcó una función de medio de cambio en vez de depósito de valor. Ya
-  en el test inicial no nombró las tres funciones por separado. — *examen: modulo-01-fundamentos-del-dinero/01-examen-2026-09-24, preguntas 1 y 6*
-
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
 
@@ -48,10 +43,11 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-09-24 · respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 1 | 2026-09-20 · respuesta del alumno en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-09-24 · conceptos/colchon-financiero.md, 2026-09-24 |
+| colchon-financiero | 1 | 2026-09-24 · conceptos/colchon-financiero.md, 2026-09-25 |
+| liquidez | 1 | 2026-09-24 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-09-25 |

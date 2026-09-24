@@ -1,46 +1,59 @@
 ---
 tipo: concepto
-bloques: [1]
+bloques: [01-01]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
 alias: [subida general de precios]
 tags: [dinero, precios]
-ejercicio: 01-01-01-inflacion
+ejercicio: 01-01-01-inflacion-poder-de-compra
 ---
 # Inflación
 
-> **En una frase:** la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** La inflación es la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-El dinero guardado debería mantener su valor (es el *depósito de valor*, ver [[funciones-del-dinero]]). Si los precios de casi todo suben a la vez, lo guardado compra cada vez menos, aunque la cifra no cambie.
+El dinero funciona como depósito de valor solo si guarda su valor. Si los precios suben, el dinero
+guardado pierde poder de compra aunque la cifra no cambie.
 
 ## El ejemplo
 
-Con una inflación de un 3 % anual, 100,00 € de hoy valen, en compra real, unos 97,00 € del año que viene. La cifra sigue siendo 100,00 €; lo que ha bajado es lo que se puede comprar con ella.
+Los precios suben un 3 % anual (es la inflación de un año). Guardas 100,00 € en un cajón.
 
-> [!info] Ampliación fuera de los apuntes
-> Los apuntes dicen "unos 97 €". La cuenta exacta es 100,00 € ÷ 1,03 = 97,09 €. La diferencia es de 0,09 € y no cambia la idea.
+- Hoy, 100,00 € compran una cesta de la compra.
+- Dentro de un año, esa cesta cuesta unos 103,00 €.
+- Tus 100,00 € siguen siendo 100,00 €, pero ya no llegan: en compra real valen **unos 97,00 €** de hoy.
+
+## La fórmula
+
+$$ P = \frac{D}{1 + i} $$
+
+$P$ es lo que vale en compra real (a precios de hoy), $D$ es el dinero guardado e $i$ es la inflación de
+un año, escrita como decimal (3 % anual → $i = 0{,}03$). Es aproximada: $100 / 1{,}03 = 97{,}09$, que el
+material redondea a 97.
 
 ## El error típico
 
-Confundir "sube el precio de una cosa" con "inflación". Un café puede subir por moda o por escasez de café: eso es una subida puntual. Inflación es cuando sube el **nivel general** de precios, de casi todo a la vez.
+Confundir "sube el precio de una cosa" con "inflación". Que suba el precio de una cosa (por moda o por
+escasez de esa cosa) no es inflación: inflación es que suba el nivel general de precios, casi todo a la vez.
 
 ## Practícalo
 
-→ **[[ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion|Inflación: qué pasa con lo guardado]]**
+→ **[Inflación y poder de compra](../ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion-poder-de-compra.html)**
 
-Cambia la tasa de inflación anual y mira cuánto se pierde; después, separa qué es inflación y qué es una subida puntual.
+Mueve la inflación y el dinero guardado. Lo que debería sorprender: con una inflación de 0 % anual no se pierde
+nada, y basta un 1 % anual para que el dinero guardado ya compre menos.
 
-> [!tip] Visto desde tus ingresos irregulares
-> Si guardas dinero para los meses flojos, la inflación se lo come poco a poco: 500,00 € en el cajón no compran lo mismo a fin de año que a principios. Es un motivo para no dejar el colchón parado sin más, y se retoma en el módulo 2.
+> [!info] Ampliación fuera de los apuntes · Visto desde tus ingresos irregulares
+> Si facturas mucho un mes y guardas el sobrante para los meses flojos, la inflación trabaja en contra de
+> ese colchón mientras esté quieto: cuanto más tiempo lo dejas sin usar, menos compra.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la inflación hace fallar el depósito de valor
-- [[liquidez]] — el otro factor de guardar dinero: lo fácil que es usarlo
+- [[funciones-del-dinero]] — la inflación es el enemigo del depósito de valor.
+- [[liquidez]] — la otra cara de guardar dinero: la ventaja.
 
 ## Historial
 
-- **01-01-01-el-dinero-y-sus-funciones** · primera vez
+- **01-01-01** · primera vez

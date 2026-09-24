@@ -24,12 +24,7 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 ## Lo que te cuesta
 
-### Errores que se repiten
-
-- **funciones-del-dinero**: falló las dos preguntas del examen que la medían. En la 1 (el problema del
-  trueque) marcó "falta de unidad de cuenta" en vez de "doble coincidencia de deseos"; en la 6 (apartar
-  dinero para usarlo más adelante) marcó una función de medio de cambio en vez de depósito de valor. Ya
-  en el test inicial no nombró las tres funciones por separado. — *examen: modulo-01-fundamentos-del-dinero/01-examen-2026-09-24, preguntas 1 y 6*
+*Todavía nada: se irá llenando con tus exámenes y tus dudas.*
 
 ## Lo que te entró a la primera
 
@@ -41,7 +36,7 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 | Examen | Intentos | Último |
 |---|---|---|
-| [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24\|Examen 01]] | 6,0 (2026-09-24) | ✅ aprobado |
+| [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-25\|Examen 01]] | 6,0 (2026-09-24) | ✅ aprobado |
 
 ### Conceptos, por bloque
 
@@ -49,12 +44,14 @@ Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces 
 
 | Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |
 |---|---|---|
-| Bloque 1 | 2 · 4 · 1 · 0 | 0 · 0 · 0 · 7 |
-| Bloque 2 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
+| Bloque 01-01 | 1 · 2 · 0 · 0 | 0 · 0 · 0 · 3 |
+| Bloque 01-02 | 3 · 2 · 0 · 0 | 0 · 0 · 0 · 5 |
+| Bloque 02-01 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
 
 ### Donde más dudas
 
-- colchon-financiero: 1 duda (última: 2026-09-24 · conceptos/colchon-financiero.md, 2026-09-24)
+- colchon-financiero: 1 duda (última: 2026-09-24 · conceptos/colchon-financiero.md, 2026-09-25)
+- liquidez: 1 duda (última: 2026-09-24 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-09-25)
 
 ## Cambios en cómo te explico
 

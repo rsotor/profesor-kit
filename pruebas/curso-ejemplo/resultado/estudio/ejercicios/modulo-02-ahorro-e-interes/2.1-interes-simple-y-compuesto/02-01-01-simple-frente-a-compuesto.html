@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple frente a compuesto</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8886; border-radius: 8px; padding: .8rem 1rem; margin: 1rem 0; }
+  h2 { margin: 0 0 .5rem; font-size: 1.05rem; }
+  label { display: block; margin: .6rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .4rem .9rem; margin: .3rem .3rem 0 0; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>Simple frente a compuesto</h1>
+<p>Conceptos: <a href="../../../conceptos/interes-simple.md">interes-simple</a> · <a href="../../../conceptos/interes-compuesto.md">interes-compuesto</a></p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <label for="capital">Capital: <strong id="capitalTxt"></strong></label>
+  <input type="range" id="capital" min="500" max="5000" step="100" value="1000">
+  <label for="tipoSimple">Opción A, interés simple: <strong id="tipoSimpleTxt"></strong></label>
+  <input type="range" id="tipoSimple" min="1" max="12" step="0.5" value="8">
+  <label for="tipoCompuesto">Opción B, interés compuesto: <strong id="tipoCompuestoTxt"></strong></label>
+  <input type="range" id="tipoCompuesto" min="1" max="12" step="0.5" value="5">
+  <label for="anios">Tiempo: <strong id="aniosTxt"></strong></label>
+  <input type="range" id="anios" min="1" max="40" step="1" value="10">
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p id="pregunta"></p>
+  <button type="button" data-r="simple">A: el interés simple</button>
+  <button type="button" data-r="compuesto">B: el interés compuesto</button>
+  <button type="button" data-r="empate">Acaban con lo mismo</button>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <p id="explicacion">Elige una respuesta y aquí verás por qué.</p>
+</section>
+
+<script>
+function euros(n) {
+  var partes = n.toFixed(2).split('.');
+  var ent = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return ent + ',' + partes[1] + ' €';
+}
+function tipo(n) { return n.toFixed(1).replace('.', ',') + ' % anual'; }
+
+function finalSimple(c, t, a) { return Math.round(c * (1 + t / 100 * a) * 100) / 100; }
+function finalCompuesto(c, t, a) { return Math.round(c * Math.pow(1 + t / 100, a) * 100) / 100; }
+
+window.verificar = function (caso) {
+  var s = finalSimple(caso.capital, caso.tipoSimple, caso.anios);
+  var k = finalCompuesto(caso.capital, caso.tipoCompuesto, caso.anios);
+  if (s > k) { return 'simple'; }
+  if (k > s) { return 'compuesto'; }
+  return 'empate';
+};
+
+function leer() {
+  return {
+    capital: Number(document.getElementById('capital').value),
+    tipoSimple: Number(document.getElementById('tipoSimple').value),
+    tipoCompuesto: Number(document.getElementById('tipoCompuesto').value),
+    anios: Number(document.getElementById('anios').value)
+  };
+}
+
+function pintar() {
+  var c = leer();
+  document.getElementById('capitalTxt').textContent = euros(c.capital);
+  document.getElementById('tipoSimpleTxt').textContent = tipo(c.tipoSimple);
+  document.getElementById('tipoCompuestoTxt').textContent = tipo(c.tipoCompuesto);
+  document.getElementById('aniosTxt').textContent = c.anios + (c.anios === 1 ? ' año' : ' años');
+  document.getElementById('pregunta').textContent = 'Dejas ' + euros(c.capital) + ' durante ' + c.anios
+    + (c.anios === 1 ? ' año' : ' años') + '. A paga ' + tipo(c.tipoSimple) + ' con interés simple; B paga '
+    + tipo(c.tipoCompuesto) + ' con interés compuesto. ¿Con cuál acabas con más dinero? (elige una)';
+  document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+}
+
+// Primer año en que el compuesto supera al simple (hasta 100 años); 0 si no lo hace.
+function anioDelAdelanto(c) {
+  for (var a = 1; a <= 100; a++) {
+    if (finalCompuesto(c.capital, c.tipoCompuesto, a) > finalSimple(c.capital, c.tipoSimple, a)) { return a; }
+  }
+  return 0;
+}
+
+function responder(r) {
+  var c = leer();
+  var correcta = window.verificar(c);
+  var s = finalSimple(c.capital, c.tipoSimple, c.anios);
+  var k = finalCompuesto(c.capital, c.tipoCompuesto, c.anios);
+  var txt = r === correcta ? '✔ Correcto. ' : '✘ No. ';
+  txt += 'A (simple) = ' + euros(c.capital) + ' × (1 + ' + (c.tipoSimple / 100).toString().replace('.', ',') + ' × ' + c.anios + ') = ' + euros(s)
+    + '. B (compuesto) = ' + euros(c.capital) + ' × ' + (1 + c.tipoCompuesto / 100).toString().replace('.', ',') + '^' + c.anios + ' = ' + euros(k) + '. ';
+  var adelanto = anioDelAdelanto(c);
+  if (adelanto === 0) {
+    txt += 'Con estos tipos, el compuesto no adelanta al simple en 100 años: el tipo de A es demasiado alto para B. Sube el tipo de B.';
+  } else if (adelanto === 1) {
+    txt += 'Con estos tipos el compuesto ya va por delante desde el primer año. Baja su tipo hasta acercarlo al de A y mira cuándo cambia.';
+  } else {
+    txt += 'El compuesto adelanta al simple a partir del año ' + adelanto + '. Mueve los años a uno y otro lado de ese punto y verás invertirse el veredicto.';
+  }
+  txt += ' El capital no cambia quién gana: prueba a moverlo.';
+  document.getElementById('explicacion').textContent = txt;
+}
+
+['capital', 'tipoSimple', 'tipoCompuesto', 'anios'].forEach(function (id) {
+  document.getElementById(id).addEventListener('input', pintar);
+});
+document.querySelectorAll('button[data-r]').forEach(function (b) {
+  b.addEventListener('click', function () { responder(b.getAttribute('data-r')); });
+});
+pintar();
+</script>
+</body>
+</html>

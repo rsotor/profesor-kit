@@ -2,42 +2,42 @@
 tipo: flashcards
 sesion: 01-02-01-presupuesto-personal
 ---
-# Flashcards · 01-02-01-presupuesto-personal
+# Flashcards · 01-02-01
 
 > El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
 > y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Facturas unos meses 2.400,00 € y otros 1.300,00 €. ¿Con qué ingreso haces el presupuesto?**
+**Todos los meses gastas algo en ocio. ¿Es por eso un gasto fijo? (sí o no, y por qué en una frase)**
 > [!success]- Respuesta
-> Con la media de los últimos 6-12 meses, no con el del mejor mes.
+> No, es variable. Que gastes algo siempre no lo hace fijo: la cifra exacta la decides tú cada mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 24/9*
 
-**Todos los meses gastas algo en ocio. ¿Es un gasto fijo? ¿Por qué?**
+**Un mes facturas 2.400,00 € y otro 1.300,00 €. ¿Con qué cifra presupuestas: la del mejor mes u otra? (explícalo en una frase)**
 > [!success]- Respuesta
-> No, es variable. Que gastes algo siempre no lo hace fijo: la cifra la decides tú cada mes.
+> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes: el mejor mes te promete un margen que la mayoría de los meses no existe.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 24/9*
 
-**Ingresos de 1.850,00 € y ahorro de 655,00 €. ¿Qué mide la tasa de ahorro y cuánto sale?**
+**Ana ahorra 300,00 € al mes con ingresos de 3.000,00 €. Luis ahorra 200,00 € con ingresos de 1.000,00 €. ¿Quién ahorra más en proporción? (el nombre)**
 > [!success]- Respuesta
-> La parte de lo que ingresas que te queda: 655,00 ÷ 1.850,00 × 100 ≈ 35,4 % mensual.
+> Luis: 20 % mensual frente al 10 % mensual de Ana. La tasa de ahorro compara personas con ingresos distintos; la cifra de ahorro sola, no.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 24/9*
 
-**Gastos de 1.195,00 € al mes. ¿Cuánto es un colchón de 3 meses y por qué debe ser líquido?**
+**¿Por qué a alguien con ingresos irregulares se le recomienda un colchón financiero mayor que a alguien con nómina? (en una frase)**
 > [!success]- Respuesta
-> 3.585,00 €. Líquido para poder usarlo ya, sin perder valor por las prisas.
+> Porque puede haber varios meses flojos seguidos: 5-6 meses de gastos en vez de 3.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 24/9*
 
 ---
-Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[gastos-fijos-y-variables]] · [[ingreso-medio]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

@@ -1,7 +1,7 @@
 ---
 tipo: examen
 unidad: 01
-fecha: 2026-09-24
+fecha: 2026-09-25
 nota: 5
 parcial: true
 intentos: 1
@@ -29,7 +29,7 @@ intentos: 1
 
 ✍️ **Tu respuesta:**
 
-**4.** Una tarjeta te cobra un 2 % mensual de interés sobre lo que debes.
+**4.** Una tarjeta te cobra un 2 por ciento de interés cada mes sobre lo que debes.
 
 ¿Qué interés pagas? *(la cifra con su periodo)*
 
@@ -48,7 +48,7 @@ intentos: 1
 ✍️ **Tu respuesta:**
 
 > [!success]- Soluciones
-> 1. 20 % mensual (300 ÷ 1.500).
+> 1. 20 por ciento (300 ÷ 1.500).
 > 2. Lo tiene inmovilizado: no lo puede convertir en dinero disponible a tiempo para pagar.
 > 3. Liquidez.
 > 4. Un 2 % mensual (al mes). Sin el periodo, la cifra no dice cuánto pagas.
@@ -59,19 +59,20 @@ intentos: 1
 
 | Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |
 |---|---|---|---|---|---|---|
-| 1 | 2026-09-24 | 5 | 2 | 2 | 1 | 1 |
+| 1 | 2026-09-25 | 5 | 2 | 2 | 1 | 1 |
 
-> [!example]- Intento 1 · 2026-09-24 · tus respuestas y la corrección
+> [!example]- Intento 1 · 2026-09-25 · tus respuestas y la corrección
 >
-> ✅ Dominado → tasa-de-ahorro
-> ⚠️ Hay que repasar → gastos-fijos-y-variables (1 fallo: alquiler con subida anual), colchon-financiero (1 sin contestar), liquidez (idea bien, sin el nombre), tasa de interés con periodo (falta el periodo)
-> 🔴 Vuelve a la nota → ninguno (ningún concepto con 2 o más fallos en este test)
+> ✅ Dominado → tasa-de-ahorro (P1), liquidez como idea (P2)
+> ⚠️ Hay que repasar → gastos-fijos-y-variables (P5, 1 fallo), el nombre "liquidez" (P3) y decir el periodo del interés (P4)
+> 🔴 Vuelve a la nota → ninguno (ningún concepto con 2 fallos en este test)
+> ❔ Sin medir → colchon-financiero (P6 en blanco: no se sabe si no lo sabe o no llegó; no se apunta como hueco)
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20 por ciento | ✅ Correcta | 20 % mensual = 300 ÷ 1.500. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no llega a tiempo: es justo lo que se pedía. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre (liquidez) | La idea es correcta (no lo puede vender rápido), pero la pregunta pedía el nombre del concepto y da una descripción. Nombre: liquidez. |
-> | 4 | 2 por ciento, sin periodo | ⚠️ Le falta: el periodo (mensual) | La cifra es correcta, pero la pregunta pedía la cifra con su periodo: un 2 % mensual. Sin periodo no dice cuánto pagas (regla del curso). |
-> | 5 | Variable. | ❌ Incorrecta | Es un gasto fijo: se repite cada mes con la misma cifra y no depende de ti; que se actualice una vez al año con el IPC no lo convierte en variable. |
-> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin contestar. El curso recomienda 3 meses de gastos con nómina fija (5-6 si los ingresos son irregulares). |
+> | 1 | 20 por ciento | ✅ Correcta | 300 ÷ 1.500 = 20 por ciento de ahorro sobre lo que cobra. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice justo lo que pasa: el dinero está inmovilizado en el piso y no lo puede convertir en dinero disponible a tiempo. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre, que la pregunta pedía | Describe bien la idea (no puede venderlo rápido para tener el dinero ya), pero no dice que eso es la liquidez. La idea cuenta como acierto; el nombre se pedía y no aparece. |
+> | 4 | 2 por ciento | ⚠️ Le falta: el periodo, que la pregunta pedía | La cifra es correcta, pero la pregunta pedía la cifra con su periodo: es un 2 % mensual. Sin periodo, la cifra no dice cuánto se paga. |
+> | 5 | Variable. | ❌ Incorrecta | El alquiler es un gasto fijo: se repite cada mes con casi la misma cifra sin que el alumno decida nada. Que el contrato lo suba una vez al año con el IPC no lo vuelve variable, porque la cifra no la decide él mes a mes. |
+> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin respuesta. Con nómina fija, el curso recomienda un colchón de 3 meses de gastos (5-6 si los ingresos son irregulares). |

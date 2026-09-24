@@ -2,26 +2,26 @@
 tipo: flashcards
 sesion: 02-01-01-interes-simple-y-compuesto
 ---
-# Flashcards · 02-01-01-interes-simple-y-compuesto
+# Flashcards · 02-01-01
 
 > El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
 > y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Un banco te ofrece "un cinco por ciento". ¿Qué le falta a esa frase para poder compararla?**
+**¿Qué distingue al interés compuesto del simple? (en una frase)**
 > [!success]- Respuesta
-> El periodo: un 5 % anual y un 5 % mensual no se parecen en nada.
+> En el compuesto los intereses se suman al capital y generan intereses ellos también; en el simple, siempre se calculan sobre el capital inicial.
 
-**1.000,00 € al 5 % anual durante 3 años: ¿cuánto dan a interés simple y cuánto a compuesto?**
+**Un banco te dice «te doy un 5». ¿Qué falta para poder comparar esa oferta con otra? (una palabra)**
 > [!success]- Respuesta
-> Simple: 1.150,00 €. Compuesto: 1.157,63 €. Diferencia de 7,63 €.
+> El periodo: no es lo mismo un 5 % anual que un 5 % mensual.
 
-**¿Por qué el compuesto crece cada vez más rápido y el simple no?**
+**Mismo capital y mismo tipo anual: ¿qué da más a un año, capitalizar cada mes o una sola vez? (una palabra)**
 > [!success]- Respuesta
-> El simple calcula siempre sobre el capital inicial; el compuesto suma los intereses al capital y estos generan más intereses.
+> Cada mes: los intereses de cada mes ya se suman al capital y generan intereses.
 
-**Al 6 % anual, ¿en cuántos años se dobla un capital a interés compuesto y con qué regla lo calculas a ojo?**
+**A ojo y sin calculadora, ¿cuántos años tarda en doblarse un capital a interés compuesto al 9 % anual? (una cifra)**
 > [!success]- Respuesta
-> Unos 12 años: regla del 72, 72 ÷ 6. Es una aproximación (exacto: 11,9 años).
+> Unos 8 años (72 ÷ 9). Es una aproximación, no el resultado exacto.
 
 ---
-Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[regla-del-72]]
+Conceptos que cubren: [[interes-simple]] · [[interes-compuesto]] · [[capital-y-tipo-de-interes]] · [[capitalizacion]] · [[regla-del-72]]

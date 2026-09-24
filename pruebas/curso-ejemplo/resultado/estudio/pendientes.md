@@ -4,17 +4,19 @@
 > Cada línea dice qué falta y en qué nota. Para resolver una duda, dile "tengo dudas"; para lo que falta
 > del material, búscalo en la plataforma del curso o cuéntale lo que recuerdes de clase.
 
-## Bloque 1 (7)
+## Bloque 01-01 (3)
 
-- [ ] **Pendiente del profesor** · [[conceptos/colchon-financiero]] — la duda no decía qué parte no quedaba clara. Si era otra (la fórmula, el "líquido" o el 5-6 meses), dime cuál y la reexplico.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — ¿Qué es exactamente el M1 y qué cuenta como dinero en él? La diapositiva 7 solo lo nombra.
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — El patrón oro: la diapositiva 6 solo trajo el título. Falta el contenido de la clase (solo lo resuelve el alumno o el centro).
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — Masa monetaria (M1): la diapositiva 7 no trae definición ni ejemplo; faltaría ese material.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — la duda no decía a qué se refería "esto". Se ha respondido para la sesión entera; si era solo una parte, dime cuál.
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — ¿Suscripciones son 25,00 € (diapositiva 4) o 52,00 € (hoja de cálculo)? Solo lo resuelve el profesor de la clase.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — si la cifra buena es 52,00 €, actualizar el ejemplo de estas notas (fijos 742,00 €, gastos 1.222,00 €, ahorro 628,00 €, tasa 33,9 % mensual).
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — ¿el patrón oro entra en el temario? La diapositiva 6 solo trae el título; pedir al alumno el texto o las notas del profesor, o decidir si se deja fuera.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — la masa monetaria (M1) solo tiene una frase en la diapositiva 7 y no hay definición completa ni ejemplo. Lo tiene que aportar el alumno o el centro.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — el marcador no decía a qué "esto" se refería (¿la sesión entera, las tres funciones, el patrón
 
-## Bloque 2 (2)
+## Bloque 01-02 (4)
 
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — confirmar con el profesor de la clase cómo calcula el banco "una doceava parte del tipo anual" en la capitalización mensual (tipo nominal frente a tipo efectivo): el material no lo explica.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — el material no trae ninguna advertencia sobre inflación o impuestos al hablar de crecimiento. Decidir si se conecta con [[inflacion]] en una sesión futura.
+- [ ] **Pendiente del profesor** · [[conceptos/colchon-financiero]] — no queda claro a qué parte se refería la duda (el marcador estaba al final de la nota, sin
+- [ ] **Falta material del curso** · [[conceptos/gastos-fijos-y-variables]] — la hoja de cálculo de la clase trae las suscripciones en 52,00 €, no en 25,00 € como las
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — cuál es la cifra correcta de "Suscripciones": 25,00 € (diapositiva 4) o 52,00 € (hoja de cálculo). Solo lo puede confirmar el profesor o el alumno. Mientras tanto, las notas usan las cifras de las diapositivas (fijos 715,00 €, gastos 1.195,00 €, ahorro 655,00 €).
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — ¿de qué meses sale la media de 1.850,00 € de la diapositiva 4? Preguntar al alumno si el profesor lo explicó en clase.
+
+## Bloque 02-01 (1)
+
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — ¿la capitalización mensual del curso divide siempre el tipo anual entre 12 (como dice la diapositiva 4)? Preguntar al alumno o al profesor si en clase se explicó cómo lo aplican los bancos reales.

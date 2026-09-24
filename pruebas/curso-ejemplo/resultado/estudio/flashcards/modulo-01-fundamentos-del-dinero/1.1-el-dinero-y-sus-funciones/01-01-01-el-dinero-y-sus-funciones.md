@@ -2,14 +2,14 @@
 tipo: flashcards
 sesion: 01-01-01-el-dinero-y-sus-funciones
 ---
-# Flashcards · 01-01-01-el-dinero-y-sus-funciones
+# Flashcards · 01-01-01
 
 > El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
 > y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Un café cuesta 1,50 € y un corte de pelo 12,00 €, y puedes compararlos sin hablar de gallinas. ¿Qué función del dinero es?**
+**Cobras una caja de pescado en dinero, sabes que vale 40,00 € y guardas una parte para el mes sin pesca. ¿Qué función del dinero es cada una de esas tres cosas?**
 > [!success]- Respuesta
-> Unidad de cuenta: todo tiene precio con la misma vara de medir.
+> Cobrar en dinero: medio de cambio. Saber que vale 40,00 €: unidad de cuenta. Guardar una parte: depósito de valor.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
@@ -17,23 +17,23 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 
 **¿Qué problema del trueque resuelve el dinero como medio de cambio?**
 > [!success]- Respuesta
-> La doble coincidencia de deseos: el vendedor ya no tiene que querer justo lo que tú ofreces.
+> La doble coincidencia de deseos: ya no hace falta que el vendedor quiera justo lo que tú ofreces.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 24/9*
 
-**Sube el café de 1,50 € a 1,80 € y todo lo demás cuesta igual. ¿Es inflación? ¿Por qué?**
+**El precio del aguacate sube por una mala cosecha. ¿Es inflación? ¿Por qué?**
 > [!success]- Respuesta
-> No. Es una subida puntual. La inflación es la subida general y sostenida del nivel de precios.
+> No. Sube el precio de una sola cosa. Inflación es la subida general y sostenida del nivel de precios, de casi todo a la vez.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 24/9*
 
-**Tienes 300,00 € en la cartera y un piso. ¿Cuál es más líquido y por qué?**
+**¿Qué es más líquido, 50,00 € en la cartera o un piso? ¿Por qué?**
 > [!success]- Respuesta
-> La cartera: se gasta al instante. El piso vale más, pero venderlo bien lleva meses.
+> Los 50,00 €: se gastan al instante. El piso vale más, pero venderlo bien lleva meses.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
