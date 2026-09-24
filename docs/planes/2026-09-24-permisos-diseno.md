@@ -95,6 +95,12 @@ Peticiones de lo que sí debe pasar: de 2 a 0 desde la terminal y de 5 a 0 desde
 
 ## 6. Lo que falta probar antes de programar
 
+- **Confianza en la carpeta** (salió en la prueba real del 2026-09-24): Claude Code **ignora** las reglas de
+  `.claude/settings.json` en una carpeta que el alumno no ha marcado como de confianza. El alumno la acepta al abrir el
+  profesor la primera vez en su curso; pero la preparación en segundo plano trabaja en `.preparacion/<id>/`, otra
+  ruta. Comprobar si la confianza del curso vale para esa subcarpeta; si no, `permisos.js` (o `preparar.js`) tiene que
+  pasar las reglas al lanzarla (`--allowedTools`, como ya hace la prueba real).
+
 - Codex en Windows: reglas `allow` para `node .kit/herramientas/…` y `git`, desde la terminal y desde Claudian, y si
   el entorno restringido deja ejecutarlos (la #36 dice que no los dejaba).
 - Claude Code en la terminal con `acceptEdits` desde el atajo: que las ediciones de `estudio/` y `config/` no pregunten.
