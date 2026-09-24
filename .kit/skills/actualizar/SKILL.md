@@ -23,6 +23,9 @@ y si algo falla vuelve exactamente a ese punto.
 
     node .kit/herramientas/actualizar.js --aplicar
 
+Si su curso va varias versiones atrás, la herramienta pasa por todas en orden, una a una, y dice cada paso. Si
+una falla, para ahí: su curso se queda sano en la última que funcionó. Díselo así, sin más detalle.
+
 ## 3. Complementos de Obsidian
 
 Ejecuta `node .kit/herramientas/obsidian.js` (descarga los complementos que falten; los ajustes ya los añadió la

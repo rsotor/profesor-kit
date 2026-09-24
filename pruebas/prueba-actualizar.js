@@ -3,30 +3,29 @@
 // actualiza sin problemas a la copia de trabajo actual. No usa ningún LLM (es pura mecánica de
 // ficheros y git): a diferencia de pruebas/prueba-real.js, sí corre en el CI, en cada PR.
 //
-// Punto de partida: `pruebas/curso-ejemplo/resultado/` (lo que dejó la última prueba real) + la
-// versión del kit que hay anotada en su RESUMEN.md. Con eso se reconstruye "el curso tal como se
-// quedó" usando el motor de esa versión (`git archive v<versión>`, o la release anterior disponible
-// si esa etiqueta no existe), y se actualiza con `actualizar.js --aplicar --origen <esta copia de
-// trabajo>`, ejecutándolo desde dentro del propio curso reconstruido — como lo haría un alumno.
+// Punto de partida: la release anterior a esta copia (la más alta por debajo de `.kit/VERSION`), entera, sacada
+// de su etiqueta con `git archive`: su motor y el curso que dejó su prueba real (`pruebas/curso-ejemplo/` y
+// `resultado/` de esa etiqueta). Nada de esta copia: si no, el curso "viejo" saldría con cosas de la versión
+// nueva y la prueba mediría eso. Se actualiza con `actualizar.js --aplicar --origen <esta copia de trabajo>`,
+// ejecutándolo desde dentro del propio curso reconstruido — como lo haría un alumno.
+//
+// Es la garantía de actualizar en secuencia: cada release se prueba desde la anterior, y un alumno que va varias
+// versiones atrás pasa por todas, una a una (actualizar.js#aplicarSiguiente).
 //
 //   node pruebas/prueba-actualizar.js
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
+const crypto = require('node:crypto');
 const { carpetaTemporal, borrar, copiar, iniciarGit, ejecutarNodo, comprobarJson } = require('./lib/montaje');
+const { sinPie } = require('../.kit/herramientas/lib/indice');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
-const EJEMPLO = path.join(__dirname, 'curso-ejemplo');
-const RESULTADO = path.join(EJEMPLO, 'resultado');
+const EJEMPLO_REL = path.join('pruebas', 'curso-ejemplo');
 
 function git(trabajo, args) {
   const r = spawnSync('git', args, { cwd: trabajo, encoding: 'utf8' });
   return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
-}
-
-function versionDeResumen(resumen) {
-  const m = /\*\*Versión del kit:\*\*\s*([0-9.]+)/.exec(resumen);
-  return m ? m[1] : null;
 }
 
 // '0.10.0' es más nueva que '0.9.1', aunque como texto no lo parezca (mismo criterio que
@@ -44,19 +43,10 @@ function etiquetasDisponibles(trabajo) {
   return r.salida.split(/\r?\n/).filter(t => /^v\d+\.\d+\.\d+$/.test(t)).sort((a, b) => (esMasNueva(a.slice(1), b.slice(1)) ? 1 : -1));
 }
 
-// La etiqueta que mejor representa "la versión que produjo este resultado": exacta si existe; si no,
-// la release publicada más reciente que sea igual o anterior; si tampoco hay ninguna, la más antigua
-// que exista (mejor eso que nada, avisando). `null` si no hay ninguna etiqueta en absoluto.
-function resolverEtiqueta(version, etiquetas) {
-  const exacta = `v${version}`;
-  if (etiquetas.includes(exacta)) return { etiqueta: exacta, motivo: null };
-  if (!etiquetas.length) return null;
-  const anteriores = etiquetas.filter(t => !esMasNueva(t.slice(1), version));
-  if (anteriores.length) {
-    const elegida = anteriores[anteriores.length - 1];
-    return { etiqueta: elegida, motivo: `no existe la etiqueta ${exacta}; se usa la última release anterior disponible` };
-  }
-  return { etiqueta: etiquetas[0], motivo: `no hay ninguna release igual o anterior a la ${version}; se usa la más antigua que hay (${etiquetas[0]})` };
+// La release anterior a `version`: la más alta de las que son estrictamente más viejas. null si no hay ninguna.
+function etiquetaAnterior(version, etiquetas) {
+  const anteriores = etiquetas.filter(t => esMasNueva(version, t.slice(1)));
+  return anteriores.length ? anteriores[anteriores.length - 1] : null;
 }
 
 function extraerEtiqueta(trabajo, etiqueta, destino) {
@@ -67,21 +57,33 @@ function extraerEtiqueta(trabajo, etiqueta, destino) {
   if (tar.status !== 0) throw new Error(`tar -x falló al extraer ${etiqueta}: ${(tar.stderr || Buffer.from('')).toString('utf8')}`);
 }
 
-// Todos los ficheros bajo `estudio/` y `config/` (lo del alumno), con su tamaño: para comprobar, tras
-// actualizar, que no ha desaparecido ni se ha vaciado nada que no debiera.
+// Los que guardar.js reescribe en cada guardado (lib/generados.js, lib/perfil.js, lib/indice.js): de esos solo
+// se comprueba que siguen ahí, no su contenido.
+const GENERADOS = new Set(['estudio/inicio.md', 'estudio/pendientes.md', 'estudio/formulario.md', 'estudio/auditoria-del-material.md',
+  'estudio/mi-perfil.md', 'estudio/ejercicios/_index.md']);
+const DIARIO = 'config/diario.md';
+const AJUSTES = 'config/ajustes.json';
+
+// Todos los ficheros bajo `estudio/` y `config/` (lo del alumno): tamaño y huella del contenido (issue #39, H10:
+// con solo el tamaño, un cambio que no encoge pasaba). El pie de navegación de las sesiones no cuenta: lo pone
+// guardar.js. El diario y los ajustes se guardan enteros, que se comparan de otra forma.
 function huellaDatos(raiz) {
   const huella = new Map();
   for (const carpeta of ['estudio', 'config']) {
-    const base = path.join(raiz, carpeta);
     const recorrer = dir => {
       if (!fs.existsSync(dir)) return;
       for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
         const abs = path.join(dir, e.name);
-        if (e.isDirectory()) { if (e.name !== '.obsidian') recorrer(abs); }
-        else huella.set(path.relative(raiz, abs).split(path.sep).join('/'), fs.statSync(abs).size);
+        if (e.isDirectory()) { if (e.name !== '.obsidian') recorrer(abs); continue; }
+        const rel = path.relative(raiz, abs).split(path.sep).join('/');
+        const bytes = fs.readFileSync(abs);
+        const contenido = rel.endsWith('.md') ? sinPie(bytes.toString('utf8')) : bytes;
+        const dato = { tamano: bytes.length, hash: crypto.createHash('sha256').update(contenido).digest('hex') };
+        if (rel === DIARIO || rel === AJUSTES) dato.texto = bytes.toString('utf8');
+        huella.set(rel, dato);
       }
     };
-    recorrer(base);
+    recorrer(path.join(raiz, carpeta));
   }
   return huella;
 }
@@ -95,15 +97,31 @@ function variantesRenombradas(rel) {
   return [`${base}-anterior${ext}`];
 }
 
-function comprobarNoSePierdeNada(antes, despues) {
+const clavesDe = texto => { try { return Object.keys(JSON.parse(texto)); } catch { return []; } };
+
+// Qué se ha perdido o cambiado de lo del alumno. Sin migraciones de por medio (`migro`), una actualización no
+// cambia ni un byte de sus notas; con ellas, puede reescribir, pero no quitar (no encoger).
+function comprobarNoSePierdeNada(antes, despues, { migro = false } = {}) {
   const problemas = [];
-  for (const [rel, tamano] of antes) {
-    if (despues.has(rel)) {
-      if (despues.get(rel) < tamano) problemas.push(`${rel} ha encogido (${tamano} → ${despues.get(rel)} bytes)`);
+  for (const [rel, a] of antes) {
+    const d = despues.get(rel);
+    if (!d) {
+      const renombrado = variantesRenombradas(rel).find(v => despues.has(v) && despues.get(v).tamano >= a.tamano);
+      if (!renombrado) problemas.push(`${rel} ha desaparecido (y no hay ningún -anterior que lo explique)`);
       continue;
     }
-    const renombrado = variantesRenombradas(rel).find(v => despues.has(v) && despues.get(v) >= tamano);
-    if (!renombrado) problemas.push(`${rel} ha desaparecido (y no hay ningún -anterior que lo explique)`);
+    if (GENERADOS.has(rel) || a.hash === d.hash) continue;
+    if (rel === DIARIO) {
+      if (!d.texto.replace(/\r\n/g, '\n').startsWith(a.texto.replace(/\r\n/g, '\n').trimEnd())) problemas.push(`${rel} ha perdido líneas: solo puede crecer`);
+      continue;
+    }
+    if (rel === AJUSTES) {
+      const faltan = clavesDe(a.texto).filter(k => !clavesDe(d.texto).includes(k));
+      if (faltan.length) problemas.push(`${rel} ha perdido ajustes: ${faltan.join(', ')}`);
+      continue;
+    }
+    if (!migro) problemas.push(`${rel} ha cambiado, y ninguna migración lo explica`);
+    else if (d.tamano < a.tamano) problemas.push(`${rel} ha encogido (${a.tamano} → ${d.tamano} bytes)`);
   }
   return problemas;
 }
@@ -114,21 +132,23 @@ function skillsInstaladas(raiz) {
   return fs.readdirSync(dir).filter(n => fs.statSync(path.join(dir, n)).isDirectory()).sort();
 }
 
-// Reconstruye, en `destino`, el curso tal como se quedó al producir `resultadoDir`: el motor de
-// `origenViejo` (una copia de trabajo del kit en la versión antigua) + config/estudio del ejemplo +
-// lo que hubiera en resultadoDir (estudio/ y config/alumno.md), con `version_datos` de esa versión.
-function reconstruirCursoViejo({ origenViejo, resultadoDir, versionDatos, destino }) {
+// Reconstruye, en `destino`, el curso tal como lo dejó la prueba real de la versión vieja: el motor de
+// `origenViejo` (esa versión, extraída de su etiqueta) + su pruebas/curso-ejemplo/ (config y portada) + su
+// resultado/ (estudio/ y config/alumno.md), con `version_datos` de esa versión.
+function reconstruirCursoViejo({ origenViejo, versionDatos, destino }) {
+  const datosCurso = path.join(origenViejo, EJEMPLO_REL);
+  const resultadoDir = path.join(datosCurso, 'resultado');
   fs.mkdirSync(destino, { recursive: true });
   const motor = JSON.parse(fs.readFileSync(path.join(origenViejo, '.kit', 'motor.json'), 'utf8'));
   for (const f of motor.ficheros) copiar(path.join(origenViejo, ...f.split('/')), path.join(destino, ...f.split('/')));
   ejecutarNodo(path.join(destino, '.kit', 'herramientas', 'preparar-curso.js'), ['--subir', 'no', '--nombre', 'Finanzas personales para empezar'], destino);
 
-  for (const rel of ['config', 'README.md']) copiar(path.join(EJEMPLO, rel), path.join(destino, rel));
+  for (const rel of ['config', 'README.md']) copiar(path.join(datosCurso, rel), path.join(destino, rel));
   if (fs.existsSync(resultadoDir)) {
     copiar(path.join(resultadoDir, 'estudio'), path.join(destino, 'estudio'));
     if (fs.existsSync(path.join(resultadoDir, 'config', 'alumno.md'))) copiar(path.join(resultadoDir, 'config', 'alumno.md'), path.join(destino, 'config', 'alumno.md'));
   } else {
-    copiar(path.join(EJEMPLO, 'estudio'), path.join(destino, 'estudio'));
+    copiar(path.join(datosCurso, 'estudio'), path.join(destino, 'estudio'));
   }
   fs.rmSync(path.join(destino, 'estudio', 'inbox'), { recursive: true, force: true });
   fs.mkdirSync(path.join(destino, 'estudio', 'inbox'), { recursive: true });
@@ -160,27 +180,21 @@ function ejecutarActualizacion(raizViejo, trabajoActual) {
 
 // Inyectables para los tests: así se puede probar la lógica sin depender de que existan etiquetas de
 // verdad ni de clonar el repo real.
-function ejecutar({
-  trabajoActual = RAIZ_KIT, resultadoDir = RESULTADO,
-  buscarEtiquetas = etiquetasDisponibles, extraer = extraerEtiqueta,
-} = {}) {
-  const ficheroResumen = path.join(resultadoDir, 'RESUMEN.md');
-  if (!fs.existsSync(ficheroResumen)) {
-    return { hecho: false, motivo: 'Todavía no existe pruebas/curso-ejemplo/resultado/: nadie ha ejecutado `npm run prueba-real` con un LLM de verdad. No hay nada que actualizar; se sale sin error.' };
-  }
-  const version = versionDeResumen(fs.readFileSync(ficheroResumen, 'utf8'));
-  if (!version) return { hecho: false, ok: false, motivo: 'RESUMEN.md no dice "**Versión del kit:**": no se puede saber de qué versión partir.' };
-
-  const etiquetas = buscarEtiquetas(trabajoActual);
-  const resuelta = resolverEtiqueta(version, etiquetas);
-  if (!resuelta) return { hecho: false, ok: false, motivo: 'Este repo no tiene ninguna etiqueta vX.Y.Z (¿checkout superficial sin --fetch-depth 0?). No se puede reconstruir una versión antigua.' };
+function ejecutar({ trabajoActual = RAIZ_KIT, buscarEtiquetas = etiquetasDisponibles, extraer = extraerEtiqueta } = {}) {
+  const version = fs.readFileSync(path.join(trabajoActual, '.kit', 'VERSION'), 'utf8').trim();
+  const etiqueta = etiquetaAnterior(version, buscarEtiquetas(trabajoActual));
+  if (!etiqueta) return { hecho: false, ok: false, motivo: `No hay ninguna release anterior a la ${version} (¿checkout superficial sin --fetch-depth 0?). No se puede reconstruir la versión anterior.` };
 
   const origenViejo = carpetaTemporal();
   const raizViejo = carpetaTemporal();
   try {
-    extraer(trabajoActual, resuelta.etiqueta, origenViejo);
+    extraer(trabajoActual, etiqueta, origenViejo);
+    if (!fs.existsSync(path.join(origenViejo, EJEMPLO_REL, 'resultado', 'RESUMEN.md'))) {
+      return { hecho: false, ok: false, motivo: `La ${etiqueta} no trae ${EJEMPLO_REL.split(path.sep).join('/')}/resultado/: no hay curso de esa versión del que partir.` };
+    }
     const versionDatosVieja = JSON.parse(fs.readFileSync(path.join(origenViejo, '.kit', 'motor.json'), 'utf8')).version_datos;
-    reconstruirCursoViejo({ origenViejo, resultadoDir, versionDatos: versionDatosVieja, destino: raizViejo });
+    const versionDatosNueva = JSON.parse(fs.readFileSync(path.join(trabajoActual, '.kit', 'motor.json'), 'utf8')).version_datos;
+    reconstruirCursoViejo({ origenViejo, versionDatos: versionDatosVieja, destino: raizViejo });
 
     const antesInforme = comprobarJson(raizViejo);
     const antesHuella = huellaDatos(raizViejo);
@@ -191,7 +205,7 @@ function ejecutar({
     const despuesInforme = comprobarJson(raizViejo);
     const despuesHuella = huellaDatos(raizViejo);
     const despuesSkills = skillsInstaladas(raizViejo);
-    const perdidos = comprobarNoSePierdeNada(antesHuella, despuesHuella);
+    const perdidos = comprobarNoSePierdeNada(antesHuella, despuesHuella, { migro: versionDatosNueva > versionDatosVieja });
     const skillsActuales = fs.readdirSync(path.join(trabajoActual, '.kit', 'skills')).sort();
 
     const problemas = [];
@@ -201,7 +215,7 @@ function ejecutar({
     if (JSON.stringify(despuesSkills) !== JSON.stringify(skillsActuales)) problemas.push(`las skills instaladas no coinciden con las del motor actual: tiene ${despuesSkills.join(', ') || 'ninguna'}, esperaba ${skillsActuales.join(', ')}`);
 
     return {
-      hecho: true, ok: problemas.length === 0, version, etiqueta: resuelta.etiqueta, motivoEtiqueta: resuelta.motivo,
+      hecho: true, ok: problemas.length === 0, version, etiqueta,
       antesErrores: antesInforme.errores.length, despuesErrores: despuesInforme.errores.length,
       antesSkills, despuesSkills, salidaActualizar: r.salida, problemas,
     };
@@ -214,7 +228,7 @@ function ejecutar({
 function cli() {
   const r = ejecutar();
   if (!r.hecho) { console.log(r.motivo); return r.ok === false ? 1 : 0; }
-  console.log(`Etiqueta usada como versión antigua: ${r.etiqueta}${r.motivoEtiqueta ? ` (${r.motivoEtiqueta})` : ''}`);
+  console.log(`De la release anterior (${r.etiqueta}, con el curso de su prueba real) a esta copia (${r.version})`);
   console.log(`comprobar.js: ${r.antesErrores} error(es) antes → ${r.despuesErrores} después`);
   console.log(`Skills antes: ${r.antesSkills.join(', ') || 'ninguna'} · después: ${r.despuesSkills.join(', ') || 'ninguna'}`);
   if (r.problemas.length) { console.log('\nProblemas encontrados:'); for (const p of r.problemas) console.log(`  ✗ ${p}`); }
@@ -232,6 +246,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  ejecutar, cli, versionDeResumen, esMasNueva, etiquetasDisponibles, resolverEtiqueta, extraerEtiqueta,
+  ejecutar, cli, esMasNueva, etiquetasDisponibles, etiquetaAnterior, extraerEtiqueta,
   huellaDatos, comprobarNoSePierdeNada, reconstruirCursoViejo, skillsInstaladas,
 };

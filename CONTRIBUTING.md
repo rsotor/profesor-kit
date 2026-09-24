@@ -89,11 +89,17 @@ cuota), y lo único que **tú** deberías ejecutar salvo que quieras de verdad u
 Cada clase, entre 10 y 12 minutos; dudas, ejercicio, examen y repaso, entre 1,5 y 5 minutos cada uno. Son unas
 ocho sesiones seguidas del asistente con tu suscripción: lánzala cuando no vayas a necesitar la cuota.
 
-Aparte, `npm run prueba-actualizar` comprueba que un curso que se quedó en una versión antigua del kit
-(la que anota `pruebas/curso-ejemplo/resultado/RESUMEN.md`) se actualiza sin perder nada a la copia de
-trabajo actual. No usa ningún LLM —es mecánica de ficheros y de `actualizar.js`—, así que **sí** corre en
-el CI, en cada PR. Si todavía no existe `resultado/` (nadie ha hecho nunca una prueba real), lo dice y
-sale sin error.
+Aparte, `npm run prueba-actualizar` comprueba que **la release anterior** (la más alta por debajo de
+`.kit/VERSION`) se actualiza sin perder nada a la copia de trabajo actual. El curso de partida sale entero de esa
+etiqueta: su motor y el curso que dejó su prueba real (`pruebas/curso-ejemplo/resultado/` tal como estaba en ella).
+Compara por contenido: sin migraciones, ninguna nota del alumno cambia; con ellas, ninguna encoge; el diario solo
+crece y los ajustes no pierden claves (los ficheros que regenera `guardar.js` solo tienen que seguir ahí). No usa
+ningún LLM —es mecánica de ficheros y de `actualizar.js`—, así que **sí** corre en el CI, en cada PR.
+
+Es la garantía de que **actualizar va en secuencia**: `actualizar.js --aplicar` nunca salta versiones, aplica la
+siguiente release y deja seguir al `actualizar.js` recién instalado. Si cada release se prueba desde la anterior,
+un alumno que va varias versiones atrás pasa por pasos probados, uno a uno. Por eso cada release tiene que llevar
+su `resultado/`: es el curso del que partirá la prueba de la siguiente.
 
 ## Las dos barreras de `main`
 
