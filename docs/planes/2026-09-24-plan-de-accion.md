@@ -85,7 +85,7 @@ pueden dar por buena una clase que no se ha preparado o perder una corrección s
 | **Permisos** | Desde Obsidian (Claudian), el profesor pide decenas de permisos: las reglas del kit están en la raíz y el asistente arranca en `estudio/`, más los comandos improvisados. **Decisión de Roberto:** nada específico de un asistente. El alumno acepta una vez y el profesor puede trabajar con todas sus notas. Idea: que el profesor delegue en su "servicio técnico" (el adaptador de cada asistente) para configurarlo en su entorno | Para continuar | M | 0.24.0 |
 | **H09** | El adaptador aún no es un contrato completo: sin versión, sin capacidades declaradas, un adaptador propio del curso manda aunque cambie `llm`, y el segundo plano cae en `sonnet`. La prueba real solo llama a `claude`. Arreglo: adaptador con versión y capacidades, y una tabla de soporte (probado, con limitaciones, no disponible) por sistema, asistente y modelo | #39 | M-L | 0.24.0 |
 | **P8** | Material que no es PDF: PPTX, Excel, fotos, audio o vídeo, Word. Decidido: hay que cubrirlo. Una herramienta del kit para leerlos quita además los `python3` improvisados, que son la mitad de los permisos | Nuestra auditoría | M-L | 0.24.0 |
-| **#36** | Claudian con Codex: sin git en la raíz no ve al profesor. La 0.22.1 ya lo avisa. Falta confirmarlo en el curso de Windows y cerrar la issue | Issue #36 | S | En cuanto Roberto lo pruebe |
+| **#36** | Claudian con Codex: sin git en la raíz no ve al profesor | Issue #36 | S | ✅ cerrada el 2026-09-24, validada en Windows |
 | **H10 (resto)** | La prueba de actualización da por conservado un fichero si no encoge (un cambio del mismo tamaño pasa). `actualizar.js` compara cuántos errores hay, no cuáles. Arreglo: huellas (hash) de los ficheros que no deben cambiar y comparar los errores uno a uno | #39 | S-M | 0.24.0 |
 | **Claudian y la clave de API** (§2.3 de nuestra auditoría) | Se da por resuelto: Claudian usa el `claude` instalado (su ajuste guarda la ruta del programa), con la suscripción. Visto en el curso de Roberto | Nuestra auditoría | — | Cerrar |
 
@@ -130,4 +130,23 @@ pueden dar por buena una clase que no se ha preparado o perder una corrección s
 | 0.22.1 | ✅ publicada | #35 cerrada; `diagnostico.js` avisa de la raíz del git (#36) |
 | 0.22.2 | ✅ publicada (#40) | #38, H01, H02, H03, H07, H10 (CI). La línea de `/sesion` sobre el título `## El ejemplo` a secas queda para la 0.23.0 (tocar una skill exige prueba real) |
 | 0.22.3 | ✅ publicada (#41) | H04, H05, H06. Bloques 1 y 2 de la #39 cerrados |
-| 0.23.0 | ⏳ | Plan de mi perfil pendiente de revisar |
+| 0.23.0 | 🚧 en revisión | 12 tareas de código hechas (405 tests). Pendiente: revisión independiente, prueba real (≈1 h de cuota, con el sí de Roberto), PR y release |
+
+## 5. Qué entra en la 0.23.0 (2026-09-24)
+
+Revisado con Roberto: las 6 desviaciones del plan de mi perfil, aceptadas; más lo que se añadió en la revisión.
+Detalle de cada tarea en `docs/planes/2026-09-23-mi-perfil-y-evolucion-plan.md`.
+
+| Tarea | Qué | Estado |
+|---|---|---|
+| 1-6 | Mi perfil (`estudio/mi-perfil.md`) y señales en `estado.js` (P4 + E4) | ✅ |
+| 7 | Alumno simulado en la prueba real | ✅ |
+| 9 | La prueba real mide la corrección con 6 veredictos esperados (H08) | ✅ |
+| 10 | Barrera de PR: exige una prueba real entera bien; `pregunta-doble` con `**1.**` (H08) | ✅ |
+| 11 | El material de clase se estudia, no se obedece, con documento trampa (H11, la regla); `## El ejemplo` a secas en `/sesion` | ✅ |
+| 12 | Avisos que crecen: `comprobar.js --revisado` y señal `avisos-acumulados`; enlace roto en mi-perfil como aviso | ✅ |
+| 13 | Si algo tarda, avisar y hacerlo mientras tanto; "test" en vez de "parcial" | ✅ |
+| Extra | `esRepo` en el entorno restringido de Codex: error de permiso, no "no es la raíz" (salió al validar la #36) | ✅ |
+| Extra | Test de extremo a extremo: el curso sale de la carpeta de trabajo, no de un clon (ya no falla con `VERSION` sin commit) | ✅ |
+| — | Revisión independiente del código | 🚧 en marcha |
+| 8 | Prueba real y PR | ⏳ con el sí de Roberto |
