@@ -39,10 +39,8 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   // y las skills hacia arriba solo hasta la raíz del git: si esa raíz no es la del curso, allí no es el profesor
   // (issue #36). Se mira desde la bóveda, que es desde donde lo lanza Claudian.
   const boveda = existe(v.CARPETA_ALUMNO) ? path.join(raiz, v.CARPETA_ALUMNO) : raiz;
-  const cima = g.intentarGit(boveda, ['rev-parse', '--show-toplevel']);
-  const real = p => fs.realpathSync.native(path.resolve(p));
   const gitEnBoveda = fs.existsSync(path.join(boveda, '.git'));
-  anota('raiz-del-git', cima.ok && real(cima.stdout.trim()) === real(raiz), 'El curso es la raíz de su repositorio git',
+  anota('raiz-del-git', g.esRepo(raiz) && !gitEnBoveda, 'El curso es la raíz de su repositorio git',
     gitEnBoveda
       ? `La carpeta ${v.CARPETA_ALUMNO} tiene su propio git (${v.CARPETA_ALUMNO}/.git): así, el asistente abierto desde Obsidian no encuentra al profesor. Si nadie lo usa aparte, bórralo; si guarda historial que el alumno quiere, pregúntale antes.`
       : 'El curso no tiene su propio repositorio git: sin él no se guarda nada y, desde Obsidian, el asistente no encuentra al profesor. Ejecuta git init en la carpeta del curso y guarda con guardar.js.');

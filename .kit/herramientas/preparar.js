@@ -260,7 +260,7 @@ function juntar(raiz, id) {
 // --- CLI -------------------------------------------------------------------------------------------
 
 const EXPLICACION_LANZAR = {
-  'sin-repo': 'esta carpeta no es un repositorio git.',
+  'sin-repo': 'la carpeta del curso no es la raíz de su propio repositorio git (no tiene uno, o está dentro de otro). Ejecuta node .kit/herramientas/diagnostico.js para ver cómo arreglarlo.',
   'sin-segundo-plano': 'tu asistente no puede trabajar en segundo plano: prepara la clase en primer plano.',
   'id-invalido': 'el id de la sesión solo puede llevar letras, números, puntos y guiones.',
   'sin-ficheros': 'falta al menos un fichero de estudio/inbox/.',

@@ -89,7 +89,7 @@ const EXPLICACION = {
   'errores': 'No se ha guardado: hay errores que arreglar primero (ejecuta comprobar.js para verlos).',
   'sin-cambios': 'No había nada nuevo que guardar.',
   'sin-identidad': 'Git no sabe quién eres todavía. Hay que configurar user.name y user.email (ver INSTALAR-AGENTE.md, paso de identidad).',
-  'sin-repo': 'Esta carpeta no es un repositorio git.',
+  'sin-repo': 'La carpeta del curso no es la raíz de su propio repositorio git (no tiene uno, o está dentro de otro): no se toca nada. Ejecuta node .kit/herramientas/diagnostico.js para ver cómo arreglarlo.',
 };
 
 function cli(args, raiz) {

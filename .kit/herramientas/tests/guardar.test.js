@@ -199,3 +199,29 @@ test('el diario respeta el fin de línea de Windows: no mezcla \\n y \\r\\n', ()
   assert.equal(texto, '# Diario\r\n\r\n- 2026-01-01 · uno\r\n- 2026-01-02 · dos\r\n');
   assert.doesNotMatch(texto.replace(/\r\n/g, ''), /\n/, 'ningún \\n suelto');
 });
+
+// issue #39, H03: un curso sin git propio dentro de otro repositorio no puede guardar en el de fuera.
+test('un curso sin git propio dentro de otro repositorio no guarda nada, y el de fuera no cambia', () => {
+  const padre = temporal('kit-padre-');
+  escribir(padre, { 'LEEME.txt': 'repo ajeno' });
+  iniciarGit(padre);
+  const antes = git(padre, 'rev-parse', 'HEAD');
+  const raiz = path.join(padre, 'curso');
+  fs.cpSync(cursoTemporal({ 'config/ajustes.json': ajustes(false) }), raiz, { recursive: true });
+  const r = guardar({ raiz, mensaje: 'sesion(1): intento' });
+  assert.equal(r.guardado, false);
+  assert.equal(r.motivo, 'sin-repo');
+  assert.equal(git(padre, 'rev-parse', 'HEAD'), antes);
+  assert.equal(git(padre, 'diff', '--cached', '--name-only'), '');
+});
+
+test('esRepo: la raíz exacta sí; una subcarpeta no; una copia de trabajo (worktree) sí', () => {
+  const g = require('../lib/git');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  assert.equal(g.esRepo(raiz), true);
+  assert.equal(g.esRepo(path.join(raiz, 'estudio')), false);
+  const copia = path.join(temporal('kit-wt-'), 'copia');
+  git(raiz, 'worktree', 'add', '-q', '-b', 'otra', copia);
+  assert.equal(g.esRepo(copia), true);
+});
