@@ -18,6 +18,13 @@
 //   config/claves/: nada de juicio que aportar.
 //
 //     node .kit/herramientas/examen.js --corregir <examen.md>
+//
+// Y para componer un examen nuevo reutilizando preguntas (docs/planes/2026-09-25-examen-v1.md, "Reutilizar
+// preguntas propias" y "Examen de referencia del centro"): las falladas en el último intento de cada examen
+// (enunciado con sus opciones, tal cual del .md; respuesta correcta y concepto, de la clave) y, aparte, las
+// del centro ya usadas, para rotarlas.
+//
+//     node .kit/herramientas/examen.js --falladas [<unidad>]   # unidad = prefijo; sin ella, todo el curso
 const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./lib/vault');
@@ -234,11 +241,31 @@ function corregir(raiz, rel) {
   return { ...r, aprobo: nota >= r.aprobado, aciertos, fallos, blancos: total - aciertos - fallos, fallosPorConcepto };
 }
 
+// Las preguntas que reutiliza la skill al componer un examen nuevo (docs/planes/2026-09-25-examen-v1.md,
+// "Reutilizar preguntas propias" y "Examen de referencia del centro"): las falladas en el último intento de
+// cada examen de la unidad (o de todo el curso, sin unidad) y, aparte, las del centro que ya han salido, para
+// rotarlas. `unidad` es un prefijo: "01" trae también los exámenes de "01-02", "01-03"…
+function falladasCli(raiz, unidad) {
+  const todos = indice.leerExamenes(raiz);
+  const examenesUnidad = unidad ? todos.filter(e => e.unidades.some(u => u === unidad || u.startsWith(`${unidad}-`))) : todos;
+  return { falladas: examenes.preguntasFalladas(raiz, examenesUnidad), centroUsadas: examenes.preguntasCentroUsadas(raiz, examenesUnidad) };
+}
+
 function cli(args, raiz) {
   const valor = marca => { const i = args.indexOf(marca); return i >= 0 ? args[i + 1] : undefined; };
   const registrarArg = valor('--registrar');
   const corregirArg = valor('--corregir');
   const json = valor('--correccion');
+
+  if (args.includes('--falladas')) {
+    const i = args.indexOf('--falladas');
+    const unidad = args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : undefined;
+    const { falladas, centroUsadas } = falladasCli(raiz, unidad);
+    console.log(`${falladas.length} pregunta(s) fallada(s) reutilizable(s)${unidad ? ` en la unidad ${unidad}` : ''}`
+      + ` · ${centroUsadas.length} del centro ya usada(s).`);
+    console.log(JSON.stringify({ falladas, centroUsadas }));
+    return 0;
+  }
 
   if (corregirArg) {
     try {
@@ -256,7 +283,8 @@ function cli(args, raiz) {
 
   if (!registrarArg || !json) {
     console.error('Uso: node .kit/herramientas/examen.js --registrar <examen.md> --correccion <fichero.json>'
-      + ' · node .kit/herramientas/examen.js --corregir <examen.md>');
+      + ' · node .kit/herramientas/examen.js --corregir <examen.md>'
+      + ' · node .kit/herramientas/examen.js --falladas [<unidad>]');
     return 2;
   }
   const ficheroJson = path.resolve(raiz, json);

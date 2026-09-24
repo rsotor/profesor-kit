@@ -102,6 +102,100 @@ function leerClaveSegura(raiz, relExamen) {
   try { return leerClave(raiz, relExamen); } catch { return null; }
 }
 
+// --- Reutilizar preguntas de exámenes anteriores (decisión del mantenedor, 2026-09-24) ---------------------
+//
+// Componer un examen de 40 o 50 preguntas de la nada es mucho para inventar de golpe: la skill /examen
+// reutiliza primero lo que el alumno falló en exámenes anteriores de la unidad (lo más valioso, es lo que va
+// a fallar de verdad) antes de escribir preguntas nuevas. El enunciado y las opciones salen tal cual del
+// propio `.md` del examen; la respuesta correcta y la explicación, de su clave (`config/claves/…`): el
+// histórico de intentos no las guarda, solo el veredicto (✅/❌) de cada una.
+
+const NUMERO_PREGUNTA_MD = /^(\d+\.\s|\*\*\d+\.\*\*)/;
+const TITULO_HISTORICO = '## Histórico de intentos';
+
+// Cada pregunta del cuerpo del examen (antes del histórico), tal como está escrita: desde su número hasta la
+// línea antes de la siguiente pregunta, un título o un callout. Un array en el mismo orden que su clave.
+function preguntasDelMd(texto) {
+  const lineas = texto.replace(/\r\n/g, '\n').split('\n');
+  const fin = lineas.indexOf(TITULO_HISTORICO) >= 0 ? lineas.indexOf(TITULO_HISTORICO) : lineas.length;
+  const lista = [];
+  for (let i = 0; i < fin; i++) {
+    if (!NUMERO_PREGUNTA_MD.test(lineas[i])) continue;
+    let j = i + 1;
+    while (j < fin && !NUMERO_PREGUNTA_MD.test(lineas[j]) && !/^#/.test(lineas[j]) && !lineas[j].startsWith('>')) j++;
+    lista.push(lineas.slice(i, j).join('\n').replace(/\s+$/, ''));
+  }
+  return lista;
+}
+
+// Los números de pregunta (1-based) que salieron falladas en el último intento: la tabla del último callout
+// "> [!example]- Intento N …", columna Resultado empezando por ❌ (examen.js#escribirIntento).
+function falladasDelUltimoIntento(texto) {
+  const lineas = texto.replace(/\r\n/g, '\n').split('\n');
+  const inicio = lineas.map((l, i) => (/^>\s*\[!example\][-+]?\s*Intento/.test(l) ? i : -1)).filter(i => i >= 0).pop();
+  if (inicio === undefined) return [];
+  const falladas = [];
+  for (const l of lineas.slice(inicio + 1)) {
+    if (!l.startsWith('>')) break;
+    const c = l.replace(/^>\s*/, '').split('|').map(x => x.trim());
+    if (c.length < 5 || !/^\d+$/.test(c[1])) continue;
+    if (c[3].startsWith('❌')) falladas.push(Number(c[1]));
+  }
+  return falladas;
+}
+
+// Las preguntas que el alumno falló, listas para reutilizar: enunciado y opciones del `.md`, respuesta
+// correcta y explicación de la clave. `examenesUnidad` es la lista de exámenes ya elegida por quien llama
+// (mismo patrón que `escalonesFinal`/`infoFinal`): cada entrada necesita, al menos, `rel` (relativa a
+// `estudio/`, como la da `lib/indice.leerExamenes`). Un examen sin histórico, sin clave o con la clave
+// desincronizada del `.md` (otro número de preguntas) no aporta nada: se salta, nunca revienta.
+function preguntasFalladas(raiz, examenesUnidad) {
+  const salida = [];
+  for (const examen of examenesUnidad) {
+    const abs = path.join(v.baseAlumno(raiz), ...v.aPosix(examen.rel).split('/'));
+    if (!fs.existsSync(abs)) continue;
+    const texto = fs.readFileSync(abs, 'utf8');
+    const falladas = falladasDelUltimoIntento(texto);
+    if (!falladas.length) continue;
+    const preguntasMd = preguntasDelMd(texto);
+    const clave = leerClaveSegura(raiz, examen.rel);
+    const clavePreguntas = (clave && Array.isArray(clave.preguntas)) ? clave.preguntas : [];
+    for (const numero of falladas) {
+      const enunciado = preguntasMd[numero - 1];
+      const c = clavePreguntas[numero - 1];
+      if (!enunciado || !c) continue;
+      salida.push({
+        examen: examen.rel, numero, enunciado,
+        correctas: c.correctas || [], explicacion: c.explicacion || '', concepto: c.concepto || null,
+      });
+    }
+  }
+  return salida;
+}
+
+// Las preguntas del centro que ya han salido en algún examen (su clave las marca con `origen: "centro"`,
+// "Examen de referencia del centro"): para poder rotar, primero las que todavía no han salido. Barato de
+// calcular — reutiliza `preguntasDelMd` — así que se saca siempre junto a `preguntasFalladas`, aunque el
+// examen no tenga ninguna fallada.
+function preguntasCentroUsadas(raiz, examenesUnidad) {
+  const salida = [];
+  for (const examen of examenesUnidad) {
+    const clave = leerClaveSegura(raiz, examen.rel);
+    const clavePreguntas = (clave && Array.isArray(clave.preguntas)) ? clave.preguntas : [];
+    if (!clavePreguntas.some(p => p && p.origen === 'centro')) continue;
+    const abs = path.join(v.baseAlumno(raiz), ...v.aPosix(examen.rel).split('/'));
+    if (!fs.existsSync(abs)) continue;
+    const preguntasMd = preguntasDelMd(fs.readFileSync(abs, 'utf8'));
+    clavePreguntas.forEach((c, i) => {
+      if (!c || c.origen !== 'centro') return;
+      const enunciado = preguntasMd[i];
+      if (!enunciado) return;
+      salida.push({ examen: examen.rel, numero: i + 1, enunciado, correctas: c.correctas || [], concepto: c.concepto || null });
+    });
+  }
+  return salida;
+}
+
 // Cuántos escalones tiene el examen final, y con qué aprobado cada uno. Sale de la clave del último final que
 // haya (la configuración con la que nació esa escalera); sin ningún final todavía, del JSON de hoy.
 function escalonesFinal(raiz, examenesFinales) {
@@ -139,4 +233,5 @@ module.exports = {
   RUTA_CONFIG, RUTA_CLAVES, POR_DEFECTO, APROBADO_POR_DEFECTO,
   leer, aprobadoDeCurso, aprobadoDeTipo, aprobadoDeExamen, esDeModulo,
   rutaClave, leerClave, leerClaveSegura, escalonesFinal, infoFinal,
+  preguntasDelMd, falladasDelUltimoIntento, preguntasFalladas, preguntasCentroUsadas,
 };

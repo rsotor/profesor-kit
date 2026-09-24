@@ -70,6 +70,68 @@ test('leerClave: falta o rota, error claro; existe, la lee', () => {
   assert.equal(ex.leerClaveSegura(raiz, 'examenes/no-existe.md'), null);
 });
 
+// --- Reutilizar preguntas falladas (decisión del mantenedor, 2026-09-24) -----------------------------------
+
+const EXAMEN_CON_INTENTO = [
+  '---', 'tipo: examen', 'unidad: "01"', '---', '# Examen', '',
+  '**1.** ¿Qué es A? *(elige una)*', '', '- [ ] a) uno', '- [ ] b) dos', '',
+  '**2.** ¿Y B? *(elige una)*', '', '- [ ] a) tres', '- [ ] b) cuatro', '',
+  '**3.** ¿Y C? *(elige una)*', '', '- [ ] a) cinco', '- [ ] b) seis', '',
+  '## Histórico de intentos', '', '| Intento | Fecha | Nota |', '|---|---|---|', '| 1 | 2026-10-01 | 3,3 |', '',
+  '> [!example]- Intento 1 · 2026-10-01 · tus respuestas y la corrección', '>',
+  '> | # | Tu respuesta | Resultado | Por qué |', '> |---|---|---|---|',
+  '> | 1 | a | ❌ Incorrecta | Correcta: b. porque b |', '> | 2 | b | ✅ Correcta | porque b |',
+  '> | 3 | | ❌ Incorrecta (en blanco) | Correcta: a. porque a |', '',
+].join('\n');
+
+test('preguntasFalladas: junta el enunciado del .md con la respuesta y la explicación de la clave, solo lo fallado', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen-2026-10-01.md': EXAMEN_CON_INTENTO,
+    'config/claves/01-examen-2026-10-01.json': JSON.stringify({
+      preguntas: [
+        { correctas: ['b'], explicacion: 'porque b', concepto: 'concepto-1' },
+        { correctas: ['b'], explicacion: 'porque b', concepto: 'concepto-2' },
+        { correctas: ['a'], explicacion: 'porque a', concepto: 'concepto-3' },
+      ],
+    }),
+  });
+  const r = ex.preguntasFalladas(raiz, [{ rel: 'examenes/01-examen-2026-10-01.md' }]);
+  assert.equal(r.length, 2, 'solo las dos falladas (1 y 3), no la acertada (2)');
+  assert.deepEqual(r.map(p => p.numero), [1, 3]);
+  assert.match(r[0].enunciado, /¿Qué es A\?/);
+  assert.deepEqual(r[0].correctas, ['b']);
+  assert.equal(r[0].concepto, 'concepto-1');
+  assert.equal(r[1].explicacion, 'porque a');
+});
+
+test('preguntasFalladas: sin histórico, sin clave o con la clave desincronizada, no revienta y no aporta nada', () => {
+  const raiz = cursoTemporal({ 'estudio/examenes/01-sin-intentos.md': '---\ntipo: examen\n---\n# Examen\n\n**1.** ¿Qué es A?\n\n- [ ] a) x\n' });
+  assert.deepEqual(ex.preguntasFalladas(raiz, [{ rel: 'examenes/01-sin-intentos.md' }]), []);
+  assert.deepEqual(ex.preguntasFalladas(raiz, [{ rel: 'examenes/no-existe.md' }]), []);
+
+  const conIntentoSinClave = cursoTemporal({ 'estudio/examenes/01-examen.md': EXAMEN_CON_INTENTO });
+  assert.deepEqual(ex.preguntasFalladas(conIntentoSinClave, [{ rel: 'examenes/01-examen.md' }]), [], 'sin clave, nada que reutilizar');
+
+  const desincronizado = cursoTemporal({
+    'estudio/examenes/01-examen.md': EXAMEN_CON_INTENTO,
+    'config/claves/01-examen.json': JSON.stringify({ preguntas: [{ correctas: ['b'] }] }),   // solo 1, falta la 3
+  });
+  const r = ex.preguntasFalladas(desincronizado, [{ rel: 'examenes/01-examen.md' }]);
+  assert.deepEqual(r.map(p => p.numero), [1], 'la pregunta 1 sí tiene clave; la 3 fallada no la tiene: se salta, no revienta');
+});
+
+test('falladasDelUltimoIntento: solo el último intento, no los anteriores', () => {
+  const dosIntentos = [
+    '> [!example]- Intento 1 · 2026-10-01 · tus respuestas y la corrección', '>',
+    '> | # | Tu respuesta | Resultado | Por qué |', '> |---|---|---|---|',
+    '> | 1 | a | ❌ Incorrecta | Correcta: b |', '',
+    '> [!example]- Intento 2 · 2026-10-05 · tus respuestas y la corrección', '>',
+    '> | # | Tu respuesta | Resultado | Por qué |', '> |---|---|---|---|',
+    '> | 1 | b | ✅ Correcta | porque b |',
+  ].join('\n');
+  assert.deepEqual(ex.falladasDelUltimoIntento(dosIntentos), [], 'en el segundo intento ya la acertó');
+});
+
 test('infoFinal: sin exámenes, el primer escalón pendiente con su aprobado; superado el último, la fecha', () => {
   const raiz = cursoTemporal();
   const vacio = ex.infoFinal(raiz, []);

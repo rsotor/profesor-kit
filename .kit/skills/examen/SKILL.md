@@ -61,8 +61,34 @@ semanas…). `/examen 1-3` = bloques 1 a 3. `/examen 7` = bloque 7. Si no lo dic
 
 ## 3. Componer las preguntas
 
-Todas de opción múltiple, con las opciones de `config/examenes.json` (`opciones`, 4 por defecto). Lee las
-notas de los bloques y `config/alumno.md`. Reparto:
+Todas de opción múltiple, con las opciones de `config/examenes.json` (`opciones`, 4 por defecto).
+
+**Antes de escribir nada nuevo, reutiliza — en este orden** (decisión del mantenedor, 2026-09-24: con 40 o
+50 preguntas en un examen grande, inventarlas todas de golpe es mucho):
+
+1. **Lo que el alumno falló** en exámenes anteriores de esta unidad — es lo más valioso, lo que va a fallar
+   de verdad. Ejecuta:
+
+       node .kit/herramientas/examen.js --falladas <unidad>
+
+   (`<unidad>` es un prefijo, como `01`; sin él, todo el curso). Su segunda línea es un JSON
+   `{ "falladas": […], "centroUsadas": […] }`. Reutiliza `falladas` tal cual: cada entrada trae `enunciado`
+   (con sus opciones, del propio `.md`), `correctas`, `explicacion`, `concepto` y `examen` (de dónde sale).
+   En la clave del examen nuevo, marca cada una con `origen: "examen anterior"` y `de: "<examen>"` (apartado
+   4), para poder trazarla. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
+2. **Las del examen de referencia del centro que todavía no han salido**, si el alumno trajo uno: `falladas`
+   ya trae marcadas `origen: "centro"` si las falló; `centroUsadas` (del mismo JSON) trae **todas** las que ya
+   salieron, las haya fallado o no — prioriza las que no estén en ninguna de las dos. Ver "Examen de
+   referencia del centro" más abajo.
+3. **Nuevas, solo para completar** lo que falte hasta el número de preguntas del tipo, con el reparto de
+   abajo.
+
+Se respeta siempre: el máximo de 3 preguntas por concepto, el tope de la mitad del examen para las de
+referencia del centro (apartado de abajo) y que un escalón del final sea más difícil que el anterior — las
+preguntas reutilizadas cuentan para el nivel que ya tenían; si con ellas el examen no llega al nivel que le
+toca, añade preguntas nuevas más difíciles hasta que sí.
+
+**Reparto de las preguntas nuevas** (paso 3 de arriba). Lee las notas de los bloques y `config/alumno.md`:
 
 | Origen | Peso | Por qué |
 |---|---|---|
@@ -74,7 +100,8 @@ notas de los bloques y `config/alumno.md`. Reparto:
 Si `estudio/formulario.md` está vacío, su 20 % pasa a cobertura (35 %). Si el alumno es nuevo y no tiene
 errores repetidos, su 40 % pasa también a cobertura (55 %).
 
-**Máximo 3 preguntas por concepto** en todo el examen (en un curso pequeño, salen menos).
+**Máximo 3 preguntas por concepto** en todo el examen (en un curso pequeño, salen menos) — cuenta también lo
+reutilizado de los pasos 1 y 2.
 
 **Distractores de verdad**: la opción incorrecta es el error típico de la nota o el concepto cercano con el
 que se confunde — nunca una opción absurda que se descarta sola. Marca `*(elige una)*` cuando solo una
@@ -146,7 +173,9 @@ nace el examen:
 Una entrada de `preguntas` por pregunta, **en el mismo orden**. `correctas`: la letra o letras que valen
 (minúscula). `explicacion`: lo que lee el alumno al fallar (por qué la correcta es correcta; si la pregunta
 viene de internet, aquí va la marca de fuente externa). `concepto`: el slug de `estudio/conceptos/`, o
-`null` si la pregunta no es de un concepto concreto.
+`null` si la pregunta no es de un concepto concreto. Si la pregunta está reutilizada (apartado 3), añade
+`origen: "examen anterior"` con `de: "<ruta del examen del que sale>"`, o `origen: "centro"` si es literal
+del test de referencia (apartado "Examen de referencia del centro"); sin ninguna de las dos, es nueva.
 
 **En el examen final**, la clave lleva además `"escalones"` — el array **completo** de
 `config/examenes.json → tipos.final.escalones` tal como estaba al escribir este examen (no solo el
@@ -214,12 +243,27 @@ un test de autoevaluación de la plataforma…), en cualquier momento del curso 
    (normalmente `modulo`; crea o ajusta uno con nombre propio como `certificacion` si el ejemplo es del
    examen final o de la certificación). **Lo que el ejemplo no diga, no se inventa:** se queda el valor que
    ya había, y se lo dices al alumno.
-2. **Úsalo como modelo de estilo** — cómo formula las preguntas, su nivel — nunca copiando sus preguntas
-   tal cual como si fueran tuyas. Si reutilizas una pregunta real del centro, márcala como del centro en la
-   explicación de la clave (apartado 4).
-3. **Deja constancia de la referencia** en el examen que generes a partir de ahí: `referencia:` en su
+2. **Reutiliza sus preguntas, literales.** Pueden caer tal cual en el examen real: el enunciado y las
+   opciones entran sin reescribirlos (paso 2 del orden del apartado 3, después de lo que el alumno falló).
+   Antes de componer las preguntas de cualquier examen nuevo de esa unidad, comprueba si hay un examen de
+   referencia guardado; si lo hay, aplica esto.
+3. **Marca cada una como del centro, en las dos capas**: en el examen, un sufijo visible tras el enunciado
+   —`*(del centro)*`, o lo que encaje con el formato de la pregunta— y en su entrada de la clave,
+   `origen: "centro"` (apartado 4).
+4. **Como mucho la mitad del examen** sale de la referencia; el resto son preguntas nuevas del mismo estilo
+   (apartado 3, paso 3). Que no se convierta en memorizar el test del centro.
+5. **Su respuesta correcta sale de la clave del propio ejemplo**, si la trae (como el fixture de prueba, con
+   la clave de soluciones al final). Si no la trae, la decides tú, contrastando con las notas del curso, y
+   se lo dices al alumno.
+6. **No la ignores**: si el alumno trajo una referencia y todavía le quedan preguntas suyas sin salir, no
+   escribas un examen entero nuevo sin ninguna.
+7. **Rota entre versiones.** Al crear una versión nueva de un examen (apartado 6) o subir de escalón en el
+   final, prioriza las preguntas de referencia que **todavía no han salido**, hasta que el alumno las haya
+   visto todas. Para saber cuáles ya salieron, usa `centroUsadas` de `node .kit/herramientas/examen.js
+   --falladas <unidad>` (apartado 3, paso 1) — no leas las claves a mano.
+8. **Deja constancia de la referencia** en el examen que generes a partir de ahí: `referencia:` en su
    frontmatter (el nombre del fichero de origen), o en la clave.
-4. **Solo afecta a los exámenes que se creen desde ahora**: cambiar `config/examenes.json` no toca los que
+9. **Solo afecta a los exámenes que se creen desde ahora**: cambiar `config/examenes.json` no toca los que
    ya existen — cada examen guarda su propia configuración en su clave (apartado 4).
 
 **Al preparar un examen final o de certificación, pide referencias si no las tienes.** Pregúntalo una vez,

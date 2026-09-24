@@ -304,6 +304,104 @@ function formatoDeOpciones(destino, ficheroExamen) {
     : { ok: true, detalle: `las ${preguntas.length} preguntas tienen ${esperado} opciones, como la clave` };
 }
 
+// Normaliza un enunciado para comparar "literal" sin que el markdown (negritas, marcadores de fuente) ni los
+// espacios de más lo desincronicen: sin eso, "**1.** Un depósito…" y "1. Un depósito…" nunca coincidirían.
+function normalizarTexto(s) {
+  return String(s)
+    .replace(/\*\([^)]*\)\*/g, '')   // *(elige una)*, *(varias)*, *(del centro)*…
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+// Las preguntas del test de referencia del centro (el fixture de pruebas/curso-ejemplo/estudio/inbox/):
+// numeradas "N. …", con sus opciones "a) …" y la clave de soluciones al final ("## Soluciones", "1-b · 2-b…").
+function preguntasReferencia(texto) {
+  const lineas = texto.replace(/\r\n/g, '\n').split('\n');
+  const iSoluciones = lineas.findIndex(l => /^## Soluciones/.test(l));
+  const correctas = {};
+  if (iSoluciones >= 0) {
+    for (const m of lineas.slice(iSoluciones + 1).join(' ').matchAll(/(\d+)-([a-z])/g)) correctas[Number(m[1])] = m[2];
+  }
+  const cuerpo = iSoluciones >= 0 ? lineas.slice(0, iSoluciones) : lineas;
+  const preguntas = [];
+  let actual = null;
+  for (const l of cuerpo) {
+    const mPregunta = /^(\d+)\.\s+(.*)$/.exec(l);
+    const mOpcion = /^\s*[a-z]\)\s+.*$/.exec(l);
+    if (mPregunta) {
+      if (actual) preguntas.push(actual);
+      actual = { numero: Number(mPregunta[1]), lineas: [mPregunta[2]] };
+    } else if (mOpcion) {
+      continue;   // las opciones no forman parte del enunciado que hay que igualar
+    } else if (actual && l.trim()) {
+      actual.lineas.push(l.trim());
+    }
+  }
+  if (actual) preguntas.push(actual);
+  return preguntas.map(p => ({ numero: p.numero, enunciado: p.lineas.join(' ').trim(), correcta: correctas[p.numero] || null }));
+}
+
+// Cada pregunta del examen, con su enunciado en crudo (desde el número hasta la primera opción con casilla) y
+// el bloque entero (para poder buscar en él un aviso visible de "del centro").
+function bloquesDeExamen(lineas) {
+  const lista = [];
+  for (let i = 0; i < lineas.length; i++) {
+    if (!NUMERO_PREGUNTA.test(lineas[i])) continue;
+    const partes = [lineas[i].replace(NUMERO_PREGUNTA, '').trim()];
+    let j = i + 1;
+    while (j < lineas.length && !OPCION_CON_CASILLA.test(lineas[j])) {
+      if (NUMERO_PREGUNTA.test(lineas[j]) || /^#/.test(lineas[j]) || lineas[j].startsWith('>')) break;
+      if (lineas[j].trim()) partes.push(lineas[j].trim());
+      j++;
+    }
+    let k = j;
+    while (k < lineas.length && (OPCION_CON_CASILLA.test(lineas[k]) || lineas[k].trim() === '')) k++;
+    lista.push({ numero: lista.length + 1, enunciadoCrudo: partes.join(' '), bloque: lineas.slice(i, k).join(' ') });
+  }
+  return lista;
+}
+
+// El examen tiene que traer, literales y marcadas, algunas de las preguntas del test de referencia del
+// centro (decisión del mantenedor, 2026-09-24): al menos una, como mucho la mitad, marcadas como del centro
+// (en el enunciado o con "origen": "centro" en la clave) y con la respuesta correcta de la clave coincidiendo
+// con la del test del centro, cuando este la trae.
+function preguntasLiteralesDelCentro(destino, ficheroExamen, textoReferencia) {
+  const referencia = preguntasReferencia(textoReferencia);
+  if (!referencia.length) return { ok: false, detalle: 'no se han podido leer preguntas del test de referencia' };
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  let clave;
+  try { clave = examenesLib.leerClave(destino, relExamen); } catch (error) {
+    return { ok: false, detalle: `no se pudo leer la clave: ${error.message}` };
+  }
+  const clavePreguntas = Array.isArray(clave.preguntas) ? clave.preguntas : [];
+  const lineas = fs.readFileSync(ficheroExamen, 'utf8').replace(/\r\n/g, '\n').split('\n');
+  const bloques = bloquesDeExamen(lineas);
+  if (!bloques.length) return { ok: false, detalle: 'no se han encontrado preguntas en el examen' };
+
+  const literales = [];
+  bloques.forEach((bloque, i) => {
+    const ref = referencia.find(r => normalizarTexto(r.enunciado) === normalizarTexto(bloque.enunciadoCrudo));
+    if (!ref) return;
+    const claveP = clavePreguntas[i] || {};
+    const marcada = /del centro/i.test(bloque.bloque) || claveP.origen === 'centro';
+    const correctas = (claveP.correctas || []).map(l => String(l).toLowerCase());
+    const coincideRespuesta = ref.correcta ? correctas.includes(ref.correcta) : null;
+    literales.push({ numero: bloque.numero, marcada, coincideRespuesta });
+  });
+
+  if (!literales.length) return { ok: false, detalle: 'ninguna pregunta del examen coincide, literal, con las del test de referencia' };
+  const mitad = Math.floor(bloques.length / 2);
+  if (literales.length > mitad) return { ok: false, detalle: `${literales.length} de ${bloques.length} preguntas son del centro (más de la mitad, ${mitad})` };
+  const sinMarcar = literales.filter(l => !l.marcada);
+  if (sinMarcar.length) return { ok: false, detalle: `${sinMarcar.length} pregunta(s) literal(es) del centro sin marcar (ni en el enunciado ni con "origen": "centro" en la clave)` };
+  const respuestaMal = literales.filter(l => l.coincideRespuesta === false);
+  if (respuestaMal.length) return { ok: false, detalle: `la respuesta de la clave no coincide con la del test del centro en la(s) pregunta(s) ${respuestaMal.map(l => l.numero).join(', ')}` };
+
+  return { ok: true, detalle: `${literales.length} de ${bloques.length} preguntas son literales del centro (máximo ${mitad}), marcadas y con su respuesta` };
+}
+
 // --- La corrección, medida (issue #39, H08) ---------------------------------------------------------------
 
 // El veredicto de una celda "Resultado" de la tabla de un intento, en los tres de "Cuando preguntas para medir"
@@ -393,5 +491,5 @@ module.exports = {
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
   casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
-  referenciaCoherente, formatoDeOpciones,
+  referenciaCoherente, formatoDeOpciones, preguntasReferencia, preguntasLiteralesDelCentro,
 };

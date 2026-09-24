@@ -228,10 +228,12 @@ function pasoExamenReferencia(ctx) {
 
 function pasoExamenGenerar(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
-  const r = invocarClaude({
-    prompt: `Hazme el examen del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /examen. ${PROMPT_COMUN}`,
-    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
-  });
+  const prompt = ctx.referenciaCentro
+    ? `Hazme el examen del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /examen. Ya sabes qué `
+      + 'test de referencia del centro te dejé: reutiliza algunas de sus preguntas, literales y marcadas '
+      + `como del centro, tal como pide la sección "Examen de referencia del centro". ${PROMPT_COMUN}`
+    : `Hazme el examen del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /examen. ${PROMPT_COMUN}`;
+  const r = invocarClaude({ prompt, modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs });
   if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
   const fichero = p.examenMasReciente(ctx.destino);
   if (!fichero) return { ok: false, detalle: 'claude terminó pero no hay ningún examen en estudio/examenes/', salidaLlm: r.salida };
@@ -239,7 +241,17 @@ function pasoExamenGenerar(ctx, examenModulo) {
   // El examen tiene que respetar el formato fijado en config/examenes.json (nº de opciones por pregunta,
   // según su propia clave): lo que el paso de la referencia del centro tenía que dejar listo antes.
   const formato = p.formatoDeOpciones(ctx.destino, fichero);
-  return { ok: formato.ok, detalle: `examen escrito: ${path.relative(ctx.destino, fichero)} · ${formato.detalle}`, salidaLlm: r.salida };
+  let ok = formato.ok;
+  let detalle = `examen escrito: ${path.relative(ctx.destino, fichero)} · ${formato.detalle}`;
+  // Con una referencia del centro de por medio, el examen tiene que traer alguna de sus preguntas, literal
+  // y marcada, sin pasar de la mitad, con la respuesta de la clave coincidiendo con la del centro.
+  if (ctx.referenciaCentro) {
+    const referencia = fs.readFileSync(path.join(ctx.datosCurso, 'estudio', 'inbox', REFERENCIA_CENTRO), 'utf8');
+    const literales = p.preguntasLiteralesDelCentro(ctx.destino, fichero, referencia);
+    ok = ok && literales.ok;
+    detalle += ` · ${literales.detalle}`;
+  }
+  return { ok, detalle, salidaLlm: r.salida };
 }
 
 // examen v1 (tipo test): la clave vive fuera de la bóveda, así que un alumno simulado con LLM no puede verla

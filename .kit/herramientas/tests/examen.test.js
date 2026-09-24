@@ -241,6 +241,61 @@ test('cli --corregir: nota, aprobado, fallos por concepto en stdout (JSON) para 
   assert.deepEqual(json, { nota: 2.5, aprobado: 6, aprobo: false, fallosPorConcepto: { numeros: 1, otro: 1 } }, 'fallos y en blanco, por concepto: los dos son señal de repasar');
 });
 
+// --- cli --falladas: lo que reutiliza la skill al componer un examen nuevo -----------------------------
+
+test('cli --falladas: junta el enunciado del .md con la respuesta de la clave, solo lo fallado en el último intento', t => {
+  const salida = [];
+  t.mock.method(console, 'log', (...a) => salida.push(a.join(' ')));
+  const raiz = cursoTest();
+  corregir(raiz, 'estudio/examenes/m1/01-examen.md');
+  assert.equal(cli(['--falladas'], raiz), 0);
+  assert.match(salida[0], /2 pregunta\(s\) fallada\(s\) reutilizable\(s\) · 0 del centro ya usada\(s\)\./);
+  const json = JSON.parse(salida[1]);
+  assert.deepEqual(json.falladas.map(p => p.numero), [2, 3]);
+  assert.equal(json.falladas[0].examen, 'examenes/m1/01-examen.md');
+  assert.match(json.falladas[0].enunciado, /¿Qué números son pares\?/);
+  assert.deepEqual(json.falladas[0].correctas, ['a', 'c']);
+  assert.equal(json.falladas[0].concepto, 'numeros');
+  assert.deepEqual(json.centroUsadas, []);
+});
+
+test('cli --falladas <unidad>: filtra por prefijo de unidad ("01" trae "01" y "01-…", no "02")', t => {
+  const salida = [];
+  t.mock.method(console, 'log', (...a) => salida.push(a.join(' ')));
+  const raiz = cursoTest();
+  corregir(raiz, 'estudio/examenes/m1/01-examen.md');
+  assert.equal(cli(['--falladas', '01'], raiz), 0);
+  assert.equal(JSON.parse(salida[1]).falladas.length, 2, 'la unidad 01 trae el examen de la unidad 01');
+  assert.equal(cli(['--falladas', '02'], raiz), 0);
+  assert.deepEqual(JSON.parse(salida[3]).falladas, [], 'la unidad 02 no tiene exámenes');
+});
+
+test('cli --falladas: también saca las preguntas del centro ya usadas (origen "centro"), para poder rotarlas', t => {
+  const salida = [];
+  t.mock.method(console, 'log', (...a) => salida.push(a.join(' ')));
+  const raiz = cursoTest({
+    'config/claves/m1/01-examen.json': JSON.stringify({
+      ...CLAVE_TEST,
+      preguntas: [{ ...CLAVE_TEST.preguntas[0], origen: 'centro' }, CLAVE_TEST.preguntas[1], CLAVE_TEST.preguntas[2]],
+    }),
+  });
+  assert.equal(cli(['--falladas'], raiz), 0);
+  const json = JSON.parse(salida[1]);
+  assert.deepEqual(json.falladas, [], 'sin corregir todavía, no hay histórico ni falladas');
+  assert.equal(json.centroUsadas.length, 1);
+  assert.equal(json.centroUsadas[0].numero, 1);
+  assert.match(json.centroUsadas[0].enunciado, /¿Cuál es la capital de Francia\?/);
+  assert.deepEqual(json.centroUsadas[0].correctas, ['b']);
+});
+
+test('cli --falladas: sin ningún examen, 0 y 0, no revienta', t => {
+  const salida = [];
+  t.mock.method(console, 'log', (...a) => salida.push(a.join(' ')));
+  const raiz = cursoTemporal();
+  assert.equal(cli(['--falladas'], raiz), 0);
+  assert.deepEqual(JSON.parse(salida[1]), { falladas: [], centroUsadas: [] });
+});
+
 test('notaTest: se trunca a un decimal, nunca se redondea hacia arriba (un 69,5 % no aprueba un escalón del 70 %)', () => {
   assert.equal(notaTest({ aciertos: 139, fallos: 61, total: 200, restaFallo: 0 }), 6.9);
   assert.equal(notaTest({ aciertos: 199, fallos: 1, total: 200, restaFallo: 0 }), 9.9, 'un 99,5 % no es un 10');
