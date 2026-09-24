@@ -20,6 +20,10 @@ const v = require('./lib/vault');
 const g = require('./lib/git');
 const { comprobar } = require('./comprobar');
 const { regenerarGenerados, anotarEnDiario, subirSiProcede } = require('./guardar');
+const { instalarSkills } = require('./instalar-skills');
+const indice = require('./lib/indice');
+const { actualizarEstadoReadme } = require('./lib/generados');
+const os = require('node:os');
 
 const CARPETA_PREPARACION = '.preparacion';
 const dirDe = (raiz, id) => path.join(raiz, CARPETA_PREPARACION, id);
@@ -31,8 +35,12 @@ const idValido = id => typeof id === 'string' && /^[\w.-]+$/.test(id);
 function leerEstadoCrudo(dir) {
   return JSON.parse(fs.readFileSync(path.join(dir, 'estado.json'), 'utf8'));
 }
+// Escritura atómica (issue #39, H05): se escribe en un temporal y se renombra, para que un corte a medias nunca deje
+// un estado.json roto que estado.js no pueda leer.
 function escribirEstado(dir, estado) {
-  fs.writeFileSync(path.join(dir, 'estado.json'), JSON.stringify(estado, null, 2) + '\n');
+  const temporal = path.join(dir, `estado.json.${process.pid}.tmp`);
+  fs.writeFileSync(temporal, JSON.stringify(estado, null, 2) + '\n');
+  fs.renameSync(temporal, path.join(dir, 'estado.json'));
 }
 // Lee y modifica sin perder lo que haya escrito el proceso en marcha a la vez (pid, ficheros...).
 function actualizarEstado(dir, cambios) {
@@ -65,13 +73,65 @@ function todasLasPreparaciones(raiz) {
     .map(id => estadoEnCaliente(dirDe(raiz, id)));
 }
 
-// Borra la copia de trabajo y su rama sin tocar el curso principal: para una preparación fallida o
-// interrumpida, cuyo trabajo se descarta (el alumno puede pedir que se vuelva a preparar).
-function descartarCopia(raiz, id) {
-  g.intentarGit(raiz, ['worktree', 'remove', '--force', dirDe(raiz, id)]);
+// Borra la copia de trabajo y su rama sin tocar el curso principal. Tras juntar, no queda nada que guardar. Al
+// descartar una preparación fallida o interrumpida (`conservar`), antes se guarda lo recuperable (issue #39, H05):
+// su registro en `.preparacion/descartadas/` y, si llegó a guardar algo, su rama con otro nombre. Solo las últimas
+// CONSERVADAS de cada cosa, para no acumular basura.
+const CONSERVADAS = 3;
+function descartarCopia(raiz, id, { conservar = false } = {}) {
+  const dir = dirDe(raiz, id);
+  if (conservar) {
+    const marca = new Date().toISOString().replace(/[:.]/g, '-');
+    const carpeta = path.join(raiz, CARPETA_PREPARACION, 'descartadas');
+    fs.mkdirSync(carpeta, { recursive: true });
+    const registro = path.join(dir, 'registro.txt');
+    if (fs.existsSync(registro)) fs.copyFileSync(registro, path.join(carpeta, `${id}-${marca}.txt`));
+    for (const viejo of fs.readdirSync(carpeta).filter(n => n.endsWith('.txt')).sort().reverse().slice(CONSERVADAS)) {
+      fs.rmSync(path.join(carpeta, viejo), { force: true });
+    }
+    let base = null;
+    try { base = leerEstadoCrudo(dir).base; } catch { /* sin estado */ }
+    const conTrabajo = base && g.intentarGit(raiz, ['rev-list', '--count', `${base}..${ramaDe(id)}`]).salida.trim() !== '0';
+    if (conTrabajo) g.intentarGit(raiz, ['branch', '-m', ramaDe(id), `preparacion-descartada/${id}-${marca}`]);
+    const guardadas = g.intentarGit(raiz, ['for-each-ref', '--sort=-refname', '--format=%(refname:short)', 'refs/heads/preparacion-descartada/']);
+    for (const rama of (guardadas.ok ? guardadas.salida.split(/\r?\n/).filter(Boolean) : []).slice(CONSERVADAS)) g.intentarGit(raiz, ['branch', '-D', rama]);
+  }
+  g.intentarGit(raiz, ['worktree', 'remove', '--force', dir]);
   g.intentarGit(raiz, ['worktree', 'prune']);
   g.intentarGit(raiz, ['branch', '-D', ramaDe(id)]);
-  fs.rmSync(dirDe(raiz, id), { recursive: true, force: true, maxRetries: 3 });
+  fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
+}
+
+// Un solo lanzamiento a la vez, también si dos llegan en el mismo instante (issue #39, H05): un fichero que se crea
+// en exclusiva. Uno olvidado (el proceso murió sin soltarlo) caduca a los CERROJO_CADUCA_MS.
+const CERROJO_CADUCA_MS = 5 * 60 * 1000;
+function tomarCerrojo(raiz) {
+  const carpeta = path.join(raiz, CARPETA_PREPARACION);
+  fs.mkdirSync(carpeta, { recursive: true });
+  const f = path.join(carpeta, '.cerrojo');
+  try {
+    if (Date.now() - fs.statSync(f).mtimeMs > CERROJO_CADUCA_MS) fs.rmSync(f, { force: true });
+  } catch { /* no había cerrojo */ }
+  try {
+    fs.writeFileSync(f, String(process.pid), { flag: 'wx' });
+  } catch (error) {
+    if (error.code === 'EEXIST') return null;
+    throw error;
+  }
+  return () => fs.rmSync(f, { force: true });
+}
+
+// estado.json y registro.txt viven en la raíz de la copia de trabajo, pero no son del curso: no pueden entrar en
+// sus guardados (issue #39, H05). Se excluyen en el `info/exclude` común a todas las copias.
+function excluirEstadoDeGit(raiz) {
+  const comun = g.intentarGit(raiz, ['rev-parse', '--git-common-dir']);
+  if (!comun.ok) return;
+  const fichero = path.resolve(raiz, comun.salida.trim(), 'info', 'exclude');
+  const previo = fs.existsSync(fichero) ? fs.readFileSync(fichero, 'utf8') : '';
+  const faltan = ['/estado.json', '/estado.json.*.tmp', '/registro.txt'].filter(l => !previo.split(/\r?\n/).includes(l));
+  if (!faltan.length) return;
+  fs.mkdirSync(path.dirname(fichero), { recursive: true });
+  fs.writeFileSync(fichero, previo.replace(/\n*$/, '') + (previo ? '\n' : '') + faltan.join('\n') + '\n');
 }
 
 // --- El prompt de segundo plano ---------------------------------------------------------------------
@@ -101,21 +161,52 @@ function lanzar(raiz, { ficheros, id }) {
     if (!fs.existsSync(path.join(v.baseAlumno(raiz), 'inbox', f))) return { lanzada: false, motivo: 'fichero-ausente', fichero: f };
   }
 
+  const soltar = tomarCerrojo(raiz);
+  if (!soltar) return { lanzada: false, motivo: 'lanzando' };
+  try {
+    return lanzarConCerrojo(raiz, { ficheros, id, adaptador });
+  } finally {
+    soltar();
+  }
+}
+
+function lanzarConCerrojo(raiz, { ficheros, id, adaptador }) {
   const [existente] = todasLasPreparaciones(raiz);
   if (existente) {
     if (existente.resultadoEnCaliente === 'terminada') return { lanzada: false, motivo: 'hay-terminada', id: existente.id };
     if (existente.resultadoEnCaliente === 'en-curso') return { lanzada: false, motivo: 'en-marcha', id: existente.id };
-    // fallida o interrumpida: no hay nada que rescatar (el curso principal nunca se tocó), se descarta sola.
-    descartarCopia(raiz, existente.id);
+    // fallida o interrumpida: el curso principal nunca se tocó; se descarta guardando lo recuperable.
+    descartarCopia(raiz, existente.id, { conservar: true });
   }
   if (fs.existsSync(dirDe(raiz, id))) return { lanzada: false, motivo: 'id-en-uso', id };
 
+  // El material de la clase entra en la copia tal cual está ahora (issue #39, H05). La copia sale del último
+  // guardado: si el material está sin guardar (lo normal: el alumno acaba de dejarlo en inbox), se guarda antes
+  // solo ese material, sin tocar nada más de lo que haya sin guardar.
+  const rutas = ficheros.map(f => `${v.CARPETA_ALUMNO}/inbox/${f}`);
+  if (g.intentarGit(raiz, ['status', '--porcelain', '--', ...rutas]).salida.trim()) {
+    if (!g.tieneIdentidad(raiz)) return { lanzada: false, motivo: 'sin-identidad' };
+    g.git(raiz, ['add', '--', ...rutas]);
+    g.git(raiz, ['commit', '-q', '-m', `inbox: material de la clase ${id}`, '--', ...rutas]);
+  }
+  const huella = (cwd, rel) => g.intentarGit(cwd, ['hash-object', '--', rel]).salida.trim();
+  const entradas = rutas.map(rel => ({ fichero: rel, huella: huella(raiz, rel) }));
+
   fs.mkdirSync(path.join(raiz, CARPETA_PREPARACION), { recursive: true });
+  excluirEstadoDeGit(raiz);
+  const base = g.shaActual(raiz).trim();
   const rWorktree = g.intentarGit(raiz, ['worktree', 'add', '-b', ramaDe(id), dirDe(raiz, id)]);
   if (!rWorktree.ok) return { lanzada: false, motivo: 'worktree', detalle: rWorktree.salida };
-
   const dir = dirDe(raiz, id);
-  escribirEstado(dir, { id, ficheros, pid: null, inicio: new Date().toISOString(), fin: null, resultado: 'en-curso', rama: ramaDe(id) });
+  const distinta = entradas.find(e => huella(dir, e.fichero) !== e.huella);
+  if (distinta) {
+    descartarCopia(raiz, id);
+    return { lanzada: false, motivo: 'entrada-distinta', fichero: distinta.fichero };
+  }
+  // Las skills no están en git (se ignoran): sin copiarlas, el asistente de la copia no encontraría /sesion.
+  if (adaptador.skills) instalarSkills({ raiz: dir, destino: adaptador.skills });
+
+  escribirEstado(dir, { id, ficheros, entradas, base, pid: null, inicio: new Date().toISOString(), fin: null, resultado: 'en-curso', rama: ramaDe(id) });
 
   const hijo = spawn(process.execPath, [__filename, '--trabajar', id], { cwd: raiz, detached: true, stdio: 'ignore' });
   hijo.unref();
@@ -125,6 +216,17 @@ function lanzar(raiz, { ficheros, id }) {
 }
 
 // --- El envoltorio que corre en segundo plano (proceso aparte, detached) -----------------------------
+
+// Tiempo máximo del asistente: una clase tarda entre 10 y 12 minutos (prueba real de la 0.21). Con 90 hay margen
+// para una clase muy larga, y un asistente colgado no deja la preparación "en curso" para siempre.
+const LIMITE_MS = 90 * 60 * 1000;
+
+// ¿Hay en la copia, guardada después de `base`, una nota de sesión de esta clase (`<id>-…md`)?
+function sesionGuardada(dir, id, base) {
+  if (base && g.intentarGit(dir, ['rev-list', '--count', `${base}..HEAD`]).salida.trim() === '0') return false;
+  const guardadas = g.intentarGit(dir, ['ls-tree', '-r', '--name-only', 'HEAD', '--', `${v.CARPETA_ALUMNO}/sesiones`]);
+  return guardadas.ok && guardadas.salida.split(/\r?\n/).some(rel => path.posix.basename(rel).startsWith(`${id}-`) && rel.endsWith('.md'));
+}
 
 // Nunca deja `estado.json` en "en-curso" para siempre si algo revienta antes de lanzar el asistente:
 // captura sus propios fallos y los deja en el registro, como si el asistente hubiera fallado.
@@ -139,11 +241,16 @@ function trabajar(raiz, id) {
     const plan = comoLanzar({ comando: adaptador.comando, segundoPlano: adaptador.segundo_plano, promptPorStdin: adaptador.prompt_por_stdin === true,
       prompt: construirPrompt(estado.ficheros, id), modelo });
     if (plan.error) throw new Error(plan.error);
-    const r = lanzarAsistente(plan, dir);
-    const ok = !r.error && r.status === 0;
+    const limite = Number(process.env.PROFESOR_KIT_PREPARAR_LIMITE_MS) || LIMITE_MS;
+    const r = lanzarAsistente(plan, dir, limite);
     const salida = ((r.stdout || '') + (r.stderr || '') + (r.error ? `\n${r.error.message}` : '')).trim();
-    fs.writeFileSync(registro, `${salida}\n`);
-    actualizarEstado(dir, { fin: new Date().toISOString(), resultado: ok ? 'terminada' : 'fallida' });
+    // Que el asistente acabe con 0 no basta (issue #39, H05): tiene que haber guardado la sesión de esta clase.
+    let motivo = null;
+    if ((r.error && r.error.code === 'ETIMEDOUT') || r.signal) motivo = `se paró al llegar al límite de tiempo (${Math.round(limite / 60000)} min)`;
+    else if (r.error || r.status !== 0) motivo = 'el asistente terminó con un error';
+    else if (!sesionGuardada(dir, id, estado.base)) motivo = `el asistente terminó, pero no ha dejado la sesión ${id} guardada en la copia`;
+    fs.writeFileSync(registro, `${salida}\n${motivo ? `\n[preparar.js] ${motivo}.\n` : ''}`);
+    actualizarEstado(dir, { fin: new Date().toISOString(), resultado: motivo ? 'fallida' : 'terminada' });
   } catch (error) {
     try { fs.writeFileSync(registro, `Fallo inesperado preparando la clase: ${error.message}\n`); } catch { /* nada que hacer */ }
     try { actualizarEstado(dir, { fin: new Date().toISOString(), resultado: 'fallida' }); } catch { /* estado.json ni existía */ }
@@ -187,22 +294,51 @@ function comoLanzar({ comando, segundoPlano, promptPorStdin, prompt, modelo, pla
   return { ejecutable: entorno.ComSpec || 'cmd.exe', args: ['/d', '/s', '/c', `""${resuelto}" ${args.join(' ')}"`], literal: true, entrada };
 }
 
-function lanzarAsistente(plan, cwd) {
-  return spawnSync(plan.ejecutable, plan.args, { cwd, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024,
+function lanzarAsistente(plan, cwd, limiteMs) {
+  return spawnSync(plan.ejecutable, plan.args, { cwd, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, timeout: limiteMs, killSignal: 'SIGKILL',
     input: plan.entrada === undefined ? '' : plan.entrada, windowsVerbatimArguments: plan.literal === true, shell: false });
 }
 
 // --- Juntar --------------------------------------------------------------------------------------------
 
-// Ficheros que "se toma cualquiera de los dos lados y se regeneran después, que es lo que son" (plan
-// §3.3): todo lo que escribe regenerarGenerados() y los pies de sesión (que van dentro de las propias
-// notas de estudio/sesiones/, no en un fichero aparte).
-function ficheroResoluble(rel) {
-  if (rel === 'README.md') return true;
+// Ficheros que se resuelven solos al juntar (plan §3.3). Dos clases:
+//  - generados enteros (lo que escribe regenerarGenerados()): se toma cualquier lado y se regeneran después;
+//  - con una parte generada y otra escrita (las sesiones con su pie de navegación, el README con su sección
+//    Estado): se quita lo generado y el resto se fusiona a tres bandas. Si los dos lados cambiaron la misma parte
+//    escrita, es un choque de verdad y se para, nunca se queda un lado entero (issue #39, H04).
+function generadoEntero(rel) {
   if (rel === 'estudio/ejercicios/_index.md') return true;
-  if (rel.startsWith('estudio/sesiones/') && rel.endsWith('.md')) return true;
   const base = path.posix.basename(rel);
-  return rel.startsWith('estudio/') && ['inicio.md', 'pendientes.md', 'formulario.md', 'auditoria-del-material.md'].includes(base);
+  return rel.startsWith('estudio/') && !rel.startsWith('estudio/sesiones/') && ['inicio.md', 'pendientes.md', 'formulario.md', 'auditoria-del-material.md'].includes(base);
+}
+const sinEstadoReadme = texto => texto.replace(/^## Estado\s*\n[\s\S]*?(?=^## |(?![\s\S]))/m, '## Estado\n\n');
+function parteEscrita(rel) {
+  if (rel === 'README.md') return sinEstadoReadme;
+  if (rel.startsWith('estudio/sesiones/') && rel.endsWith('.md')) return indice.sinPie;
+  return null;
+}
+function ficheroResoluble(rel) {
+  return generadoEntero(rel) || parteEscrita(rel) !== null;
+}
+
+// Fusión a tres bandas de la parte escrita de un fichero en conflicto. true si se ha podido sin choque.
+function fusionarParteEscrita(raiz, rel) {
+  const quitar = parteEscrita(rel);
+  const version = etapa => { const r = g.intentarGit(raiz, ['show', `:${etapa}:${rel}`]); return r.ok ? quitar(r.stdout) : ''; };
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-juntar-'));
+  try {
+    const [nuestra, comun, suya] = ['nuestra', 'comun', 'suya'].map(n => path.join(dir, n));
+    fs.writeFileSync(nuestra, version(2));
+    fs.writeFileSync(comun, version(1));
+    fs.writeFileSync(suya, version(3));
+    const r = spawnSync('git', ['merge-file', '-p', nuestra, comun, suya], { encoding: 'utf8' });
+    if (r.status !== 0) return false;
+    fs.writeFileSync(path.join(raiz, ...rel.split('/')), r.stdout);
+    g.git(raiz, ['add', '--', rel]);
+    return true;
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 // Ficheros que los dos lados tocan a la vez con filas, una por concepto: la tutoría cambia el estado de filas que
@@ -214,9 +350,22 @@ const POR_FILAS = {
   'estudio/conceptos/_index.md': linea => (/^([a-z0-9][a-z0-9-]*) *\|/.exec(linea) || [])[1],
 };
 
-function juntarPorFilas(ours, theirs, clave) {
+// Con la versión común (`base`), una fila que existe en los dos lados y que solo cambió en uno se queda con ese
+// cambio (la preparación añade un alias a un concepto que ya existía); si cambió en los dos, es un choque (null).
+// Sin `base`, mandan las filas del curso principal.
+function juntarPorFilas(ours, theirs, clave, base = null) {
   const eol = ours.includes('\r\n') ? '\r\n' : '\n';
+  const porClave = texto => new Map(texto.split(/\r?\n/).filter(l => clave(l)).map(l => [clave(l), l]));
+  const suyas = porClave(theirs);
+  const comunes = base === null ? null : porClave(base);
   const nuestras = ours.split(/\r?\n/);
+  for (let i = 0; i < nuestras.length; i++) {
+    const k = clave(nuestras[i]);
+    if (!k || !comunes || !suyas.has(k) || suyas.get(k) === nuestras[i]) continue;
+    const comun = comunes.get(k);
+    if (comun === nuestras[i]) nuestras[i] = suyas.get(k);
+    else if (comun !== suyas.get(k)) return null;
+  }
   const tenemos = new Set(nuestras.map(clave).filter(Boolean));
   const nuevas = theirs.split(/\r?\n/).filter(l => clave(l) && !tenemos.has(clave(l)));
   let ultima = -1;
@@ -230,7 +379,8 @@ function resolverPorFilas(raiz, rel) {
   const ours = g.intentarGit(raiz, ['show', `:2:${rel}`]);
   const theirs = g.intentarGit(raiz, ['show', `:3:${rel}`]);
   if (!ours.ok || !theirs.ok) return false;
-  const texto = juntarPorFilas(ours.salida, theirs.salida, POR_FILAS[rel]);
+  const comun = g.intentarGit(raiz, ['show', `:1:${rel}`]);
+  const texto = juntarPorFilas(ours.stdout, theirs.stdout, POR_FILAS[rel], comun.ok ? comun.stdout : null);
   if (texto === null) return false;
   fs.writeFileSync(path.join(raiz, ...rel.split('/')), texto.endsWith('\n') ? texto : texto + '\n');
   g.git(raiz, ['add', '--', rel]);
@@ -278,10 +428,14 @@ function juntar(raiz, id) {
     for (const f of conflictos.filter(x => POR_FILAS[x])) {
       if (!resolverPorFilas(raiz, f)) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'choque', ficheros: [f] }; }
     }
-    for (const f of conflictos.filter(x => !POR_FILAS[x])) { g.git(raiz, ['checkout', '--ours', '--', f]); g.git(raiz, ['add', '--', f]); }
+    for (const f of conflictos.filter(x => !POR_FILAS[x] && parteEscrita(x))) {
+      if (!fusionarParteEscrita(raiz, f)) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'choque', ficheros: [f] }; }
+    }
+    for (const f of conflictos.filter(x => generadoEntero(x))) { g.git(raiz, ['checkout', '--ours', '--', f]); g.git(raiz, ['add', '--', f]); }
   }
 
   regenerarGenerados(raiz);
+  actualizarEstadoReadme(raiz);
   const informe = comprobar(raiz);
   if (informe.errores.length) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'errores', informe }; }
 
@@ -308,6 +462,9 @@ const EXPLICACION_LANZAR = {
   'id-en-uso': r => `ya existe una copia con el id ${r.id}.`,
   'worktree': r => `no se pudo crear la copia de trabajo: ${r.detalle}`,
   'fichero-ausente': r => `${r.fichero} no está en estudio/inbox/.`,
+  'lanzando': 'ahora mismo se está lanzando otra preparación: espera un momento y mira --estado.',
+  'sin-identidad': 'git no sabe quién eres todavía, y hay que guardar el material de la clase antes de prepararla: configura user.name y user.email.',
+  'entrada-distinta': r => `${r.fichero} no ha llegado igual a la copia de trabajo: no se prepara nada. Vuelve a intentarlo.`,
 };
 
 function explicar(mapa, r) {
@@ -374,7 +531,7 @@ function cli(args, raiz) {
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'preparar.js');
 
 module.exports = {
-  comoLanzar, lanzarAsistente,
+  comoLanzar, lanzarAsistente, tomarCerrojo,
   juntarPorFilas,
   lanzar, trabajar, juntar, cli, todasLasPreparaciones, formatearEstado, ficheroResoluble, pidVivo, descartarCopia,
   construirPrompt, dirDe, ramaDe,

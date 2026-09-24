@@ -181,3 +181,23 @@ test('sin identidad de git no empieza: el revert no se queda a medias', () => {
   assert.equal(fs.readFileSync(en(raiz, 'estudio/mapa-del-curso.md'), 'utf8'), '# Mapa\n\nnuevo\n');
   assert.equal(deshacer({ raiz, ver: true }).motivo, 'vista-previa', 'enseñar qué se desharía sí se puede');
 });
+
+// issue #39, H06: lo último puede ser un merge (juntar una preparación): se deshace contra el curso principal.
+test('deshacer un merge (una preparación juntada) quita lo que trajo; y deshacer el deshacer lo devuelve', () => {
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  git(raiz, 'checkout', '-q', '-b', 'preparacion/x');
+  escribir(raiz, { 'estudio/inbox/de-la-preparacion.md': 'traído por la preparación\n' });
+  git(raiz, 'add', '-A');
+  git(raiz, 'commit', '-q', '-m', 'sesion(x): preparada');
+  git(raiz, 'checkout', '-q', 'main');
+  git(raiz, 'merge', '-q', '--no-ff', '-m', 'sesion(x): clase x (preparada en segundo plano)', 'preparacion/x');
+  const vista = deshacer({ raiz, ver: true });
+  assert.deepEqual(vista.ficheros, ['inbox/de-la-preparacion.md (nuevo)']);
+  const r = deshacer({ raiz });
+  assert.equal(r.deshecho, true, r.motivo);
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'inbox', 'de-la-preparacion.md')));
+  const rehacer = deshacer({ raiz });
+  assert.equal(rehacer.deshecho, true, rehacer.motivo);
+  assert.ok(fs.existsSync(path.join(raiz, 'estudio', 'inbox', 'de-la-preparacion.md')));
+});

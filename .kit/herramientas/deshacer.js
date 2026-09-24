@@ -18,8 +18,13 @@ function ultimoCommit(raiz) {
 // Qué ficheros toca el commit que se va a deshacer, con la ruta como la ve el alumno en Obsidian
 // (sin `estudio/` delante) y en llano.
 const ETIQUETA = { A: 'nuevo', M: 'cambiado', D: 'borrado', R: 'renombrado', C: 'copiado' };
+// Un merge (juntar una preparación) no tiene un único "antes": se compara con su primer padre, que es el curso
+// principal tal como estaba (issue #39, H06).
+const esMerge = (raiz, sha) => g.git(raiz, ['rev-list', '--parents', '-n', '1', sha]).trim().split(/\s+/).length > 2;
 function ficherosAfectados(raiz, sha) {
-  const salida = g.git(raiz, ['show', '--name-status', '--format=', sha]);
+  const salida = esMerge(raiz, sha)
+    ? g.git(raiz, ['diff', '--name-status', `${sha}^1`, sha])
+    : g.git(raiz, ['show', '--name-status', '--format=', sha]);
   return salida.split('\n').filter(Boolean).map(linea => {
     const partes = linea.split('\t');
     const letra = partes[0][0];
@@ -46,7 +51,7 @@ function deshacer({ raiz, ver = false, hoy }) {
   const ficheros = ficherosAfectados(raiz, sha);
   if (ver) return { deshecho: false, ver: true, motivo: 'vista-previa', mensaje, ficheros };
 
-  const revert = g.intentarGit(raiz, ['revert', '--no-commit', 'HEAD']);
+  const revert = g.intentarGit(raiz, ['revert', '--no-commit', ...(esMerge(raiz, sha) ? ['-m', '1'] : []), 'HEAD']);
   if (!revert.ok) {
     g.intentarGit(raiz, ['revert', '--abort']);
     return { deshecho: false, motivo: 'conflicto', mensaje };
