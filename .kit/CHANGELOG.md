@@ -17,6 +17,9 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - **Actualizar es más seguro, sobre todo si llevas tiempo sin hacerlo.** Tu profesor ya no salta de golpe a la
   última versión: pasa por todas, una a una, y cada paso se ha probado antes de publicarse. Si uno fallara, tu
   curso se queda sano en la última que funcionó. (Empieza a notarse a partir de la siguiente versión.)
+- **Ya puedes dejar en inbox tus Word, PowerPoint y Excel** tal cual, sin pasarlos a PDF: tu profesor los lee
+  enteros, con las notas del orador de las diapositivas y las fórmulas de las hojas de cálculo. El audio y el
+  vídeo, todavía no: pásale su transcripción.
 - **Tus ejercicios y repasos se comprueban solos** antes de guardarse: si una página tuviera un error que la
   dejara sin funcionar, o necesitara internet, tu profesor lo arregla antes de dártela.
 - **Tu profesor te pide todavía menos permisos.** Ya no te abre el repaso en el navegador: te dice dónde está, en

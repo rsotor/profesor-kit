@@ -28,7 +28,8 @@ El identificador de la sesión sale de la sección "Cómo numera el centro las c
 adivines: un identificador mal puesto rompe el `## Historial` de todas las notas que toque.
 
 Fuente de los apuntes: fichero en `estudio/inbox/`, texto pegado, PDF, transcripción. Si es un PDF o una
-imagen, léelo antes de empezar. **Léelo entero:** la salida de una lectura larga se corta, y un fichero
+imagen, léelo antes de empezar. Un Word, PowerPoint o Excel se lee con `node .kit/herramientas/leer.js <fichero>`
+(saca también las notas del orador y las fórmulas del Excel); nunca con `python3` ni otro programa improvisado. **Léelo entero:** la salida de una lectura larga se corta, y un fichero
 leído a medias parece leído. Si la salida termina a mitad de una frase o de una diapositiva, sigue leyendo
 desde ahí (por páginas o por tramos) hasta el final, y solo entonces empieza a escribir. Si un tramo no
 se deja leer, dilo: no des por hecho lo que no has visto.
