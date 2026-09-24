@@ -111,3 +111,39 @@ test('senales: aprobado de config/curso.md; un parcial suspendido no da señal',
 test('senales: curso sin datos, lista vacía', () => {
   assert.deepEqual(perfil.senales(cursoTemporal()), []);
 });
+
+const PROFESOR = '---\ntono: cercano\n---\n# El profesor\n\n## Tono\n\nDirecto y cálido.\n\n'
+  + '## Qué le funciona a este alumno al explicar\n\n## Historial de cambios\n<!-- fecha · qué -->\n';
+
+test('markdownPerfil: copia lo que hay, "Todavía nada" en lo vacío, y no enseña lo interno', () => {
+  const raiz = cursoTemporal({
+    'config/alumno.md': ALUMNO + '\n## Cómo escribe en sus notas\n\n| Propiedad | Escribió |\n|---|---|\n| estudiada | sí |\n'
+      + '\n## Nivel de partida\n\n- Módulo 1: 1\n',
+    'config/profesor.md': PROFESOR,
+  });
+  const md = perfil.markdownPerfil(raiz);
+  assert.match(md, /^# Mi perfil/);
+  assert.match(md, /díselo/i);
+  assert.match(md, /## Cómo te explico y por qué[\s\S]*### Tono\n\nDirecto y cálido\.[\s\S]*### Cómo explicarte\n\n\| Funciona/);
+  assert.doesNotMatch(md, /### Lo que te funciona/);                 // sección vacía en profesor.md: no sale
+  assert.match(md, /## Lo que te entró a la primera\n\n\*Todavía nada/);
+  assert.match(md, /## Cambios en cómo te explico\n\n\*Todavía nada/);
+  assert.doesNotMatch(md, /Cómo escribe en sus notas|estudiada \| sí|Nivel de partida/);
+  assert.match(md, /### Donde más dudas\n\n- alfa: 3 dudas/);
+});
+
+test('markdownPerfil: tabla de exámenes con cada intento y si aprueba', () => {
+  const raiz = cursoTemporal({
+    ...examen('01-examen', 'unidad: 01\nfecha: 2026-10-09\nnota: 6,5', HIST([[1, '2026-10-01', '4'], [2, '2026-10-09', '6,5']])),
+  });
+  const md = perfil.markdownPerfil(raiz);
+  assert.match(md, /\| \[\[examenes\/01-examen\\\|Examen 01\]\] \| 4,0 \(2026-10-01\) → 6,5 \(2026-10-09\) \| ✅ aprobado \|/);
+});
+
+test('markdownPerfil: curso recién instalado, sin alumno.md ni profesor.md ni exámenes', () => {
+  const raiz = cursoTemporal();
+  require('node:fs').rmSync(require('node:path').join(raiz, 'config', 'profesor.md'));
+  const md = perfil.markdownPerfil(raiz);
+  assert.equal((md.match(/Todavía nada/g) || []).length >= 4, true);
+  assert.match(md, /### Conceptos, por bloque/);   // progreso.md de la base tiene [[alfa]] ⬜
+});

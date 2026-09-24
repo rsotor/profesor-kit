@@ -115,4 +115,79 @@ function senales(raiz) {
   return lista;
 }
 
-module.exports = { ESTADOS, leerConfig, seccion, tieneContenido, intentosDe, examenesConIntentos, leerDudas, conceptosPorBloque, senales, fmt };
+const PERFIL = 'mi-perfil.md';
+const TODAVIA_NADA = '*Todavía nada: se irá llenando con tus exámenes y tus dudas.*';
+const MAX_DUDAS = 5;
+
+// Qué se copia y bajo qué título. [fichero de config/, sección de origen, subtítulo en la hoja (null: sin subtítulo)].
+// Lo que no está aquí no se enseña: "Cómo escribe en sus notas" es para las herramientas; "Nivel de partida" ya
+// está en la hoja del test inicial; "Quién es" lo dijo el propio alumno.
+const GRUPOS = [
+  ['Cómo te explico y por qué', [
+    ['profesor.md', 'Tono', 'Tono'],
+    ['profesor.md', 'Qué le funciona a este alumno al explicar', 'Lo que te funciona'],
+    ['alumno.md', 'Cómo explicarle', 'Cómo explicarte'],
+    ['alumno.md', 'Qué funcionó', 'Lo que te desbloqueó algo'],
+  ]],
+  ['Lo que te cuesta', [
+    ['alumno.md', 'Conceptos que costaron', 'Conceptos que te costaron'],
+    ['alumno.md', 'Errores repetidos', 'Errores que se repiten'],
+  ]],
+  ['Lo que te entró a la primera', [['alumno.md', 'Conceptos que entraron a la primera', null]]],
+];
+const HISTORIAL = ['Cambios en cómo te explico', [['profesor.md', 'Historial de cambios', null]]];
+
+function evolucion(raiz) {
+  const aprobado = indice.leerAprobado(raiz);
+  const examenes = examenesConIntentos(raiz);
+  const bloques = conceptosPorBloque(raiz);
+  const dudas = leerDudas(raiz).slice(0, MAX_DUDAS);
+  const l = ['## Tu evolución', ''];
+  if (!examenes.length && !bloques.length && !dudas.length) return [...l, TODAVIA_NADA, ''];
+  if (examenes.length) {
+    l.push('### Exámenes', '', '| Examen | Intentos | Último |', '|---|---|---|');
+    for (const e of examenes) {
+      const ultimo = e.intentos[e.intentos.length - 1];
+      const nombre = `Examen ${e.unidades.join(', ') || path.posix.basename(e.rel, '.md')}`;
+      const intentos = e.intentos.map(i => `${fmt(i.nota)} (${i.fecha})`).join(' → ');
+      l.push(`| [[${e.rel.replace(/\.md$/, '')}\\|${nombre}]] | ${intentos} | ${ultimo.nota >= aprobado ? '✅ aprobado' : '❌ suspenso'} |`);
+    }
+    l.push('');
+  }
+  if (bloques.length) {
+    l.push('### Conceptos, por bloque', '', 'Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces · ⬜ sin evaluar.', '',
+      '| Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |', '|---|---|---|');
+    for (const [b, c] of bloques) l.push(`| ${b} | ${ESTADOS.map(e => c.teoria[e]).join(' · ')} | ${ESTADOS.map(e => c.aplicacion[e]).join(' · ')} |`);
+    l.push('');
+  }
+  if (dudas.length) {
+    l.push('### Donde más dudas', '');
+    for (const d of dudas) l.push(`- ${d.concepto}: ${d.veces} ${d.veces === 1 ? 'duda' : 'dudas'} (última: ${d.ultima})`);
+    l.push('');
+  }
+  return l;
+}
+
+// estudio/mi-perfil.md: lo que el profesor sabe del alumno, con su prueba, y cómo va. Se copia literal lo que
+// escribió el profesor en config/ (el alumno ve lo mismo que él: una sola verdad) y se calcula la evolución.
+function markdownPerfil(raiz) {
+  const textos = { 'alumno.md': leerConfig(raiz, 'alumno.md'), 'profesor.md': leerConfig(raiz, 'profesor.md') };
+  const l = ['# Mi perfil', '',
+    '> Lo que tu profesor sabe de ti, con la prueba de cada cosa, y cómo vas. Lo genera él cada vez que guarda:',
+    '> **no lo edites**. Si algo no es verdad, **díselo** y lo corrige.', ''];
+  const grupo = ([titulo, partes]) => {
+    l.push(`## ${titulo}`, '');
+    const llenas = partes.map(([f, s, sub]) => [sub, seccion(textos[f], s)]).filter(([, c]) => tieneContenido(c));
+    if (!llenas.length) { l.push(TODAVIA_NADA, ''); return; }
+    for (const [sub, c] of llenas) { if (sub) l.push(`### ${sub}`, ''); l.push(c, ''); }
+  };
+  GRUPOS.forEach(grupo);
+  l.push(...evolucion(raiz));
+  grupo(HISTORIAL);
+  return l.join('\n');
+}
+
+module.exports = {
+  PERFIL, TODAVIA_NADA, ESTADOS, leerConfig, seccion, tieneContenido, intentosDe, examenesConIntentos, leerDudas,
+  conceptosPorBloque, senales, fmt, markdownPerfil,
+};
