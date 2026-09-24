@@ -365,7 +365,10 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     const clasesEnSegundoPlano = clases.clases.filter(c => !c.id.startsWith(prefijoExamen));
     const [claseEnSegundoPlano, ...otrasEnSegundoPlano] = clasesEnSegundoPlano;
 
-    for (const clase of clasesModuloDelExamen) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+    for (const clase of clasesModuloDelExamen) {
+      ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+      if (clase.trampa && !sinLlm) ejecutarPaso(pasos, `material con órdenes (${clase.id})`, () => p.comprobarTrampa(destino, { id: clase.id, concepto: clase.trampa.concepto }));
+    }
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
     ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));
     ejecutarPaso(pasos, '/ejercicio', () => pasoEjercicio(ctx));
