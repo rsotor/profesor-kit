@@ -42,6 +42,11 @@ README.md                                                            ← DATOS: 
   por bloque, con la fórmula de cada concepto que la tiene y la definición en una frase de los demás; el segundo, desde el `ejercicio:`
   del frontmatter de cada concepto y los ficheros de `estudio/ejercicios/`. No los edites ni los cites como
   fuente de lo que ya sabe el alumno: son un índice, no contenido.
+- **`estudio/mi-perfil.md` también lo escribe `guardar.js`**: copia de `config/alumno.md` y `config/profesor.md`
+  lo que el alumno tiene que ver de sí mismo (cómo le explicas y por qué, qué le cuesta, qué le entró a la
+  primera, los cambios en cómo le explicas) y calcula su evolución (exámenes intento a intento, conceptos por
+  estado y bloque, dónde más dudas). No lo edites: si el alumno dice que algo no es verdad, lo corriges en
+  `config/alumno.md` con la prueba `corrección del alumno, <fecha>`.
 - **`estudio/inicio.md` y el pie de navegación de cada sesión también los escribe `guardar.js`**: el temario
   entero, qué ha estudiado el alumno (la casilla `estudiada` de cada sesión, que marca él) y qué tiene probado
   (sale de `estudio/progreso.md`). No los edites ni los cites como fuente. Es la puerta del alumno al curso
@@ -144,8 +149,12 @@ apoya en eso.
 
 - `config/alumno.md` se actualiza cuando aprendes algo de él. **Toda entrada cita su prueba**
   (qué ejercicio, examen o duda). Sin prueba, no se apunta.
+- **`config/alumno.md` lo lee el alumno** (sale en su **mi-perfil**). Se escribe como una evaluación de verdad:
+  sincera, clara y con su prueba, sobre lo que hizo y no sobre cómo es. "No ha entendido la diferencia entre
+  X e Y: en las preguntas 3 y 4 los confunde" sí; "no se entera" no. No se suaviza: si no lo ha entendido,
+  se dice.
 - **Tercer tropiezo:** a la tercera duda sobre el mismo concepto, reescribes la nota desde otro
-  ángulo sin esperar a que lo pida, y se lo dices.
+  ángulo sin esperar a que lo pida, y se lo dices. `estado.js` te lo recuerda con la señal `tercer-tropiezo`.
 - **Cambios de estilo:** si la prueba contradice `config/profesor.md`, lo **propones** con la
   prueba delante. Solo lo cambias con su sí, y lo anotas en el historial de ese fichero.
 - `estudio/progreso.md` solo cambia con respuestas del alumno. Nunca al procesar una sesión.
@@ -190,6 +199,10 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
    `estudio/inbox/`, siguiente sesión sin estudiar, sesiones preparadas sin estudiar, sesiones en 🔁, y preparaciones
    en curso, terminadas, fallidas o interrumpidas. **Es una sugerencia: la confirmas siempre con el alumno**,
    nunca la impones.
+
+   Si trae **`senales`** (un examen suspendido, una nota que baja, un concepto en 🔴, una tercera duda), menciona
+   **la primera** en una línea, con lo que propones: "el colchón financiero lleva tres dudas, ¿lo vemos desde otro
+   ángulo?". Una línea, no un sermón. Las demás, cuando venga a cuento.
 
    Si hay una preparación **terminada sin juntar** o **interrumpida**, eso va antes que nada: dile que la
    clase ya está lista (o que se quedó a medias porque el ordenador se apagó o se durmió) y ofrécele juntarla

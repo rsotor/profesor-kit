@@ -72,7 +72,7 @@ En `config/alumno.md`:
 
 - Sube el contador del concepto en la tabla de `## Registro de dudas`.
 - Si es la 1ª vez: apunta en `## Conceptos que costaron` qué falló y qué lo desbloqueó.
-- **Si es la 3ª duda del mismo concepto:** tercer tropiezo, bandera roja. Reexplica la nota
+- **Si es la 3ª duda del mismo concepto** (`estado.js --json` la da como señal `tercer-tropiezo`): tercer tropiezo, bandera roja. Reexplica la nota
   entera desde otro ángulo sin que lo pida, y díselo: _"Es la tercera vez que <X> te frena. He
   reescrito la nota con otro enfoque."_
 - Si la duda revela un prerrequisito flojo, comprueba el `requiere:` de la nota: puede que el

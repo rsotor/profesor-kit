@@ -154,6 +154,9 @@ No es un paso fijo ni un bloqueo: es lo que haces cuando **los datos lo piden**.
 acumula fallos o dudas (`config/alumno.md`, `estudio/progreso.md` en 🔴), un examen sale mal en general,
 varias notas del mismo bloque han necesitado reescritura, o el alumno dice que algo le estorba. Entonces:
 
+Empieza por `node .kit/herramientas/estado.js --json` → `senales`: ahí están ya calculadas (examen suspendido,
+nota que baja entre intentos, concepto en 🔴, tercera duda). No sustituyen tu juicio, te dicen dónde mirar.
+
 - **Qué cambiar aquí, para este alumno y este temario:** ajustes concretos en `config/profesor.md` (largo,
   orden, tipo de ejemplo, peso de la lente…), con su sí. Cada alumno y cada curso son distintos: lo que
   aprendas es, casi siempre, mejora de *este* profesor.

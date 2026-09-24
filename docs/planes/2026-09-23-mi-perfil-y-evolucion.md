@@ -3,6 +3,23 @@
 Especificación. Nace de la auditoría del 2026-09-23 (`docs/auditoria/2026-09-23-auditoria-del-kit.md`, §8.1 P4,
 §8.2 E4) y del plan 0.22 (§5b.4). Decisiones de Roberto tomadas al revisar la sección 8, el 2026-09-23.
 
+## 0. Correcciones tras el plan (revisadas con Roberto, 2026-09-24)
+
+Mandan sobre lo que diga el resto de este documento:
+
+1. El bloque de un concepto es el primer valor de su `bloques:` (como `formulario.md`), no `config/estructura.json`.
+   Sin `bloques:` → "Sin bloque" (§3).
+2. `examen-suspenso` vale para cualquier examen completo, no solo el de módulo. Un **test** (lo que el kit llamaba
+   "parcial": el de "lo que me falta") no cuenta (§4).
+3. Las señales llevan `examen` (ruta relativa a `estudio/`) en vez de `unidad` (§4).
+4. `mi-perfil.md` no va a `GENERADOS_CON_ENLACES`: un enlace roto copiado de `config/alumno.md` no bloquea el
+   guardado. Sale como aviso, y los avisos se revisan cada cierto tiempo (§5 y tarea 12 del plan).
+5. La señal se menciona en el paso 3 del arranque, cuando ya se ha leído `estado.js`, no en el paso 1 (§4).
+6. El alumno simulado devuelve un JSON con sus respuestas y el script las escribe en el examen: nunca tiene el
+   fichero con las soluciones a su alcance (§6).
+
+Y en todo lo que ve el alumno, el examen "parcial" pasa a llamarse **test**.
+
 ## 1. Qué se quiere
 
 Los datos que dicen cómo va el alumno ya existen, pero repartidos: nota y fecha de cada intento de examen,
@@ -69,7 +86,7 @@ Reglas de copia:
 
 | `tipo` | Cuándo |
 |---|---|
-| `examen-suspenso` | El último intento de un examen de módulo tiene nota por debajo del aprobado |
+| `examen-suspenso` | El último intento de un examen completo (no un test) tiene nota por debajo del aprobado |
 | `nota-baja` | Un examen tiene dos intentos o más y el último tiene nota menor que el anterior |
 | `concepto-rojo` | Un concepto tiene 🔴 en algún eje de `progreso.md` |
 | `tercer-tropiezo` | Un concepto tiene 3 dudas o más en el "Registro de dudas" |
@@ -78,7 +95,7 @@ Reglas de copia:
 
 Uso en las skills y en `AGENTS.md`:
 
-- **Al saludar** (`AGENTS.md`, "Al empezar cada sesión", paso 1): si hay señales, menciona **como mucho una**, la
+- **Al saludar** (`AGENTS.md`, "Al empezar cada sesión", paso 3, tras leer `estado.js`): si hay señales, menciona **como mucho una**, la
   primera, en la misma frase del saludo. No es un sermón, es una línea.
 - **`/examen`**, "Cuando hay señal de que algo no funciona": las señales de `estado.js` son el punto de partida,
   en vez de tener que buscarlas.
@@ -91,7 +108,7 @@ Uso en las skills y en `AGENTS.md`:
 | `.kit/herramientas/lib/perfil.js` (nuevo) | `markdownPerfil(raiz)`, `senales(raiz)` y lectores auxiliares (secciones por título, histórico de intentos, registro de dudas). Reutiliza `indice.leerExamenes`, `indice.leerProgreso`, `indice.leerAprobado` |
 | `guardar.js` → `regenerarGenerados()` | Escribe `mi-perfil.md` **antes** de `inicio.md` (como `formulario.md`, porque "Otras hojas" mira si existe) |
 | `lib/indice.js` → `OTRAS_HOJAS` | Añade `mi-perfil` |
-| `lib/vault.js` → `GENERADOS_CON_ENLACES` | Añade `mi-perfil.md` (copia enlaces de `alumno.md`) |
+| `lib/vault.js` → `GENERADOS_CON_ENLACES` | **No** se añade `mi-perfil.md` (ver §0, punto 4) |
 | `preparar.js` (resolución de choques al juntar) | Añade `mi-perfil.md` a los generados que se regeneran en vez de chocar |
 | `estado.js` | `senales` en el JSON y en la salida de texto |
 | `AGENTS.md` | Lista de lo que escribe `guardar.js`; paso 1 del saludo; regla de cómo se escribe `config/alumno.md` (evaluación sincera, clara, con prueba, sobre lo que hizo) en "Cómo aprendes del alumno" |

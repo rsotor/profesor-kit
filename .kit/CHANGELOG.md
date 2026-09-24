@@ -13,6 +13,15 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.23.0
+- **Nueva hoja, mi-perfil**, en inicio: lo que tu profesor sabe de ti, con la prueba de cada cosa. Cómo te
+  explica y por qué, qué te cuesta, qué te entró a la primera y cómo vas: tus exámenes intento a intento, tus
+  conceptos por bloque y dónde tienes más dudas. Se actualiza sola. Si algo no es verdad, díselo y lo corrige.
+- Tu profesor se entera antes de que algo no funciona (un examen suspendido, una nota que baja, un concepto que
+  fallas dos veces, la tercera duda sobre lo mismo) y te lo dice al empezar, en una línea.
+- **Si ya tenías tu curso:** tu profesor te ofrece añadir a tu hoja *Cómo usar tu profesor* la línea que explica
+  **mi-perfil**.
+
 ## 0.22.3
 Preparar una clase en segundo plano ya es fiable. También sale de la auditoría independiente del kit.
 - **La clase que acabas de dejar en inbox llega siempre a la preparación.** Antes, si no estaba guardada, la
