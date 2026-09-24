@@ -131,6 +131,14 @@ test('pregunta-doble: dos signos de interrogación en la misma pregunta, aviso',
   assert.match(a[0].detalle, /2 signos/);
 });
 
+// issue #39, H08: los exámenes numeran las preguntas en negrita ("**1.**"); también cuentan.
+test('pregunta-doble: con la numeración en negrita ("**1.**") también avisa', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\n---\n# Examen\n\n**1.** ¿Qué es alfa? ¿Por qué importa?\n\n✍️ **Tu respuesta:**\n',
+  });
+  assert.equal(avisos(raiz, 'pregunta-doble').length, 1);
+});
+
 test('pregunta-doble: una sola pregunta, no avisa', () => {
   const raiz = cursoTemporal({
     'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\n---\n# Examen\n\n1. ¿Qué es alfa?\n\n✍️ **Tu respuesta:**\n',

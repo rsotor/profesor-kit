@@ -420,7 +420,7 @@ function preguntasDeExamen(texto) {
   let actual = null;
   for (const linea of lineas) {
     if (/✍️\s*\*\*Tu respuesta:\*\*/.test(linea)) { if (actual) preguntas.push(actual.join('\n')); actual = null; continue; }
-    if (/^\d+\.\s/.test(linea)) { actual = [linea]; continue; }
+    if (/^(\d+\.\s|\*\*\d+\.\*\*)/.test(linea)) { actual = [linea]; continue; }
     if (actual) actual.push(linea);
   }
   return preguntas;

@@ -175,3 +175,10 @@ test('el examen del oráculo y sus veredictos esperados encajan: un hueco por pr
   assert.deepEqual([...new Set(esperado.map(e => e.veredicto))].sort(), ['correcta', 'incorrecta', 'le-falta']);
   assert.match(examen, /^parcial: true$/m, 'es un test: no pone nota al módulo');
 });
+
+test('markdownResumen: la línea de resultado que lee la barrera del PR', () => {
+  const md = markdownResumen({ fecha: '2026-10-01', version: '0.23.0', modelo: 'sonnet', sinLlm: false,
+    pasos: [{ paso: 'a', ok: true, duracionMs: 1, detalle: '' }, { paso: 'b', ok: false, duracionMs: 1, detalle: '' }, { paso: 'c', ok: null, duracionMs: 1, detalle: '' }],
+    informe: { errores: [], avisos: [] }, conteos: {}, correccion: { bien: 5, total: 6 }, commit: 'abc1234' });
+  assert.match(md, /^Resultado: 1\/2 pasos bien · corrección 5\/6 · commit abc1234$/m);
+});

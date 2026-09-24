@@ -282,11 +282,15 @@ function agruparPorRegla(lista) {
   return [...grupos.entries()].sort((a, b) => b[1].length - a[1].length);
 }
 
-function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos, perfil }) {
+function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos, perfil, correccion, commit }) {
   const l = [];
   l.push('# Resultado de la prueba real del profesor', '');
   if (sinLlm) l.push('> **Modo `--sin-llm`: no se ha ejecutado ningún LLM real.** Solo se ha montado el curso y probado', '> el propio ejecutor. Ejecuta `npm run prueba-real` (sin ese flag) para una prueba de verdad.', '');
   l.push(`- **Fecha:** ${fecha}`, `- **Versión del kit:** ${version}`, `- **Modelo:** ${modelo}`, '');
+  // Línea fija que lee .github/cambio-grande.js: no se cambia su forma sin cambiar allí la expresión.
+  const hechos = pasos.filter(x => x.ok !== null);
+  const c = correccion || { bien: 0, total: 0 };
+  l.push(`Resultado: ${hechos.filter(x => x.ok).length}/${hechos.length} pasos bien · corrección ${c.bien}/${c.total} · commit ${commit || 'desconocido'}`, '');
 
   l.push('## Pasos', '', '| Paso | Resultado | Duración | Qué se comprobó |', '|---|---|---|---|');
   for (const paso of pasos) {
@@ -393,7 +397,8 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     fs.copyFileSync(path.join(destino, 'config', 'alumno.md'), path.join(resultadoDir, 'config', 'alumno.md'));
     const resumen = markdownResumen({
       fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
-      modelo, sinLlm, pasos, informe, conteos, perfil,
+      modelo, sinLlm, pasos, informe, conteos, perfil, correccion: ctx.correccion,
+      commit: (spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: trabajo, encoding: 'utf8' }).stdout || '').trim(),
     });
     fs.writeFileSync(path.join(resultadoDir, 'RESUMEN.md'), resumen);
 
