@@ -7,16 +7,12 @@ const g = require('./lib/git');
 const { ejecutar: ejecutarProceso, explicar } = require('./lib/proceso');
 const { guardar } = require('./guardar');
 const { escanearSecretos } = require('./lib/secretos');
+const { motivoRutaNoSegura } = require('./lib/rutas');
 
 function validarMotor(ficheros) {
   for (const f of ficheros) {
-    const normal = path.posix.normalize(f);
-    if (normal !== f || f.startsWith('/') || /^[A-Za-z]:/.test(f) || normal.split('/').includes('..')) {
-      throw new Error(`Ruta de motor no válida: ${f}`);
-    }
-    if (v.RUTAS_PROTEGIDAS.includes(normal.split('/')[0])) {
-      throw new Error(`El motor no puede tocar datos del alumno: ${f}`);
-    }
+    if (motivoRutaNoSegura(f)) throw new Error(`Ruta de motor no válida: ${f} (${motivoRutaNoSegura(f)})`);
+    if (motivoRutaNoSegura(f, { protegidas: v.RUTAS_PROTEGIDAS })) throw new Error(`El motor no puede tocar datos del alumno: ${f}`);
   }
 }
 

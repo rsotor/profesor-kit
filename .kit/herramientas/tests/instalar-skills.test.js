@@ -90,3 +90,24 @@ test('cli: un LLM sin adaptador (ni del kit ni del curso) y sin --destino no ins
   assert.match(lineas.join('\n'), /ESTANDARES\.md/);
   assert.match(lineas.join('\n'), /--destino/);
 });
+
+// issue #39, H02: un manifiesto anterior con un nombre que sale de la carpeta de skills no borra nada fuera.
+test('un manifiesto con "../../victim" no borra nada fuera de la carpeta de skills', () => {
+  const raiz = cursoTemporal(skill('sesion'));
+  instalarSkills({ raiz });
+  escribir(raiz, { 'victim/importante.md': 'no me borres', 'estudio/importante.md': 'ni a mí' });
+  const manifiesto = path.join(raiz, '.claude', 'skills', '.instaladas-por-kit.json');
+  fs.writeFileSync(manifiesto, JSON.stringify(['sesion', '../../victim', '../../estudio', '..', '.']));
+  instalarSkills({ raiz });
+  assert.equal(fs.readFileSync(path.join(raiz, 'victim', 'importante.md'), 'utf8'), 'no me borres');
+  assert.equal(fs.readFileSync(path.join(raiz, 'estudio', 'importante.md'), 'utf8'), 'ni a mí');
+  assert.ok(fs.existsSync(path.join(raiz, '.claude', 'skills', 'sesion', 'SKILL.md')));
+});
+
+test('un destino de skills que sale del curso o toca datos del alumno se rechaza sin tocar nada', () => {
+  const raiz = cursoTemporal(skill('sesion'));
+  for (const destino of ['../fuera', 'estudio/skills', '.git/skills', 'C:/skills']) {
+    assert.throws(() => instalarSkills({ raiz, destino }), /no válida/, destino);
+  }
+  assert.ok(!fs.existsSync(path.join(raiz, 'estudio', 'skills')));
+});

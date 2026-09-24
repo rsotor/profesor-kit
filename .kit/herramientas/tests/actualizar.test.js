@@ -309,3 +309,12 @@ test('migración 004: funciona aunque en memoria estén las piezas de la versió
     if (antes) require.cache[rutaIndice] = antes; else delete require.cache[rutaIndice];
   }
 });
+
+// issue #39, H02: el motor tampoco acepta separadores de Windows, .git ni las carpetas del alumno en mayúsculas.
+test('validarMotor: rechaza "\\", ".git" y datos del alumno escritos con otras mayúsculas', () => {
+  const { validarMotor } = require('../actualizar');
+  for (const f of ['estudio\\notas', '..\\fuera', '.', '.git', '.git/hooks/x', 'CONFIG', 'Estudio/x']) {
+    assert.throws(() => validarMotor([f]), /no válida|datos del alumno/, f);
+  }
+  assert.doesNotThrow(() => validarMotor(['AGENTS.md', '.kit', '.claude/settings.json']));
+});

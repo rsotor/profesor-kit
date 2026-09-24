@@ -109,3 +109,12 @@ test('un fichero sin prefijo se coloca por quién lo enlaza: si es una sola unid
   assert.match(leer(raiz, 'ejercicios/modulo-01-conceptos/1.2-medidores/01-02-04-van-y-tir.md'), /\(van-o-tir\.html\)/, 'mismo directorio: el enlace relativo no cambia');
   assert.deepEqual(comprobar(raiz).errores, []);
 });
+
+// issue #39, H02: una carpeta de unidad que sale de su sitio, también con separadores de Windows, no se acepta.
+test('estructura: una carpeta con "..", "\\" o ".git" no es válida', () => {
+  const { leerEstructura } = require('../organizar');
+  for (const carpeta of ['..\\fuera', 'a\\..\\..\\fuera', '../fuera', '.git', 'C:/x']) {
+    const raiz = cursoTemporal({ 'config/estructura.json': JSON.stringify({ unidades: [{ prefijo: '01', carpeta }] }) });
+    assert.throws(() => leerEstructura(raiz), /unidad no válida/, carpeta);
+  }
+});

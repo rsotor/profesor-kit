@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./lib/vault');
+const { motivoRutaNoSegura } = require('./lib/rutas');
 
 // Coloca el material del alumno en carpetas que copian la arquitectura del curso.
 // La arquitectura la escribe el profesor en config/estructura.json:
@@ -17,7 +18,7 @@ function leerEstructura(raiz) {
   const e = JSON.parse(fs.readFileSync(f, 'utf8'));
   if (!Array.isArray(e.unidades)) throw new Error('config/estructura.json: falta la lista "unidades"');
   for (const u of e.unidades) {
-    if (!u.prefijo || !u.carpeta || u.carpeta.startsWith('/') || u.carpeta.split('/').includes('..')) throw new Error(`config/estructura.json: unidad no válida ${JSON.stringify(u)}`);
+    if (!u.prefijo || motivoRutaNoSegura(u.carpeta) || motivoRutaNoSegura(u.prefijo, { unTramo: true })) throw new Error(`config/estructura.json: unidad no válida ${JSON.stringify(u)}`);
   }
   return e;
 }
