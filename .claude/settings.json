@@ -5,6 +5,7 @@
       "Bash(node .kit/herramientas/estado.js *)",
       "Bash(node .kit/herramientas/guardar.js *)",
       "Bash(node .kit/herramientas/dudas.js *)",
+      "Bash(node .kit/herramientas/examen.js *)",
       "Bash(node .kit/herramientas/leer.js *)",
       "Bash(node .kit/herramientas/permisos.js *)",
       "Bash(node .kit/herramientas/deshacer.js *)",

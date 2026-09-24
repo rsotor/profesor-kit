@@ -251,6 +251,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Antes de algo de varios pasos (la línea "en curso" del diario) | `node .kit/herramientas/guardar.js --empezar "<qué>"` |
 | Para que el alumno acepte los permisos una vez (con su sí) | `node .kit/herramientas/permisos.js --ver` · `--aplicar` · `--quitar` |
 | Para leer un Word, PowerPoint o Excel del material | `node .kit/herramientas/leer.js <fichero>` (`--parte N` si es largo) |
+| Para registrar la corrección de un examen (histórico, huecos, `estudiada`) | `node .kit/herramientas/examen.js --registrar <examen> --correccion <json>` |
 | Para apuntar una duda en el registro de `config/alumno.md` | `node .kit/herramientas/dudas.js <concepto> --prueba "<fichero>"` |
 | Para deshacer el último guardado | `node .kit/herramientas/deshacer.js` (antes, `--ver` para enseñar qué cambiaría) |
 | Si falta una carpeta o un fichero | `node .kit/herramientas/reparar.js` |

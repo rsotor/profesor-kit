@@ -20,6 +20,11 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
 - **Ya puedes dejar en inbox tus Word, PowerPoint y Excel** tal cual, sin pasarlos a PDF: tu profesor los lee
   enteros, con las notas del orador de las diapositivas y las fórmulas de las hojas de cálculo. El audio y el
   vídeo, todavía no: pásale su transcripción.
+- **Las correcciones de tus exámenes quedan siempre bien apuntadas**: cada intento, con tus respuestas tal cual,
+  en el histórico del examen, y el examen listo para repetirlo.
+- **Tu profesor entiende mejor lo que le pides**: "tengo una duda de…" en el chat también cuenta como duda (y si
+  es la tercera sobre lo mismo, te lo explica desde otro ángulo); "hazme unas preguntas" es un repaso rápido en el
+  chat, y "hazme un repaso visual", la página.
 - **Tus ejercicios y repasos se comprueban solos** antes de guardarse: si una página tuviera un error que la
   dejara sin funcionar, o necesitara internet, tu profesor lo arregla antes de dártela.
 - **Tu profesor te pide todavía menos permisos.** Ya no te abre el repaso en el navegador: te dice dónde está, en
