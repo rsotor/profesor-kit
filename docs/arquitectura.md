@@ -309,8 +309,8 @@ código — y por eso es la única que usa un LLM de verdad y nunca corre en el 
   `config/` ya configurado (como lo dejaría `/configurar`) y valores **no por defecto** a propósito
   (lente activada, marcador de dudas distinto, `flashcards_por_sesion` fijo, `estructura.json` con
   submódulos, `patrones_prohibidos`): así la prueba real ejercita rutas que un curso recién instalado no
-  toca. `clases.json` y `alumno/respuestas-examen.md` son metadatos del ejecutor (qué clases procesar y en
-  qué orden, cómo "contestar" el examen), no datos del curso.
+  toca. `clases.json` y `alumno/perfil.md` son metadatos del ejecutor (qué clases procesar y en
+  qué orden; quién contesta el examen: el alumno simulado), no datos del curso.
 - `pruebas/lib/montaje.js` monta, en una carpeta temporal autolimpiable, un curso de verdad: el motor de
   la copia de trabajo actual + `preparar-curso.js --subir no` + los datos de `curso-ejemplo/` encima +
   `git init` + `instalar-skills.js`. Lo comparten `prueba-real.js` y `prueba-actualizar.js`.

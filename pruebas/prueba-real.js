@@ -15,7 +15,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { borrar, montarCurso, comprobarJson } = require('./lib/montaje');
+const { borrar, montarCurso, comprobarJson, carpetaTemporal } = require('./lib/montaje');
 const p = require('./lib/pasos');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
@@ -164,11 +164,35 @@ function pasoExamenGenerar(ctx, examenModulo) {
   return { ok: true, detalle: `examen escrito: ${path.relative(ctx.destino, fichero)}`, salidaLlm: r.salida };
 }
 
+// El alumno simulado (plan 0.22, 5b.4): otra llamada sin conversación, desde una carpeta vacía (no puede abrir el
+// examen con las soluciones), que recibe el examen limpio y el perfil y devuelve sus respuestas en JSON.
+function pasoExamenContestar(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: no hay nada que contestar' };
+  const examen = p.examenSinSoluciones(fs.readFileSync(ctx.ficheroExamen, 'utf8'));
+  const n = p.contarHuecos(examen);
+  const perfil = fs.readFileSync(path.join(ctx.datosCurso, 'alumno', 'perfil.md'), 'utf8');
+  const vacia = carpetaTemporal();
+  try {
+    const r = invocarClaude({ prompt: p.promptAlumnoSimulado(perfil, examen, n), modelo: ctx.modelo, cwd: vacia, limiteMs: ctx.limiteMs });
+    if (!r.ok) return { ok: false, detalle: `claude falló haciendo de alumno (código ${r.codigo})`, salidaLlm: r.salida };
+    const respuestas = p.leerRespuestas(r.salida);
+    if (!respuestas) return { ok: false, detalle: 'el alumno simulado no devolvió el JSON de respuestas', salidaLlm: r.salida };
+    const puesto = p.ponerRespuestas(ctx.ficheroExamen, respuestas);
+    if (!puesto.ok) return { ok: false, detalle: `el alumno simulado dio ${puesto.respuestas} respuestas para ${puesto.huecos} preguntas`, salidaLlm: r.salida };
+    return { ok: true, detalle: `${puesto.huecos} preguntas contestadas por el alumno simulado, ${puesto.enBlanco} en blanco` };
+  } finally {
+    borrar(vacia);
+  }
+}
+
+// Fuera de aquí, el alumno simulado o la corrección no se portaron como se esperaba.
+const NOTA_MIN = 3;
+const NOTA_MAX = 8;
+
 function pasoExamenCorregir(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: se omite la corrección' };
-  const tabla = fs.readFileSync(path.join(ctx.datosCurso, 'alumno', 'respuestas-examen.md'), 'utf8');
-  const contadas = p.rellenarRespuestasExamen(ctx.ficheroExamen, tabla);
   const progresoAntes = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const r = invocarClaude({
     prompt: `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
@@ -181,10 +205,12 @@ function pasoExamenCorregir(ctx, examenModulo) {
   const historico = /## Histórico de intentos/.test(texto);
   const progresoDespues = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const progresoMovido = progresoAntes !== progresoDespues;
-  const ok = !!nota && historico && progresoMovido;
+  const valor = nota ? Number(nota[1].replace(',', '.')) : null;
+  const enMargen = valor !== null && valor >= NOTA_MIN && valor <= NOTA_MAX;
+  const ok = !!nota && historico && progresoMovido && enMargen;
   return {
     ok,
-    detalle: `respuestas preparadas: ${JSON.stringify(contadas)} · nota: ${nota ? nota[1] : 'no encontrada'} · `
+    detalle: `nota: ${nota ? nota[1] : 'no encontrada'} (margen esperado ${NOTA_MIN}-${NOTA_MAX}: ${enMargen ? 'sí' : 'no'}) · `
       + `histórico de intentos: ${historico ? 'sí' : 'no'} · progreso.md movido: ${progresoMovido ? 'sí' : 'no'}`,
     salidaLlm: r.salida,
   };
@@ -206,6 +232,18 @@ function pasoRepaso(ctx, examenModulo) {
   };
 }
 
+// Cómo quedó mi-perfil.md y qué señales da estado.js, con el motor del propio curso montado.
+function resumenPerfil(destino) {
+  const f = path.join(destino, 'estudio', 'mi-perfil.md');
+  const senales = require(path.join(destino, '.kit', 'herramientas', 'estado.js')).calcularEstado(destino).senales || [];
+  if (!fs.existsSync(f)) return { existe: false, conContenido: 0, total: 0, senales: senales.map(s => `${s.tipo}: ${s.detalle}`) };
+  const partes = fs.readFileSync(f, 'utf8').split(/^## /m).slice(1);
+  return {
+    existe: true, total: partes.length, conContenido: partes.filter(x => !/Todavía nada/.test(x)).length,
+    senales: senales.map(s => `${s.tipo}: ${s.detalle}`),
+  };
+}
+
 function contarNotas(destino, carpeta, ext) {
   const dir = path.join(destino, 'estudio', carpeta);
   if (!fs.existsSync(dir)) return 0;
@@ -221,7 +259,7 @@ function agruparPorRegla(lista) {
   return [...grupos.entries()].sort((a, b) => b[1].length - a[1].length);
 }
 
-function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos }) {
+function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos, perfil }) {
   const l = [];
   l.push('# Resultado de la prueba real del profesor', '');
   if (sinLlm) l.push('> **Modo `--sin-llm`: no se ha ejecutado ningún LLM real.** Solo se ha montado el curso y probado', '> el propio ejecutor. Ejecuta `npm run prueba-real` (sin ese flag) para una prueba de verdad.', '');
@@ -239,6 +277,13 @@ function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conte
   if (fallidos.length) {
     l.push('## Lo que respondió el asistente en los pasos que fallaron', '');
     for (const x of fallidos) l.push(`### ${x.paso}`, '', '```text', String(x.salidaLlm).slice(-4000).replace(/```/g, "'''"), '```', '');
+  }
+
+  l.push('## Mi perfil', '');
+  if (!perfil) l.push('- No calculado.', '');
+  else {
+    l.push(perfil.existe ? `- \`mi-perfil.md\`: ${perfil.conContenido} de ${perfil.total} secciones con contenido` : '- `mi-perfil.md`: **no existe**');
+    l.push(perfil.senales.length ? `- Señales de \`estado.js\`: ${perfil.senales.join(' · ')}` : '- Señales de `estado.js`: ninguna', '');
   }
 
   l.push('## `comprobar.js`', '', `- **${informe.errores.length} error(es)** · **${informe.avisos.length} aviso(s)**`, '');
@@ -298,12 +343,14 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));
     ejecutarPaso(pasos, '/ejercicio', () => pasoEjercicio(ctx));
     ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
+    ejecutarPaso(pasos, '/examen (contestar)', () => pasoExamenContestar(ctx));
     ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --juntar ${claseEnSegundoPlano.id}`, () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano));
     for (const clase of otrasEnSegundoPlano) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
     ejecutarPaso(pasos, '/repaso', () => pasoRepaso(ctx, clases.examen_modulo));
 
     const informe = comprobarJson(destino);
+    const perfil = resumenPerfil(destino);
     const conteos = {
       conceptos: contarNotas(destino, 'conceptos', ['.md']),
       sesiones: contarNotas(destino, 'sesiones', ['.md']),
@@ -322,7 +369,7 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     fs.copyFileSync(path.join(destino, 'config', 'alumno.md'), path.join(resultadoDir, 'config', 'alumno.md'));
     const resumen = markdownResumen({
       fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
-      modelo, sinLlm, pasos, informe, conteos,
+      modelo, sinLlm, pasos, informe, conteos, perfil,
     });
     fs.writeFileSync(path.join(resultadoDir, 'RESUMEN.md'), resumen);
 

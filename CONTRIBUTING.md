@@ -69,8 +69,8 @@ de desorden real de alumno) en una carpeta temporal, y le hace pasar, con `claud
 interactivo, por las cinco skills de trabajo en orden: `/sesion` de las clases del módulo del examen,
 `preparar.js --lanzar` de la clase que no hace falta para ese examen (en segundo plano, justo antes de
 `/dudas`), `/dudas` (tras simular que el alumno dejó dos dudas y marcó una casilla "a su manera"),
-`/ejercicio`, `/examen` (generar y corregir, con respuestas preparadas en
-`pruebas/curso-ejemplo/alumno/respuestas-examen.md`), `preparar.js --juntar` de esa preparación y
+`/ejercicio`, `/examen` (generar, contestar y corregir: las respuestas las da un alumno simulado con el perfil de
+`pruebas/curso-ejemplo/alumno/perfil.md`, sin ver las soluciones; la nota tiene que quedar entre 3 y 8), `preparar.js --juntar` de esa preparación y
 `/repaso`. Es el caso de verdad con choques posibles del plan 0.22 (§4): dos ramas trabajando a la vez
 sobre el mismo curso. Cada paso es una llamada a `claude` independiente (sesión nueva), y si uno falla o
 no encuentra lo que esperaba, se anota como fallo de **ese** paso y la prueba sigue con los demás — nunca

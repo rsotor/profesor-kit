@@ -94,51 +94,57 @@ function examenMasReciente(destino) {
   return ficheros.map(f => ({ f, mtime: fs.statSync(f).mtimeMs })).sort((a, b) => b.mtime - a.mtime)[0].f;
 }
 
-// Parsea la tabla de pruebas/curso-ejemplo/alumno/respuestas-examen.md: filas `clave | calidad | respuesta`.
-function parseTablaRespuestas(md) {
-  const filas = [];
-  for (const linea of md.split(/\r?\n/)) {
-    const m = /^\|([^|]+)\|([^|]+)\|(.*)\|$/.exec(linea.trim());
-    if (!m) continue;
-    const claves = m[1].trim();
-    const calidad = m[2].trim();
-    if (claves === 'Palabras clave' || /^-+$/.test(claves.replace(/\s/g, ''))) continue;
-    if (!['bien', 'a-medias', 'mal', 'blanco'].includes(calidad)) continue;
-    filas.push({ claves: claves.split(',').map(c => c.trim().toLowerCase()).filter(Boolean), calidad, respuesta: m[3].trim() });
+const HUECO = /✍️\s*\*\*Tu respuesta:\*\*/;
+
+// Lo que ve el alumno simulado: el examen sin nada que le dé la respuesta. Fuera todos los callouts (las
+// soluciones van plegadas en uno; la ampliación y los intentos anteriores, en otros) y todo desde el histórico.
+function examenSinSoluciones(texto) {
+  const lineas = texto.replace(/\r\n/g, '\n').split('\n');
+  const corte = lineas.findIndex(l => /^## Histórico de intentos/.test(l));
+  const salida = [];
+  let enCallout = false;
+  for (const l of corte >= 0 ? lineas.slice(0, corte) : lineas) {
+    if (/^>\s*\[![^\]]+\]/.test(l)) { enCallout = true; continue; }
+    if (enCallout && l.startsWith('>')) continue;
+    enCallout = false;
+    salida.push(l);
   }
-  return filas;
+  return salida.join('\n');
 }
 
-const CICLO_POR_DEFECTO = [
-  { calidad: 'bien', respuesta: 'Lo explico con mis palabras, tal como lo entendí en clase.' },
-  { calidad: 'a-medias', respuesta: 'Creo que va por aquí, aunque no estoy del todo seguro.' },
-  { calidad: 'mal', respuesta: 'No estoy seguro, pero diría que es justo lo contrario.' },
-  { calidad: 'blanco', respuesta: '' },
-];
+function contarHuecos(texto) { return texto.split(/\r?\n/).filter(l => HUECO.test(l)).length; }
 
-// Rellena cada `✍️ **Tu respuesta:**` del examen con una respuesta preparada (nunca inventa la
-// pregunta: la lee del propio examen y busca la fila de la tabla cuyas palabras clave aparecen en su
-// enunciado). Si ninguna fila encaja, cicla bien/a-medias/mal/blanco para que la tanda salga variada
-// de todos modos. Devuelve cuántas respuestas de cada calidad escribió.
-function rellenarRespuestasExamen(ficheroExamen, tablaRespuestasMd) {
-  const filas = parseTablaRespuestas(tablaRespuestasMd);
+// El alumno simulado devuelve {"respuestas": [...]} en algún punto de su salida.
+function leerRespuestas(salida) {
+  const i = salida.indexOf('{');
+  const j = salida.lastIndexOf('}');
+  if (i < 0 || j < i) return null;
+  try {
+    const r = JSON.parse(salida.slice(i, j + 1)).respuestas;
+    return Array.isArray(r) ? r.map(x => String(x ?? '').replace(/\s*\n\s*/g, ' ').trim()) : null;
+  } catch { return null; }
+}
+
+// Cada respuesta detrás de su `✍️ **Tu respuesta:**`, en orden. Si no hay tantas como huecos, no se toca nada:
+// una respuesta desplazada corregiría la pregunta equivocada.
+function ponerRespuestas(ficheroExamen, respuestas) {
   const lineas = fs.readFileSync(ficheroExamen, 'utf8').split(/\r?\n/);
-  const contadas = { bien: 0, 'a-medias': 0, mal: 0, blanco: 0, 'sin-plantilla': 0 };
-  let preguntaActual = '';
-  let indiceCiclo = 0;
-  for (let i = 0; i < lineas.length; i++) {
-    if (/^\d+\.\s/.test(lineas[i])) preguntaActual = '';
-    if (!/✍️\s*\*\*Tu respuesta:\*\*/.test(lineas[i])) { preguntaActual += ` ${lineas[i]}`; continue; }
-    const textoPregunta = preguntaActual.toLowerCase();
-    const fila = filas.find(f => f.claves.some(clave => textoPregunta.includes(clave)));
-    const elegida = fila || { ...CICLO_POR_DEFECTO[indiceCiclo % CICLO_POR_DEFECTO.length], sinPlantilla: true };
-    if (!fila) indiceCiclo++;
-    contadas[fila ? elegida.calidad : 'sin-plantilla']++;
-    if (elegida.calidad !== 'blanco' && elegida.respuesta) lineas[i] = `${lineas[i]} ${elegida.respuesta}`;
-    preguntaActual = '';
-  }
+  const huecos = lineas.map((l, i) => (HUECO.test(l) ? i : -1)).filter(i => i >= 0);
+  if (huecos.length !== respuestas.length) return { ok: false, huecos: huecos.length, respuestas: respuestas.length };
+  huecos.forEach((i, n) => { if (respuestas[n]) lineas[i] = `${lineas[i]} ${respuestas[n]}`; });
   fs.writeFileSync(ficheroExamen, lineas.join('\n'));
-  return contadas;
+  return { ok: true, huecos: huecos.length, enBlanco: respuestas.filter(r => !r).length };
+}
+
+function promptAlumnoSimulado(perfil, examen, n) {
+  return [
+    'Eres un alumno haciendo un examen, no un profesor ni un asistente. Este es tu perfil:', '', perfil, '',
+    'Este es el examen:', '', examen, '',
+    `Contesta las ${n} preguntas que tienen la línea «✍️ Tu respuesta», en orden, como contestaría de verdad este alumno:`,
+    'con sus palabras, con el nivel y la proporción de aciertos, medias respuestas, fallos y blancos que dice su perfil,',
+    'y con errores creíbles, nunca absurdos. En una pregunta tipo test, contesta con la letra y, si quieres, una frase.',
+    `Devuelve SOLO un JSON, sin nada más: {"respuestas": ["…", "…"]} con exactamente ${n} elementos; "" deja una en blanco.`,
+  ].join('\n');
 }
 
 // HTML de repaso generados en estudio/repasos/.
@@ -153,5 +159,6 @@ function repasosGenerados(destino) {
 
 module.exports = {
   recorrerMd, primerConcepto, primeraSesion, insertarAntesDelPie, simularAlumnoTrasSesiones, quedaMarcador,
-  conceptoConFormula, examenMasReciente, parseTablaRespuestas, rellenarRespuestasExamen, repasosGenerados,
+  conceptoConFormula, examenMasReciente, repasosGenerados,
+  examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
 };

@@ -9,6 +9,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { temporal } = require('./ayuda');
 const { ejecutar, markdownResumen, agruparPorRegla, modeloRecomendado } = require('../../../pruebas/prueba-real');
+const p = require('../../../pruebas/lib/pasos');
 
 const RAIZ = path.resolve(__dirname, '..', '..', '..');
 const EJEMPLO = path.join(RAIZ, 'pruebas', 'curso-ejemplo');
@@ -88,4 +89,47 @@ test('ejecutar: sustituye el resultado anterior entero, no lo mezcla', () => {
   fs.writeFileSync(path.join(resultadoDir, 'sobrante-de-antes.txt'), 'x');
   ejecutar({ sinLlm: true, trabajo: RAIZ, datosCurso: EJEMPLO, resultadoDir });
   assert.ok(!fs.existsSync(path.join(resultadoDir, 'sobrante-de-antes.txt')));
+});
+
+const EXAMEN = [
+  '---', 'tipo: examen', '---', '# Examen', '', '## Uno', '', '**1.** ¿Qué es A?', '', '✍️ **Tu respuesta:**', '',
+  '**2.** ¿Y B?', '', '✍️ **Tu respuesta:**', '',
+  '> [!success]- Soluciones', '> 1. A es la primera.', '> 2. B es la segunda.', '',
+  '## Histórico de intentos', '', '| Intento | Fecha | Nota |', '|---|---|---|', '| 1 | 2026-10-01 | 5 |',
+].join('\n');
+
+test('examenSinSoluciones: quita callouts y el histórico, deja las preguntas', () => {
+  const limpio = p.examenSinSoluciones(EXAMEN);
+  assert.match(limpio, /¿Qué es A\?/);
+  assert.doesNotMatch(limpio, /primera|Soluciones|Histórico/);
+  assert.equal(p.contarHuecos(limpio), 2);
+});
+
+test('leerRespuestas: saca el JSON aunque venga con texto alrededor; si no hay, null', () => {
+  assert.deepEqual(p.leerRespuestas('Aquí van:\n{"respuestas": ["A es la primera", ""]}\nListo.'), ['A es la primera', '']);
+  assert.equal(p.leerRespuestas('no sé'), null);
+  assert.equal(p.leerRespuestas('{"otra": 1}'), null);
+});
+
+test('ponerRespuestas: escribe cada una tras su hueco; si no cuadran, no toca nada', () => {
+  const dir = temporal('alumno-simulado-');
+  const f = path.join(dir, 'examen.md');
+  fs.writeFileSync(f, EXAMEN);
+  assert.deepEqual(p.ponerRespuestas(f, ['solo una']), { ok: false, huecos: 2, respuestas: 1 });
+  assert.equal(fs.readFileSync(f, 'utf8'), EXAMEN);
+  assert.deepEqual(p.ponerRespuestas(f, ['A es la primera', '']), { ok: true, huecos: 2, enBlanco: 1 });
+  assert.match(fs.readFileSync(f, 'utf8'), /✍️ \*\*Tu respuesta:\*\* A es la primera\n/);
+});
+
+test('promptAlumnoSimulado: lleva el perfil, el examen y el número exacto de respuestas', () => {
+  const prompt = p.promptAlumnoSimulado('PERFIL-X', 'EXAMEN-Y', 7);
+  assert.match(prompt, /PERFIL-X/);
+  assert.match(prompt, /EXAMEN-Y/);
+  assert.match(prompt, /exactamente 7/);
+});
+
+test('markdownResumen: sección Mi perfil con secciones y señales', () => {
+  const md = markdownResumen({ fecha: '2026-10-01', version: '0.23.0', modelo: 'sonnet', sinLlm: false, pasos: [],
+    informe: { errores: [], avisos: [] }, conteos: {}, perfil: { existe: true, conContenido: 4, total: 5, senales: ['concepto-rojo: alfa'] } });
+  assert.match(md, /## Mi perfil[\s\S]*4 de 5 secciones con contenido[\s\S]*concepto-rojo: alfa/);
 });
