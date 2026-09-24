@@ -206,3 +206,23 @@ test('comprobar.js --revisado apunta la fecha y cuántos avisos hay en config/re
   assert.match(r.fecha, /^\d{4}-\d{2}-\d{2}$/);
   assert.equal(r.avisos, comprobar(raiz).avisos.length);
 });
+
+test('comprobar.js --revisado: con --json imprime el informe, y con errores sale con 1', () => {
+  const { cli } = require('../comprobar');
+  const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n# S\n\n[[no-existe]]\n' });
+  const salidas = [];
+  const log = console.log;
+  console.log = x => salidas.push(String(x));
+  let codigo;
+  try { codigo = cli(['--revisado', '--json'], raiz); } finally { console.log = log; }
+  assert.equal(codigo, 1);
+  assert.ok(salidas.some(s => s.startsWith('{') && JSON.parse(s).errores.length > 0));
+});
+
+test('no-se-vera-bien también mira mi-perfil.md, como aviso que remite a config/', () => {
+  const raiz = cursoTemporal({ 'config/alumno.md': '# A\n\n## Cómo explicarle\n\nLa cuenta es $10 € + 5 €$.\n' });
+  require('../guardar').regenerarGenerados(raiz);
+  const a = avisos(raiz, 'no-se-vera-bien').filter(x => x.fichero === 'mi-perfil.md');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /config\//);
+});

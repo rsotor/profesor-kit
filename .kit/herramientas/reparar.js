@@ -10,7 +10,9 @@ const g = require('./lib/git');
 //  3. si es una carpeta del alumno, se crea vacía.
 function reparar(raiz) {
   const resultado = { devueltos: [], restaurados: [], recreadas: [], sinArreglo: [] };
-  const esRepo = g.esRepo(raiz);
+  // En un entorno restringido que no deja ejecutar git (#36), se repara igual lo que no necesita git.
+  let esRepo = false;
+  try { esRepo = g.esRepo(raiz); } catch (error) { if (error.code !== 'EPERM') throw error; resultado.sinGit = true; }
 
   for (const pieza of v.piezasAusentes(raiz)) {
     const destino = path.join(raiz, ...pieza.ruta.split('/'));

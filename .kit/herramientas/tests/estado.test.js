@@ -181,3 +181,19 @@ test('senalAvisos: 10 más que en la última revisión, o 30 días con avisos; s
   assert.equal(senalAvisos({ fecha: '2026-08-01', avisos: 5 }, 0, '2026-10-01'), null, 'sin avisos no hay nada que revisar');
   assert.equal(senalAvisos(null, 12, '2026-10-01').tipo, 'avisos-acumulados');
 });
+
+test('senalAvisos: sin ninguna revisión, cuenta desde el primer guardado del curso', () => {
+  const { senalAvisos } = require('../estado');
+  assert.equal(senalAvisos(null, 5, '2026-10-01', '2026-09-20'), null, 'curso reciente');
+  assert.match(senalAvisos(null, 5, '2026-10-01', '2026-08-01').detalle, /desde el 2026-08-01/);
+});
+
+test('estado: si comprobar revienta (una carpeta llamada "x.md"), el arranque sigue; solo falta esa señal', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const raiz = raizAlDia();
+  fs.mkdirSync(path.join(raiz, 'estudio', 'conceptos', 'raro.md'));
+  const estado = calcularEstado(raiz);
+  assert.ok([1, 2, 3].includes(estado.caso));
+  assert.ok(Array.isArray(estado.senales));
+});

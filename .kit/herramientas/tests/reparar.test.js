@@ -76,3 +76,16 @@ test('la guía de uso solo se echa en falta cuando la configuración está compl
   escribir(configurado, { 'estudio/como-usar-tu-profesor.md': '# Cómo usar tu profesor\n' });
   assert.deepEqual(ausentes(configurado), []);
 });
+
+// #36: en el entorno restringido de Codex git no se ejecuta; reparar sigue con lo que no necesita git.
+test('reparar: si el entorno no deja ejecutar git, recrea igual lo que no necesita git', () => {
+  const g = require('../lib/git');
+  const original = g.esRepo;
+  const raiz = cursoTemporal();
+  fs.rmSync(path.join(raiz, 'estudio', 'repasos'), { recursive: true, force: true });
+  g.esRepo = () => { const e = new Error('sin permiso'); e.code = 'EPERM'; throw e; };
+  try {
+    const r = reparar(raiz);
+    assert.ok(r.recreadas.some(x => /repasos/.test(x)), JSON.stringify(r));
+  } finally { g.esRepo = original; }
+});

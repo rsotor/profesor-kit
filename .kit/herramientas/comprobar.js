@@ -54,6 +54,9 @@ function comprobarEnlacesDelPerfil(raiz, informe) {
     informe.avisos.push({ regla: 'enlace-roto-en-perfil', fichero: 'mi-perfil.md',
       detalle: `[[${destino}]] no existe: viene de config/alumno.md o config/profesor.md, corrígelo allí` });
   }
+  const propio = { errores: [], avisos: [] };
+  comprobarQueSeVeraBien(raiz, ['mi-perfil.md'], propio);
+  for (const a of propio.avisos) informe.avisos.push({ ...a, detalle: `${a.detalle} (viene de config/alumno.md o config/profesor.md: corrígelo allí)` });
 }
 
 function slugsDelIndice(raiz) {
@@ -546,8 +549,9 @@ function cli(args, raizPorDefecto) {
   const informe = comprobar(raiz);
   if (args.includes('--revisado')) {
     apuntarRevision(raiz, informe.avisos.length);
-    console.log(`Revisión apuntada: ${informe.avisos.length} aviso(s) en config/revision-avisos.json.`);
-    return 0;
+    if (args.includes('--json')) console.log(JSON.stringify(informe));
+    else console.log(`Revisión apuntada: ${informe.avisos.length} aviso(s) en config/revision-avisos.json.`);
+    return informe.errores.length ? 1 : 0;
   }
   if (args.includes('--json')) console.log(JSON.stringify(informe));
   else imprimir(informe);

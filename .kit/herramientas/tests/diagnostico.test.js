@@ -147,3 +147,17 @@ test('Obsidian sin abrir es un aviso, no bloquea; un curso con errores sí', t =
   assert.equal(cli(['--json'], raiz, { carpetaBin, entorno, ejecutar: ordenador() }), 1);
   assert.equal(JSON.parse(lineas.pop()).find(c => c.id === 'curso-sano').ok, false);
 });
+
+test('diagnóstico: si el entorno no deja ejecutar git, lo dice en una línea y sigue con lo demás', () => {
+  const g = require('../lib/git');
+  const original = g.esRepo;
+  const { raiz, carpetaBin, entorno } = cursoInstalado();
+  g.esRepo = () => { const e = new Error('sin permiso'); e.code = 'EPERM'; throw e; };
+  try {
+    const lista = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() });
+    const git = lista.find(c => c.id === 'entorno-git');
+    assert.equal(git.ok, false);
+    assert.match(git.arreglo, /fuera de ese entorno/);
+    assert.ok(lista.find(c => c.id === 'atajo'), 'sigue con el resto');
+  } finally { g.esRepo = original; }
+});

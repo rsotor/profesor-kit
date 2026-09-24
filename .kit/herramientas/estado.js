@@ -5,6 +5,7 @@ const v = require('./lib/vault');
 const indice = require('./lib/indice');
 const perfil = require('./lib/perfil');
 const { comprobar } = require('./comprobar');
+const g = require('./lib/git');
 
 // La foto del curso al abrir (plan 0.22, §3.1): lo que el arranque necesita para confirmar con el alumno
 // si toca estudiar lo ya preparado, esperar a que se prepare lo nuevo, o repasar mientras se prepara.
@@ -70,16 +71,31 @@ const DIAS_SIN_REVISAR = 30;
 function leerRevision(raiz) {
   try { return JSON.parse(fs.readFileSync(path.join(raiz, 'config', 'revision-avisos.json'), 'utf8')); } catch { return null; }
 }
-function senalAvisos(revision, avisos, hoy = new Date().toISOString().slice(0, 10)) {
+// Sin ninguna revisión, cuenta desde el primer guardado del curso (`inicio`): un curso que nunca se revisa también
+// acaba avisando, aunque sus avisos no crezcan de golpe.
+function senalAvisos(revision, avisos, hoy = new Date().toISOString().slice(0, 10), inicio = null) {
+  if (!revision && inicio) revision = { fecha: inicio, avisos: 0, desdeElInicio: true };
   const antes = revision && Number.isInteger(revision.avisos) ? revision.avisos : 0;
   const desde = revision && revision.fecha ? ` desde el ${revision.fecha}` : '';
   if (avisos - antes >= AVISOS_DE_MAS) {
-    const cuando = revision && revision.fecha ? ` (del ${revision.fecha})` : '';
+    const cuando = revision && revision.fecha && !revision.desdeElInicio ? ` (del ${revision.fecha})` : '';
     return { tipo: 'avisos-acumulados', detalle: `${avisos} avisos, ${avisos - antes} más que en la última revisión${cuando}` };
   }
   const dias = revision && revision.fecha ? (Date.parse(hoy) - Date.parse(revision.fecha)) / 86400000 : 0;
   if (avisos > 0 && dias >= DIAS_SIN_REVISAR) return { tipo: 'avisos-acumulados', detalle: `${avisos} avisos sin revisar${desde}` };
   return null;
+}
+
+// La señal de avisos es accesoria: si comprobar revienta por algo raro del curso (una carpeta llamada "x.md"), el
+// arranque sigue sin ella; el caso sugerido y las preparaciones son lo que importa (revisión de la 0.23.0).
+function senalDeAvisos(raiz) {
+  try {
+    const primero = g.intentarGit(raiz, ['log', '--max-parents=0', '--format=%cs']);
+    const inicio = primero.ok ? (primero.stdout.trim().split(/\r?\n/).pop() || '').slice(0, 10) || null : null;
+    return senalAvisos(leerRevision(raiz), comprobar(raiz).avisos.length, undefined, inicio);
+  } catch {
+    return null;
+  }
 }
 
 function calcularEstado(raiz) {
@@ -103,7 +119,7 @@ function calcularEstado(raiz) {
     enRepaso,
     preparaciones,
     caso,
-    senales: [...perfil.senales(raiz), senalAvisos(leerRevision(raiz), comprobar(raiz).avisos.length)].filter(Boolean),
+    senales: [...perfil.senales(raiz), senalDeAvisos(raiz)].filter(Boolean),
   };
 }
 
