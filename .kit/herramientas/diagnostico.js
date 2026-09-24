@@ -49,7 +49,7 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   anota('curso-preparado', hayAjustes && !existe('docs') && !existe('.github'), 'Curso preparado', 'Ejecuta preparar-curso.js (paso 5 de la guía).');
   const ajustes = v.leerAjustes(raiz);
 
-  if (ajustes.subir_a_github) {
+  if (ajustes.subir_a_github === true) {
     const url = g.esRepo(raiz) ? g.urlOrigen(raiz) : null;
     const propio = Boolean(url) && !url.includes(motor.repo);
     anota('copia-en-github', propio, 'Tu curso tiene su copia en GitHub', 'El curso no tiene remoto propio: créalo con gh repo create --private (paso 3).');

@@ -40,7 +40,7 @@ test('leerMarcador usa @@ por defecto y respeta config/profesor.md', () => {
 test('leerAjustes aplica valores por defecto si falta el fichero', () => {
   const raiz = cursoTemporal();
   require('node:fs').rmSync(require('node:path').join(raiz, 'config', 'ajustes.json'));
-  assert.deepEqual(v.leerAjustes(raiz), { subir_a_github: true, llm: 'claude-code', nombre_curso: '', atajo: '', version_datos: 1, configuracion: { curso: false, estilo: false, nivel: false }, patrones_prohibidos: [] });
+  assert.deepEqual(v.leerAjustes(raiz), { subir_a_github: false, llm: 'claude-code', nombre_curso: '', atajo: '', version_datos: 1, configuracion: { curso: false, estilo: false, nivel: false }, patrones_prohibidos: [] });
 });
 
 test('las rutas protegidas son config y la carpeta del alumno entera', () => {
@@ -101,4 +101,11 @@ test('leerAdaptador: "codex-cli" es alias de "codex", para los cursos que ya ten
   const raiz = cursoTemporal({ '.kit/adaptadores/codex.json': JSON.stringify({ comando: 'codex', skills: '.agents/skills' }) });
   assert.deepEqual(v.leerAdaptador(raiz, 'codex-cli'), { comando: 'codex', skills: '.agents/skills' });
   assert.deepEqual(v.leerAdaptador(raiz, 'codex'), { comando: 'codex', skills: '.agents/skills' }, 'y sigue funcionando con el id de hoy');
+});
+
+// issue #39, H07: un valor con el tipo equivocado no se interpreta: se señala. "false" (texto) no es false.
+test('revisarAjustes: señala los valores con un tipo distinto del esperado; sin ajustes, no sube', () => {
+  assert.deepEqual(v.revisarAjustes({ subir_a_github: 'false', llm: 'codex', version_datos: '3' }).map(p => p.clave), ['subir_a_github', 'version_datos']);
+  assert.deepEqual(v.revisarAjustes({ subir_a_github: true, llm: 'codex', configuracion: { curso: true } }), []);
+  assert.equal(v.leerAjustes(cursoTemporal()).subir_a_github, false);
 });

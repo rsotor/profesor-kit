@@ -459,6 +459,18 @@ function comprobarPropiedades(raiz, notas, informe) {
   }
 }
 
+// Un ajuste con el tipo equivocado no se adivina (issue #39, H07): "false" en texto no es false.
+function comprobarAjustes(raiz, informe) {
+  const fichero = path.join(raiz, 'config', 'ajustes.json');
+  if (!fs.existsSync(fichero)) return;
+  let ajustes;
+  try { ajustes = JSON.parse(fs.readFileSync(fichero, 'utf8')); } catch { return; }
+  for (const p of v.revisarAjustes(ajustes)) {
+    informe.avisos.push({ regla: 'ajuste-no-valido', fichero: 'config/ajustes.json',
+      detalle: `"${p.clave}" vale ${p.valor} y tiene que ser ${p.esperado}: hasta que se arregle, se usa el valor más prudente${p.clave === 'subir_a_github' ? ' (no se sube a GitHub)' : ''}` });
+  }
+}
+
 function comprobar(raiz) {
   const informe = { errores: [], avisos: [] };
   comprobarPiezas(raiz, informe);
@@ -486,6 +498,7 @@ function comprobar(raiz) {
   comprobarRequiereVacio(raiz, informe);
   comprobarPreguntaDoble(raiz, informe);
   comprobarObsidianVeEjercicios(raiz, informe);
+  comprobarAjustes(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;
 }

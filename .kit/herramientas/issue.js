@@ -4,6 +4,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { ejecutar } = require('./lib/proceso');
 const v = require('./lib/vault');
+const { tipoDeSecreto } = require('./lib/secretos');
 
 // El camino del profesor al kit: una issue bien formada, sin datos del alumno, sin duplicar.
 //   node .kit/herramientas/issue.js --titulo "[skill] qué pasa" --cuerpo cuerpo.md          → vista previa
@@ -12,7 +13,6 @@ const v = require('./lib/vault');
 
 const PERSONAL = [
   [/\/Users\/[^/\s]+|\/home\/[^/\s]+|[A-Za-z]:\\Users\\[^\\\s]+/, 'una ruta con tu nombre de usuario'],
-  [/\bgh[pousr]_[A-Za-z0-9]{36,}\b|\bsk-[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----/, 'algo que parece un secreto'],
   [/[\w.+-]+@[\w-]+\.[\w.]+/, 'una dirección de correo'],
 ];
 
@@ -26,9 +26,11 @@ function entorno(raiz, plataforma = process.platform, version = os.release()) {
   return `**Entorno:** ${sistema} ${version} · ${ajustes.llm} · kit ${v.leerVersion(raiz)} · Node ${process.versions.node}`;
 }
 
+// Los secretos, con el mismo detector que guardar.js (lib/secretos.js); aquí se añade lo personal.
 function revisar(texto) {
   const problemas = [];
   for (const [regex, que] of PERSONAL) if (regex.test(texto)) problemas.push(que);
+  if (texto.split(/\r?\n/).some(tipoDeSecreto)) problemas.push('algo que parece un secreto');
   return problemas;
 }
 
