@@ -148,5 +148,5 @@ Detalle de cada tarea en `docs/planes/2026-09-23-mi-perfil-y-evolucion-plan.md`.
 | 13 | Si algo tarda, avisar y hacerlo mientras tanto; "test" en vez de "parcial" | ✅ |
 | Extra | `esRepo` en el entorno restringido de Codex: error de permiso, no "no es la raíz" (salió al validar la #36) | ✅ |
 | Extra | Test de extremo a extremo: el curso sale de la carpeta de trabajo, no de un clon (ya no falla con `VERSION` sin commit) | ✅ |
-| — | Revisión independiente del código | 🚧 en marcha |
-| 8 | Prueba real y PR | ⏳ con el sí de Roberto |
+| — | Revisión independiente del código | ✅ hecha y arreglada |
+| 8 | Prueba real y PR | ⏳ tres pruebas (11/12, 7/12, 8/12; corrección 6/6 siempre). Falta atacar la causa: ver `2026-09-25-para-continuar.md` |
