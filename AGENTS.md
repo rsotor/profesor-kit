@@ -201,7 +201,7 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
    nunca la impones.
 
    Si trae **`senales`** (un examen suspendido, una nota que baja, un concepto en 🔴, una tercera duda), menciona
-   **la primera** en una línea, con lo que propones: "el colchón financiero lleva tres dudas, ¿lo vemos desde otro
+   **la primera** en una línea, con lo que propones: "este concepto ya lleva tres dudas, ¿lo vemos desde otro
    ángulo?". Una línea, no un sermón. Las demás, cuando venga a cuento.
 
    Si hay una preparación **terminada sin juntar** o **interrumpida**, eso va antes que nada: dile que la
