@@ -13,6 +13,19 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.22.2
+Una versión de seguridad: nada nuevo que aprender, pero tu curso está más protegido. Sale de una auditoría
+independiente del kit.
+- **Tu profesor ya no da 69 avisos falsos de "concepto sin ejemplo"** en notas que sí tienen su ejemplo con un
+  título como "El ejemplo, paso a paso".
+- **Solo se sube a GitHub cuando está claro.** Si el ajuste de subir está mal escrito o falta, tu trabajo se
+  guarda igual en tu ordenador y el profesor te avisa. Antes de subir se comprueba que tu copia de GitHub sigue
+  siendo privada, y que no va ninguna contraseña o clave, tampoco en un guardado de antes que aún no había
+  subido. Si algo de eso falla, no sube, y lo hará en el siguiente guardado.
+- **Si tu curso está dentro de otra carpeta con su propio historial**, tu profesor ya no guarda en ella por
+  error: te dice cómo arreglarlo.
+- **Preparar una clase en segundo plano es más seguro en Windows**, sea cual sea el nombre de tus ficheros.
+
 ## 0.22.1
 - **Actualizar ya no falla en un curso grande.** Si tu curso tenía muchos avisos, la actualización se paraba con
   un error raro ("Unterminated string in JSON") sin tocar nada. Ahora se actualiza con normalidad.

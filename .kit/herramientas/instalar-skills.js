@@ -2,10 +2,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./lib/vault');
+const { motivoRutaNoSegura, estaDentro } = require('./lib/rutas');
 
 const MANIFIESTO = '.instaladas-por-kit.json';
 
 function instalarSkills({ raiz, destino = '.claude/skills' }) {
+  // El destino sale del adaptador, que el curso puede escribir (config/adaptador-llm.json): se comprueba igual.
+  const motivo = motivoRutaNoSegura(destino, { protegidas: v.RUTAS_PROTEGIDAS });
+  if (motivo) throw new Error(`Carpeta de skills no válida en el adaptador: ${destino} (${motivo})`);
   const origen = path.join(raiz, '.kit', 'skills');
   const dirDestino = path.join(raiz, ...destino.split('/'));
   fs.mkdirSync(dirDestino, { recursive: true });
@@ -16,8 +20,11 @@ function instalarSkills({ raiz, destino = '.claude/skills' }) {
     ? fs.readdirSync(origen, { withFileTypes: true }).filter(e => e.isDirectory()).map(e => e.name).sort()
     : [];
 
-  const retiradas = anteriores.filter(n => !actuales.includes(n));
-  for (const nombre of [...retiradas, ...actuales]) fs.rmSync(path.join(dirDestino, nombre), { recursive: true, force: true, maxRetries: 3 });
+  // Solo se borra lo que es de verdad una carpeta de skill dentro del destino: un manifiesto estropeado o
+  // manipulado ("../../algo") no puede borrar nada fuera (issue #39, H02).
+  const borrable = n => !motivoRutaNoSegura(n, { unTramo: true }) && estaDentro(dirDestino, n);
+  const retiradas = (Array.isArray(anteriores) ? anteriores : []).filter(n => !actuales.includes(n)).filter(borrable);
+  for (const nombre of [...retiradas, ...actuales.filter(borrable)]) fs.rmSync(path.join(dirDestino, nombre), { recursive: true, force: true, maxRetries: 3 });
   for (const nombre of actuales) fs.cpSync(path.join(origen, nombre), path.join(dirDestino, nombre), { recursive: true });
 
   fs.writeFileSync(ficheroManifiesto, JSON.stringify(actuales, null, 2) + '\n');

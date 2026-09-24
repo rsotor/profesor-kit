@@ -61,3 +61,9 @@ test('cli: vista previa sin enviar; con --enviar crea y devuelve la url; sin gh 
   assert.match(lineas.join('\n'), /feedback-pendiente\.md/);
   assert.equal(cli([], raiz), 2);
 });
+
+// issue #39, H07: un solo detector de secretos; issue.js no puede dejar pasar lo que guardar.js bloquea.
+test('revisar: detecta los mismos secretos que el escaneo al guardar (token fino de GitHub incluido)', () => {
+  assert.deepEqual(revisar(`token: github_pat_${'A1'.repeat(30)}`), ['algo que parece un secreto']);
+  assert.deepEqual(revisar(`clave AKIA${'B'.repeat(16)}`), ['algo que parece un secreto']);
+});

@@ -15,8 +15,9 @@ forma, y de `main` solo sale lo que se publica como release:
 5. **Si el alumno va a notar el cambio:** una línea en `.kit/CHANGELOG.md` **y `.kit/VERSION` subido** (ver
    Versiones). Si cambia el formato de los datos: migración en `.kit/herramientas/migraciones/` (sin ella,
    el test de coherencia falla).
-6. **Tras mezclar, comprueba que la release existe.** El workflow `release.yml` se lanza en cada merge a
-   `main` que cambie `.kit/VERSION`: crea la etiqueta `vX.Y.Z` y la release con la sección de esa versión del
+6. **Tras mezclar, comprueba que la release existe.** El workflow `release.yml` se lanza cuando los tests de
+   `main` terminan en verde tras un merge, y publica ese mismo commit si `.kit/VERSION` tiene una versión sin
+   release (tarda lo que tarden los tests, unos minutos): crea la etiqueta `vX.Y.Z` y la release con la sección de esa versión del
    CHANGELOG. `actualizar.js` descarga **la última release**, nunca `main`: hasta que la release existe, los
    cursos no ven la versión nueva. Compruébalo con `gh release list`. Si Actions no la creó (sin minutos, un
    fallo), hazlo a mano desde `main` actualizada:

@@ -1,7 +1,9 @@
 'use strict';
 const path = require('node:path');
 const g = require('./lib/git');
-const { leerAjustes } = require('./lib/vault');
+const { leerAjustes, leerMotor } = require('./lib/vault');
+const { escanearSalientes } = require('./lib/secretos');
+const { ejecutar } = require('./lib/proceso');
 const fs = require('node:fs');
 const { comprobar } = require('./comprobar');
 const { pendientes, markdownPendientes, markdownAuditoria, markdownFormulario, markdownEjercicios, actualizarEstadoReadme } = require('./lib/generados');
@@ -49,17 +51,50 @@ function regenerarGenerados(raiz) {
   escribirSiCambia(path.join(base, 'auditoria-del-material.md'), markdownAuditoria(raiz));
 }
 
+// ¿Es seguro subir a este remoto? (issue #39, H07). Una carpeta del disco no sale del ordenador. En GitHub, solo
+// un repositorio privado que no sea el del kit; si no se puede comprobar (sin red, sin sesión de gh), no se
+// sube: el trabajo ya está guardado en local y sube en el siguiente guardado. Otro servidor: el kit no sabe
+// comprobarlo, así que tampoco.
+function destinoSeguro(url, repoKit, ejecutarGh = (args) => ejecutar('gh', args)) {
+  const esLocal = !/^[a-z][a-z0-9+.-]*:\/\//i.test(url) && !/^[^@/\\]+@[^:]+:/.test(url);
+  if (esLocal || /^file:\/\//i.test(url)) return { ok: true };
+  const m = /github\.com[:/]([^/]+\/[^/]+?)(?:\.git)?\/?$/i.exec(url);
+  if (!m) return { ok: false, motivo: 'el remoto no está en GitHub y el kit no sabe comprobar si es privado' };
+  if (repoKit && m[1].toLowerCase() === repoKit.toLowerCase()) return { ok: false, motivo: 'el remoto es el repositorio del kit, no el tuyo' };
+  const r = ejecutarGh(['repo', 'view', m[1], '--json', 'visibility', '--jq', '.visibility']);
+  if (!r.ok) return { ok: false, motivo: 'no se ha podido comprobar que tu repositorio de GitHub sea privado (¿sin red o sin sesión de gh?)' };
+  if (r.salida.trim() !== 'PRIVATE') return { ok: false, motivo: 'tu repositorio de GitHub no es privado: ponlo privado con gh repo edit --visibility private --accept-visibility-change-consequences' };
+  return { ok: true };
+}
+
+// El repositorio del kit, para no subir nunca a él. Un curso a medio reparar puede no tener motor.json.
+function repoDelKit(raiz) {
+  try { return leerMotor(raiz).repo; } catch { return null; }
+}
+
 // Decide si lo que hay en HEAD se sube, y lo sube si procede. Mismo criterio para un guardado que para
 // un deshacer (deshacer.js la reutiliza): sin subir_a_github, con un secreto o sin remoto, se queda en local.
 // Una copia de trabajo de preparar.js (rama `preparacion/<id>`) nunca sube: es una rama aparte que nadie
 // más ve hasta que `--juntar` la mezcla con la principal, y esa mezcla es la que sube (con sus reglas
-// normales), no cada guardado suelto de la preparación.
-function subirSiProcede(raiz, informe) {
+// normales), no cada guardado suelto de la preparación. Solo un `true` de verdad sube: "false" en texto, o
+// no tener el ajuste, se queda en local (issue #39, H07).
+function subirSiProcede(raiz, informe, { ejecutarGh } = {}) {
   const resultado = { subido: false };
-  if (!leerAjustes(raiz).subir_a_github) resultado.motivoSubida = 'subir_a_github está desactivado';
-  else if (g.ramaActual(raiz).startsWith('preparacion/')) resultado.motivoSubida = 'esto es una copia de preparación en segundo plano: se sube cuando el profesor la junte con --juntar';
+  const subir = leerAjustes(raiz).subir_a_github;
+  const url = g.urlOrigen(raiz);
+  let salientes;
+  let destino;
+  if (subir !== true) {
+    resultado.motivoSubida = subir === false ? 'subir_a_github está desactivado'
+      : 'subir_a_github en config/ajustes.json no es true ni false: no se sube hasta arreglarlo';
+  } else if (g.ramaActual(raiz).startsWith('preparacion/')) resultado.motivoSubida = 'esto es una copia de preparación en segundo plano: se sube cuando el profesor la junte con --juntar';
   else if (informe.errores.some(e => e.regla === 'secreto')) resultado.motivoSubida = 'hay un posible secreto: no se sube hasta quitarlo';
-  else if (!g.urlOrigen(raiz)) resultado.motivoSubida = 'no hay remoto configurado';
+  else if (!url) resultado.motivoSubida = 'no hay remoto configurado';
+  else if ((salientes = escanearSalientes(raiz)).length) {
+    const s = salientes[0];
+    resultado.motivoSubida = `hay un posible secreto (${s.tipo}) en un guardado que aún no se ha subido (${s.commit}, ${s.fichero}): ` +
+      'aunque ya no esté en los ficheros, subiría con la historia. No se sube; el trabajo sigue guardado en local';
+  } else if (!(destino = destinoSeguro(url, repoDelKit(raiz), ejecutarGh)).ok) resultado.motivoSubida = `${destino.motivo}. El trabajo está guardado en local`;
   else {
     const push = g.intentarGit(raiz, ['push', '-q', 'origin', 'HEAD']);
     if (push.ok) resultado.subido = true;
@@ -89,7 +124,7 @@ const EXPLICACION = {
   'errores': 'No se ha guardado: hay errores que arreglar primero (ejecuta comprobar.js para verlos).',
   'sin-cambios': 'No había nada nuevo que guardar.',
   'sin-identidad': 'Git no sabe quién eres todavía. Hay que configurar user.name y user.email (ver INSTALAR-AGENTE.md, paso de identidad).',
-  'sin-repo': 'Esta carpeta no es un repositorio git.',
+  'sin-repo': 'La carpeta del curso no es la raíz de su propio repositorio git (no tiene uno, o está dentro de otro): no se toca nada. Ejecuta node .kit/herramientas/diagnostico.js para ver cómo arreglarlo.',
 };
 
 function cli(args, raiz) {
@@ -103,4 +138,4 @@ function cli(args, raiz) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'guardar.js');
 
-module.exports = { guardar, regenerarGenerados, anotarEnDiario, subirSiProcede, cli };
+module.exports = { guardar, regenerarGenerados, anotarEnDiario, subirSiProcede, destinoSeguro, cli };

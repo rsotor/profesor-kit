@@ -62,7 +62,7 @@ function deshacer({ raiz, ver = false, hoy }) {
 }
 
 const EXPLICACION = {
-  'sin-repo': 'Esta carpeta no es un repositorio git.',
+  'sin-repo': 'La carpeta del curso no es la raíz de su propio repositorio git (no tiene uno, o está dentro de otro): no se toca nada. Ejecuta node .kit/herramientas/diagnostico.js para ver cómo arreglarlo.',
   'sin-commits': 'Todavía no hay nada guardado que deshacer.',
   'cambios-sin-guardar': 'Hay cambios sin guardar: deshacer ahora los perdería o los mezclaría con lo que se '
     + 'deshace. Guárdalos primero (guardar.js) o descártalos, y decide con el alumno.',

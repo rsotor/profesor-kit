@@ -285,8 +285,11 @@ function leerProfesor(raiz) {
 }
 
 // Sección con su cuerpo crudo (sin el pie de navegación, que no es contenido). null si la sección no existe.
-function capturarSeccion(texto, titulo) {
-  const re = new RegExp(`^## ${generados.escaparRegex(titulo)}\\s*\\n([\\s\\S]*?)(?=^## |(?![\\s\\S]))`, 'm');
+// Con `conAnadido`, también vale el título seguido de un añadido que no sea una letra más ("## El ejemplo, paso a
+// paso", "## El ejemplo (del curso)"): cursos anteriores a la 0.21 lo escribían así (issue #38).
+function capturarSeccion(texto, titulo, { conAnadido = false } = {}) {
+  const resto = conAnadido ? '(?![\\p{L}])[^\\n]*\\n' : '\\s*\\n';
+  const re = new RegExp(`^## ${generados.escaparRegex(titulo)}${resto}([\\s\\S]*?)(?=^## |(?![\\s\\S]))`, conAnadido ? 'mu' : 'm');
   const m = re.exec(indice.sinPie(texto));
   return m ? m[1] : null;
 }
@@ -298,15 +301,15 @@ function cuerpoReal(cuerpo) {
   return cuerpo.split('\n').filter(l => l.trim() && !/^[*_<>].*[*_>]$/.test(l.trim())).join('\n').trim();
 }
 
-function seccionVacia(texto, titulo) {
-  const cuerpo = cuerpoReal(capturarSeccion(texto, titulo));
+function seccionVacia(texto, titulo, opciones) {
+  const cuerpo = cuerpoReal(capturarSeccion(texto, titulo, opciones));
   return !cuerpo || /^<.*>$/.test(cuerpo);
 }
 
 function comprobarConceptoSinEjemplo(raiz, informe) {
   for (const slug of v.listarConceptos(raiz)) {
     const fichero = `conceptos/${slug}.md`;
-    if (seccionVacia(leer(raiz, fichero), 'El ejemplo')) {
+    if (seccionVacia(leer(raiz, fichero), 'El ejemplo', { conAnadido: true })) {
       informe.avisos.push({ regla: 'concepto-sin-ejemplo', fichero, detalle: 'falta "## El ejemplo" (o está vacía, o tiene el texto de la plantilla) — "ejemplo antes que definición": sin él, la nota explica en el vacío' });
     }
   }
@@ -456,6 +459,18 @@ function comprobarPropiedades(raiz, notas, informe) {
   }
 }
 
+// Un ajuste con el tipo equivocado no se adivina (issue #39, H07): "false" en texto no es false.
+function comprobarAjustes(raiz, informe) {
+  const fichero = path.join(raiz, 'config', 'ajustes.json');
+  if (!fs.existsSync(fichero)) return;
+  let ajustes;
+  try { ajustes = JSON.parse(fs.readFileSync(fichero, 'utf8')); } catch { return; }
+  for (const p of v.revisarAjustes(ajustes)) {
+    informe.avisos.push({ regla: 'ajuste-no-valido', fichero: 'config/ajustes.json',
+      detalle: `"${p.clave}" vale ${p.valor} y tiene que ser ${p.esperado}: hasta que se arregle, se usa el valor más prudente${p.clave === 'subir_a_github' ? ' (no se sube a GitHub)' : ''}` });
+  }
+}
+
 function comprobar(raiz) {
   const informe = { errores: [], avisos: [] };
   comprobarPiezas(raiz, informe);
@@ -483,6 +498,7 @@ function comprobar(raiz) {
   comprobarRequiereVacio(raiz, informe);
   comprobarPreguntaDoble(raiz, informe);
   comprobarObsidianVeEjercicios(raiz, informe);
+  comprobarAjustes(raiz, informe);
   informe.errores.push(...escanearSecretos(raiz));
   return informe;
 }

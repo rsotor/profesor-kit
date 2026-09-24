@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { guardar } = require('../guardar');
+const { guardar, destinoSeguro } = require('../guardar');
 const { cursoTemporal, escribir, iniciarGit, git, temporal } = require('./ayuda');
 
 function conOrigen(raiz) {
@@ -198,4 +198,70 @@ test('el diario respeta el fin de línea de Windows: no mezcla \\n y \\r\\n', ()
   const texto = require('node:fs').readFileSync(require('node:path').join(raiz, 'config', 'diario.md'), 'utf8');
   assert.equal(texto, '# Diario\r\n\r\n- 2026-01-01 · uno\r\n- 2026-01-02 · dos\r\n');
   assert.doesNotMatch(texto.replace(/\r\n/g, ''), /\n/, 'ningún \\n suelto');
+});
+
+// issue #39, H03: un curso sin git propio dentro de otro repositorio no puede guardar en el de fuera.
+test('un curso sin git propio dentro de otro repositorio no guarda nada, y el de fuera no cambia', () => {
+  const padre = temporal('kit-padre-');
+  escribir(padre, { 'LEEME.txt': 'repo ajeno' });
+  iniciarGit(padre);
+  const antes = git(padre, 'rev-parse', 'HEAD');
+  const raiz = path.join(padre, 'curso');
+  fs.cpSync(cursoTemporal({ 'config/ajustes.json': ajustes(false) }), raiz, { recursive: true });
+  const r = guardar({ raiz, mensaje: 'sesion(1): intento' });
+  assert.equal(r.guardado, false);
+  assert.equal(r.motivo, 'sin-repo');
+  assert.equal(git(padre, 'rev-parse', 'HEAD'), antes);
+  assert.equal(git(padre, 'diff', '--cached', '--name-only'), '');
+});
+
+test('esRepo: la raíz exacta sí; una subcarpeta no; una copia de trabajo (worktree) sí', () => {
+  const g = require('../lib/git');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  assert.equal(g.esRepo(raiz), true);
+  assert.equal(g.esRepo(path.join(raiz, 'estudio')), false);
+  const copia = path.join(temporal('kit-wt-'), 'copia');
+  git(raiz, 'worktree', 'add', '-q', '-b', 'otra', copia);
+  assert.equal(g.esRepo(copia), true);
+});
+
+// issue #39, H07: publicar solo con un sí claro y a un destino que se sabe privado.
+test('subir_a_github como texto ("false") no sube, y dice por qué', () => {
+  const raiz = cursoTemporal({ 'config/ajustes.json': JSON.stringify({ subir_a_github: 'false', version_datos: 1 }) });
+  iniciarGit(raiz);
+  const remoto = conOrigen(raiz);
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
+  const r = guardar({ raiz, mensaje: 'x' });
+  assert.equal(r.guardado, true);
+  assert.equal(r.subido, false);
+  assert.match(r.motivoSubida, /subir_a_github/);
+  assert.notEqual(git(remoto, 'rev-parse', 'main'), git(raiz, 'rev-parse', 'HEAD'));
+});
+
+test('un secreto en un guardado intermedio que aún no se ha subido bloquea la subida, aunque ya no esté en los ficheros', () => {
+  const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
+  iniciarGit(raiz);
+  const remoto = conOrigen(raiz);
+  escribir(raiz, { 'estudio/inbox/nota.md': `mi token ghp_${'x'.repeat(36)}\n` });
+  git(raiz, 'add', '-A');
+  git(raiz, 'commit', '-q', '-m', 'con secreto');
+  escribir(raiz, { 'estudio/inbox/nota.md': 'ya no\n' });
+  const r = guardar({ raiz, mensaje: 'quitado' });
+  assert.equal(r.guardado, true);
+  assert.equal(r.subido, false);
+  assert.match(r.motivoSubida, /secreto/);
+  assert.doesNotMatch(r.motivoSubida, /ghp_/);
+  assert.notEqual(git(remoto, 'rev-parse', 'main'), git(raiz, 'rev-parse', 'HEAD'));
+});
+
+test('destinoSeguro: una carpeta del disco vale; en GitHub, solo si es privado y no es el kit; si no se sabe, no', () => {
+  const gh = respuesta => () => respuesta;
+  assert.equal(destinoSeguro('/ruta/a/remoto.git', 'rsotor/profesor-kit', gh({ ok: false })).ok, true);
+  assert.equal(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PRIVATE\n' })).ok, true);
+  assert.equal(destinoSeguro('git@github.com:ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PRIVATE\n' })).ok, true);
+  assert.match(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PUBLIC\n' })).motivo, /privad/);
+  assert.match(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: false, salida: 'sin red' })).motivo, /comprobar/);
+  assert.match(destinoSeguro('https://github.com/rsotor/profesor-kit.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PRIVATE' })).motivo, /kit/);
+  assert.match(destinoSeguro('https://gitlab.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true })).motivo, /GitHub/);
 });

@@ -15,8 +15,10 @@ const CARPETA_ALUMNO = 'estudio';
 const OTRAS_CARPETAS_ALUMNO = ['inbox', 'repasos'];
 const RUTAS_PROTEGIDAS = ['config', CARPETA_ALUMNO, 'README.md'];
 const GUIA_DE_USO = 'como-usar-tu-profesor.md';
+// Sin un sí explícito (`subir_a_github: true`), no se sube nada: publicar es lo único que no se puede deshacer
+// (issue #39, H07). preparar-curso.js siempre lo escribe, con lo que el alumno eligió.
 const AJUSTES_POR_DEFECTO = {
-  subir_a_github: true,
+  subir_a_github: false,
   llm: 'claude-code',
   nombre_curso: '',
   atajo: '',
@@ -167,6 +169,16 @@ function leerAjustes(raiz) {
   return { ...structuredClone(AJUSTES_POR_DEFECTO), ...JSON.parse(fs.readFileSync(fichero, 'utf8')) };
 }
 
+// Los ajustes con un tipo distinto del esperado ("false" en texto, un número entre comillas): no se interpretan,
+// se señalan. Las claves que no están en AJUSTES_POR_DEFECTO no se miran (el curso puede tener las suyas).
+function revisarAjustes(ajustes) {
+  const tipo = x => (Array.isArray(x) ? 'lista' : x === null ? 'nada' : typeof x);
+  const nombre = { boolean: 'true o false', string: 'un texto', number: 'un número', object: 'un grupo de ajustes', lista: 'una lista' };
+  return Object.entries(AJUSTES_POR_DEFECTO)
+    .filter(([clave, porDefecto]) => clave in ajustes && tipo(ajustes[clave]) !== tipo(porDefecto))
+    .map(([clave, porDefecto]) => ({ clave, esperado: nombre[tipo(porDefecto)], valor: JSON.stringify(ajustes[clave]) }));
+}
+
 function escribirAjustes(raiz, ajustes) {
   const fichero = path.join(raiz, 'config', 'ajustes.json');
   fs.mkdirSync(path.dirname(fichero), { recursive: true });
@@ -235,6 +247,7 @@ function leerVersion(dir) {
 }
 
 module.exports = {
+  revisarAjustes,
   CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, GENERADOS_CON_ENLACES, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
   aPosix, baseAlumno,
   recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter, revisarPropiedades, PROPIEDADES, esCierto, numero,

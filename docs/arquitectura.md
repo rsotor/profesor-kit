@@ -127,13 +127,28 @@ que `organizar.js` colocaría) · `orden-ambiguo` · `navegacion-rota` (pie con 
 
 **Secretos (error)**: `secreto` — un fichero de secretos sin ignorar (`.env`, `.pem`, `.key`) o un patrón
 de token/clave conocido (`lib/secretos.js#PATRONES`) en cualquier línea de un fichero candidato a `git`.
+El mismo detector (`tipoDeSecreto`) lo usan `issue.js` y la revisión de lo que se va a subir (ver "Subir").
+
+**Subir (`guardar.js#subirSiProcede`)**: solo con `subir_a_github: true` de verdad (sin el ajuste, no se sube),
+fuera de una rama `preparacion/*`, sin secretos en los ficheros **ni en los guardados que aún no están en el
+remoto** (`lib/secretos.js#escanearSalientes`) y a un destino seguro (`destinoSeguro`: una carpeta del disco, o
+un repositorio de GitHub privado que no sea el del kit; si no se puede comprobar, no sube). Si algo falla, el
+trabajo queda guardado en local y sube en el siguiente guardado.
+
+**Ajustes (aviso)**: `ajuste-no-valido` — un valor de `config/ajustes.json` con otro tipo que el esperado
+(`vault.js#revisarAjustes`: `"false"` en texto no es `false`); se usa el valor más prudente.
+
+**Rutas que vienen de un fichero**: `motor.json`, el manifiesto de las skills, `estructura.json` y el destino de
+skills del adaptador pasan por `lib/rutas.js#motivoRutaNoSegura` antes de escribir o borrar nada (relativas, con
+`/`, sin `..`, `\`, unidad, `.git` ni carpetas del alumno). Las herramientas que tocan git exigen además que el
+curso sea la raíz de su repositorio (`lib/git.js#esRepo`), no una carpeta dentro de otro.
 
 **Se verá bien en Obsidian (aviso, pero "se arregla siempre antes de guardar")**: `no-se-vera-bien`
 (símbolo de moneda o `%` sin proteger dentro de una fórmula, `[[nota|alias]]` sin escapar dentro de una
 tabla) · `obsidian-oculta-ejercicios` (falta activar "Detectar todas las extensiones" y hay `.html`).
 
 **Lint pedagógico (aviso, "se arreglan siempre antes de guardar salvo motivo concreto")**: `nota-larga`
-(no cabe en una pantalla) · `concepto-sin-ejemplo` (falta o está vacía "## El ejemplo") ·
+(no cabe en una pantalla) · `concepto-sin-ejemplo` (falta o está vacía "## El ejemplo", con o sin añadido en el título) ·
 `sesion-incompleta` (falta "Cobertura", "Auditoría" o "Para pensarlo despacio") ·
 `flashcards-fuera-de-rango` · `requiere-vacio` (dificultad 3 sin prerrequisito declarado) ·
 `pregunta-doble` (≥2 signos `?` en una pregunta de examen) · `falta-info-mal-usado` (`FALTA INFO` dentro de
@@ -191,7 +206,8 @@ fíe de fechas/tamaños) y reinstala las skills viejas.
 
 **Publicación** (`CONTRIBUTING.md`): rama desde `main` → tests en local (hook `pre-push`) → PR → CI
 (`tests.yml`: Linux + Windows, Node 24, cobertura ≥80 %) → check `tests-ok` obligatorio → merge a `main`
-→ si `.kit/VERSION` cambió, `release.yml` crea la etiqueta `vX.Y.Z` con las notas de esa versión del
+→ los tests vuelven a correr en `main` y, solo si terminan en verde, `release.yml` publica ese mismo commit: si
+`.kit/VERSION` tiene una versión sin release, crea la etiqueta `vX.Y.Z` con las notas de esa versión del
 CHANGELOG (`.github/release-notas.js`). `actualizar.js` **solo** descarga releases publicadas, nunca
 `main` a secas: hasta que la release existe, ningún curso ve la versión nueva.
 
