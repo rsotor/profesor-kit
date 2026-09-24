@@ -33,7 +33,11 @@ profesor-kit/
   demás del repo del curso lo deja tal cual.
 - **`config/`** y **`estudio/`** son datos: `/actualizar` nunca los toca. `config/` es de quien instala y
   del profesor (`ajustes.json`, `curso.md`, `profesor.md`, `alumno.md`, `estructura.json`,
-  `adaptador-llm.json`, `diario.md`); `estudio/` es la bóveda que el alumno abre en Obsidian.
+  `adaptador-llm.json`, `diario.md`, `examenes.json`); `estudio/` es la bóveda que el alumno abre en
+  Obsidian. **`config/claves/`** son las claves de corrección de los exámenes tipo test (examen v1,
+  `lib/examenes.js`): viven fuera de `estudio/` a propósito, con la misma ruta relativa que su examen
+  (`estudio/examenes/<ruta>.md` → `config/claves/<ruta>.json`) — así el alumno nunca puede abrirlas desde
+  Obsidian, ni por accidente.
 - **Lo que nunca se puede romper al actualizar** lo impone el código, no la convención:
   `actualizar.js#validarMotor()` rechaza cualquier ruta del `motor.json` nuevo que sea absoluta, lleve
   `..` o **empiece por una ruta de `vault.js#RUTAS_PROTEGIDAS`** (`config`, `estudio`, `README.md`) — si
@@ -82,6 +86,7 @@ el alumno/instalador a través del LLM.
 | `indice.js` | Calcula `estudio/inicio.md` y el pie de navegación de cada sesión, a partir de las sesiones, el progreso y los exámenes en disco; por módulo, conceptos dominados y "🏁 superado" (se quita con `progreso_en_inicio: no` en `config/profesor.md`) |
 | `generados.js` | Calcula el resto de ficheros que escribe `guardar.js`: pendientes, auditoría del material, formulario, índice de ejercicios y la sección "Estado" del README |
 | `repaso.js` | E1, repaso espaciado (Leitner, cinco cajas: 1, 3, 7, 14 y 30 días). `guardar.js` pone casillas ✅/❌ debajo de cada flashcard de una sesión estudiada, mueve de caja lo marcado y escribe `config/repaso.json`; nunca en una copia de preparación (`preparacion/<id>`), se hace al juntar. `indice.js` enseña en inicio lo que toca en dos tramos de fechas. Migración `006-…` para los cursos que ya existen |
+| `examenes.js` | Examen v1 (tipo test, docs/planes/2026-09-25-examen-v1.md): lee `config/examenes.json` (tipos con nombre — `lo-que-falta`, `modulo`, `trimestre`, `final` con sus `escalones` — con valores por defecto si falta el fichero o una clave), resuelve el `aprobado` de un examen ya escrito (su propio frontmatter manda; si no, su tipo/escalón; si no, `config/curso.md`; si no, 5) y calcula la ruta de la clave de cada examen en `config/claves/`. `esDeModulo()` decide si un examen pone nota a una unidad (de toda la vida, `modulo` o `lo-que-falta`, sin escalón); el final y el trimestre quedan fuera. Migración `007-examenes-json.js` crea `config/examenes.json` con el `aprobado` que tuviera `config/curso.md` (cursos ya empezados no cambian de nota a mitad de curso) |
 | `perfil.js` | Calcula `estudio/mi-perfil.md` (copia secciones de `config/alumno.md` y `config/profesor.md` y la evolución) y las señales que da `estado.js` |
 | `secretos.js` | Escanea los ficheros candidatos a `git` en busca de patrones de tokens y claves conocidos |
 | `obsidian.js` | Aplica los ajustes recomendados de Obsidian sin pisar los del alumno, y descarga complementos verificados por sha256 |
@@ -154,7 +159,8 @@ tabla) · `obsidian-oculta-ejercicios` (falta activar "Detectar todas las extens
 (no cabe en una pantalla) · `concepto-sin-ejemplo` (falta o está vacía "## El ejemplo", con o sin añadido en el título) ·
 `sesion-incompleta` (falta "Cobertura", "Auditoría" o "Para pensarlo despacio") ·
 `flashcards-fuera-de-rango` · `requiere-vacio` (dificultad 3 sin prerrequisito declarado) ·
-`pregunta-doble` (≥2 signos `?` en una pregunta de examen) · `falta-info-mal-usado` (`FALTA INFO` dentro de
+`pregunta-doble` (≥2 signos `?` en el enunciado de una pregunta de examen — libre, hasta `✍️ **Tu respuesta:**`,
+o tipo test, hasta su primera opción `- [ ]`) · `falta-info-mal-usado` (`FALTA INFO` dentro de
 "## El error típico" de un concepto: eso no es material que el curso tuviera que entregar).
 
 **Propiedades no estándar (aviso)**: `propiedad-no-estandar` — el alumno escribió una propiedad conocida
@@ -310,15 +316,22 @@ código — y por eso es la única que usa un LLM de verdad y nunca corre en el 
   `config/` ya configurado (como lo dejaría `/configurar`) y valores **no por defecto** a propósito
   (lente activada, marcador de dudas distinto, `flashcards_por_sesion` fijo, `estructura.json` con
   submódulos, `patrones_prohibidos`): así la prueba real ejercita rutas que un curso recién instalado no
-  toca. `clases.json` y `alumno/perfil.md` son metadatos del ejecutor (qué clases procesar y en
-  qué orden; quién contesta el examen: el alumno simulado), no datos del curso.
+  toca. `clases.json` y `alumno/perfil.md` son metadatos del ejecutor (qué clases procesar y en qué orden;
+  el perfil, para el oráculo del formato libre), no datos del curso. `estudio/inbox/` trae también un
+  examen tipo test de ejemplo, "material del centro" que el alumno pudo traer (`/configurar`, bloque A: si
+  llega uno así, ajusta `config/examenes.json` a sus opciones y su aprobado).
 - `pruebas/lib/montaje.js` monta, en una carpeta temporal autolimpiable, un curso de verdad: el motor de
   la copia de trabajo actual + `preparar-curso.js --subir no` + los datos de `curso-ejemplo/` encima +
   `git init` + `instalar-skills.js`. Lo comparten `prueba-real.js` y `prueba-actualizar.js`.
 - `pruebas/prueba-real.js` (`npm run prueba-real`) monta el curso y lanza `claude -p` (una sesión nueva
   por paso) por las cinco skills de trabajo en orden, simulando al alumno entre medias (dudas, casilla
-  "a su manera", respuestas de examen). Las clases del módulo del examen se procesan en primer plano; la
-  que no hace falta para ese examen se lanza con `preparar.js --lanzar` en segundo plano justo antes de
+  "a su manera"). El examen que genera `/examen` es tipo test: sus casillas las marca
+  `pruebas/lib/pasos.js#contestarExamenTest`, con un patrón determinista (no un LLM: la clave vive fuera
+  de la bóveda, así que un alumno simulado no tendría nada que "contestar" de verdad) leyendo la clave real
+  para poder calcular de antemano la nota exacta que `examen.js --corregir` tiene que sacar y comprobarla
+  sin margen. El oráculo de la corrección (`pruebas/curso-ejemplo/oraculo/`) sigue midiendo el formato
+  libre de antes, con un examen fijo de respuestas ya escritas. Las clases del módulo del examen se
+  procesan en primer plano; la que no hace falta para ese examen se lanza con `preparar.js --lanzar` en segundo plano justo antes de
   `/dudas`, sigue corriendo durante `/ejercicio` y el examen, y se junta con `--juntar` en cuanto el
   examen está corregido — el caso de verdad con choques posibles (plan 0.22, §4). Guarda el resultado en
   `curso-ejemplo/resultado/` (estudio, `config/alumno.md` y `RESUMEN.md`) y borra siempre la temporal.

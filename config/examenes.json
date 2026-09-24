@@ -1,0 +1,17 @@
+{
+  "opciones": 4,
+  "resta_fallo": 0,
+  "tipos": {
+    "lo-que-falta": { "preguntas": 5 },
+    "modulo": { "preguntas": 15, "aprobado": 5 },
+    "trimestre": { "preguntas": 40, "aprobado": 7 },
+    "final": {
+      "escalones": [
+        { "preguntas": 20, "aprobado": 7 },
+        { "preguntas": 30, "aprobado": 8 },
+        { "preguntas": 40, "aprobado": 9 },
+        { "preguntas": 50, "aprobado": 10 }
+      ]
+    }
+  }
+}

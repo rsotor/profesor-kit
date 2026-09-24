@@ -48,6 +48,15 @@
     { "frase": "he terminado el examen", "esperada": "examen" },
     { "frase": "¿qué tal me salió el último examen?", "esperada": null },
 
+    { "frase": "examen final", "esperada": "examen" },
+    { "frase": "vamos a prepararnos", "esperada": "examen" },
+    { "frase": "quiero hacer el siguiente escalón", "esperada": "examen" },
+    { "frase": "quiero prepararme para el examen final del curso", "esperada": "examen" },
+    { "frase": "ya me he estudiado todo, ¿hacemos el examen final?", "esperada": "examen" },
+    { "frase": "he suspendido el escalón 2, quiero repetirlo", "esperada": "examen" },
+    { "frase": "¿cuándo puedo hacer el examen final?", "esperada": null },
+    { "frase": "vamos a prepararnos algo de comer antes de seguir", "esperada": null },
+
     { "frase": "configura el curso", "esperada": "configurar" },
     { "frase": "quiero cambiar cómo me explicas", "esperada": "configurar" },
     { "frase": "he empezado un curso nuevo y quiero prepararlo con el profesor", "esperada": "configurar" },

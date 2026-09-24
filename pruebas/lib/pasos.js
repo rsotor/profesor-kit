@@ -5,7 +5,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { MARCA_INICIO } = require('../../.kit/herramientas/lib/indice');
-const { sinCodigo } = require('../../.kit/herramientas/lib/vault');
+const { sinCodigo, aPosix } = require('../../.kit/herramientas/lib/vault');
+const examenesLib = require('../../.kit/herramientas/lib/examenes');
 
 // Inserta contenido en el cuerpo de la nota, antes del pie de navegación (`%% navegación %%` de
 // lib/indice.js) si ya lo tiene: si se añadiera detrás, quedaría fuera del cuerpo que lee /dudas y
@@ -148,6 +149,113 @@ function promptAlumnoSimulado(perfil, examen, n) {
   ].join('\n');
 }
 
+// --- El examen tipo test (examen v1): el alumno simulado marca casillas, no un LLM ------------------------
+//
+// Con el examen tipo test, la clave vive fuera de la bóveda (config/claves/…): un LLM haciendo de alumno no
+// puede verla, así que "contestar como lo haría este alumno" ya no aporta nada que se pueda medir — lo único
+// que importa es si el profesor corrige bien. Por eso aquí no se llama a ningún LLM: se marcan las casillas
+// con un patrón determinista (aciertos, fallos y blancos conocidos de antemano), leyendo la clave real que
+// acabó de escribir /examen, para poder calcular la nota exacta que examen.js --corregir tiene que sacar.
+
+const NUMERO_PREGUNTA = /^(\d+\.\s|\*\*\d+\.\*\*)/;
+const OPCION_CON_CASILLA = /^-\s*\[([ xX])\]\s*([a-zA-Z])\)/;
+
+// Las preguntas de un examen tipo test, con sus opciones y en qué línea está cada una: la misma forma de
+// leerlas que usa examen.js (lib interno, no exportado), para no desincronizarse de lo que el código real
+// entiende por "una pregunta".
+function casillasDeExamen(lineas) {
+  const lista = [];
+  for (let i = 0; i < lineas.length; i++) {
+    if (!NUMERO_PREGUNTA.test(lineas[i])) continue;
+    let j = i + 1;
+    const opciones = [];
+    while (j < lineas.length) {
+      const m = OPCION_CON_CASILLA.exec(lineas[j]);
+      if (m) { opciones.push({ linea: j, letra: m[2].toLowerCase() }); j++; continue; }
+      if (lineas[j].trim() === '') { j++; continue; }
+      if (opciones.length || NUMERO_PREGUNTA.test(lineas[j]) || /^#/.test(lineas[j]) || lineas[j].startsWith('>')) break;
+      j++;
+    }
+    if (opciones.length) lista.push({ opciones });
+  }
+  return lista;
+}
+
+// Un patrón fijo, sin aleatoriedad: 1 de cada 5 preguntas en blanco, 1 de cada 5 fallada (a propósito, con
+// una opción que no es la correcta) y el resto acertada. Con `n` preguntas cualquiera, sale siempre el mismo
+// reparto para el mismo `n`: es lo que hace que la nota esperada se pueda calcular antes de corregir.
+function patronDeRespuestas(n) {
+  return Array.from({ length: n }, (_, i) => (i % 5 === 4 ? 'blanco' : i % 5 === 0 ? 'fallo' : 'acierto'));
+}
+
+const marcar = linea => linea.replace(/^(\s*-\s*)\[[ xX]\]/, '$1[x]');
+
+// La nota que tiene que dar examen.js --corregir con este patrón y esta clave (misma fórmula que
+// examen.js#notaTest): así se puede comparar exacta con lo que de verdad escriba la corrección.
+function notaEsperada({ aciertos, fallos, total, restaFallo }) {
+  return Math.max(0, Math.floor(((aciertos - restaFallo * fallos) * 100) / total + 1e-9) / 10);
+}
+
+// Marca las casillas del examen recién escrito con el patrón de arriba, usando la clave de verdad
+// (config/claves/…, fuera de la bóveda) para saber qué opción es la correcta y cuál no. Devuelve cuántas
+// preguntas de cada tipo hubo y la nota que examen.js --corregir tiene que sacar.
+function contestarExamenTest(destino, ficheroExamen) {
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  let clave;
+  try { clave = examenesLib.leerClave(destino, relExamen); } catch (error) { return { ok: false, detalle: `no se pudo leer la clave: ${error.message}` }; }
+  const clavePreguntas = Array.isArray(clave.preguntas) ? clave.preguntas : [];
+  const texto = fs.readFileSync(ficheroExamen, 'utf8');
+  const eol = texto.includes('\r\n') ? '\r\n' : '\n';
+  const lineas = texto.replace(/\r\n/g, '\n').split('\n');
+  const preguntas = casillasDeExamen(lineas);
+  if (!preguntas.length) return { ok: false, detalle: 'no se han encontrado preguntas con casillas ("- [ ] a) …")' };
+  if (preguntas.length !== clavePreguntas.length) {
+    return { ok: false, detalle: `el examen tiene ${preguntas.length} preguntas y la clave trae ${clavePreguntas.length}` };
+  }
+  const patron = patronDeRespuestas(preguntas.length);
+  let aciertos = 0, fallos = 0, blancos = 0;
+  preguntas.forEach((pregunta, i) => {
+    if (patron[i] === 'blanco') { blancos++; return; }
+    const correctas = (clavePreguntas[i].correctas || []).map(l => String(l).toLowerCase());
+    if (patron[i] === 'acierto') {
+      aciertos++;
+      for (const o of pregunta.opciones) if (correctas.includes(o.letra)) lineas[o.linea] = marcar(lineas[o.linea]);
+    } else {
+      fallos++;
+      const mala = pregunta.opciones.find(o => !correctas.includes(o.letra)) || pregunta.opciones[0];
+      lineas[mala.linea] = marcar(lineas[mala.linea]);
+    }
+  });
+  fs.writeFileSync(ficheroExamen, lineas.join(eol));
+  const restaFallo = Number(clave.resta_fallo) || 0;
+  const total = preguntas.length;
+  return { ok: true, total, aciertos, fallos, blancos, notaEsperada: notaEsperada({ aciertos, fallos, total, restaFallo }) };
+}
+
+// Lo que tiene que quedar verdad tras `/examen (contestar)` y la corrección: la nota exacta que se esperaba,
+// el histórico de intentos escrito, las casillas del cuerpo desmarcadas otra vez (para poder repetirlo) y la
+// clave de verdad fuera de `estudio/` (nunca dentro de la bóveda que ve el alumno).
+function verificarCorreccionTest(destino, ficheroExamen, contestacion) {
+  if (!contestacion || !contestacion.ok) return { ok: false, detalle: 'no hay respuestas de referencia: se omite la comprobación' };
+  const texto = fs.readFileSync(ficheroExamen, 'utf8');
+  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(texto);
+  const m = fm && /^nota:\s*([\d.,]+)\s*$/m.exec(fm[1]);
+  const nota = m ? Number(m[1].replace(',', '.')) : null;
+  const notaExacta = nota !== null && Math.abs(nota - contestacion.notaEsperada) < 1e-9;
+  const historico = /## Histórico de intentos/.test(texto);
+  const cuerpo = texto.split('## Histórico de intentos')[0];
+  const desmarcadas = !/\[[xX]\]/.test(cuerpo);
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  const rutaClave = examenesLib.rutaClave(destino, relExamen);
+  const claveFueraDeEstudio = fs.existsSync(rutaClave) && !rutaClave.startsWith(path.join(destino, 'estudio') + path.sep);
+  const ok = notaExacta && historico && desmarcadas && claveFueraDeEstudio;
+  return {
+    ok,
+    detalle: `nota: ${nota} (esperada ${contestacion.notaEsperada}${notaExacta ? ', exacta' : ', NO coincide'}) · `
+      + `histórico: ${historico ? 'sí' : 'no'} · casillas desmarcadas: ${desmarcadas ? 'sí' : 'no'} · clave fuera de estudio/: ${claveFueraDeEstudio ? 'sí' : 'no'}`,
+  };
+}
+
 // --- La corrección, medida (issue #39, H08) ---------------------------------------------------------------
 
 // El veredicto de una celda "Resultado" de la tabla de un intento, en los tres de "Cuando preguntas para medir"
@@ -236,4 +344,5 @@ module.exports = {
   conceptoConFormula, examenMasReciente, repasosGenerados,
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
+  casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
 };

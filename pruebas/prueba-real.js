@@ -15,7 +15,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { borrar, montarCurso, comprobarJson, carpetaTemporal } = require('./lib/montaje');
+const { borrar, montarCurso, comprobarJson } = require('./lib/montaje');
 const p = require('./lib/pasos');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
@@ -215,56 +215,32 @@ function pasoExamenGenerar(ctx, examenModulo) {
   return { ok: true, detalle: `examen escrito: ${path.relative(ctx.destino, fichero)}`, salidaLlm: r.salida };
 }
 
-// El alumno simulado (plan 0.22, 5b.4): otra llamada sin conversación, desde una carpeta vacía (no puede abrir el
-// examen con las soluciones), que recibe el examen limpio y el perfil y devuelve sus respuestas en JSON.
+// examen v1 (tipo test): la clave vive fuera de la bóveda, así que un alumno simulado con LLM no puede verla
+// — no hay nada que "contestar como lo haría este alumno" que se pueda medir. Se marcan las casillas con un
+// patrón determinista (pruebas/lib/pasos.js#contestarExamenTest), leyendo la clave real, para poder calcular
+// de antemano la nota exacta que `examen.js --corregir` tiene que sacar y comprobarla luego sin margen.
 function pasoExamenContestar(ctx) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: no hay nada que contestar' };
-  const examen = p.examenSinSoluciones(fs.readFileSync(ctx.ficheroExamen, 'utf8'));
-  const n = p.contarHuecos(examen);
-  const perfil = fs.readFileSync(path.join(ctx.datosCurso, 'alumno', 'perfil.md'), 'utf8');
-  const vacia = carpetaTemporal();
-  try {
-    const r = invocarClaude({ prompt: p.promptAlumnoSimulado(perfil, examen, n), modelo: ctx.modelo, cwd: vacia, limiteMs: ctx.limiteMs });
-    if (!r.ok) return { ok: false, detalle: `claude falló haciendo de alumno (código ${r.codigo})`, salidaLlm: r.salida };
-    const respuestas = p.leerRespuestas(r.salida);
-    if (!respuestas) return { ok: false, detalle: 'el alumno simulado no devolvió el JSON de respuestas', salidaLlm: r.salida };
-    const puesto = p.ponerRespuestas(ctx.ficheroExamen, respuestas);
-    if (!puesto.ok) return { ok: false, detalle: `el alumno simulado dio ${puesto.respuestas} respuestas para ${puesto.huecos} preguntas`, salidaLlm: r.salida };
-    return { ok: true, detalle: `${puesto.huecos} preguntas contestadas por el alumno simulado, ${puesto.enBlanco} en blanco` };
-  } finally {
-    borrar(vacia);
-  }
+  const r = p.contestarExamenTest(ctx.destino, ctx.ficheroExamen);
+  if (!r.ok) return r;
+  ctx.contestacion = r;
+  return { ok: true, detalle: `${r.total} preguntas marcadas con un patrón conocido (nota esperada: ${String(r.notaEsperada).replace('.', ',')}): ${r.aciertos} aciertos, ${r.fallos} fallos, ${r.blancos} en blanco` };
 }
-
-// Fuera de aquí, el alumno simulado o la corrección no se portaron como se esperaba.
-const NOTA_MIN = 3;
-const NOTA_MAX = 8;
 
 function pasoExamenCorregir(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: se omite la corrección' };
   const progresoAntes = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const r = invocarClaude({
-    prompt: `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
+    prompt: `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (usa node .kit/herramientas/examen.js --corregir). ${PROMPT_COMUN}`,
     modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
   });
   if (!r.ok) return { ok: false, detalle: `claude falló al corregir (código ${r.codigo})`, salidaLlm: r.salida };
-  const texto = fs.readFileSync(ctx.ficheroExamen, 'utf8');
-  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(texto);
-  const nota = fm && /^nota:\s*([\d.,]+)\s*$/m.exec(fm[1]);
-  const historico = /## Histórico de intentos/.test(texto);
+  const v = p.verificarCorreccionTest(ctx.destino, ctx.ficheroExamen, ctx.contestacion);
   const progresoDespues = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const progresoMovido = progresoAntes !== progresoDespues;
-  const valor = nota ? Number(nota[1].replace(',', '.')) : null;
-  const enMargen = valor !== null && valor >= NOTA_MIN && valor <= NOTA_MAX;
-  const ok = !!nota && historico && progresoMovido && enMargen;
-  return {
-    ok,
-    detalle: `nota: ${nota ? nota[1] : 'no encontrada'} (margen esperado ${NOTA_MIN}-${NOTA_MAX}: ${enMargen ? 'sí' : 'no'}) · `
-      + `histórico de intentos: ${historico ? 'sí' : 'no'} · progreso.md movido: ${progresoMovido ? 'sí' : 'no'}`,
-    salidaLlm: r.salida,
-  };
+  return { ok: v.ok && progresoMovido, detalle: `${v.detalle} · progreso.md movido: ${progresoMovido ? 'sí' : 'no'}`, salidaLlm: r.salida };
 }
 
 // La corrección, medida (issue #39, H08): un test fijo con las respuestas ya escritas y, para cada una, el veredicto

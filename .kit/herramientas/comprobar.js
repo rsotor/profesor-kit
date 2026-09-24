@@ -469,18 +469,25 @@ function comprobarRequiereVacio(raiz, informe) {
   }
 }
 
-// Una "pregunta" es lo que la skill /examen numera (`1. `, `2. `…) hasta su línea `✍️ **Tu respuesta:**`: es el
-// formato que la propia skill exige, así que es la única forma fiable de saber dónde empieza y acaba una
-// pregunta sin adivinar. Sin ese cierre no se cuenta como pregunta (heurística conservadora: mejor no avisar
-// que avisar de un fichero que no sigue el formato). Las soluciones van después del cierre, así que quedan
-// fuera solas, sin necesidad de tratarlas aparte.
+// Una "pregunta" es lo que la skill /examen numera (`1. `, `2. `…) hasta su cierre: la línea
+// `✍️ **Tu respuesta:**` en el formato libre de antes, o su primera opción con casilla (`- [ ] a) …`) en el
+// tipo test (examen v1). Son los dos formatos que exige la propia skill, así que es la única forma fiable de
+// saber dónde empieza y acaba una pregunta sin adivinar. Sin ninguno de los dos cierres no se cuenta como
+// pregunta (heurística conservadora: mejor no avisar que avisar de un fichero que no sigue ningún formato).
+// Las soluciones (y, en el test, el resto de opciones) van después del cierre, así que quedan fuera solas.
+const OPCION_CON_CASILLA = /^-\s*\[[ xX]\]\s*[a-zA-Z]\)/;
+
 function preguntasDeExamen(texto) {
   const sinFrontmatter = texto.replace(/^---\r?\n[\s\S]*?\r?\n---/, '');
   const lineas = indice.sinPie(v.sinCodigo(sinFrontmatter)).split(/\r?\n/);
   const preguntas = [];
   let actual = null;
   for (const linea of lineas) {
-    if (/✍️\s*\*\*Tu respuesta:\*\*/.test(linea)) { if (actual) preguntas.push(actual.join('\n')); actual = null; continue; }
+    if (/✍️\s*\*\*Tu respuesta:\*\*/.test(linea) || OPCION_CON_CASILLA.test(linea)) {
+      if (actual) preguntas.push(actual.join('\n'));
+      actual = null;
+      continue;
+    }
     if (/^(\d+\.\s|\*\*\d+\.\*\*)/.test(linea)) { actual = [linea]; continue; }
     if (actual) actual.push(linea);
   }

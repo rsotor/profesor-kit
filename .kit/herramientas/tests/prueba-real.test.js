@@ -267,6 +267,92 @@ test('argsClaude pide la salida en JSON; leerSalidaClaude saca el texto y lo que
   assert.deepEqual(leerSalidaClaude('no es json'), { texto: 'no es json', denegaciones: [] }, 'si no hay JSON, el texto tal cual');
 });
 
+// --- El examen tipo test: el alumno simulado marca casillas, no un LLM (examen v1) -------------------------
+
+// Un examen tipo test mínimo (5 preguntas, 4 opciones) y su clave, fuera de "estudio/" (como manda la skill).
+function examenTestConClave(destino, { resta_fallo = 0 } = {}) {
+  const letras = ['a', 'b', 'c', 'd'];
+  const preguntas = Array.from({ length: 5 }, (_, i) => `**${i + 1}.** ¿Pregunta ${i + 1}? *(elige una)*\n\n`
+    + letras.map(l => `- [ ] ${l}) opción ${l}`).join('\n') + '\n');
+  const examen = `---\ntipo: examen\nunidad: "01"\nfecha: 2026-10-02\nnota:\nintentos: 0\ntipo_examen: modulo\naprobado: 6\n---\n`
+    + `# Examen\n\n${preguntas.join('\n')}`;
+  const ficheroExamen = path.join(destino, 'estudio', 'examenes', '01-examen-2026-10-02.md');
+  fs.mkdirSync(path.dirname(ficheroExamen), { recursive: true });
+  fs.writeFileSync(ficheroExamen, examen);
+  const clave = {
+    opciones: 4, resta_fallo,
+    preguntas: Array.from({ length: 5 }, (_, i) => ({ correctas: ['b'], explicacion: `porque sí, ${i + 1}`, concepto: `concepto-${i + 1}` })),
+  };
+  const rutaClave = path.join(destino, 'config', 'claves', '01-examen-2026-10-02.json');
+  fs.mkdirSync(path.dirname(rutaClave), { recursive: true });
+  fs.writeFileSync(rutaClave, JSON.stringify(clave));
+  return ficheroExamen;
+}
+
+test('casillasDeExamen: una pregunta por casilla `**N.**`, con sus opciones y línea', () => {
+  const lineas = ['**1.** ¿Qué es A?', '', '- [ ] a) uno', '- [x] b) dos', '', '**2.** ¿Y B?', '', '- [ ] a) tres'];
+  const preguntas = p.casillasDeExamen(lineas);
+  assert.equal(preguntas.length, 2);
+  assert.deepEqual(preguntas[0].opciones.map(o => o.letra), ['a', 'b']);
+  assert.equal(preguntas[0].opciones[1].linea, 3);
+});
+
+test('patronDeRespuestas: 1 de cada 5 en blanco, 1 de cada 5 fallada, el resto acertada — siempre igual para el mismo n', () => {
+  assert.deepEqual(p.patronDeRespuestas(5), ['fallo', 'acierto', 'acierto', 'acierto', 'blanco']);
+  assert.deepEqual(p.patronDeRespuestas(5), p.patronDeRespuestas(5));
+});
+
+test('contestarExamenTest: marca las casillas con el patrón, leyendo la clave real, y calcula la nota esperada', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  const r = p.contestarExamenTest(destino, ficheroExamen);
+  assert.deepEqual(r, { ok: true, total: 5, aciertos: 3, fallos: 1, blancos: 1, notaEsperada: 6 });
+
+  const lineas = fs.readFileSync(ficheroExamen, 'utf8').split('\n');
+  const preguntas = p.casillasDeExamen(lineas);
+  // Pregunta 1 (fallo): una opción marcada, pero no la "b" correcta. Pregunta 2 (acierto): justo la "b".
+  assert.equal(preguntas[0].opciones.some(o => o.letra !== 'b' && /\[x\]/.test(lineas[o.linea])), true);
+  assert.equal(/\[x\] b\) opción b/.test(lineas[preguntas[1].opciones[1].linea]), true);
+  // Pregunta 5 (blanco): ninguna casilla marcada.
+  assert.equal(preguntas[4].opciones.every(o => /\[ \]/.test(lineas[o.linea])), true);
+});
+
+test('contestarExamenTest: si el número de preguntas no cuadra con la clave, no toca nada y lo dice', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  const clave = JSON.parse(fs.readFileSync(path.join(destino, 'config', 'claves', '01-examen-2026-10-02.json'), 'utf8'));
+  clave.preguntas.pop();
+  fs.writeFileSync(path.join(destino, 'config', 'claves', '01-examen-2026-10-02.json'), JSON.stringify(clave));
+  const r = p.contestarExamenTest(destino, ficheroExamen);
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /5 preguntas.*clave trae 4/);
+});
+
+test('verificarCorreccionTest: nota exacta, histórico, casillas desmarcadas y clave fuera de estudio/', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  const contestacion = p.contestarExamenTest(destino, ficheroExamen);
+  // Lo que dejaría examen.js --corregir: nota en el frontmatter, histórico, casillas desmarcadas otra vez.
+  let texto = fs.readFileSync(ficheroExamen, 'utf8').replace(/^nota:.*$/m, 'nota: 6').replace(/\[x\]/g, '[ ]');
+  texto += '\n## Histórico de intentos\n\n| Intento | Fecha | Nota |\n|---|---|---|\n| 1 | 2026-10-02 | 6 |\n';
+  fs.writeFileSync(ficheroExamen, texto);
+  const r = p.verificarCorreccionTest(destino, ficheroExamen, contestacion);
+  assert.equal(r.ok, true, r.detalle);
+  assert.match(r.detalle, /exacta/);
+});
+
+test('verificarCorreccionTest: una nota distinta de la esperada no pasa', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  const contestacion = p.contestarExamenTest(destino, ficheroExamen);
+  let texto = fs.readFileSync(ficheroExamen, 'utf8').replace(/^nota:.*$/m, 'nota: 9').replace(/\[x\]/g, '[ ]');
+  texto += '\n## Histórico de intentos\n\n| Intento | Fecha | Nota |\n|---|---|---|\n| 1 | 2026-10-02 | 9 |\n';
+  fs.writeFileSync(ficheroExamen, texto);
+  const r = p.verificarCorreccionTest(destino, ficheroExamen, contestacion);
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /NO coincide/);
+});
+
 test('markdownResumen: sección de permisos denegados, por paso; sin ninguno, lo dice', () => {
   const base = { fecha: '2026-10-01', version: '0.23.0', modelo: 'sonnet', sinLlm: false, informe: { errores: [], avisos: [] },
     conteos: { conceptos: 0, sesiones: 0, flashcards: 0, ejercicios: 0, examenes: 0, repasos: 0, todo: 0, faltaInfo: 0, dudaPendiente: 0 } };

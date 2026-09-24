@@ -161,6 +161,25 @@ test('pregunta-doble: sin la línea "✍️ **Tu respuesta:**" no sigue el forma
   assert.equal(avisos(raiz, 'pregunta-doble').length, 0);
 });
 
+// examen v1 (tipo test): sin "✍️ **Tu respuesta:**", el enunciado va de "**N.**" a su primera opción "- [ ]".
+test('pregunta-doble: examen tipo test (con casillas, sin "✍️"), dos signos de interrogación, aviso', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\ntipo_examen: modulo\n---\n# Examen\n\n'
+      + '**1.** ¿Qué es alfa? ¿Por qué importa? *(elige una)*\n\n- [ ] a) Uno\n- [ ] b) Dos\n\n**2.** ¿Y beta? *(elige una)*\n\n- [ ] a) Uno\n- [ ] b) Dos\n',
+  });
+  const a = avisos(raiz, 'pregunta-doble');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /2 signos/);
+});
+
+test('pregunta-doble: examen tipo test con una sola pregunta y un "?" en una opción, no avisa', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\ntipo_examen: modulo\n---\n# Examen\n\n'
+      + '**1.** ¿Qué es alfa? *(elige una)*\n\n- [ ] a) Una letra?\n- [ ] b) Un número\n',
+  });
+  assert.equal(avisos(raiz, 'pregunta-doble').length, 0);
+});
+
 // --- falta-info-mal-usado (plan 0.22, arreglo 5b.1) ------------------------------------------------
 
 test('falta-info-mal-usado: FALTA INFO dentro de "## El error típico", aviso', () => {
