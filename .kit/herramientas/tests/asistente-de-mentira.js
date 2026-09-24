@@ -6,8 +6,8 @@
 //
 //   node asistente-de-mentira.js <id> [prompt] [modelo]
 //
-// Con la variable de entorno PROFESOR_KIT_ASISTENTE_DE_MENTIRA_FALLA=1, simula un asistente que revienta
-// (para probar el caso "fallo del asistente" de preparar.js).
+// Variables de entorno: PROFESOR_KIT_ASISTENTE_DE_MENTIRA_FALLA=1 (revienta), _NO_HACE_NADA=1 (sale con 0 sin
+// hacer nada), _DUERME_MS=<ms> (tarda antes de trabajar) y _EDITA=<fichero> (toca una línea que ya existía).
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
@@ -15,6 +15,15 @@ const { execFileSync } = require('node:child_process');
 if (process.env.PROFESOR_KIT_ASISTENTE_DE_MENTIRA_FALLA === '1') {
   console.error('fallo simulado del asistente de mentira');
   process.exit(1);
+}
+// issue #39, H05: un asistente que termina "bien" (código 0) sin haber hecho nada.
+if (process.env.PROFESOR_KIT_ASISTENTE_DE_MENTIRA_NO_HACE_NADA === '1') {
+  console.log('he terminado (sin hacer nada)');
+  process.exit(0);
+}
+// issue #39, H05: un asistente que se cuelga (duerme más que el límite de tiempo de la preparación).
+if (process.env.PROFESOR_KIT_ASISTENTE_DE_MENTIRA_DUERME_MS) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, Number(process.env.PROFESOR_KIT_ASISTENTE_DE_MENTIRA_DUERME_MS));
 }
 
 const id = process.argv[2];
@@ -29,7 +38,8 @@ const ficheroAEditar = process.env.PROFESOR_KIT_ASISTENTE_DE_MENTIRA_EDITA;
 if (ficheroAEditar) {
   const abs = path.join(raiz, ...ficheroAEditar.split('/'));
   const original = fs.readFileSync(abs, 'utf8');
-  const editado = original.includes('Uno.') ? original.replace('Uno.', 'Editado por el asistente de mentira, en segundo plano.') : `${original}\nEdición del asistente de mentira, en segundo plano.\n`;
+  const busca = process.env.PROFESOR_KIT_ASISTENTE_DE_MENTIRA_BUSCA || 'Uno.';
+  const editado = original.includes(busca) ? original.replace(busca, 'Editado por el asistente de mentira, en segundo plano.') : `${original}\nEdición del asistente de mentira, en segundo plano.\n`;
   fs.writeFileSync(abs, editado);
 }
 

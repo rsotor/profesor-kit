@@ -314,3 +314,116 @@ test('juntar: progreso.md tocado en los dos lados (estado cambiado y fila nueva 
   assert.match(progreso, /\[\[concepto-p1\]\] \| ⬜ \| ⬜ \|/, 'la fila nueva de la preparación llega');
   assert.equal(git(['status', '--porcelain']).salida, '');
 });
+
+// --- issue #39: la preparación en segundo plano, fiable (0.22.3) -------------------------------------------
+
+function lanzarCon(id, env, ficheros = conFichero(id)) {
+  return ejecutar(process.execPath, [path.join(curso, '.kit', 'herramientas', 'preparar.js'), '--lanzar', ...ficheros, '--id', id], curso, env);
+}
+const registroDe = id => fs.readFileSync(path.join(curso, '.preparacion', id, 'registro.txt'), 'utf8');
+
+test('11. H05: el material recién dejado en inbox, sin guardar, llega a la copia igual; las skills también; el estado no se versiona', () => {
+  assert.deepEqual(preparaciones(), []);
+  escribirAdaptador('k1');
+  fs.writeFileSync(path.join(curso, 'estudio', 'inbox', 'otra-clase.md'), 'no es de esta clase');
+  const r = lanzar('k1');
+  assert.equal(r.codigo, 0, r.salida);
+  const dir = path.join(curso, '.preparacion', 'k1');
+  assert.equal(git(['hash-object', 'estudio/inbox/k1.md'], dir).salida, git(['hash-object', 'estudio/inbox/k1.md']).salida, 'el mismo contenido en la copia');
+  assert.match(git(['log', '-1', '--format=%s']).salida, /inbox.*k1/, 'el material de la clase se guarda antes en el curso principal');
+  assert.match(git(['status', '--porcelain']).salida, /otra-clase\.md/, 'lo demás sin guardar no se toca');
+  assert.ok(fs.existsSync(path.join(dir, '.claude', 'skills', 'sesion', 'SKILL.md')), 'las skills están en la copia');
+  esperarTerminada('k1');
+  assert.equal(git(['ls-tree', '-r', '--name-only', 'preparacion/k1', '--', 'estado.json', 'registro.txt']).salida, '', 'estado y registro fuera de git');
+  fs.rmSync(path.join(curso, 'estudio', 'inbox', 'otra-clase.md'));
+  assert.equal(herramienta('preparar', '--juntar', 'k1').codigo, 0);
+  assert.ok(!existe('estado.json') && !existe('registro.txt'));
+});
+
+test('12. H05: un asistente que termina "bien" sin dejar la sesión queda fallida, y el registro dice por qué', () => {
+  escribirAdaptador('l1');
+  assert.equal(lanzarCon('l1', { PROFESOR_KIT_ASISTENTE_DE_MENTIRA_NO_HACE_NADA: '1' }).codigo, 0);
+  assert.equal(esperarTerminada('l1').resultado, 'fallida');
+  assert.match(registroDe('l1'), /no ha dejado la sesión l1/);
+  assert.equal(herramienta('preparar', '--juntar', 'l1').codigo, 1);
+});
+
+test('13. H05: un asistente colgado se para al llegar al límite de tiempo, y queda fallida', () => {
+  escribirAdaptador('m1');
+  assert.equal(lanzarCon('m1', { PROFESOR_KIT_ASISTENTE_DE_MENTIRA_DUERME_MS: '8000', PROFESOR_KIT_PREPARAR_LIMITE_MS: '700' }).codigo, 0);
+  assert.equal(esperarTerminada('m1').resultado, 'fallida');
+  assert.match(registroDe('m1'), /límite de tiempo/);
+});
+
+test('14. H05: al descartar una preparación fallida se guarda su registro (las últimas, no todas)', () => {
+  escribirAdaptador('n1');
+  assert.equal(lanzar('n1').codigo, 0);   // descarta m1, que falló
+  const descartadas = path.join(curso, '.preparacion', 'descartadas');
+  assert.ok(fs.readdirSync(descartadas).some(n => n.startsWith('m1-') && n.endsWith('.txt')), 'el registro de m1 se conserva');
+  esperarTerminada('n1');
+  assert.equal(herramienta('preparar', '--juntar', 'n1').codigo, 0);
+});
+
+test('15. H05: dos lanzamientos a la vez no pueden pasar los dos (cerrojo)', () => {
+  const { tomarCerrojo } = require('../preparar');
+  const soltar = tomarCerrojo(curso);
+  assert.ok(soltar, 'el primero lo toma');
+  assert.equal(tomarCerrojo(curso), null, 'el segundo no');
+  soltar();
+  const otraVez = tomarCerrojo(curso);
+  assert.ok(otraVez, 'soltado, se puede volver a tomar');
+  otraVez();
+  // Un cerrojo olvidado (un proceso que murió) caduca solo.
+  const f = path.join(curso, '.preparacion', '.cerrojo');
+  fs.writeFileSync(f, 'viejo');
+  const hace = new Date(Date.now() - 10 * 60 * 1000);
+  fs.utimesSync(f, hace, hace);
+  const trasCaducar = tomarCerrojo(curso);
+  assert.ok(trasCaducar);
+  trasCaducar();
+});
+
+test('16. H04: el cuerpo de una sesión cambiado en los dos lados es un choque: no se pierde ninguno de los dos', () => {
+  const rel = 'estudio/sesiones/d1-clase-de-mentira.md';
+  escribirAdaptador('o1');
+  assert.equal(lanzarCon('o1', { PROFESOR_KIT_ASISTENTE_DE_MENTIRA_EDITA: rel, PROFESOR_KIT_ASISTENTE_DE_MENTIRA_BUSCA: 'Sin discrepancias.' }).codigo, 0);
+  const abs = path.join(curso, ...rel.split('/'));
+  fs.writeFileSync(abs, fs.readFileSync(abs, 'utf8').replace('Sin discrepancias.', 'Corregido en la tutoría.'));
+  assert.equal(herramienta('guardar', 'dudas: corrigiendo la auditoría de d1').codigo, 0);
+  const antes = git(['rev-parse', 'HEAD']).salida;
+  esperarTerminada('o1');
+  const j = herramienta('preparar', '--juntar', 'o1');
+  assert.equal(j.codigo, 1, j.salida);
+  assert.match(j.salida, /d1-clase-de-mentira\.md/);
+  assert.equal(git(['rev-parse', 'HEAD']).salida, antes);
+  assert.equal(git(['status', '--porcelain']).salida, '');
+  git(['worktree', 'remove', '--force', path.join(curso, '.preparacion', 'o1')]);
+  git(['branch', '-D', 'preparacion/o1']);
+});
+
+test('17. H04: si solo la preparación cambia el cuerpo de una sesión, su cambio llega aunque los pies choquen', () => {
+  const rel = 'estudio/sesiones/d1-clase-de-mentira.md';
+  escribirAdaptador('q1');
+  assert.equal(lanzarCon('q1', { PROFESOR_KIT_ASISTENTE_DE_MENTIRA_EDITA: rel, PROFESOR_KIT_ASISTENTE_DE_MENTIRA_BUSCA: 'Toda la diapositiva quedó en la nota.' }).codigo, 0);
+  const abs = path.join(curso, ...rel.split('/'));
+  fs.writeFileSync(abs, fs.readFileSync(abs, 'utf8').replace(/estudiada: true\n?/, ''));
+  assert.equal(herramienta('guardar', 'dudas: d1 otra vez sin estudiar').codigo, 0);
+  esperarTerminada('q1');
+  const j = herramienta('preparar', '--juntar', 'q1');
+  assert.equal(j.codigo, 0, j.salida);
+  const texto = leer(rel);
+  assert.match(texto, /Editado por el asistente de mentira/, 'el cambio de la preparación llega');
+  assert.doesNotMatch(texto, /estudiada: true/, 'y el de la tutoría también');
+});
+
+test('juntarPorFilas con la versión común: una fila cambiada solo en un lado gana ese lado; cambiada en los dos, choque', () => {
+  const { juntarPorFilas } = require('../preparar');
+  const clave = l => (/^([a-z0-9][a-z0-9-]*) *\|/.exec(l) || [])[1];
+  const base = '# Índice\n\na | Def A | B1 | 1 | alias:\nb | Def B | B1 | 1 | alias:\n';
+  const ours = '# Índice\n\na | Def A | B1 | 1 | alias:\nb | Def B | B1 | 2 | alias:\n';
+  const theirs = '# Índice\n\na | Def A | B1 | 1 | alias: otra-a\nb | Def B | B1 | 1 | alias:\nc | Def C | B1 | 1 | alias:\n';
+  assert.equal(juntarPorFilas(ours, theirs, clave, base),
+    '# Índice\n\na | Def A | B1 | 1 | alias: otra-a\nb | Def B | B1 | 2 | alias:\nc | Def C | B1 | 1 | alias:\n');
+  const ambos = '# Índice\n\na | Def A cambiada | B1 | 1 | alias:\nb | Def B | B1 | 1 | alias:\n';
+  assert.equal(juntarPorFilas(ambos, theirs, clave, base), null);
+});

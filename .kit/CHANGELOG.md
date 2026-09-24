@@ -13,6 +13,16 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.22.3
+Preparar una clase en segundo plano ya es fiable. También sale de la auditoría independiente del kit.
+- **La clase que acabas de dejar en inbox llega siempre a la preparación.** Antes, si no estaba guardada, la
+  preparación no la veía. Ahora tu profesor la guarda un momento antes de empezar.
+- **Una clase solo sale como "lista" si de verdad está preparada.** Si algo va mal, o tarda más de hora y media,
+  sale como fallida y te lo dice, en vez de darte una clase vacía.
+- **Al juntar la clase no se pierde nada.** Si mientras tanto cambiaste la misma parte de una nota, tu profesor
+  para y te lo enseña, en vez de quedarse con una de las dos versiones.
+- **"Deshaz lo último" también funciona después de juntar una clase preparada.**
+
 ## 0.22.2
 Una versión de seguridad: nada nuevo que aprender, pero tu curso está más protegido. Sale de una auditoría
 independiente del kit.
