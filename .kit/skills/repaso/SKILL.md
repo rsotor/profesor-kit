@@ -1,6 +1,6 @@
 ---
 name: repaso
-description: Use when the student wants a visual review of a block or a concept, as a local web page instead of markdown. Triggers on "/repaso", "hazme un repaso visual", "repasa este bloque", "quiero verlo en una página web".
+description: Use when the student wants a visual review page of a block or a concept, as a local web page instead of markdown. Triggers on "/repaso", "hazme un repaso visual", "hazme una página de repaso", "quiero verlo en una página web". Not for a quick oral review in the chat ("¿repasamos?", "hazme unas preguntas"): that is the warm-up in conversation, no skill.
 ---
 
 # Repaso visual
@@ -28,8 +28,8 @@ se crea uno segundo para el mismo alcance.
 - `estudio/inicio.md` — las sesiones del alcance, y la carpeta de su unidad en `estudio/sesiones/`
 - Las notas de `estudio/conceptos/` que enlacen con ellas (las notas enteras, no solo los títulos)
 - `estudio/flashcards/` del alcance
-- `config/alumno.md` — los conceptos marcados `dificultad: 3` en su frontmatter van primero
-  y con más aire
+- Los conceptos con `dificultad: 3` en el frontmatter de su nota, y lo que `config/alumno.md` dice que le cuesta:
+  van primero y con más aire
 
 ### 3. Construir la página
 
@@ -71,3 +71,6 @@ El repaso es un fichero del alumno como cualquier otro: se guarda.
 
 Dile en una línea qué alcance cubre la página y cuántos conceptos, ejercicios y flashcards
 incluye. Nada más —la página se explica sola o está mal hecha.
+
+Y cierra con una línea `Del kit: nada` o `Del kit: <qué>` (algo que no es de este curso ni de este alumno; si no es
+"nada", sigue "Feedback al kit" de `AGENTS.md`).

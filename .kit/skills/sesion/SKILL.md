@@ -106,7 +106,7 @@ curso no tiene estructura, va directamente en `estudio/sesiones/`. Las flashcard
 clase van en la **misma carpeta de unidad** dentro de su tipo, y **su nombre empieza por el id de la
 sesión** (`01-02-04-van-o-tir.html`, no `van-o-tir.html`): así `organizar.js` sabe de quién son aunque
 sirvan a varios conceptos. Es un **mapa, no
-contenido**: ~15-20 líneas.
+contenido**: corto, y aparte las secciones fijas de la plantilla (Cobertura, Auditoría, Para pensarlo despacio).
 
 1. **El nombre sale de `config/curso.md`.** Usa números a dos dígitos para que ordene bien en el
    explorador de ficheros: con uno solo, `9` ordena después de `14`.
@@ -140,7 +140,8 @@ la escribe `guardar.js`. Si la sesión es de una unidad que no está en `config/
 
 ### 5. Flashcards
 
-`estudio/flashcards/<id-de-sesion>.md`, desde `.kit/plantillas/flashcards.md`. El número lo marca
+`estudio/flashcards/<carpeta de su unidad>/<id-de-sesion>-tema.md` (la misma carpeta de unidad que la sesión,
+punto 4), desde `.kit/plantillas/flashcards.md`. El número lo marca
 `flashcards_por_sesion` de `config/profesor.md`. Prioriza lo que sea carne de examen y los
 errores típicos.
 

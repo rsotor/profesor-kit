@@ -213,6 +213,8 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
    evaluar primero; reglas de "Cuando preguntas para medir"). Se puede saltar ("ahora no"); las respuestas
    cuentan como prueba y mueven `estudio/progreso.md`. **Si lo salta tres veces seguidas**, deja de ofrecerlo y
    apúntalo en `config/alumno.md` (sección "## Calentamiento"; créala si no existe).
+   Si en cualquier momento pide "hazme unas preguntas" o "¿repasamos?", es esto mismo, en el chat: no es `/examen`
+   ni `/repaso` (la página).
 
    **Si la preparación sigue en marcha** tras las dos preguntas (caso 2, con el alumno esperando), no lo
    dejes parado: dile que aún queda un poco y ofrécele seguir según cómo ha ido — si acertó, "lo estás
