@@ -191,7 +191,8 @@ fíe de fechas/tamaños) y reinstala las skills viejas.
 
 **Publicación** (`CONTRIBUTING.md`): rama desde `main` → tests en local (hook `pre-push`) → PR → CI
 (`tests.yml`: Linux + Windows, Node 24, cobertura ≥80 %) → check `tests-ok` obligatorio → merge a `main`
-→ si `.kit/VERSION` cambió, `release.yml` crea la etiqueta `vX.Y.Z` con las notas de esa versión del
+→ los tests vuelven a correr en `main` y, solo si terminan en verde, `release.yml` publica ese mismo commit: si
+`.kit/VERSION` tiene una versión sin release, crea la etiqueta `vX.Y.Z` con las notas de esa versión del
 CHANGELOG (`.github/release-notas.js`). `actualizar.js` **solo** descarga releases publicadas, nunca
 `main` a secas: hasta que la release existe, ningún curso ve la versión nueva.
 
