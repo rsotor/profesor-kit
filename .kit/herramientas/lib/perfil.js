@@ -86,4 +86,33 @@ function conceptosPorBloque(raiz) {
   return [...bloques.entries()].sort(([a], [b]) => a.localeCompare(b));
 }
 
-module.exports = { ESTADOS, leerConfig, seccion, tieneContenido, intentosDe, examenesConIntentos, leerDudas, conceptosPorBloque };
+const UMBRAL_TROPIEZO = 3;
+const fmt = n => n.toFixed(1).replace('.', ',');
+const nombreExamen = e => `examen ${e.unidades.join(', ') || path.posix.basename(e.rel, '.md')}`;
+
+// Lo que dice que algo no funciona, calculado. El profesor las lee en estado.js --json (arranque, /examen, /dudas).
+function senales(raiz) {
+  const aprobado = indice.leerAprobado(raiz);
+  const examenes = examenesConIntentos(raiz);
+  const lista = [];
+  for (const e of examenes) {
+    const ultimo = e.intentos[e.intentos.length - 1];
+    if (ultimo.nota < aprobado) {
+      lista.push({ tipo: 'examen-suspenso', examen: e.rel, detalle: `${nombreExamen(e)}: ${fmt(ultimo.nota)} en el intento ${ultimo.intento} (aprobado: ${fmt(aprobado)})` });
+    }
+  }
+  for (const e of examenes.filter(x => x.intentos.length > 1)) {
+    const [antes, ahora] = e.intentos.slice(-2);
+    if (ahora.nota < antes.nota) lista.push({ tipo: 'nota-baja', examen: e.rel, detalle: `${nombreExamen(e)}: de ${fmt(antes.nota)} a ${fmt(ahora.nota)}` });
+  }
+  for (const [slug, estado] of indice.leerProgreso(raiz)) {
+    const ejes = [estado.teoria === '🔴' && 'teoría', estado.aplicacion === '🔴' && 'aplicación'].filter(Boolean);
+    if (ejes.length) lista.push({ tipo: 'concepto-rojo', concepto: slug, detalle: `${slug}: falló dos veces (${ejes.join(' y ')})` });
+  }
+  for (const d of leerDudas(raiz).filter(x => x.veces >= UMBRAL_TROPIEZO)) {
+    lista.push({ tipo: 'tercer-tropiezo', concepto: d.concepto, detalle: `${d.concepto}: ${d.veces} dudas` });
+  }
+  return lista;
+}
+
+module.exports = { ESTADOS, leerConfig, seccion, tieneContenido, intentosDe, examenesConIntentos, leerDudas, conceptosPorBloque, senales, fmt };

@@ -80,3 +80,34 @@ test('conceptosPorBloque: cuenta estados por eje y bloque; sin bloques: va a "Si
   assert.deepEqual(bloques.get('Bloque 2').teoria, { '✅': 0, '🟡': 1, '🔴': 0, '⬜': 0 });
   assert.deepEqual(bloques.get('Sin bloque').aplicacion, { '✅': 0, '🟡': 0, '🔴': 1, '⬜': 0 });
 });
+
+const examen = (nombre, fm, historico = '') => ({
+  [`estudio/examenes/${nombre}.md`]: `---\ntipo: examen\n${fm}\n---\n# Examen\n${historico}`,
+});
+const HIST = filas => '\n## Histórico de intentos\n\n| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |\n'
+  + `|---|---|---|---|---|---|---|\n${filas.map(([i, f, n]) => `| ${i} | ${f} | ${n} | 0 | 0 | 0 | 0 |`).join('\n')}\n`;
+
+test('senales: las cuatro, en orden de prioridad', () => {
+  const raiz = cursoTemporal({
+    ...examen('01-examen', 'unidad: 01\nfecha: 2026-10-09\nnota: 4', HIST([[1, '2026-10-01', '6'], [2, '2026-10-09', '4']])),
+    'estudio/progreso.md': '# Progreso\n\n| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[alfa]] | 🔴 falló dos veces | ⬜ |\n',
+    'config/alumno.md': ALUMNO,
+  });
+  assert.deepEqual(perfil.senales(raiz).map(s => s.tipo), ['examen-suspenso', 'nota-baja', 'concepto-rojo', 'tercer-tropiezo']);
+  const [suspenso, baja] = perfil.senales(raiz);
+  assert.match(suspenso.detalle, /4,0/);
+  assert.match(baja.detalle, /de 6,0 a 4,0/);
+});
+
+test('senales: aprobado de config/curso.md; un parcial suspendido no da señal', () => {
+  const raiz = cursoTemporal({
+    'config/curso.md': '---\naprobado: 6\n---\n# Curso\n',
+    ...examen('01-examen', 'unidad: 01\nfecha: 2026-10-01\nnota: 5,5'),
+    ...examen('01-02-parcial', 'unidad: 01-02\nfecha: 2026-10-02\nnota: 1\nparcial: true'),
+  });
+  assert.deepEqual(perfil.senales(raiz).map(s => [s.tipo, s.examen]), [['examen-suspenso', 'examenes/01-examen.md']]);
+});
+
+test('senales: curso sin datos, lista vacía', () => {
+  assert.deepEqual(perfil.senales(cursoTemporal()), []);
+});
