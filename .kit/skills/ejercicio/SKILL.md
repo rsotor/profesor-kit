@@ -95,8 +95,9 @@ pesan causas entre sí, no hay ningún número que mover—.
 
 ### 5. Verificarlo — no es opcional
 
-1. Si hay código, comprueba que no tiene errores de sintaxis (`node --check` sobre el JS
-   extraído). Un error de sintaxis deja la página muerta y en silencio.
+1. Si hay código, `node .kit/herramientas/comprobar.js` compila el JS de cada página (sin ejecutarlo) y da el
+   error `ejercicio-con-errores` con su línea. Un error de sintaxis deja la página muerta y en silencio. No lo
+   compruebes extrayendo el JS con comandos (`sed`, `node --check`): pide permiso, y sin nadie delante se deniega.
 2. **Reproduce el resultado fuera del ejercicio** y compáralo con la nota del concepto. Si
    discrepan, **manda la nota.**
 3. Si los casos son aleatorios, **barre unos miles** y comprueba que la respuesta marcada

@@ -304,6 +304,9 @@ subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no
 shell** (`cat >`, `echo >>`, `sed -i`, `python`, `node -e`…). Cada comando pide permiso al alumno, y sin nadie
 delante (el segundo plano) se deniega y el paso se queda sin hacer. Lo que sí es un comando son las
 herramientas del kit de esta tabla: si hay una para lo que vas a hacer, úsala en vez de editar a mano.
+**Cada herramienta, en su propio comando:** sin encadenarla con otra cosa (`;`, `&&`, `|`, `cd … &&`). Si una
+parte se deniega, se deniega el comando entero, también la herramienta. Y no abras ficheros por él (`open`,
+`start`): dile dónde están en Obsidian.
 
 Mensajes de guardado: `sesion(<id>): <tema>` · `dudas: N resueltas` · `examen: <alcance>` ·
 `ejercicio: <concepto>` · `repaso: <alcance>` · `config: <qué cambió>`.

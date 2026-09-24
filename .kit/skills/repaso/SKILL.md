@@ -53,12 +53,13 @@ mal escrita —arregla la nota, no la página.
 Si `lente` está activada en `config/profesor.md`, añade al final una sección aparte con esa
 lectura; nunca decide qué se explica ni cuánto, y nunca puntúa.
 
-### 4. Generarlo y abrirlo
+### 4. Generarlo
 
-Escribe el fichero en su carpeta (ver el punto 1) y ábrelo en el navegador del alumno:
+Escribe el fichero en su carpeta (ver el punto 1) con tu herramienta de ficheros. `comprobar.js` compila su JS y
+avisa si carga algo de internet: lo que diga, se arregla antes de guardar.
 
-- Mac: `open <ruta del fichero>`
-- Windows: `start <ruta del fichero>`
+No lo abras tú (`open`, `start`…): es un comando distinto en cada sistema y pide permiso. Dile dónde está: en
+Obsidian, en la carpeta **repasos**, y se abre con doble clic.
 
 ### 5. Cerrar
 

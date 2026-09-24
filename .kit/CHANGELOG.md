@@ -13,6 +13,15 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.24.0
+- **Actualizar es más seguro, sobre todo si llevas tiempo sin hacerlo.** Tu profesor ya no salta de golpe a la
+  última versión: pasa por todas, una a una, y cada paso se ha probado antes de publicarse. Si uno fallara, tu
+  curso se queda sano en la última que funcionó. (Empieza a notarse a partir de la siguiente versión.)
+- **Tus ejercicios y repasos se comprueban solos** antes de guardarse: si una página tuviera un error que la
+  dejara sin funcionar, o necesitara internet, tu profesor lo arregla antes de dártela.
+- **Tu profesor te pide todavía menos permisos.** Ya no te abre el repaso en el navegador: te dice dónde está, en
+  Obsidian, y lo abres con doble clic.
+
 ## 0.23.0
 - **Nueva hoja, mi-perfil**, en inicio: lo que tu profesor sabe de ti, con la prueba de cada cosa. Cómo te
   explica y por qué, qué te cuesta, qué te entró a la primera y cómo vas: tus exámenes intento a intento, tus
