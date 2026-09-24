@@ -46,6 +46,22 @@ test('concepto-sin-ejemplo: con el ejemplo relleno, no avisa', () => {
   assert.equal(avisos(cursoTemporal(), 'concepto-sin-ejemplo').length, 0);
 });
 
+// issue #38: cursos de antes de la 0.21 tienen el título con un añadido; siguen siendo el ejemplo.
+test('concepto-sin-ejemplo: un título que empieza por "El ejemplo" con un añadido cuenta como ejemplo', () => {
+  const titulos = ['El ejemplo, paso a paso', 'El ejemplo, paso a paso (del curso)', 'El ejemplo (tabla del curso)', 'El ejemplo: el caso X (del curso)'];
+  const ficheros = Object.fromEntries(titulos.map((t, i) => [`estudio/conceptos/c${i}.md`,
+    `---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# C${i}\n\n## ${t}\n\nUn caso de verdad.\n\n## Lo que significa\n\nx\n`]));
+  assert.equal(avisos(cursoTemporal(ficheros), 'concepto-sin-ejemplo').length, 0);
+});
+
+test('concepto-sin-ejemplo: "## El ejemplo, paso a paso" vacío sigue avisando, y "## El ejemplar" no cuenta', () => {
+  const raiz = cursoTemporal({
+    'estudio/conceptos/vacio.md': '---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# Vacío\n\n## El ejemplo, paso a paso\n\n## Otra\n\nx\n',
+    'estudio/conceptos/otro.md': '---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# Otro\n\n## El ejemplar\n\nx\n',
+  });
+  assert.deepEqual(avisos(raiz, 'concepto-sin-ejemplo').map(a => a.fichero).sort(), ['conceptos/otro.md', 'conceptos/vacio.md']);
+});
+
 // --- sesion-incompleta ---------------------------------------------------------------------------
 
 test('sesion-incompleta: falta "## Auditoría del material", aviso con esa sección en el detalle', () => {
