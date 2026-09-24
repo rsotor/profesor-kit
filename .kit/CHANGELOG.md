@@ -24,6 +24,11 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
   dejara sin funcionar, o necesitara internet, tu profesor lo arregla antes de dártela.
 - **Tu profesor te pide todavía menos permisos.** Ya no te abre el repaso en el navegador: te dice dónde está, en
   Obsidian, y lo abres con doble clic.
+- **Puedes aceptar los permisos una sola vez.** Con tu sí, tu profesor edita tus notas y usa sus herramientas sin
+  preguntarte a cada paso, solo dentro de tu curso (también desde Obsidian). Lo puedes quitar cuando quieras.
+  Con Claude Code; con Codex, en cuanto lo hayamos probado.
+- **Si ya tenías tu curso:** tu profesor te ofrece aceptar los permisos una vez (`permisos.js --ver` y, con tu sí,
+  `--aplicar`).
 
 ## 0.23.0
 - **Nueva hoja, mi-perfil**, en inicio: lo que tu profesor sabe de ti, con la prueba de cada cosa. Cómo te

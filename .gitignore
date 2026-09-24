@@ -3,6 +3,9 @@
 .agents/skills/
 .codex/skills/
 
+# El sí del alumno a los permisos (permisos.js): es de este ordenador, no del curso ni del motor.
+**/.claude/settings.local.json
+
 # Secretos: nunca entran en el repo
 .env
 .env.*

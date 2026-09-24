@@ -280,6 +280,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
 | Para guardar (comprueba, hace commit y sube si procede) | `node .kit/herramientas/guardar.js "<mensaje>"` |
 | Antes de algo de varios pasos (la línea "en curso" del diario) | `node .kit/herramientas/guardar.js --empezar "<qué>"` |
+| Para que el alumno acepte los permisos una vez (con su sí) | `node .kit/herramientas/permisos.js --ver` · `--aplicar` · `--quitar` |
 | Para leer un Word, PowerPoint o Excel del material | `node .kit/herramientas/leer.js <fichero>` (`--parte N` si es largo) |
 | Para apuntar una duda en el registro de `config/alumno.md` | `node .kit/herramientas/dudas.js <concepto> --prueba "<fichero>"` |
 | Para deshacer el último guardado | `node .kit/herramientas/deshacer.js` (antes, `--ver` para enseñar qué cambiaría) |
@@ -305,6 +306,8 @@ subir. Si `comprobar.js` da errores, se arreglan antes de guardar. Los avisos no
 shell** (`cat >`, `echo >>`, `sed -i`, `python`, `node -e`…). Cada comando pide permiso al alumno, y sin nadie
 delante (el segundo plano) se deniega y el paso se queda sin hacer. Lo que sí es un comando son las
 herramientas del kit de esta tabla: si hay una para lo que vas a hacer, úsala en vez de editar a mano.
+**Si el alumno está aceptando muchos permisos**, ofrécele una vez dejarlo aceptado: enséñale lo que dice
+`permisos.js --ver` y, con su sí, `permisos.js --aplicar`. Nunca sin su sí, y nunca otro modo "sin preguntar".
 **Cada herramienta, en su propio comando:** sin encadenarla con otra cosa (`;`, `&&`, `|`, `cd … &&`). Si una
 parte se deniega, se deniega el comando entero, también la herramienta. Y no abras ficheros por él (`open`,
 `start`): dile dónde están en Obsidian.
