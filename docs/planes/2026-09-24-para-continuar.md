@@ -8,6 +8,10 @@ Estado al cerrar la sesión del 2026-09-23. Rama `mi-perfil-y-evolucion` (**solo
 > Seguimos con el profesor-kit (repo en ~/Documents/courses/profesor-kit, cuenta de GitHub rsotor, rama
 > `mi-perfil-y-evolucion`). Lee `docs/planes/2026-09-24-para-continuar.md` y sigue desde "Siguiente paso".
 
+> **Actualizado el 2026-09-24:** todo lo pendiente está ordenado en
+> [`2026-09-24-plan-de-accion.md`](2026-09-24-plan-de-accion.md), que pasa a ser la fuente única. Este resumen
+> queda como contexto de la sesión.
+
 ## Qué se decidió ayer
 
 | Tema | Decisión |
