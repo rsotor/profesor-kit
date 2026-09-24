@@ -145,11 +145,17 @@ function reconstruirCursoViejo({ origenViejo, resultadoDir, versionDatos, destin
 }
 
 // Ejecuta `actualizar.js --aplicar --origen <trabajoActual>` tal como lo haría el curso, desde dentro
-// de sí mismo, con SU PROPIA copia (antigua) de la herramienta.
+// de sí mismo, con SU PROPIA copia (antigua) de la herramienta. Y después el guardado con el que termina
+// /actualizar, ya con el motor nuevo: hasta la 0.22.3, actualizar.js hacía su guardado final con el código viejo
+// (los generados salían como los hacía la versión vieja) y lo que el alumno ve es lo de después de /actualizar.
 function ejecutarActualizacion(raizViejo, trabajoActual) {
   const r = spawnSync(process.execPath, [path.join(raizViejo, '.kit', 'herramientas', 'actualizar.js'), '--aplicar', '--origen', trabajoActual],
     { cwd: raizViejo, encoding: 'utf8' });
-  return { ok: r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
+  const salida = ((r.stdout || '') + (r.stderr || '')).trim();
+  if (r.status !== 0) return { ok: false, salida };
+  const cierre = spawnSync(process.execPath, [path.join(raizViejo, '.kit', 'herramientas', 'guardar.js'), 'config: al día tras actualizar'],
+    { cwd: raizViejo, encoding: 'utf8' });
+  return { ok: cierre.status === 0, salida: [salida, ((cierre.stdout || '') + (cierre.stderr || '')).trim()].filter(Boolean).join('\n') };
 }
 
 // Inyectables para los tests: así se puede probar la lógica sin depender de que existan etiquetas de
