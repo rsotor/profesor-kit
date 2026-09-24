@@ -129,5 +129,5 @@ pueden dar por buena una clase que no se ha preparado o perder una corrección s
 |---|---|---|
 | 0.22.1 | ✅ publicada | #35 cerrada; `diagnostico.js` avisa de la raíz del git (#36) |
 | 0.22.2 | ✅ publicada (#40) | #38, H01, H02, H03, H07, H10 (CI). La línea de `/sesion` sobre el título `## El ejemplo` a secas queda para la 0.23.0 (tocar una skill exige prueba real) |
-| 0.22.3 | ⏳ | |
+| 0.22.3 | ✅ publicada (#41) | H04, H05, H06. Bloques 1 y 2 de la #39 cerrados |
 | 0.23.0 | ⏳ | Plan de mi perfil pendiente de revisar |
