@@ -6,21 +6,21 @@ sesion: 01-02-01-presupuesto-personal
 
 > Se responde mentalmente antes de desplegar.
 
-**Tu ocio cuesta algo distinto cada mes. ¿Es un gasto fijo o variable, y por qué?**
+**Todos los meses gastas algo en ocio. ¿Es un gasto fijo? ¿Por qué?**
 > [!success]- Respuesta
-> Variable: la cifra la decides tú cada mes. Que haya gasto todos los meses no lo hace fijo.
+> No, es variable. Que lo gastes siempre no lo hace fijo: la cifra la decides tú cada mes.
 
-**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso presupuestas?**
+**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso montas el presupuesto?**
 > [!success]- Respuesta
-> Con la media de los últimos 6-12 meses, no con el del mejor mes.
+> Con la media de los últimos 6-12 meses, no con el mejor mes.
 
-**Ana ahorra 300,00 € con 1.500,00 € de ingresos; Berta 450,00 € con 3.000,00 €. ¿Quién ahorra una parte mayor de lo que gana?**
+**Ingresas 1.000,00 € y ahorras 200,00 €. ¿Cuál es tu tasa de ahorro?**
 > [!success]- Respuesta
-> Ana: 20 % mensual frente al 15 % mensual de Berta.
+> 200 ÷ 1.000 × 100 = 20 % mensual.
 
-**Gastas 1.000,00 € al mes. ¿Cuánto es un colchón de 3 meses, y por qué se calcula con gastos y no con ingresos?**
+**Gastas 800,00 € al mes. ¿Cuánto es un colchón de 6 meses?**
 > [!success]- Respuesta
-> 3.000,00 €. Cubre lo que sale cada mes, no lo que entraba.
+> 800,00 € × 6 = 4.800,00 €.
 
 ---
-Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[presupuesto]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

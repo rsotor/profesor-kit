@@ -14,7 +14,16 @@ Estados: `⬜ sin evaluar` · `🟡 flojo` · `✅ sólido` · `🔴 falló dos 
 
 | Concepto | Teoría | Aplicación |
 |---|---|---|
-| [[presupuesto-personal]] | ⬜ sin evaluar | ⬜ sin evaluar |
-| [[gastos-fijos-y-variables]] | ⬜ sin evaluar | 🟡 flojo |
+| [[trueque]] | ✅ sólido | ⬜ sin evaluar |
+| [[funciones-del-dinero]] | ✅ sólido | ⬜ sin evaluar |
+| [[inflacion]] | ✅ sólido | ✅ sólido |
+| [[liquidez]] | 🟡 flojo | ⬜ sin evaluar |
+| [[presupuesto]] | ✅ sólido | 🟡 flojo |
+| [[gastos-fijos-y-variables]] | ✅ sólido | 🟡 flojo |
 | [[tasa-de-ahorro]] | ⬜ sin evaluar | ✅ sólido |
-| [[colchon-financiero]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[colchon-financiero]] | ✅ sólido | 🟡 flojo |
+| [[capital-y-tipo-de-interes]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[interes-simple]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[interes-compuesto]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[capitalizacion]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[regla-del-72]] | ⬜ sin evaluar | ⬜ sin evaluar |

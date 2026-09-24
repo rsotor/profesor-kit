@@ -29,7 +29,7 @@ parcial: true
 
 ✍️ **Tu respuesta:**
 
-**4.** Una tarjeta te cobra un 2 % de interés cada mes sobre lo que debes.
+**4.** Una tarjeta te cobra un 2&#37; de interés cada mes sobre lo que debes.
 
 ¿Qué interés pagas? *(la cifra con su periodo)*
 
@@ -48,19 +48,12 @@ parcial: true
 ✍️ **Tu respuesta:**
 
 > [!success]- Soluciones
-> 1. 20 % (300 ÷ 1.500).
+> 1. 20 % mensual (300 ÷ 1.500).
 > 2. Lo tiene inmovilizado: no lo puede convertir en dinero disponible a tiempo para pagar.
 > 3. Liquidez.
 > 4. Un 2 % mensual (al mes). Sin el periodo, la cifra no dice cuánto pagas.
 > 5. Fijo.
 > 6. 3 meses de gastos.
-
-## Visto desde tus ingresos irregulares
-
-El colchón de la pregunta 6 (3 meses) es el de una nómina fija. Con tus ingresos irregulares, la clase
-recomienda 5-6 meses ([[colchon-financiero]]). Y en la 5, el alquiler es de lo que hay que seguir pagando
-aunque un mes factures poco: por eso separar bien lo fijo de lo variable ([[gastos-fijos-y-variables]]) es
-lo primero al montar tu colchón.
 
 ## Histórico de intentos
 
@@ -69,17 +62,18 @@ lo primero al montar tu colchón.
 | 1 | 2026-09-24 | 5 | 2 | 2 | 1 | 1 |
 
 > [!example]- Intento 1 · 2026-09-24 · tus respuestas y la corrección
-> **Veredicto** (es un test, no pone nota a la unidad; suspendido según `aprobado: 6` del curso)
 >
-> ✅ Dominado → cálculo de la [[tasa-de-ahorro]]
-> ⚠️ Hay que repasar → periodo de un interés (pregunta 4); nombre de la liquidez (pregunta 3)
-> 🔴 Vuelve a la nota → [[gastos-fijos-y-variables]] (pregunta 5); [[colchon-financiero]] (pregunta 6, en blanco)
+> ✅ Dominado → tasa-de-ahorro (la cuenta), liquidez (la idea: lo tiene atado y no puede sacarlo a tiempo)
+> ⚠️ Hay que repasar → gastos-fijos-y-variables (1 fallo: pregunta 5). Además, el nombre *liquidez* (pregunta 3) y decir el periodo de un interés (pregunta 4)
+> 🔴 Vuelve a la nota → ninguno todavía (nadie ha fallado dos intentos)
+>
+> Nota: 2 enteras + 2 a medias (media) = 3 sobre 6 → **5 sobre 10**. No llega al mínimo (6), pero es un test parcial de 6 preguntas: no puntúa la unidad ni marca ninguna sesión como estudiada.
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20 % | ✅ Correcta | 300 ÷ 1.500 = 0,20. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Es la idea: el dinero está inmovilizado y no llega a tiempo. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre | La idea es la buena (no se convierte en dinero rápido), pero la pregunta pedía el nombre: **liquidez**. |
-> | 4 | 2 % | ⚠️ Le falta: el periodo | La cifra es correcta, pero la pregunta pedía "con su periodo": es un 2 % **mensual**. Sin periodo no se sabe cuánto pagas al año. |
-> | 5 | Variable. | ❌ Incorrecta | Es **fijo**: la cifra es la misma cada mes y no la decides tú. Que suba una vez al año con el IPC no la vuelve variable: tampoco la decides tú. |
-> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Eran 3 meses de gastos con nómina fija (5-6 con ingresos irregulares). |
+> | 1 | 20&#37; | ✅ Correcta | 300 ÷ 1.500 = 20 % mensual. La pregunta pedía solo una cifra, así que no se le exige el periodo. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Es justo la idea: el dinero existe, pero no se convierte en efectivo a tiempo. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre | La idea es correcta (la definición de liquidez), pero la pregunta pedía el nombre y no lo pone: *liquidez*. |
+> | 4 | 2&#37; | ⚠️ Le falta: el periodo | La cifra está bien, pero la pregunta pedía el periodo: es un 2 % mensual. Sin él, la cifra no dice cuánto pagas (regla del curso). |
+> | 5 | Variable. | ❌ Incorrecta | Es un gasto fijo: se repite cada mes con la misma cifra (700 €) sin que tú decidas nada. Que suba una vez al año con el IPC lo cambia poco: no lo decides tú cada mes, que es lo que hace variable a un gasto. |
+> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Recomienda cubrir 3 meses de gastos. |

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Se dobla el capital?</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: .8rem 1rem; margin: 1rem 0; }
+  h2 { font-size: 1rem; margin: 0 0 .5rem; }
+  label { display: block; margin: .6rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem .9rem; margin: .25rem .25rem .25rem 0; border-radius: 6px; border: 1px solid #8888; cursor: pointer; }
+  .bien { background: #2e7d3240; }
+  .mal { background: #c6282840; }
+  .vacio { opacity: .7; }
+</style>
+</head>
+<body>
+<h1>¿Se dobla el capital?</h1>
+<p>Conceptos: <a href="../../../conceptos/interes-compuesto.md">interés compuesto</a> ·
+<a href="../../../conceptos/regla-del-72.md">regla del 72</a> · Sesión 02-01-01</p>
+
+<section>
+  <h2>Condiciones</h2>
+  <p>Depositas 1.000,00 € y no tocas nada.</p>
+  <label>Tipo de interés (% anual): <b id="vi"></b><input id="i" type="range" min="1" max="12" step="0.5" value="6"></label>
+  <label>Años que lo dejas: <b id="vt"></b><input id="t" type="range" min="3" max="40" step="1" value="10"></label>
+</section>
+
+<section>
+  <h2>Reto</h2>
+  <p>Con interés compuesto, ¿llegas a tener 2.000,00 € o más dentro de esos años? <em>(elige una opción antes de ver el cálculo)</em></p>
+  <button id="si" type="button">Sí, se dobla</button>
+  <button id="no" type="button">No, no llega</button>
+</section>
+
+<section>
+  <h2>Explicación</h2>
+  <p id="expl" class="vacio">Elige una respuesta y aquí verás por qué. Después mueve las condiciones y vuelve a elegir.</p>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const eur = n => n.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+const num = (n, d) => n.toFixed(d).replace(".", ",");
+function leer() { return { i: +$("i").value, t: +$("t").value }; }
+function pintar() {
+  const s = leer();
+  $("vi").textContent = num(s.i, 1) + " % anual"; $("vt").textContent = s.t + " años";
+  $("expl").textContent = "Elige una respuesta y aquí verás por qué. Después mueve las condiciones y vuelve a elegir.";
+  $("expl").className = "vacio";
+  $("si").className = ""; $("no").className = "";
+}
+function calcula(s) {
+  const r = s.i / 100;
+  const compuesto = 1000 * Math.pow(1 + r, s.t);
+  const simple = 1000 * (1 + r * s.t);
+  return { compuesto, simple, aniosExacto: Math.log(2) / Math.log(1 + r), aniosSimple: 1 / r, regla72: 72 / s.i, dobla: compuesto >= 2000 };
+}
+function responde(dijoSi) {
+  const s = leer(), r = calcula(s), ok = dijoSi === r.dobla;
+  const t = (ok ? "Correcto. " : "No. ") +
+    "En " + s.t + " años, con interés compuesto: " + eur(r.compuesto) + " (con simple serían " + eur(r.simple) + "). " +
+    "Doblar tarda " + num(r.aniosExacto, 1) + " años con la fórmula exacta; la regla del 72 da " + num(r.regla72, 1) +
+    " años; con interés simple, " + num(r.aniosSimple, 1) + " años.";
+  $("expl").className = "";
+  $("expl").textContent = t;
+  (dijoSi ? $("si") : $("no")).className = ok ? "bien" : "mal";
+}
+["i", "t"].forEach(id => $(id).oninput = pintar);
+$("si").onclick = () => responde(true);
+$("no").onclick = () => responde(false);
+pintar();
+</script>
+</body>
+</html>

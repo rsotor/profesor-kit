@@ -4,15 +4,20 @@
 > **estudiada** arriba de su nota; aquí se verá la próxima vez que trabajes con tu profesor.
 
 🔁 Para repasar:
+- [[01-01-01-el-dinero-y-sus-funciones|1.1 El dinero y sus funciones]]
 - [[01-02-01-presupuesto-personal|1.2 Presupuesto personal]]
 
-👉 Has estudiado todas las sesiones procesadas.
+👉 Sigue por aquí: [[02-01-01-interes-simple-y-compuesto|2.1 Interés simple y compuesto]]
 
-Estudiadas 1 de 1 · Pendientes abiertos: 7 → [[pendientes]]
+Estudiadas 2 de 3 · Pendientes abiertos: 10 → [[pendientes]]
 
-## Módulo 1 · Fundamentos del dinero · 1/1 estudiadas · listo para el examen del módulo: pídeselo a tu profesor
+## Módulo 1 · Fundamentos del dinero · 2/2 estudiadas · 📝 7,4 (2026-09-24)
 
-### 1.1 El dinero y sus funciones · aún sin sesiones
+### 1.1 El dinero y sus funciones · 1/1 estudiadas
+
+| Sesión | Estudiada (tú) | Profesor |
+|---|---|---|
+| [[01-01-01-el-dinero-y-sus-funciones\|1.1 El dinero y sus funciones]] | ✅ | 🔁 repasar |
 
 ### 1.2 Presupuesto personal · 1/1 estudiadas
 
@@ -20,6 +25,12 @@ Estudiadas 1 de 1 · Pendientes abiertos: 7 → [[pendientes]]
 |---|---|---|
 | [[01-02-01-presupuesto-personal\|1.2 Presupuesto personal]] | ✅ | 🔁 repasar |
 
-## Módulo 2 · Ahorro e interés · aún sin sesiones
+## Módulo 2 · Ahorro e interés · 0/1 estudiadas · sin examen de módulo
+
+### 2.1 Interés simple y compuesto · 0/1 estudiadas
+
+| Sesión | Estudiada (tú) | Profesor |
+|---|---|---|
+| [[02-01-01-interes-simple-y-compuesto\|2.1 Interés simple y compuesto]] | ⬜ |  |
 
 Otras hojas: [[mi-perfil]] · [[mapa-del-curso]] · [[progreso]] · [[formulario]] · [[test-inicial]] · [[como-usar-tu-profesor]]

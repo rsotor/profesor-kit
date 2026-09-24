@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El colchón en un mes flojo</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: .8rem 1rem; margin: 1rem 0; }
+  h2 { font-size: 1rem; margin: 0 0 .5rem; }
+  label { display: block; margin: .6rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem .9rem; margin: .25rem .25rem .25rem 0; border-radius: 6px; border: 1px solid #8888; cursor: pointer; }
+  .bien { background: #2e7d3240; }
+  .mal { background: #c6282840; }
+  .vacio { opacity: .7; }
+</style>
+</head>
+<body>
+<h1>El colchón en un mes flojo</h1>
+<p>Concepto: <a href="../../../conceptos/colchon-financiero.md">colchón financiero</a> · Sesión 01-02-01</p>
+
+<section>
+  <h2>Condiciones</h2>
+  <label>Gastos al mes: <b id="vg"></b><input id="g" type="range" min="400" max="2000" step="50" value="800"></label>
+  <label>Colchón guardado: <b id="vc"></b><input id="c" type="range" min="0" max="10000" step="100" value="2400"></label>
+  <label>Lo que ingresas cada mes flojo: <b id="vi"></b><input id="i" type="range" min="0" max="2000" step="50" value="300"></label>
+  <label>Meses flojos seguidos: <b id="vm"></b><input id="m" type="range" min="1" max="12" step="1" value="4"></label>
+</section>
+
+<section>
+  <h2>Reto</h2>
+  <p>Con estas condiciones, ¿aguanta el colchón todos los meses flojos sin quedarte a cero? <em>(elige una opción antes de ver el cálculo)</em></p>
+  <button id="si" type="button">Sí, aguanta</button>
+  <button id="no" type="button">No, se acaba antes</button>
+</section>
+
+<section>
+  <h2>Explicación</h2>
+  <p id="expl" class="vacio">Elige una respuesta y aquí verás por qué. Después mueve las condiciones y vuelve a elegir.</p>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const eur = n => n.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+function leer() { return { g: +$("g").value, c: +$("c").value, i: +$("i").value, m: +$("m").value }; }
+function pintar() {
+  const s = leer();
+  $("vg").textContent = eur(s.g); $("vc").textContent = eur(s.c);
+  $("vi").textContent = eur(s.i); $("vm").textContent = s.m;
+  $("expl").textContent = "Elige una respuesta y aquí verás por qué. Después mueve las condiciones y vuelve a elegir.";
+  $("expl").className = "vacio";
+  $("si").className = ""; $("no").className = "";
+}
+function calcula(s) {
+  const falta = Math.max(0, s.g - s.i);
+  const necesario = falta * s.m;
+  return { falta, necesario, aguanta: s.c >= necesario, meses: falta > 0 ? s.c / falta : Infinity };
+}
+function responde(dijoSi) {
+  const s = leer(), r = calcula(s), ok = dijoSi === r.aguanta;
+  let t = ok ? "Correcto. " : "No. ";
+  if (r.falta === 0) {
+    t += "Lo que ingresas cubre tus gastos: no gastas nada del colchón.";
+  } else {
+    t += "Cada mes flojo te faltan " + eur(s.g) + " − " + eur(s.i) + " = " + eur(r.falta) + ". " +
+         "En " + s.m + " meses te faltan " + eur(r.necesario) + ", y tienes " + eur(s.c) + ": " +
+         (r.aguanta ? "aguanta." : "no llega.") +
+         " El colchón dura " + r.meses.toFixed(1).replace(".", ",") + " meses así. Si no ingresaras nada, duraría " +
+         (s.c / s.g).toFixed(1).replace(".", ",") + " meses (colchón ÷ gastos).";
+  }
+  $("expl").className = "";
+  $("expl").textContent = t;
+  (dijoSi ? $("si") : $("no")).className = ok ? "bien" : "mal";
+}
+["g", "c", "i", "m"].forEach(id => $(id).oninput = pintar);
+$("si").onclick = () => responde(true);
+$("no").onclick = () => responde(false);
+pintar();
+</script>
+</body>
+</html>

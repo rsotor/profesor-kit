@@ -1,59 +1,47 @@
 ---
 tipo: concepto
-bloques: [01-02]
-visto_en: [01-02-01-presupuesto-personal]
+bloques: ["Módulo 1"]
+visto_en: ["01-02-01-presupuesto-personal"]
 dificultad: 2
-requiere: [presupuesto-personal]
+requiere: [presupuesto]
 alias: [porcentaje de ahorro]
-tags: [presupuesto]
-ejercicio: 01-02-01-colchon-y-gastos
+tags: []
 ---
 # Tasa de ahorro
 
-> **En una frase:** qué parte de lo que ingresas te queda cada mes, en proporción, para poder comparar entre meses o personas.
+> **En una frase:** la parte de lo que ingresas que te queda al acabar el mes, expresada en tanto por ciento, para poder comparar personas o meses con ingresos distintos.
 
 ## El problema
 
-"Ahorro 300,00 € al mes" no dice si es mucho o poco: depende de lo que ingresas. Con otra cifra de
-ingresos no se puede comparar.
+Ahorrar 200,00 € no dice nada por sí solo: es mucho si ingresas 1.000,00 € y poco si ingresas
+5.000,00 €. La cifra absoluta no se puede comparar.
 
 ## El ejemplo
 
-Ana ingresa 1.500,00 € y ahorra 300,00 €. Berta ingresa 3.000,00 € y ahorra 450,00 €. Berta ahorra más
-euros, pero:
-
-- Ana: 300 ÷ 1.500 = 0,20 → **20 % mensual**
-- Berta: 450 ÷ 3.000 = 0,15 → **15 % mensual**
-
-Ana ahorra una parte mayor de lo que gana.
+Persona A: ingresa 1.000,00 €, ahorra 200,00 €. Persona B: ingresa 4.000,00 €, ahorra 400,00 €.
+B ahorra más euros, pero A guarda **20 % mensual** de lo que gana y B solo **10 % mensual**. A ahorra
+mejor en proporción.
 
 ## La fórmula
 
 $$ \text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100 $$
 
-Es el ahorro dividido entre los ingresos, pasado a porcentaje (mensual, porque usa el mes).
+El ahorro del mes (ver [[presupuesto]]) dividido entre lo que ingresaste ese mes; multiplicar por 100
+lo convierte en tanto por ciento. Siempre se dice de qué periodo es: aquí, de un mes.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundirla con una tasa de interés. La tasa de ahorro mide **tu comportamiento** en un mes; el interés
-> lo paga un banco por un dinero. Se parecen en el "%", nada más.
-
-## Practícalo
-
-→ **[Colchón y gastos](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-y-gastos.html)**
-
-Sube los gastos y mira qué le pasa al ahorro: es el paso previo a ver cuánto tardas en llenar el colchón.
-
-## Visto desde tus ingresos irregulares
-
-Con ingresos que varían, tu tasa de ahorro también varía cada mes. Tiene más sentido mirarla sobre el
-ingreso **medio** que sobre un mes suelto: un mes de 2.400,00 € da una tasa alta que no es representativa.
+> Comparar la tasa de un mes con la de otro sin fijarse en que los ingresos cambiaron. Si facturas
+> mucho un mes, la tasa sube aunque tus gastos sean los de siempre.
 
 ## Relacionados
 
-- [[presupuesto-personal]] — de donde sale el ahorro del mes
-- [[colchon-financiero]] — a qué se destina lo ahorrado
+- [[presupuesto]] — de ahí sale el ahorro del mes
+
+> [!info] Ampliación fuera de los apuntes
+> **Visto desde tus ingresos irregulares:** tu tasa saltará de un mes a otro. Mírala sobre varios
+> meses (con el ingreso medio), no sobre el mejor ni el peor.
 
 ## Historial
 
