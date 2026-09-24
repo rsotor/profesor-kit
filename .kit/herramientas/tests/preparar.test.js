@@ -44,7 +44,8 @@ function esperarTerminada(id) {
 // El adaptador de un asistente que trabaja en segundo plano con asistente-de-mentira.js, con el id
 // grabado literal (el asistente de mentira no lee el prompt: el test ya sabe qué id le toca).
 function escribirAdaptador(idParaElAsistente) {
-  const adaptador = { comando: process.execPath, skills: '.claude/skills', permisos: { fichero: '.claude/settings.json', formato: 'x' } };
+  const llm = JSON.parse(fs.readFileSync(path.join(curso, 'config', 'ajustes.json'), 'utf8')).llm || 'claude-code';
+  const adaptador = { id: llm, comando: process.execPath, skills: '.claude/skills', permisos: { fichero: '.claude/settings.json', formato: 'x' } };
   if (idParaElAsistente) adaptador.segundo_plano = [SCRIPT_ASISTENTE, idParaElAsistente, '{prompt}', '{modelo}'];
   fs.writeFileSync(path.join(curso, 'config', 'adaptador-llm.json'), JSON.stringify(adaptador, null, 2));
 }

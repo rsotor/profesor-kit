@@ -229,17 +229,29 @@ const ALIAS_LLM = { 'codex-cli': 'codex' };
 // propio curso (vive en config/: /actualizar nunca lo toca) y manda sobre el que trae el kit en
 // `.kit/adaptadores/<llm>.json`, que solo existe para los LLMs ya verificados. Sin ninguno de los dos,
 // null: quien llama decide cómo avisar (ver .kit/ESTANDARES.md).
+// El del curso solo manda si es de este asistente (su `id`, issue #39, H09): si el alumno cambia `llm`, el adaptador
+// que escribió para el anterior no se aplica al nuevo. Los de antes de tener `id` lo ganan con la migración 005.
 function leerAdaptador(raiz, llm) {
   // El alias es un respaldo, nunca sustituye la búsqueda literal: si algún día existiera de verdad un
   // adaptador `codex-cli.json` (un curso que lo escribió a mano antes de este cambio, por ejemplo), ese
   // manda sobre el alias.
-  const rutas = [path.join(raiz, 'config', 'adaptador-llm.json')];
-  for (const id of [llm, ALIAS_LLM[llm]].filter(Boolean)) rutas.push(path.join(raiz, '.kit', 'adaptadores', `${id}.json`));
-  for (const ruta of rutas) {
+  const ids = [llm, ALIAS_LLM[llm]].filter(Boolean);
+  const local = leerAdaptadorDelCurso(raiz);
+  if (local === null) return null;   // JSON roto: como si no hubiera ninguno (diagnostico.js lo dice)
+  if (local && ids.includes(local.id)) return local;
+  for (const id of ids) {
+    const ruta = path.join(raiz, '.kit', 'adaptadores', `${id}.json`);
     if (!fs.existsSync(ruta)) continue;
     try { return JSON.parse(fs.readFileSync(ruta, 'utf8')); } catch { return null; }
   }
   return null;
+}
+
+// config/adaptador-llm.json tal cual: undefined si no hay, null si no es JSON válido.
+function leerAdaptadorDelCurso(raiz) {
+  const ruta = path.join(raiz, 'config', 'adaptador-llm.json');
+  if (!fs.existsSync(ruta)) return undefined;
+  try { return JSON.parse(fs.readFileSync(ruta, 'utf8')); } catch { return null; }
 }
 
 function leerVersion(dir) {
@@ -251,5 +263,5 @@ module.exports = {
   CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, GENERADOS_CON_ENLACES, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
   aPosix, baseAlumno,
   recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter, revisarPropiedades, PROPIEDADES, esCierto, numero,
-  leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, leerAdaptador, piezasAusentes,
+  leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, leerAdaptador, leerAdaptadorDelCurso, piezasAusentes,
 };

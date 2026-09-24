@@ -13,6 +13,31 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.24.0
+- **Actualizar es más seguro, sobre todo si llevas tiempo sin hacerlo.** Tu profesor ya no salta de golpe a la
+  última versión: pasa por todas, una a una, y cada paso se ha probado antes de publicarse. Si uno fallara, tu
+  curso se queda sano en la última que funcionó. (Empieza a notarse a partir de la siguiente versión.)
+- **Ya puedes dejar en inbox tus Word, PowerPoint y Excel** tal cual, sin pasarlos a PDF: tu profesor los lee
+  enteros, con las notas del orador de las diapositivas y las fórmulas de las hojas de cálculo. El audio y el
+  vídeo, todavía no: pásale su transcripción.
+- **Las correcciones de tus exámenes quedan siempre bien apuntadas**: cada intento, con tus respuestas tal cual,
+  en el histórico del examen, y el examen listo para repetirlo.
+- **Tu profesor entiende mejor lo que le pides**: "tengo una duda de…" en el chat también cuenta como duda (y si
+  es la tercera sobre lo mismo, te lo explica desde otro ángulo); "hazme unas preguntas" es un repaso rápido en el
+  chat, y "hazme un repaso visual", la página.
+- **Tus ejercicios y repasos se comprueban solos** antes de guardarse: si una página tuviera un error que la
+  dejara sin funcionar, o necesitara internet, tu profesor lo arregla antes de dártela.
+- **Tu profesor te pide todavía menos permisos.** Ya no te abre el repaso en el navegador: te dice dónde está, en
+  Obsidian, y lo abres con doble clic.
+- **Puedes aceptar los permisos una sola vez.** Con tu sí, tu profesor edita tus notas y usa sus herramientas sin
+  preguntarte a cada paso, solo dentro de tu curso (también desde Obsidian). Lo puedes quitar cuando quieras.
+  Con Claude Code y con Codex.
+- **Con Codex, tu profesor ya puede preparar una clase en segundo plano** mientras seguís con otra cosa.
+- **Cuando tu profesor prepara una clase en segundo plano, trabaja sin internet**: nada de lo que lee en tu
+  material puede salir de tu ordenador ni traerle instrucciones de fuera.
+- **Si ya tenías tu curso:** tu profesor te ofrece aceptar los permisos una vez (`permisos.js --ver` y, con tu sí,
+  `--aplicar`).
+
 ## 0.23.0
 - **Nueva hoja, mi-perfil**, en inicio: lo que tu profesor sabe de ti, con la prueba de cada cosa. Cómo te
   explica y por qué, qué te cuesta, qué te entró a la primera y cómo vas: tus exámenes intento a intento, tus

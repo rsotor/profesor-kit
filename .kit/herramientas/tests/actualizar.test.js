@@ -98,7 +98,7 @@ test('un curso que ya tenía errores se actualiza igual (no empeora)', () => {
 
 test('.kit/adaptadores/ viaja con el motor; config/adaptador-llm.json (local, del alumno) no se toca', () => {
   const v = require('../lib/vault');
-  const local = JSON.stringify({ comando: 'codex-beta', skills: '.mi-carpeta/skills' });
+  const local = JSON.stringify({ id: 'claude-code', comando: 'codex-beta', skills: '.mi-carpeta/skills' });
   const { raiz, origen } = montar({ extraCurso: { 'config/adaptador-llm.json': local } });
   assert.ok(fs.existsSync(path.join(origen, '.kit', 'adaptadores', 'claude-code.json')), 'el kit real trae el adaptador de Claude Code');
   assert.equal(actualizar({ raiz, origen }).actualizado, true);
@@ -269,7 +269,7 @@ test('la versión publicada es la última release (etiqueta vX.Y.Z), y se descar
   const conRelease = gh(args => args[0] === 'api' ? { ok: true, salida: 'v0.20.0' } : { ok: true, salida: '' });
   assert.equal(etiquetaPublicada('rsotor/profesor-kit', conRelease), 'v0.20.0');
   assert.equal(versionPublicada('rsotor/profesor-kit', conRelease), '0.20.0');
-  const tmp = descargar('rsotor/profesor-kit', conRelease);
+  const tmp = descargar('rsotor/profesor-kit', null, conRelease);
   assert.ok(fs.existsSync(tmp));
   fs.rmSync(tmp, { recursive: true, force: true });
   const clon = llamadas.find(a => a[0] === 'repo');
@@ -278,7 +278,11 @@ test('la versión publicada es la última release (etiqueta vX.Y.Z), y se descar
 
   assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: false, salida: 'HTTP 404' }))), null, 'sin release o sin red: null');
   assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: true, salida: 'main' }))), null, 'solo vale una etiqueta de versión');
-  assert.throws(() => descargar('x/y', gh(() => ({ ok: false, salida: '' }))), /última versión publicada/);
+  assert.throws(() => descargar('x/y', null, gh(() => ({ ok: false, salida: '' }))), /última versión publicada/);
+  const pedida = descargar('rsotor/profesor-kit', 'v0.19.0', conRelease);
+  fs.rmSync(pedida, { recursive: true, force: true });
+  const ultimo = llamadas[llamadas.length - 1];
+  assert.equal(ultimo[ultimo.indexOf('--branch') + 1], 'v0.19.0', 'con etiqueta, descarga esa y no pregunta cuál es la última');
 });
 
 test('con un posible secreto en el curso no actualiza ni hace el commit previo: primero hay que quitarlo', () => {
@@ -327,4 +331,35 @@ test('el guardado final usa el guardar.js del motor nuevo, no el que ya estaba c
   assert.equal(actualizar({ raiz, origen }).actualizado, true);
   assert.equal(git(raiz, 'show', 'HEAD:estudio/marca-v2.md'), 'v2');
   assert.equal(git(raiz, 'status', '--porcelain'), '');
+});
+
+test('compara qué errores hay, no cuántos: arreglar uno y romper otro distinto también revierte', () => {
+  // El curso ya tiene un enlace roto en s01; la migración lo arregla y rompe otro en el mapa: mismo número de errores.
+  const cambia = `module.exports = { descripcion: 'cambia', migrar(raiz) {
+    const fs = require('node:fs'), path = require('node:path');
+    fs.writeFileSync(path.join(raiz, 'estudio/sesiones/s01-intro.md'), '---\\ntipo: sesion\\n---\\n[[alfa]]\\n');
+    fs.appendFileSync(path.join(raiz, 'estudio/mapa-del-curso.md'), '[[otro-roto]]\\n');
+  } };`;
+  const { raiz, origen } = montar({ motorNuevo: { version_datos: 2 }, extraOrigen: { '.kit/herramientas/migraciones/002-cambia.js': cambia } });
+  escribir(raiz, { 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
+  const r = actualizar({ raiz, origen });
+  assert.equal(r.motivo, 'revertido');
+  assert.match(r.detalle, /mapa-del-curso/);
+  assert.equal(leer(raiz, 'AGENTS.md'), 'reglas v1');
+});
+
+test('migración 005: el adaptador propio del curso gana el id de su asistente; sin tocar nada más, y es idempotente', () => {
+  const m = require('../migraciones/005-adaptador-con-id');
+  const raiz = cursoTemporal({ 'config/ajustes.json': JSON.stringify({ llm: 'codex-cli', version_datos: 4 }),
+    'config/adaptador-llm.json': JSON.stringify({ comando: 'codex', skills: '.agents/skills' }, null, 2) });
+  m.migrar(raiz);
+  m.migrar(raiz);
+  assert.deepEqual(JSON.parse(leer(raiz, 'config/adaptador-llm.json')), { id: 'codex-cli', comando: 'codex', skills: '.agents/skills' });
+  const conId = cursoTemporal({ 'config/adaptador-llm.json': '{"id":"otro","comando":"x"}' });
+  m.migrar(conId);
+  assert.equal(leer(conId, 'config/adaptador-llm.json'), '{"id":"otro","comando":"x"}', 'si ya lo tiene, no se toca');
+  const roto = cursoTemporal({ 'config/adaptador-llm.json': '{ roto' });
+  m.migrar(roto);
+  assert.equal(leer(roto, 'config/adaptador-llm.json'), '{ roto', 'uno roto no se arregla a ciegas: lo dice diagnostico.js');
+  m.migrar(cursoTemporal());   // sin adaptador propio: nada
 });

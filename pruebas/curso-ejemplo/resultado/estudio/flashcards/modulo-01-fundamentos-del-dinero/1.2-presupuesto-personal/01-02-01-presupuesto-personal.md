@@ -4,23 +4,24 @@ sesion: 01-02-01-presupuesto-personal
 ---
 # Flashcards · 01-02-01-presupuesto-personal
 
-> Se responde mentalmente antes de desplegar.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Todos los meses gastas algo en ocio. ¿Es un gasto fijo? ¿Por qué?**
+**Todos los meses gastas algo en ocio, más o menos parecido. ¿Es un gasto fijo? *(sí o no, y por qué en una frase)***
 > [!success]- Respuesta
-> No, es variable. Que lo gastes siempre no lo hace fijo: la cifra la decides tú cada mes.
+> No, es variable: la cifra exacta la decides tú cada mes. Que gastes algo siempre no lo hace fijo.
 
-**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso montas el presupuesto?**
+**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué cifra de ingresos conviene presupuestar? *(en una frase)***
 > [!success]- Respuesta
-> Con la media de los últimos 6-12 meses, no con el mejor mes.
+> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
 
-**Ingresas 1.000,00 € y ahorras 200,00 €. ¿Cuál es tu tasa de ahorro?**
+**Ana ahorra 400,00 € y Luis también. ¿Ahorran igual de bien? *(en una frase)***
 > [!success]- Respuesta
-> 200 ÷ 1.000 × 100 = 20 % mensual.
+> No se sabe: falta cuánto ingresa cada uno. La tasa de ahorro (ahorro ÷ ingresos × 100) es la que permite comparar.
 
-**Gastas 800,00 € al mes. ¿Cuánto es un colchón de 6 meses?**
+**Tus gastos son 1.000,00 € al mes. ¿Cuánto es un colchón de 5 meses? *(una cifra)***
 > [!success]- Respuesta
-> 800,00 € × 6 = 4.800,00 €.
+> 5 × 1.000,00 € = 5.000,00 €.
 
 ---
-Conceptos que cubren: [[presupuesto]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[gastos-fijos-y-variables]] · [[ingreso-medio]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

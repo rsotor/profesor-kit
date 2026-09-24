@@ -1,6 +1,6 @@
 ---
 name: examen
-description: Use when the student wants to test themselves before an exam or check what they have mastered across topic blocks. Triggers on "/examen", "vamos a validar los bloques 1 y 2", "ponme un test", "prepárame el examen".
+description: Use when the student wants a written exam or test to check what they have mastered across topic blocks. Triggers on "/examen", "vamos a validar los bloques 1 y 2", "ponme un test", "prepárame el examen". Not for two or three quick questions in the chat ("hazme unas preguntas"): that is the warm-up in conversation, no skill.
 ---
 
 # Modo examen
@@ -70,7 +70,8 @@ Con este frontmatter, que es lo que lee `estudio/inicio.md`:
     tipo: examen
     unidad: 01-02          # prefijo de la unidad; si abarca varias, lista: [01-02, 01-03]
     fecha: 2026-10-02
-    nota:                  # sobre 10; se rellena al corregir
+    nota:                  # sobre 10; lo rellena examen.js al corregir
+    intentos: 0            # lo sube examen.js en cada corrección
     parcial: true          # solo en los tests de "lo que me falta"
     ---
 
@@ -118,24 +119,28 @@ Cuando te dé las respuestas:
    concepto solo cambia de estado si hay una respuesta suya que lo justifique:
    - acertó el mecanismo → `teoría ✅` · acertó el cálculo o supo aplicarlo → `aplicación ✅`
    - falló → `🟡`; falló por segunda vez → `🔴` (y entonces también el paso 3)
-6. **Guarda el intento aparte**, en `## Histórico de intentos` al final de la nota (créala la primera vez):
-   - una fila en `| Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |` (la nota, un número sobre
-     10, como en el frontmatter: `6,5`, no `6,5/10`);
-   - un bloque plegado `> [!example]- Intento N · <fecha> · tus respuestas y la corrección` con el veredicto y la
-     tabla `| # | Tu respuesta | Resultado | Por qué |`, con sus respuestas **literales**. La celda Resultado
-     **empieza siempre** por una de estas tres etiquetas, y detrás lo que quieras: `✅ Correcta` · `⚠️ Le falta:
-     <qué>` · `❌ Incorrecta` (también para una en blanco: `❌ Incorrecta (en blanco)`). Son los tres veredictos
-     de "Cuando preguntas para medir"; las herramientas leen la etiqueta.
-7. **Frontmatter:** `nota:` y `fecha:` son las de **este** intento (`nota` sobre 10, un número: `2`, nunca
-   `2/10`); `intentos:` sube en uno.
+6. **Registra el intento con la herramienta, no a mano.** Escribe con tu herramienta de ficheros
+   `correccion-examen.json`, en la raíz del curso, con lo que es juicio tuyo:
 
-   Para decidir si aprueba, mira `aprobado:` de `config/curso.md` (5 si no está) — no lo escribas en el
-   frontmatter del examen, esos tres campos son los únicos que le tocan.
-8. **Limpia el examen:** cada `✍️ **Tu respuesta:**` vuelve a quedar vacío. Las preguntas, las cifras, el orden
-   de las opciones y las soluciones **no cambian**: al repetirlo, el alumno compara intento a intento.
-9. **Si aprueba** (y no es un test), marca `estudiada: true` en las notas de sesión que cubría el examen: las de
-   su unidad y las de todas las unidades que cuelgan de ella. Es la única vez que el profesor marca esa casilla.
-10. Guarda:
+       { "nota": 6.5,
+         "veredicto": ["✅ Dominado → …", "⚠️ Hay que repasar → …", "🔴 Vuelve a la nota → …"],
+         "preguntas": [{ "resultado": "✅ Correcta", "por_que": "…" }, …] }
+
+   `nota`, un número sobre 10 (`6.5`, nunca `6,5/10`); `preguntas`, una por hueco y en orden, con `resultado`
+   empezando **siempre** por una de las tres etiquetas de "Cuando preguntas para medir" —`✅ Correcta` ·
+   `⚠️ Le falta: <qué>` · `❌ Incorrecta` (una en blanco: `❌ Incorrecta (en blanco)`)— y detrás lo que quieras.
+   Después:
+
+       node .kit/herramientas/examen.js --registrar <ruta del examen> --correccion correccion-examen.json
+
+   La herramienta copia sus respuestas **literales** a `## Histórico de intentos` (la fila y el bloque plegado
+   del intento), pone `nota`, `fecha` e `intentos` en el frontmatter, deja cada `✍️ **Tu respuesta:**` vacío otra
+   vez (las preguntas, cifras, opciones y soluciones no cambian: al repetirlo, compara intento a intento) y, si
+   aprueba un examen (no un test; el aprobado es `aprobado:` de `config/curso.md`, 5 si no está), marca
+   `estudiada: true` en las sesiones de su unidad y de las que cuelgan de ella: es la única vez que el profesor
+   marca esa casilla. Si algo no cuadra (un resultado de menos, una en blanco que no es incorrecta), no toca
+   nada y dice qué: arréglalo en el JSON y repite.
+7. Guarda:
 
     node .kit/herramientas/guardar.js "examen: <alcance>"
 

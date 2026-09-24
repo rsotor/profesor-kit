@@ -1,6 +1,6 @@
 ---
 name: dudas
-description: Use when the student wants their pending doubt markers reviewed and answered, the async channel for solo study. Triggers on "/dudas", "he dejado comentarios", "resuelve mis dudas", "revisa lo que he anotado".
+description: Use when the student has doubts, either left as markers in their notes while studying alone or asked right now in the chat about a concept. Triggers on "/dudas", "tengo dudas", "tengo una duda de <concepto>", "no entiendo <concepto>", "he dejado comentarios", "resuelve mis dudas", "revisa lo que he anotado".
 ---
 
 # Resolver las dudas pendientes
@@ -24,8 +24,13 @@ Ejecuta:
     node .kit/herramientas/comprobar.js
 
 Los avisos con regla `duda-pendiente` señalan los ficheros que tienen marcadores sin responder —
-es lo que sustituye a repasar el material a mano. Si no hay ninguno, dilo y termina. No hay nada
-más que hacer.
+es lo que sustituye a repasar el material a mano. Si no hay ninguno y la duda no te la ha hecho en el chat, dilo
+y termina.
+
+**Si te la hace en el chat** ("no entiendo X"), es una duda igual que un marcador: la respondes en la
+conversación (pasos 2 y 3: contexto y un ejemplo nuevo), la llevas a la nota si la mejora (paso 4, sin callout de
+duda: no había marcador) y **la apuntas en el registro** (paso 5, con `--prueba "chat, <fecha>"`): si no, el
+tercer tropiezo solo contaría las que deja por escrito.
 
 ### 2. Leer el contexto de cada una
 

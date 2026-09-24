@@ -71,6 +71,12 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   // que las skills existen de verdad en su carpeta. Sin adaptador para este LLM, no se puede verificar:
   // es un aviso, no un ✗, y dice cómo resolverlo.
   const adaptador = v.leerAdaptador(raiz, ajustes.llm);
+  // Un adaptador del curso de otro asistente (o sin id) no se usa: se dice, para que no parezca que se aplica.
+  const delCurso = v.leerAdaptadorDelCurso(raiz);
+  if (delCurso && delCurso.id !== ajustes.llm) {
+    anota('adaptador-del-curso', false, 'El adaptador propio del curso es de este asistente',
+      `config/adaptador-llm.json ${delCurso.id ? `es de "${delCurso.id}"` : 'no dice de qué asistente es (falta "id")'} y el curso usa "${ajustes.llm}": no se aplica. Si es de este, pon "id": "${ajustes.llm}"; si no, bórralo.`, false);
+  }
   if (adaptador && adaptador.skills) {
     anota('skills', existe(`${adaptador.skills}/sesion/SKILL.md`), 'Skills instaladas', 'Ejecuta instalar-skills.js (paso 6).');
   } else {
@@ -97,6 +103,16 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   }
 
   anota('obsidian', existe(`${v.CARPETA_ALUMNO}/.obsidian/workspace.json`), 'La carpeta estudio está abierta en Obsidian', 'Falta abrir la carpeta estudio como bóveda en Obsidian (paso 9).', false);
+  // Aceptar los permisos una vez es decisión del alumno (en /configurar), no un paso de la instalación: sin aceptar
+  // o sin soporte en su asistente, se informa; solo es un fallo si se quedó a medias o su fichero no se puede leer.
+  let permisos;
+  try { permisos = require('./permisos').estado(raiz); } catch (error) { permisos = { roto: error.message }; }
+  const titulo = permisos.roto ? 'Permisos aceptados una vez'
+    : !permisos.soportado ? `Permisos: se piden a cada paso (${permisos.motivo})`
+      : permisos.aplicado ? 'Permisos aceptados una vez (sin preguntar a cada paso, solo dentro del curso)'
+        : 'Permisos: se piden a cada paso (el alumno no los ha aceptado; su profesor se lo ofrece)';
+  anota('permisos', !permisos.roto && !permisos.parcial, titulo,
+    permisos.roto || 'Los permisos aceptados están a medias: repite node .kit/herramientas/permisos.js --aplicar (o --quitar).', false);
   const errores = comprobar(raiz).errores.length;
   anota('curso-sano', errores === 0, 'El curso está sano', `comprobar.js da ${errores} error(es): ejecútalo para verlos.`);
   return lista;

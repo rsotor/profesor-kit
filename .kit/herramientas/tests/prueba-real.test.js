@@ -278,3 +278,9 @@ test('markdownResumen: sección de permisos denegados, por paso; sin ninguno, lo
   assert.match(con, /## Permisos denegados\n\n- \*\*\/dudas\*\* · Bash: `sed -i s\/1\/2\/ config\/alumno\.md`\n/);
   assert.match(markdownResumen({ ...base, pasos: [] }), /## Permisos denegados\n\n- Ninguno\.\n/);
 });
+
+test('lineaDePaso: cada paso en una línea, con su resultado, lo que tardó y los permisos denegados', () => {
+  const { lineaDePaso } = require('../../../pruebas/prueba-real');
+  assert.equal(lineaDePaso({ paso: '/dudas', ok: true, duracionMs: 63700, detalle: 'ok', denegaciones: [] }), '  ✅ /dudas (64 s) — ok');
+  assert.equal(lineaDePaso({ paso: '/repaso', ok: false, duracionMs: 1000, detalle: 'sin html', denegaciones: [{}, {}] }), '  ❌ /repaso (1 s) — sin html · 2 permiso(s) denegado(s)');
+});

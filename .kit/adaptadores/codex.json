@@ -1,10 +1,39 @@
 {
+  "schema_version": 1,
+  "id": "codex",
   "comando": "codex",
   "skills": ".agents/skills",
   "puente": null,
   "permisos": {
-    "fichero": "~/.codex/rules/default.rules (fichero de usuario, fuera del curso; ruta relativa al perfil del alumno)",
+    "fichero": ".codex/rules/<nombre>.rules dentro del curso (si la carpeta es de confianza), o ~/.codex/rules/default.rules del usuario",
     "formato": "Una regla por herramienta, sin comodín: prefix_rule(pattern=[\"node\", \".kit/herramientas/<nombre>.js\"], decision=\"allow\")"
   },
-  "probado": "Windows 11 · Codex CLI 0.155.1 · 2026-09-23"
+  "aceptar_una_vez": {
+    "tipo": "codex",
+    "probado": "Windows · Codex CLI 0.156.1 · 2026-09-24 (issue #42): .codex/config.toml con la raíz del curso en writable_roots y reglas en .codex/rules/, desde la raíz y desde estudio/"
+  },
+  "probado": "Windows · Codex CLI 0.156.1 · 2026-09-24",
+  "segundo_plano": [
+    "exec",
+    "--ephemeral",
+    "--sandbox",
+    "workspace-write",
+    "-c",
+    "web_search=disabled",
+    "--ignore-user-config",
+    "-"
+  ],
+  "prompt_por_stdin": true,
+  "soporte": [
+    {
+      "sistema": "Windows",
+      "estado": "con-limitaciones",
+      "evidencia": "instalación, skills, permisos de una vez y segundo plano (codex exec, sin red) probados · Codex CLI 0.156.1 · 2026-09-24 (issue #42); sin prueba real completa, y la regla que hace preguntar por python sin comprobar con Python instalado"
+    },
+    {
+      "sistema": "macOS",
+      "estado": "experimental",
+      "evidencia": "sin prueba en macOS con Codex"
+    }
+  ]
 }

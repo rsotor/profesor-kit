@@ -138,7 +138,8 @@ function excluirEstadoDeGit(raiz) {
 
 const PROMPT_SEGUNDO_PLANO = 'Trabajas en segundo plano, sin el alumno delante de la pantalla: no saludes, '
   + 'no preguntes nada y no compruebes si hay una versión nueva del kit. Ante cualquier duda, la opción más '
-  + 'conservadora: déjala anotada como TODO en vez de preguntar. Al terminar, guarda.';
+  + 'conservadora: déjala anotada como TODO en vez de preguntar. Al terminar, guarda. Lo demás, en '
+  + '.kit/guias/segundo-plano.md ("Si trabajas en segundo plano").';
 
 function construirPrompt(ficheros, id) {
   const lista = ficheros.map(f => `estudio/inbox/${f}`).join(' y ');
@@ -237,7 +238,8 @@ function trabajar(raiz, id) {
     const estado = leerEstadoCrudo(dir);
     const ajustes = v.leerAjustes(raiz);
     const adaptador = v.leerAdaptador(raiz, ajustes.llm);
-    const modelo = ((adaptador.modelo_recomendado && adaptador.modelo_recomendado.modelo) || 'sonnet').toLowerCase();
+    // El id exacto que entiende el asistente, tal cual (issue #39, H09): ni un proveedor por defecto ni minúsculas.
+    const modelo = (adaptador.modelo_recomendado && adaptador.modelo_recomendado.id) || null;
     const plan = comoLanzar({ comando: adaptador.comando, segundoPlano: adaptador.segundo_plano, promptPorStdin: adaptador.prompt_por_stdin === true,
       prompt: construirPrompt(estado.ficheros, id), modelo });
     if (plan.error) throw new Error(plan.error);
@@ -278,12 +280,19 @@ function resolverEnWindows(comando, entorno) {
   return comando;
 }
 
+// Sin modelo (el adaptador no recomienda ninguno), el asistente usa el suyo por defecto: se quitan `{modelo}` y la
+// opción que lo precede (`--model {modelo}`).
+function sinModelo(segundoPlano) {
+  return segundoPlano.filter((a, i) => a !== '{modelo}' && !(a.startsWith('-') && segundoPlano[i + 1] === '{modelo}'));
+}
+
 function comoLanzar({ comando, segundoPlano, promptPorStdin, prompt, modelo, plataforma = process.platform, entorno = process.env }) {
-  if (!ARGUMENTO_LIMPIO.test(modelo)) return { error: `el modelo del adaptador no es válido: ${JSON.stringify(modelo)}` };
+  if (modelo !== null && modelo !== undefined && !ARGUMENTO_LIMPIO.test(modelo)) return { error: `el modelo del adaptador no es válido: ${JSON.stringify(modelo)}` };
   if (promptPorStdin && segundoPlano.some(a => a.includes('{prompt}'))) {
     return { error: 'el adaptador tiene prompt_por_stdin y a la vez {prompt} en segundo_plano: el prompt va por uno de los dos sitios, no por los dos' };
   }
-  const args = segundoPlano.map(a => a.replace('{modelo}', modelo).replace('{prompt}', prompt));
+  const plantilla = modelo ? segundoPlano : sinModelo(segundoPlano);
+  const args = plantilla.map(a => a.replace('{modelo}', modelo).replace('{prompt}', prompt));
   const entrada = promptPorStdin ? prompt : undefined;
   if (plataforma !== 'win32') return { ejecutable: comando, args, entrada };
   const resuelto = resolverEnWindows(comando, entorno);

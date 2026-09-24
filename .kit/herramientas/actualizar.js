@@ -8,6 +8,7 @@ const { ejecutar: ejecutarProceso, explicar } = require('./lib/proceso');
 const { guardar } = require('./guardar');
 const { escanearSecretos } = require('./lib/secretos');
 const { motivoRutaNoSegura } = require('./lib/rutas');
+const { spawnSync } = require('node:child_process');
 
 function validarMotor(ficheros) {
   for (const f of ficheros) {
@@ -26,11 +27,13 @@ function nodo(script, args, cwd) {
 // comprobar.js --json sale con el código 1 cuando el curso tiene errores: eso no es un fallo del proceso,
 // es su contrato (ver comprobar.js#cli). Lo que sí es un fallo real es que el proceso ni llegara a
 // arrancar (permiso denegado, comando inexistente): ahí no hay stdout que parsear, solo lo dice `motivo`.
-function contarErrores(dirKit, raiz) {
+// Devuelve cada error como "regla · fichero": se compara cuáles hay, no cuántos (issue #39, H10). Si no, arreglar
+// uno y romper otro distinto pasaría por "no empeora".
+function erroresDe(dirKit, raiz) {
   const r = nodo(path.join(dirKit, '.kit', 'herramientas', 'comprobar.js'), ['--json', '--raiz', raiz], raiz);
   if (['permiso', 'no-existe'].includes(r.motivo)) throw new Error(`comprobar.js falló: ${explicar(r)}`);
   try {
-    return JSON.parse(r.stdout).errores.length;
+    return JSON.parse(r.stdout).errores.map(e => `${e.regla} · ${e.fichero}`);
   } catch {
     throw new Error(`comprobar.js --json no devolvió un informe legible (llegaron ${r.stdout.length} bytes; el final: ${r.salida.slice(-300)})`);
   }
@@ -106,7 +109,7 @@ function actualizar({ raiz, origen }) {
   if (secretos.length) {
     return { actualizado: false, motivo: 'secreto', de, a, migraciones: [], detalle: `hay un posible secreto en ${[...new Set(secretos.map(x => x.fichero))].join(', ')}: quítalo antes de actualizar; no se toca nada` };
   }
-  const antes = contarErrores(origen, raiz);
+  const antes = erroresDe(origen, raiz);
   // No es una copia aparte: es un commit de lo que hubiera sin guardar, para poder volver exactamente aquí.
   // Si no se pudo guardar (git sin identidad, por ejemplo), no se sigue: la vuelta atrás borraría lo que no
   // llegó a guardarse, y eso es lo único que la actualización promete no tocar nunca.
@@ -147,8 +150,8 @@ function actualizar({ raiz, origen }) {
     if (hechas.length) v.escribirAjustes(raiz, { ...v.leerAjustes(raiz), version_datos: motorNuevo.version_datos });
 
     reinstalarSkills(raiz);
-    const despues = contarErrores(raiz, raiz);
-    if (despues > antes) throw new Error(`tras actualizar hay ${despues} errores (antes había ${antes})`);
+    const nuevos = erroresDe(raiz, raiz).filter(e => !antes.includes(e));
+    if (nuevos.length) throw new Error(`tras actualizar hay errores que antes no estaban: ${[...new Set(nuevos)].join('; ')}`);
   } catch (error) {
     restaurar(raiz, sha);
     reinstalarSkills(raiz);
@@ -180,17 +183,42 @@ function etiquetaPublicada(repo, ejecutar = gh) {
 // Sin sesión de `gh` o sin red, la consulta a la API falla igual que si `gh` no pudiera ni lanzarse
 // (sandbox) o no estuviera instalado: `motivo` (de proceso.js) distingue esos dos últimos casos, que no
 // son "sin sesión ni release" sino del entorno de quien lo ejecuta.
-function descargar(repo, ejecutar = gh) {
-  const consulta = consultaEtiqueta(repo, ejecutar);
-  if (!esEtiqueta(consulta)) {
-    const razon = ['permiso', 'no-existe'].includes(consulta.motivo) ? `: ${explicar(consulta)}` : ' (¿sesión de gh iniciada? ¿hay alguna release?)';
-    throw new Error(`No se pudo saber cuál es la última versión publicada del kit${razon}`);
+// Sin `etiqueta`, la última publicada (para --ver: su CHANGELOG trae las novedades de todas las intermedias).
+function descargar(repo, etiquetaPedida = null, ejecutar = gh) {
+  let etiqueta = etiquetaPedida;
+  if (!etiqueta) {
+    const consulta = consultaEtiqueta(repo, ejecutar);
+    if (!esEtiqueta(consulta)) {
+      const razon = ['permiso', 'no-existe'].includes(consulta.motivo) ? `: ${explicar(consulta)}` : ' (¿sesión de gh iniciada? ¿hay alguna release?)';
+      throw new Error(`No se pudo saber cuál es la última versión publicada del kit${razon}`);
+    }
+    etiqueta = consulta.salida;
   }
-  const etiqueta = consulta.salida;
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'profesor-kit-'));
   const r = ejecutar(['repo', 'clone', repo, tmp, '--', '--depth', '1', '--branch', etiqueta, '-q']);
   if (!r.ok) throw new Error(`No se pudo descargar el kit ${etiqueta}: ${explicar(r)}`);
   return tmp;
+}
+
+// Todas las releases publicadas (sin borradores ni versiones de prueba). null si no se puede saber.
+function listarReleases(repo, ejecutar = gh) {
+  const r = ejecutar(['api', `repos/${repo}/releases?per_page=100`, '--paginate', '--jq', '.[] | select((.draft or .prerelease) | not) | .tag_name']);
+  if (!r.ok) return null;
+  return r.salida.split(/\r?\n/).map(t => t.trim()).filter(Boolean);
+}
+
+// Las releases posteriores a la instalada, de la más vieja a la más nueva: los pasos que faltan.
+function pasosPendientes(actual, etiquetas) {
+  return etiquetas.filter(t => /^v\d+\.\d+\.\d+$/.test(t) && esMasNueva(t.slice(1), actual))
+    .sort((a, b) => (esMasNueva(a.slice(1), b.slice(1)) ? 1 : -1));
+}
+
+// El paso siguiente lo da el actualizar.js recién instalado, en un proceso nuevo: el de esa versión, que es el que
+// se probó al publicarla (prueba-actualizar: de la versión anterior a la nueva). Nunca el código que ya está en
+// memoria, que es el de la versión de antes.
+function continuarConLaNueva(raiz) {
+  const r = spawnSync(process.execPath, [path.join(raiz, '.kit', 'herramientas', 'actualizar.js'), '--aplicar'], { cwd: raiz, stdio: 'inherit' });
+  return r.status === null ? 1 : r.status;
 }
 
 function novedades(origen, versionActual) {
@@ -225,10 +253,36 @@ function comprobarNovedades(raiz, hoy = new Date().toISOString().slice(0, 10), c
   return `Hay una versión nueva del kit: tienes la ${actual} y está publicada la ${nueva}. Cuando quieras, pídeme "actualiza el kit".`;
 }
 
-// `descargarKit` se inyecta para poder probar el flujo sin red.
-function cli(args, raiz, descargarKit = descargar, consultar = versionPublicada) {
+// `--aplicar` sin `--origen` va versión a versión (nunca se salta ninguna): aplica la siguiente release y, si
+// quedan más, deja seguir al actualizar.js recién instalado. Así cada paso es uno que se probó al publicar.
+function aplicarSiguiente(raiz, descargarKit, { listar = listarReleases, continuar = continuarConLaNueva } = {}) {
+  const repo = v.leerMotor(raiz).repo;
+  const de = v.leerVersion(raiz);
+  const etiquetas = listar(repo);
+  if (!etiquetas) { console.log('No se pudo saber qué versiones hay publicadas (¿sin red o sin sesión de gh?). No se ha tocado nada.'); return 1; }
+  const pasos = pasosPendientes(de, etiquetas);
+  if (!pasos.length) { console.log(`Ya tienes la última versión (${de}).`); return 0; }
+  const origen = descargarKit(repo, pasos[0]);
+  try {
+    const r = actualizar({ raiz, origen });
+    if (!r.actualizado) {
+      console.log(`No se ha actualizado: todo sigue como estaba, en la ${r.de}. Motivo: ${r.detalle || r.motivo}`);
+      return 1;
+    }
+    const quedan = pasos.length - 1;
+    console.log(`Actualizado de ${r.de} a ${r.a}.${r.migraciones.length ? ` Datos migrados: ${r.migraciones.join(', ')}.` : ''}` +
+      (quedan ? ` ${quedan === 1 ? 'Queda 1 versión' : `Quedan ${quedan} versiones`}: sigo con la ${pasos[1].slice(1)}.` : ''));
+  } finally {
+    fs.rmSync(origen, { recursive: true, force: true, maxRetries: 3 });
+  }
+  return pasos.length > 1 ? continuar(raiz) : 0;
+}
+
+// `descargarKit` (y `secuencia`: listar y continuar) se inyectan para poder probar el flujo sin red.
+function cli(args, raiz, descargarKit = descargar, consultar = versionPublicada, secuencia = {}) {
   if (args.includes('--comprobar')) { const aviso = comprobarNovedades(raiz, undefined, consultar); if (aviso) console.log(aviso); return 0; }
   const i = args.indexOf('--origen');
+  if (i < 0 && args.includes('--aplicar')) return aplicarSiguiente(raiz, descargarKit, secuencia);
   const origen = i >= 0 ? path.resolve(args[i + 1]) : descargarKit(v.leerMotor(raiz).repo);
   try {
     const de = v.leerVersion(raiz);
@@ -254,4 +308,7 @@ function cli(args, raiz, descargarKit = descargar, consultar = versionPublicada)
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'actualizar.js');
 
-module.exports = { actualizar, restaurar, validarMotor, novedades, comprobarNovedades, fusionarGitignore, etiquetaPublicada, versionPublicada, descargar, cli };
+module.exports = {
+  actualizar, restaurar, validarMotor, novedades, comprobarNovedades, fusionarGitignore, etiquetaPublicada, versionPublicada,
+  descargar, listarReleases, pasosPendientes, cli,
+};

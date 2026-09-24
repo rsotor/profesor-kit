@@ -47,6 +47,21 @@ Se arreglaron síntomas uno a uno (la prueba ya pasa las reglas del curso y un e
   Además, el profesor encadena `guardar.js --empezar … ; sed …` en un comando: al denegarse, la línea "en curso"
   tampoco se escribe. Regla para `AGENTS.md`: cada herramienta del kit en su propio comando, sin encadenar.
 
+## Estado al cerrar el 2026-09-24 (noche) — leer esto primero
+
+- **0.23.0 publicada** (PR #43). **0.24.0 entera en el PR #44** (rama `actualizar-en-secuencia`), CI en verde, prueba
+  real 12/12 · 6/6 · 2 permisos denegados. **No mergear hasta añadir Codex** (decisión de Roberto: una sola release).
+- **Siguiente paso:** cuando llegue la respuesta de la **#42** (Windows con Codex: 7 tareas × 3 rondas en terminal y
+  Claudian, y las pruebas A/B/C del comentario), escribir con esos datos, sin inventar:
+  1. `.kit/adaptadores/codex.json`: `aceptar_una_vez` (hoy `{ pendiente: #42 }`) con un tipo nuevo en `permisos.js`
+     (`TIPOS`), `segundo_plano` si A funciona, y su `soporte` (Windows) con la evidencia.
+  2. `.kit/adaptadores/LEEME.md` (tabla y matriz; un test exige que coincidan) y `ESTANDARES.md` (lo de Codex).
+  3. Tests, push al PR #44, CI, y Roberto mergea → release automática. Después, comentario en la #39 (D3: H10,
+     H11, parte de H09, P8), enseñándoselo antes.
+- **Quedan para la 0.25.0:** H09 entero (prueba real con otra familia de asistentes; Codex del Mac sin sesión),
+  una herramienta para barrer casos de un ejercicio (último comando improvisado de la prueba real), el resto del
+  diagnóstico (media/baja: "2+ fallos", reparto del examen, `references/`), y lo que ya estaba (E1-E3, P7…).
+
 ## Siguiente paso: atacar la causa, y después una sola prueba real
 
 1. **Decidir con Roberto el alcance** (propuesta): meter en la 0.23.0 el mínimo que quita la causa, sin esperar a la

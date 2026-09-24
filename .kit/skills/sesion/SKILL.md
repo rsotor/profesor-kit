@@ -28,7 +28,8 @@ El identificador de la sesión sale de la sección "Cómo numera el centro las c
 adivines: un identificador mal puesto rompe el `## Historial` de todas las notas que toque.
 
 Fuente de los apuntes: fichero en `estudio/inbox/`, texto pegado, PDF, transcripción. Si es un PDF o una
-imagen, léelo antes de empezar. **Léelo entero:** la salida de una lectura larga se corta, y un fichero
+imagen, léelo antes de empezar. Un Word, PowerPoint o Excel se lee con `node .kit/herramientas/leer.js <fichero>`
+(saca también las notas del orador y las fórmulas del Excel); nunca con `python3` ni otro programa improvisado. **Léelo entero:** la salida de una lectura larga se corta, y un fichero
 leído a medias parece leído. Si la salida termina a mitad de una frase o de una diapositiva, sigue leyendo
 desde ahí (por páginas o por tramos) hasta el final, y solo entonces empieza a escribir. Si un tramo no
 se deja leer, dilo: no des por hecho lo que no has visto.
@@ -105,7 +106,7 @@ curso no tiene estructura, va directamente en `estudio/sesiones/`. Las flashcard
 clase van en la **misma carpeta de unidad** dentro de su tipo, y **su nombre empieza por el id de la
 sesión** (`01-02-04-van-o-tir.html`, no `van-o-tir.html`): así `organizar.js` sabe de quién son aunque
 sirvan a varios conceptos. Es un **mapa, no
-contenido**: ~15-20 líneas.
+contenido**: corto, y aparte las secciones fijas de la plantilla (Cobertura, Auditoría, Para pensarlo despacio).
 
 1. **El nombre sale de `config/curso.md`.** Usa números a dos dígitos para que ordene bien en el
    explorador de ficheros: con uno solo, `9` ordena después de `14`.
@@ -139,7 +140,8 @@ la escribe `guardar.js`. Si la sesión es de una unidad que no está en `config/
 
 ### 5. Flashcards
 
-`estudio/flashcards/<id-de-sesion>.md`, desde `.kit/plantillas/flashcards.md`. El número lo marca
+`estudio/flashcards/<carpeta de su unidad>/<id-de-sesion>-tema.md` (la misma carpeta de unidad que la sesión,
+punto 4), desde `.kit/plantillas/flashcards.md`. El número lo marca
 `flashcards_por_sesion` de `config/profesor.md`. Prioriza lo que sea carne de examen y los
 errores típicos.
 

@@ -49,7 +49,7 @@ test('el comando del adaptador (config/adaptador-llm.json o .kit/adaptadores/<ll
   assert.match(fs.readFileSync(path.join(carpetaBin, 'geo'), 'utf8'), /exec ese-llm "\$@"/);
 
   const raiz2 = cursoTemporal({ 'config/ajustes.json': JSON.stringify({ llm: 'codex-cli' }),
-    'config/adaptador-llm.json': JSON.stringify({ comando: 'codex-beta' }) });
+    'config/adaptador-llm.json': JSON.stringify({ id: 'codex-cli', comando: 'codex-beta' }) });
   crearAtajo({ raiz: raiz2, nombre: 'quimica', carpetaBin, plataforma: 'darwin', entorno: entornoCon(carpetaBin) });
   assert.match(fs.readFileSync(path.join(carpetaBin, 'quimica'), 'utf8'), /exec codex-beta "\$@"/);
 });

@@ -119,7 +119,7 @@ test('con la nota vieja (config/adaptacion-llm.md) y sin el JSON nuevo, el aviso
 test('otro LLM con adaptador propio del curso (config/adaptador-llm.json): comprueba su carpeta de skills de verdad', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado({ llm: 'codex-cli' });
   fs.rmSync(path.join(raiz, '.claude'), { recursive: true });
-  escribir(raiz, { 'config/adaptador-llm.json': JSON.stringify({ comando: 'codex', skills: '.codex/skills', puente: null, permisos: null, probado: 'Windows · 2026-09-23' }) });
+  escribir(raiz, { 'config/adaptador-llm.json': JSON.stringify({ id: 'codex-cli', comando: 'codex', skills: '.codex/skills', puente: null, permisos: null, probado: 'Windows · 2026-09-23' }) });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), ['skills']);
   escribir(raiz, { '.codex/skills/sesion/SKILL.md': 'x' });
   assert.deepEqual(fallos(diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() })), []);
@@ -160,4 +160,17 @@ test('diagnóstico: si el entorno no deja ejecutar git, lo dice en una línea y 
     assert.match(git.arreglo, /fuera de ese entorno/);
     assert.ok(lista.find(c => c.id === 'atajo'), 'sigue con el resto');
   } finally { g.esRepo = original; }
+});
+
+test('permisos: sin aceptar no es un fallo (es decisión del alumno); a medias, sí, con su arreglo', () => {
+  const { raiz, carpetaBin, entorno } = cursoInstalado();
+  escribir(raiz, { '.kit/adaptadores/claude-code.json': JSON.stringify({ ...ADAPTADOR_CLAUDE, aceptar_una_vez: { tipo: 'claude-code' } }) });
+  const sinAceptar = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() });
+  assert.deepEqual(fallos(sinAceptar), []);
+  assert.match(sinAceptar.find(c => c.id === 'permisos').texto, /no los ha aceptado/);
+  require('../permisos').aplicar(raiz);
+  fs.rmSync(path.join(raiz, '.claude', 'settings.local.json'));
+  const aMedias = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador() });
+  assert.deepEqual(fallos(aMedias), ['permisos']);
+  assert.match(aMedias.find(c => c.id === 'permisos').arreglo, /permisos\.js --aplicar/);
 });

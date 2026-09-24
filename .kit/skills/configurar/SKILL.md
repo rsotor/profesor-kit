@@ -217,6 +217,12 @@ Presenta al profesor en **cinco líneas**: cómo es · por dónde empieza · qu�
 desde cero · cómo dejarle dudas. El alumno puede corregir cualquier cosa; si corrige, actualiza el
 fichero que toque.
 
+### Los permisos, una vez
+
+Ejecuta `node .kit/herramientas/permisos.js --ver` y cuéntale lo que dice en dos o tres frases: con su sí, dejas
+de pedirle permiso a cada paso, solo dentro de su curso, y lo puede quitar cuando quiera. Con su sí,
+`permisos.js --aplicar`. Si dice que no, o que su asistente aún no sabe, sigue: preguntarás como hasta ahora.
+
 ### La hoja para otro día
 
 Antes de guardar, escribe **`estudio/como-usar-tu-profesor.md`** a partir de

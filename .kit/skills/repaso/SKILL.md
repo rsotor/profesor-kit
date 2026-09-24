@@ -1,6 +1,6 @@
 ---
 name: repaso
-description: Use when the student wants a visual review of a block or a concept, as a local web page instead of markdown. Triggers on "/repaso", "hazme un repaso visual", "repasa este bloque", "quiero verlo en una página web".
+description: Use when the student wants a visual review page of a block or a concept, as a local web page instead of markdown. Triggers on "/repaso", "hazme un repaso visual", "hazme una página de repaso", "quiero verlo en una página web". Not for a quick oral review in the chat ("¿repasamos?", "hazme unas preguntas"): that is the warm-up in conversation, no skill.
 ---
 
 # Repaso visual
@@ -28,8 +28,8 @@ se crea uno segundo para el mismo alcance.
 - `estudio/inicio.md` — las sesiones del alcance, y la carpeta de su unidad en `estudio/sesiones/`
 - Las notas de `estudio/conceptos/` que enlacen con ellas (las notas enteras, no solo los títulos)
 - `estudio/flashcards/` del alcance
-- `config/alumno.md` — los conceptos marcados `dificultad: 3` en su frontmatter van primero
-  y con más aire
+- Los conceptos con `dificultad: 3` en el frontmatter de su nota, y lo que `config/alumno.md` dice que le cuesta:
+  van primero y con más aire
 
 ### 3. Construir la página
 
@@ -53,12 +53,13 @@ mal escrita —arregla la nota, no la página.
 Si `lente` está activada en `config/profesor.md`, añade al final una sección aparte con esa
 lectura; nunca decide qué se explica ni cuánto, y nunca puntúa.
 
-### 4. Generarlo y abrirlo
+### 4. Generarlo
 
-Escribe el fichero en su carpeta (ver el punto 1) y ábrelo en el navegador del alumno:
+Escribe el fichero en su carpeta (ver el punto 1) con tu herramienta de ficheros. `comprobar.js` compila su JS y
+avisa si carga algo de internet: lo que diga, se arregla antes de guardar.
 
-- Mac: `open <ruta del fichero>`
-- Windows: `start <ruta del fichero>`
+No lo abras tú (`open`, `start`…): es un comando distinto en cada sistema y pide permiso. Dile dónde está: en
+Obsidian, en la carpeta **repasos**, y se abre con doble clic.
 
 ### 5. Cerrar
 
@@ -70,3 +71,6 @@ El repaso es un fichero del alumno como cualquier otro: se guarda.
 
 Dile en una línea qué alcance cubre la página y cuántos conceptos, ejercicios y flashcards
 incluye. Nada más —la página se explica sola o está mal hecha.
+
+Y cierra con una línea `Del kit: nada` o `Del kit: <qué>` (algo que no es de este curso ni de este alumno; si no es
+"nada", sigue "Feedback al kit" de `AGENTS.md`).

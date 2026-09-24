@@ -95,8 +95,9 @@ pesan causas entre sí, no hay ningún número que mover—.
 
 ### 5. Verificarlo — no es opcional
 
-1. Si hay código, comprueba que no tiene errores de sintaxis (`node --check` sobre el JS
-   extraído). Un error de sintaxis deja la página muerta y en silencio.
+1. Si hay código, `node .kit/herramientas/comprobar.js` compila el JS de cada página (sin ejecutarlo) y da el
+   error `ejercicio-con-errores` con su línea. Un error de sintaxis deja la página muerta y en silencio. No lo
+   compruebes extrayendo el JS con comandos (`sed`, `node --check`): pide permiso, y sin nadie delante se deniega.
 2. **Reproduce el resultado fuera del ejercicio** y compáralo con la nota del concepto. Si
    discrepan, **manda la nota.**
 3. Si los casos son aleatorios, **barre unos miles** y comprueba que la respuesta marcada
@@ -114,8 +115,9 @@ sitios a mano, y `node .kit/herramientas/comprobar.js` valida que no falte el pr
    declara y cada uno explica qué se ve *desde su lado* (no se copia el mismo párrafo).
 2. **Ejercicio → concepto**: el ejercicio enlaza de vuelta a la nota o notas, no solo a la
    sesión de la que salió.
-3. **`estudio/ejercicios/<id-de-sesion>.md`** de la sesión de la que salga, con su versión a mano. Si
-   nace suelto, va a `estudio/ejercicios/extra.md`.
+3. **`estudio/ejercicios/<carpeta de su unidad>/<id-de-sesion>-tema.md`** de la sesión de la que salga (la misma
+   carpeta de unidad que la sesión, ver `/sesion`), con su versión a mano. Si nace suelto, va a
+   `estudio/ejercicios/extra.md`.
 
 `estudio/ejercicios/_index.md` **se escribe solo al guardar**, con una fila en las dos tablas —por ejercicio
 y por concepto— por cada `ejercicio:` del punto 1, y *qué se descubre fallándolo* sale del `## Practícalo`
@@ -137,3 +139,6 @@ Si `comprobar.js` da errores, se arreglan antes de guardar.
 
 Dile en una línea qué ejercicio hay y **qué se descubre fallándolo**. Nada más —el ejercicio
 se explica solo o está mal hecho.
+
+Y cierra con una línea `Del kit: nada` o `Del kit: <qué>` (algo que no es de este curso ni de este alumno; si no es
+"nada", sigue "Feedback al kit" de `AGENTS.md`).

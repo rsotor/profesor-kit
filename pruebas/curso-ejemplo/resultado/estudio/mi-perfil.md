@@ -26,43 +26,23 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 ### Conceptos que te costaron
 
-- **Colchón financiero:** pidió otro ejemplo sin decir qué parte no entendía. Se le dio un caso de mes
-  flojo con la diferencia gastos − ingresos (600,00 €); pendiente saber si eso lo desbloqueó. —
-  *duda en conceptos/colchon-financiero.md, 2026-09-24*
-
-- **Liquidez:** en el examen del módulo 1 dijo que un piso es muy líquido "porque vale muchísimo": confunde
-  que algo valga mucho con que se convierta rápido en dinero. Es la segunda vez que aparece (ya había una
-  duda). — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24.md, pregunta 7*
-- **Presupuesto con ingresos irregulares:** en la pregunta 9 presupuestó con el mejor mes (2.000,00 €) en
-  vez de con la media (1.500,00 €), aunque en la 10 sí explicó por qué eso falla. Sabe el porqué, pero no
-  lo aplica al elegir la cifra. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24.md, preguntas 9 y 10*
-
-- **Gastos fijos y variables (aplicación):** clasificó como variable un alquiler de 700,00 € que se repite
-  cada mes y solo sube una vez al año con el IPC; es fijo. Un solo fallo y en la teoría sí acertó (examen
-  del módulo 1), así que se apunta como tropiezo al aplicar, no como hueco del concepto. — *examen:
-  estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24-correccion.md, pregunta 5*
-- **Tasa de interés sin periodo:** ante "un 2 % de interés cada mes" contestó "2 %", sin decir que es
-  mensual, cuando la pregunta pedía el periodo. Un solo caso; **TODO:** volver a comprobarlo cuando se
-  procese el módulo 2 (interés), que aún no tiene nota. — *examen:
-  estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24-correccion.md, pregunta 4*
+- **liquidez**: dice que un piso es muy líquido porque «vale mucho»; confunde valor con facilidad de convertirlo en dinero (aunque en la pregunta 5 sí supo elegir a Ana). — *examen del módulo 1, pregunta 6*
+- **inflacion**: da por inflación la subida de un solo precio (el aguacate, +40 % anual); no distingue una subida puntual de la subida general y sostenida. — *examen del módulo 1, pregunta 8*
+- **gastos-fijos-y-variables**: propone recortar del alquiler (fijo) en un mes flojo en lugar de los gastos variables. — *examen del módulo 1, pregunta 14*
+- **periodo de una tasa**: da la tasa de ahorro sin su periodo (25 %, no 25 % mensual) aunque la pregunta lo pedía. — *examen del módulo 1, preguntas 15 y 16*
+- **Sin evaluar**: las preguntas 11 (presupuestar con la media) y 18 (colchón de un freelance) las dejó en blanco; no hay respuesta, así que no se apunta como hueco. — *examen del módulo 1, preguntas 11 y 18*
 
 ### Errores que se repiten
 
-- **Colchón financiero:** en el examen del módulo 1 no supo calcular cuántos meses flojos aguanta (dio 4
-  en vez de 10: dividió el colchón entre los gastos completos, no entre lo que falta cada mes) y dejó en
-  blanco qué va primero, el viaje o el colchón. Sí sabe calcular el colchón objetivo y explicar por qué
-  con ingresos irregulares hace falta más. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24.md, preguntas 15 y 17*
-
-- **Colchón financiero (de nuevo en blanco):** dejó sin contestar cuántos meses de gastos recomienda el
-  curso con nómina fija. No se cambia su estado en el progreso (una respuesta en blanco no prueba nada),
-  pero ya es la segunda vez que deja en blanco una pregunta de este concepto (la otra fue la 17 del examen
-  del módulo 1). — *examen:
-  estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24-correccion.md, pregunta 6*
+- **gastos-fijos-y-variables**: segundo fallo seguido. Primero propuso recortar el alquiler (fijo) en un mes flojo; ahora clasifica el alquiler como variable porque sube una vez al año con el IPC. Confunde «cambia alguna vez» con «lo decides tú cada mes». — *examen del módulo 1, pregunta 14; test 01-examen-2026-09-24-correccion, pregunta 5*
+- **periodo de una tasa**: vuelve a dar la cifra sin su periodo (2 %, no 2 % mensual) cuando la pregunta lo pedía. — *examen del módulo 1, preguntas 15 y 16; test 01-examen-2026-09-24-correccion, pregunta 4*
+- **liquidez** (matiz): ahora explica bien la idea (dinero atado que no llega a tiempo), pero no dio el nombre cuando la pregunta lo pedía. — *test 01-examen-2026-09-24-correccion, preguntas 2 y 3*
+- **Sin evaluar**: la pregunta 6 (meses de colchón con nómina fija) la dejó en blanco; no se apunta como hueco. — *test 01-examen-2026-09-24-correccion, pregunta 6*
 
 ## Lo que te entró a la primera
 
-- **Trueque, funciones del dinero, inflación, gastos fijos y variables:** acertó todas sus preguntas del
-  examen del módulo 1, incluidas las de explicar el porqué. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24.md, preguntas 1-6 y 11*
+- **funciones-del-dinero** y **trueque**: acertó las cinco preguntas (1, 2, 3, 4 y 9), la explicación de la 3 con sus palabras. — *examen del módulo 1*
+- **ingreso-medio**, **colchon-financiero** (el cálculo) y **tasa-de-ahorro** (el cálculo): cifras correctas a la primera. — *examen del módulo 1, preguntas 10, 17, 15 y 16*
 
 ## Tu evolución
 
@@ -70,7 +50,7 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 | Examen | Intentos | Último |
 |---|---|---|
-| [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24\|Examen 01]] | 7,4 (2026-09-24) | ✅ aprobado |
+| [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24\|Examen 01]] | 6,4 (2026-09-24) | ✅ aprobado |
 
 ### Conceptos, por bloque
 
@@ -78,13 +58,14 @@ Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces 
 
 | Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |
 |---|---|---|
-| Módulo 1 | 6 · 1 · 0 · 1 | 2 · 3 · 0 · 3 |
-| Módulo 2 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
+| Bloque 1.1 | 3 · 1 · 0 · 1 | 1 · 0 · 0 · 4 |
+| Bloque 1.2 | 0 · 0 · 1 · 4 | 3 · 1 · 0 · 1 |
+| Bloque 2.1 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
 
 ### Donde más dudas
 
 - colchon-financiero: 1 duda (última: 2026-09-24 · conceptos/colchon-financiero.md, 2026-09-24)
-- liquidez: 1 duda (última: 2026-09-24 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-09-24)
+- funciones-del-dinero: 1 duda (última: 2026-09-24 · sesiones/01-01-01-el-dinero-y-sus-funciones.md, 2026-09-24)
 
 ## Cambios en cómo te explico
 

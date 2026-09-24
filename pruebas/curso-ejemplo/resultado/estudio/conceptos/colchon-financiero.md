@@ -1,85 +1,78 @@
 ---
 tipo: concepto
-bloques: ["Módulo 1"]
+bloques: ["1.2"]
 visto_en: ["01-02-01-presupuesto-personal"]
-dificultad: 3
-requiere: [liquidez, presupuesto]
-alias: [fondo de emergencia, colchón, meses de gastos cubiertos]
+dificultad: 2
+requiere: [presupuesto, liquidez, gastos-fijos-y-variables]
+alias: [colchón, fondo de emergencia]
 tags: []
-ejercicio: 01-02-01-colchon-en-un-mes-flojo
+ejercicio: 01-02-01-colchon-racha-floja
 ---
 # Colchón financiero
 
-> **En una frase:** dinero líquido guardado aparte para cubrir tus gastos si un mes ingresas poco o surge un imprevisto, y que se mide en meses de gastos cubiertos.
+> **En una frase:** Dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o llega un imprevisto, medido en meses de gastos.
 
 ## El problema
 
-Un mes entran menos ingresos de lo previsto, o se estropea algo. Sin reserva, esos gastos se pagan
-con deuda o dejando de pagar otra cosa.
+Un mes sin ingresos o un imprevisto obliga a endeudarte o a vender algo con prisas. El colchón evita esa
+situación.
 
 ## El ejemplo
 
-Tus gastos son de 800,00 € al mes. Un colchón de 3 meses son 800,00 € × 3 = **2.400,00 €**. Tiene
-que ser dinero [[liquidez|líquido]]: si lo necesitas en un mes flojo, no puedes esperar a vender nada.
+Con los 1.195,00 € de gastos del mes de clase, un colchón de 3 meses son 3 × 1.195,00 € = **3.585,00 €**.
 
-Con ingresos irregulares se apunta más alto: **5-6 meses** en vez de 3. Con 800,00 € de gastos, 6
-meses son 4.800,00 €.
+Uno de 6 meses serían 7.170,00 €.
+
+> [!warning] Cifra en revisión
+> Con los gastos de la hoja (1.222,00 €), 3 meses serían 3.666,00 €. Ver **Pendiente** de la sesión.
 
 ## La fórmula
 
-$$ \text{colchón objetivo} = \text{gastos mensuales} \times \text{meses que quieres cubrir} $$
-
-Los gastos de un mes por el número de meses de margen que buscas.
+$$ \text{colchón} = \text{meses de cobertura} \times \text{gastos mensuales} $$
 
 ## El error típico
 
-Ahorrar para otra cosa antes de tener colchón. Según la clase, el colchón es el primer objetivo: sin
-él, un mes flojo te obliga a tocar lo que apartaste para otro fin.
+> [!info] Ampliación fuera de los apuntes
+> Guardarlo en algo que no se pueda usar ya (poca [[liquidez]]): un colchón que hay que vender para usarlo
+> no cumple su función. Y guardarlo quieto lo recorta la [[inflacion]]; eso se verá en el módulo 2.
 
 ## Practícalo
 
-→ **[El colchón en un mes flojo](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-en-un-mes-flojo.html)**
+→ **[Una racha floja](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-racha-floja.html)**
 
-Mueve los gastos, el colchón, lo que ingresas en un mes flojo y cuántos meses seguidos dura. Lo que
-debería sorprender es que si en el mes flojo aún ingresas algo, el colchón dura más meses que
-"colchón ÷ gastos".
+Mueve lo que facturas en los meses flojos y la duración de la racha. Lo que debería sorprender: el colchón
+dura más meses de los que dice su cobertura, porque solo tapa la diferencia entre gastos y facturación, no
+los gastos enteros.
 
-→ **[¿Cuánto paga el colchón?](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-cuanto-paga-el-colchon.html)**
+## Visto desde tus ingresos irregulares
 
-Tres casos con opciones: en cada uno cambia lo que ingresas en el mes flojo. Lo que debería sorprender
-es que "colchón ÷ gastos" solo da la respuesta cuando no entra nada.
-
-> [!info] Ampliación fuera de los apuntes
-> **Visto desde tus ingresos irregulares:** tu colchón no tiene que cubrir el gasto entero, sino la
-> diferencia entre lo que gastas y lo que ese mes llega a entrar. Por eso el ejercicio deja mover el
-> ingreso del mes flojo.
+Con nómina fija se recomiendan unos 3 meses; con ingresos irregulares, 5-6 meses (dato de la clase). La
+razón: un mes flojo no es raro en tu caso, es lo esperable.
 
 ## Relacionados
 
 - [[liquidez]] — el colchón tiene que poder gastarse ya
-- [[presupuesto]] — de él salen los gastos mensuales que hay que cubrir
-- [[gastos-fijos-y-variables]] — los fijos son lo que sí o sí hay que cubrir
-- [[inflacion]] — un colchón parado pierde poder de compra con el tiempo
+- [[gastos-fijos-y-variables]] — de ellos sale la cifra mensual a cubrir
+- [[inflacion]] — lo que le pasa al dinero guardado quieto
 
 ## Historial
 
-- **01-02-01-presupuesto-personal** · primera vez
+- **01-02-01** · primera vez
 
 > [!question]- Duda · 2026-09-24
 > no entiendo bien esta parte, ¿me lo explicas con otro ejemplo?
 >
-> **Respuesta:** Otro caso, ahora de un mes flojo de verdad. Tus gastos son de 1.000,00 € al mes y en
-> un mes flojo solo facturas 400,00 €.
+> **Respuesta:** no decías qué parte, así que va otro ejemplo de la idea entera, con tu caso. Supón unos
+> gastos de **1.000,00 €** al mes y un colchón de 5 meses: 5 × 1.000,00 € = **5.000,00 €**.
 >
-> | | Importe |
-> |---|---|
-> | Gastos del mes | 1.000,00 € |
-> | Lo que entra ese mes | 400,00 € |
-> | Lo que falta (lo que tiene que pagar el colchón) | **600,00 €** |
+> | Mes | Facturas | Gastas | Sale del colchón | Colchón que queda |
+> |---|---|---|---|---|
+> | Bueno | 1.800,00 € | 1.000,00 € | 0,00 € | 5.000,00 € |
+> | Sin facturar | 0,00 € | 1.000,00 € | 1.000,00 € | 4.000,00 € |
+> | Flojo | 400,00 € | 1.000,00 € | 600,00 € | 3.400,00 € |
 >
-> Con un colchón de 3.000,00 €, no te dura 3.000,00 € ÷ 1.000,00 € = 3 meses, sino
-> 3.000,00 € ÷ 600,00 € = **5 meses flojos seguidos**. El colchón no paga el gasto entero: paga solo
-> lo que los ingresos no llegan a cubrir.
+> El colchón no se gasta en los meses buenos: solo tapa la diferencia en los flojos. Tras esos dos
+> meses te quedan 3.400,00 €, es decir, 3,4 meses de gastos todavía cubiertos.
 >
-> **TODO:** la duda no dice a qué parte se refiere ("esta parte"). He explicado la idea central con un
-> ejemplo nuevo; si era la fórmula, la liquidez o el ejercicio, dime cuál y lo reescribo.
+> **TODO:** preguntar al alumno qué parte concreta de la nota no se entiende (la fórmula, el ejemplo de
+> 3.585,00 € o el aviso de "Cifra en revisión"), para reexplicarla si esto no bastó.

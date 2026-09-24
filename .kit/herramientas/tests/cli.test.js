@@ -181,3 +181,102 @@ test('actualizar --comprobar: avisa en una línea solo si hay versión nueva, un
   assert.equal(cli(['--comprobar'], raiz, undefined, () => '3.0.0'), 0);
   assert.match(lineas.join('\n'), /publicada la 3\.0\.0/);
 });
+
+// Actualizar en secuencia: nunca se salta versiones. Cada proceso aplica solo la siguiente release y deja que el
+// actualizar.js recién instalado (el de esa versión, el que se probó al publicarla) siga con la otra.
+test('actualizar: pasosPendientes da las releases posteriores a la instalada, de la más vieja a la más nueva', () => {
+  const { pasosPendientes } = require('../actualizar');
+  assert.deepEqual(pasosPendientes('1.0.0', ['v1.10.0', 'v0.9.0', 'v1.0.0', 'v1.2.0', 'main', 'v1.2.0-beta']), ['v1.2.0', 'v1.10.0']);
+  assert.deepEqual(pasosPendientes('2.0.0', ['v1.0.0', 'v2.0.0']), []);
+});
+
+test('actualizar: listarReleases pide todas las releases publicadas; sin red, null', () => {
+  const { listarReleases } = require('../actualizar');
+  let pedido;
+  assert.deepEqual(listarReleases('rsotor/profesor-kit', args => { pedido = args; return { ok: true, salida: 'v0.23.0\nv0.22.3\n' }; }), ['v0.23.0', 'v0.22.3']);
+  assert.equal(pedido[0], 'api');
+  assert.ok(pedido.includes('--paginate'));
+  assert.match(pedido[1], /^repos\/rsotor\/profesor-kit\/releases/);
+  assert.equal(listarReleases('x/y', () => ({ ok: false, salida: 'HTTP 404' })), null);
+});
+
+test('actualizar --aplicar sin --origen: descarga solo la siguiente versión, la aplica y deja seguir a la nueva', t => {
+  const salida = capturar(t);
+  const { cli } = require('../actualizar');
+  const { raiz, origen } = cursoYOrigen();                          // curso en 1.0.0, origen en 2.0.0
+  const pedidas = [];
+  let continuado = null;
+  const copia = () => { const d = temporal('kit-descarga-'); fs.cpSync(origen, d, { recursive: true }); return d; };
+  const codigo = cli(['--aplicar'], raiz, (repo, etiqueta) => { pedidas.push(etiqueta); return copia(); }, undefined, {
+    listar: () => ['v3.0.0', 'v1.0.0', 'v2.0.0'],
+    continuar: dir => { continuado = dir; return 0; },
+  });
+  assert.equal(codigo, 0);
+  assert.deepEqual(pedidas, ['v2.0.0'], 'solo la siguiente, nunca la última de golpe');
+  assert.equal(fs.readFileSync(path.join(raiz, 'AGENTS.md'), 'utf8'), 'v2');
+  assert.equal(continuado, raiz, 'queda la 3.0.0: sigue la versión recién instalada');
+  assert.match(salida(), /Actualizado de 1\.0\.0 a 2\.0\.0\. Queda 1 versión: sigo con la 3\.0\.0\./);
+});
+
+test('actualizar --aplicar sin --origen: en el último paso no sigue; al día o sin red, lo dice', t => {
+  const salida = capturar(t);
+  const { cli } = require('../actualizar');
+  const { raiz, origen } = cursoYOrigen();
+  const copia = () => { const d = temporal('kit-descarga-'); fs.cpSync(origen, d, { recursive: true }); return d; };
+  let continuado = false;
+  const seguir = { continuar: () => { continuado = true; return 0; } };
+  assert.equal(cli(['--aplicar'], raiz, copia, undefined, { ...seguir, listar: () => ['v2.0.0', 'v1.0.0'] }), 0);
+  assert.equal(continuado, false);
+  assert.equal(cli(['--aplicar'], raiz, copia, undefined, { ...seguir, listar: () => ['v2.0.0'] }), 0);
+  assert.match(salida(), /Ya tienes la última versión \(2\.0\.0\)/);
+  assert.equal(cli(['--aplicar'], raiz, copia, undefined, { ...seguir, listar: () => null }), 1);
+  assert.match(salida(), /No se pudo saber qué versiones hay publicadas/);
+});
+
+test('actualizar --aplicar sin --origen: si un paso falla, no sigue y el curso se queda en la versión de antes', t => {
+  const salida = capturar(t);
+  const { cli } = require('../actualizar');
+  const { raiz, origen } = cursoYOrigen({ migracion: `module.exports = { descripcion: 'x', migrar() { throw new Error('pum'); } };` });
+  let continuado = false;
+  const codigo = cli(['--aplicar'], raiz, () => { const d = temporal('kit-descarga-'); fs.cpSync(origen, d, { recursive: true }); return d; }, undefined, {
+    listar: () => ['v2.0.0', 'v3.0.0'], continuar: () => { continuado = true; return 0; },
+  });
+  assert.equal(codigo, 1);
+  assert.equal(continuado, false);
+  assert.equal(fs.readFileSync(path.join(raiz, 'AGENTS.md'), 'utf8'), 'v1');
+  assert.match(salida(), /todo sigue como estaba, en la 1\.0\.0/);
+});
+
+// De extremo a extremo, sin red: un `gh` falso sirve tres versiones locales. El curso (1.0.0) pasa por la 2.0.0 y
+// llega a la 3.0.0, y cada paso lo da el actualizar.js de la versión de partida, en su propio proceso.
+test('actualizar --aplicar: de la 1.0.0 a la 3.0.0 pasando por la 2.0.0, un proceso por paso', t => {
+  if (process.platform === 'win32') { t.skip('el gh falso es un script de Node con shebang'); return; }
+  const { spawnSync } = require('node:child_process');
+  const { raiz } = cursoYOrigen();
+  const versiones = temporal('kit-versiones-');
+  for (const n of ['2.0.0', '3.0.0']) {
+    const d = path.join(versiones, `v${n}`);
+    fs.cpSync(KIT_REAL, path.join(d, '.kit'), { recursive: true });
+    fs.rmSync(path.join(d, '.kit', 'herramientas', 'migraciones'), { recursive: true, force: true });
+    escribir(d, { 'AGENTS.md': `v${n[0]}`, '.kit/VERSION': n, '.kit/motor.json': MOTOR(['AGENTS.md', '.kit']) });
+  }
+  const bin = temporal('kit-bin-');
+  const gh = path.join(bin, 'gh');
+  fs.writeFileSync(gh, `#!${process.execPath}
+const fs = require('node:fs'), path = require('node:path');
+const a = process.argv.slice(2);
+fs.appendFileSync(${JSON.stringify(path.join(bin, 'llamadas.txt'))}, a.join(' ') + '\\n');
+if (a[0] === 'api') { console.log(a[1].includes('/releases?') ? 'v3.0.0\\nv2.0.0\\nv1.0.0' : 'v3.0.0'); process.exit(0); }
+if (a[0] === 'repo' && a[1] === 'clone') { fs.cpSync(path.join(${JSON.stringify(versiones)}, a[a.indexOf('--branch') + 1]), a[3], { recursive: true }); process.exit(0); }
+process.exit(1);
+`);
+  fs.chmodSync(gh, 0o755);
+  const r = spawnSync(process.execPath, [path.join(raiz, '.kit', 'herramientas', 'actualizar.js'), '--aplicar'],
+    { cwd: raiz, encoding: 'utf8', env: { ...process.env, PATH: `${bin}${path.delimiter}${process.env.PATH}` } });
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /Actualizado de 1\.0\.0 a 2\.0\.0\. Queda 1 versión: sigo con la 3\.0\.0\.\n[\s\S]*Actualizado de 2\.0\.0 a 3\.0\.0\./);
+  assert.equal(fs.readFileSync(path.join(raiz, 'AGENTS.md'), 'utf8'), 'v3');
+  const clonadas = fs.readFileSync(path.join(bin, 'llamadas.txt'), 'utf8').split('\n').filter(l => l.startsWith('repo clone')).map(l => l.split('--branch ')[1].split(' ')[0]);
+  assert.deepEqual(clonadas, ['v2.0.0', 'v3.0.0']);
+  assert.deepEqual(git(raiz, 'log', '--format=%s').split('\n').filter(l => l.startsWith('kit:')), ['kit: actualizado a 3.0.0', 'kit: actualizado a 2.0.0']);
+});
