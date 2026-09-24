@@ -6,6 +6,7 @@ const v = require('./lib/vault');
 const { escanearSecretos } = require('./lib/secretos');
 const indice = require('./lib/indice');
 const generados = require('./lib/generados');
+const paginasWeb = require('./lib/paginas-web');
 
 const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidian', 'docs', 'node_modules', 'pruebas-local']);
 
@@ -224,34 +225,24 @@ function comprobarEjerciciosSueltos(raiz, declarados, informe) {
 
 // Las páginas web del alumno (ejercicios y repasos) tienen que funcionar con doble clic y sin red. El JS de cada
 // <script> se compila sin ejecutarse: un error de sintaxis deja la página muerta y en silencio. Lo hace esta
-// herramienta, y no el profesor con comandos a mano (prueba real del 2026-09-24: se le denegaban). Un <script> con
-// src, o de un tipo que no es JS (datos en JSON, un módulo), no se compila aquí.
-const SCRIPT = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
-const ES_JS = atributos => {
-  const tipo = /\btype\s*=\s*["']?([^"'\s>]+)/i.exec(atributos);
-  return !/\bsrc\s*=/i.test(atributos) && (!tipo || /^(text|application)\/(javascript|ecmascript)$/i.test(tipo[1]));
-};
-// Lo que carga algo de fuera: <script src>, <link href>, <img src>… a http(s):// o //. Un <a href> no carga nada.
-const CARGA_DE_FUERA = /<(?:script|link|img|iframe|audio|video|source)\b[^>]*?\b(?:src|href)\s*=\s*["']?((?:https?:)?\/\/[^"'\s>]+)/gi;
-
+// herramienta, y no el profesor con comandos a mano (prueba real del 2026-09-24: se le denegaban). Ejecutarlo de
+// verdad para barrer casos es cosa de verificar-ejercicio.js: aquí solo se comprueba que compila.
 function comprobarPaginasWeb(raiz, informe) {
   const base = v.baseAlumno(raiz);
   for (const carpeta of ['ejercicios', 'repasos']) {
     for (const abs of v.recorrer(path.join(base, carpeta), n => n.endsWith('.html'))) {
       const fichero = v.aPosix(path.relative(base, abs));
       const html = fs.readFileSync(abs, 'utf8');
-      for (const m of html.matchAll(SCRIPT)) {
-        if (!ES_JS(m[1])) continue;
+      for (const { codigo, lineaInicial } of paginasWeb.scriptsJs(html)) {
         try {
-          new vm.Script(m[2], { filename: fichero });
+          new vm.Script(codigo, { filename: fichero });
         } catch (error) {
-          const antes = html.slice(0, m.index + m[0].indexOf('>') + 1).split('\n').length - 1;
           const enScript = Number((new RegExp(`${fichero.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}:(\\d+)`).exec(error.stack) || [])[1]) || 1;
           informe.errores.push({ regla: 'ejercicio-con-errores', fichero,
-            detalle: `línea ${antes + enScript}: ${error.message} — con un error así la página no funciona, y no avisa` });
+            detalle: `línea ${lineaInicial + enScript}: ${error.message} — con un error así la página no funciona, y no avisa` });
         }
       }
-      const fuera = [...new Set([...html.matchAll(CARGA_DE_FUERA)].map(m => m[1]))];
+      const fuera = paginasWeb.cargasDeFuera(html);
       if (fuera.length) {
         informe.avisos.push({ regla: 'ejercicio-con-red', fichero,
           detalle: `carga de internet ${fuera.join(', ')}: tiene que funcionar sin red y con doble clic, con todo dentro del fichero` });
