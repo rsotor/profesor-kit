@@ -1,6 +1,6 @@
 # Permisos: aceptar una vez · Diseño (0.24.0)
 
-Estado: **borrador para decidir con Roberto** (2026-09-24). Nada implementado.
+Estado: **decidido con Roberto** (2026-09-24): P1 a P4 como se recomiendan. Nada implementado todavía.
 
 ## 1. El problema
 
@@ -64,7 +64,7 @@ Una herramienta nueva, `permisos.js`, que sabe **qué** hay que permitir (lo dec
    para leer, buscar y editar, y P8 trae una herramienta del kit para leer PPTX, Excel y demás, que es de donde salen
    los `python3`.
 
-## 4. Decisiones para Roberto
+## 4. Decisiones (Roberto, 2026-09-24: sí a las cuatro recomendaciones)
 
 | # | Decisión | Recomendación | Por qué |
 |---|---|---|---|
