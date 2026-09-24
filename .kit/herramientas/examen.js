@@ -138,7 +138,7 @@ function cli(args, raiz) {
     const veredicto = r.parcial ? 'test: no pone nota a la unidad' : r.nota >= r.aprobado ? 'aprobado' : `suspenso (aprobado: ${r.aprobado})`;
     console.log(`Intento ${r.intento} registrado: ${notaEnTexto(r.nota)} · ${veredicto} · ${r.enteras} enteras, ${r.medias} a medias, ${r.falladas} falladas, ${r.blanco} en blanco.`
       + (r.estudiadas.length ? ` Sesiones marcadas como estudiadas: ${r.estudiadas.join(', ')}.` : ''));
-    console.log('Falta lo tuyo: estudio/progreso.md (y config/alumno.md si hay errores repetidos). Después, guarda.');
+    console.log(`${path.basename(ficheroJson)} ya está borrado (no hace falta que lo borres). Falta lo tuyo: estudio/progreso.md (y config/alumno.md si hay errores repetidos). Después, guarda.`);
     return 0;
   } catch (error) {
     console.error(`No se ha registrado nada: ${error.message}`);

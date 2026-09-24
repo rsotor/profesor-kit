@@ -107,6 +107,7 @@ test('cli: lee la corrección de un JSON, la registra y borra el JSON; con error
   fs.writeFileSync(json, JSON.stringify(CORRECCION));
   assert.equal(cli(['--registrar', 'estudio/examenes/m1/01-examen.md', '--correccion', 'correccion.json'], raiz), 0);
   assert.ok(!fs.existsSync(json));
+  assert.match(salida.join('\n'), /correccion\.json ya está borrado/);
   assert.match(salida.join('\n'), /Intento 1 registrado: 6,5 · aprobado · 1 enteras, 1 a medias, 0 falladas, 1 en blanco/);
   fs.writeFileSync(json, '{ roto');
   assert.equal(cli(['--registrar', 'estudio/examenes/m1/01-examen.md', '--correccion', 'correccion.json'], raiz), 1);

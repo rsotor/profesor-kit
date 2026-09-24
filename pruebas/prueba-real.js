@@ -111,6 +111,17 @@ function ejecutarPaso(pasos, nombre, fn) {
   } catch (error) {
     pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: false, detalle: `error: ${error.message}`, denegaciones: denegacionesDelPaso });
   }
+  avisarPaso(pasos[pasos.length - 1]);
+}
+
+// Cada paso, en cuanto acaba: un fallo se ve en el minuto en que pasa, no al final de una prueba de 20.
+function lineaDePaso(paso) {
+  const icono = paso.ok === null ? '⏭️ ' : paso.ok ? '✅' : '❌';
+  const denegados = (paso.denegaciones || []).length;
+  return `  ${icono} ${paso.paso} (${(paso.duracionMs / 1000).toFixed(0)} s) — ${paso.detalle}${denegados ? ` · ${denegados} permiso(s) denegado(s)` : ''}`;
+}
+function avisarPaso(paso) {
+  if (!process.env.NODE_TEST_CONTEXT) console.log(lineaDePaso(paso));
 }
 
 const PROMPT_COMUN = 'No me preguntes nada: si dudas, toma la opción más conservadora y déjala como TODO o FALTA INFO. Al terminar, guarda.';
@@ -485,7 +496,8 @@ function cli(args) {
 
   const { pasos, informe } = ejecutar({ sinLlm, modelo, limiteMs });
   console.log(`Resultado en ${path.relative(RAIZ_KIT, RESULTADO)}/RESUMEN.md`);
-  for (const paso of pasos) console.log(`  ${paso.ok === null ? '⏭️ ' : paso.ok ? '✅' : '❌'} ${paso.paso} — ${paso.detalle}`);
+  const denegados = pasos.reduce((n, x) => n + (x.denegaciones || []).length, 0);
+  console.log(`${pasos.filter(x => x.ok).length}/${pasos.filter(x => x.ok !== null).length} pasos bien · ${denegados} permiso(s) denegado(s)`);
   const fallo = pasos.some(x => x.ok === false) || informe.errores.length > 0;
   return fallo ? 1 : 0;
 }
@@ -499,4 +511,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla, argsClaude, entornoDeAlumno, leerSalidaClaude };
+module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla, argsClaude, entornoDeAlumno, leerSalidaClaude, lineaDePaso };
