@@ -35,6 +35,18 @@ ficheros**:
 Se arreglaron síntomas uno a uno (la prueba ya pasa las reglas del curso y un entorno de alumno; `dudas.js` existe).
 **La causa no está arreglada.** Es el punto 4 y 14 del diagnóstico, y es también lo que pide el diseño de permisos.
 
+## Hecho después (2026-09-24, tarde)
+
+- **Paso 1 hecho** (`b5056f1`): regla de `AGENTS.md` (ficheros con las herramientas de ficheros, nunca con shell),
+  `guardar.js --empezar`, `/dudas` con `dudas.js`, la contradicción de `progreso.md`, y la prueba real con
+  `--output-format json` y la sección "Permisos denegados".
+- **Prueba real: 12/12 · corrección 6/6** (`c09e610`), ≈ 17 min de pasos (el "≈1 h" de abajo era de antes de la
+  0.22; la preparación en segundo plano gasta cuota aparte). PR de la 0.23.0 abierto; la release, tras revisarlo Roberto.
+- **Quedan 4 permisos denegados → 0.24.0:** 3 al verificar el JS de un ejercicio (`sed … > /tmp/ej.js && node
+  --check`: hace falta una herramienta que lo verifique, es el punto "verificar ejercicios") y 1 `open` del repaso.
+  Además, el profesor encadena `guardar.js --empezar … ; sed …` en un comando: al denegarse, la línea "en curso"
+  tampoco se escribe. Regla para `AGENTS.md`: cada herramienta del kit en su propio comando, sin encadenar.
+
 ## Siguiente paso: atacar la causa, y después una sola prueba real
 
 1. **Decidir con Roberto el alcance** (propuesta): meter en la 0.23.0 el mínimo que quita la causa, sin esperar a la
