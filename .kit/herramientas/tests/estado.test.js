@@ -152,3 +152,20 @@ test('lo que ya se está preparando (o está preparado sin juntar) no es materia
   const e = calcularEstado(raiz);
   assert.deepEqual(e.materialNuevo, ['inbox/clase4.pdf'], 'solo la interrumpida vuelve a ser material por preparar');
 });
+
+test('senales: van en el JSON y una por línea en el texto', () => {
+  const raiz = raizAlDia({
+    'estudio/progreso.md': '# Progreso\n\n| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[alfa]] | 🔴 falló dos veces | ⬜ |\n',
+  });
+  const estado = calcularEstado(raiz);
+  assert.deepEqual(estado.senales.map(s => s.tipo), ['concepto-rojo']);
+  const r = spawnSync(process.execPath, [require('node:path').join(__dirname, '..', 'estado.js'), '--raiz', raiz], { encoding: 'utf8' });
+  assert.match(r.stdout, /Señal \(concepto-rojo\): alfa: falló dos veces \(teoría\)/);
+});
+
+test('senales: sin nada que decir, lista vacía y "Señales: ninguna"', () => {
+  const raiz = raizAlDia();
+  assert.deepEqual(calcularEstado(raiz).senales, []);
+  const r = spawnSync(process.execPath, [require('node:path').join(__dirname, '..', 'estado.js'), '--raiz', raiz], { encoding: 'utf8' });
+  assert.match(r.stdout, /Señales: ninguna/);
+});

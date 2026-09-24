@@ -3,10 +3,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./lib/vault');
 const indice = require('./lib/indice');
+const perfil = require('./lib/perfil');
 
 // La foto del curso al abrir (plan 0.22, §3.1): lo que el arranque necesita para confirmar con el alumno
 // si toca estudiar lo ya preparado, esperar a que se prepare lo nuevo, o repasar mientras se prepara.
 // Todo sale de disco: nadie rellena esto a mano, y es solo una sugerencia — el profesor la confirma siempre.
+// Y las señales de que algo no funciona (`lib/perfil.js`), para que el profesor no tenga que acordarse de buscarlas.
 
 // "Material nuevo" (plan §2): un fichero de estudio/inbox/ que ninguna sesión cita en su `fuente:`.
 // Se compara por nombre de fichero, no por ruta completa: `fuente:` se escribe sin `estudio/` delante
@@ -81,6 +83,7 @@ function calcularEstado(raiz) {
     enRepaso,
     preparaciones,
     caso,
+    senales: perfil.senales(raiz),
   };
 }
 
@@ -99,6 +102,8 @@ function imprimir(estado) {
   } else {
     l.push('Preparaciones: ninguna');
   }
+  if (estado.senales.length) for (const s of estado.senales) l.push(`Señal (${s.tipo}): ${s.detalle}`);
+  else l.push('Señales: ninguna');
   console.log(l.join('\n'));
 }
 
