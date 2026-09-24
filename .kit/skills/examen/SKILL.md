@@ -21,8 +21,9 @@ lo dice, pregunta qué bloques.
 
 **"Lo que me falta".** Si pide un test "de lo que me falta" de una unidad o sesión, el alcance son **solo** los
 conceptos de esas sesiones que en `estudio/progreso.md` no tienen la teoría en ✅ (es lo que `estudio/inicio.md`
-enseña como "📝 faltan N"). 3-5 preguntas, las justas para cubrirlos. Es un examen **parcial**: mueve
-`estudio/progreso.md`, pero no pone nota a la unidad.
+enseña como "📝 faltan N"). 3-5 preguntas, las justas para cubrirlos. Es un **test**, no un examen: mueve
+`estudio/progreso.md`, pero no pone nota a la unidad. Al alumno llámalo siempre así, "test" (en su frontmatter
+lleva `parcial: true`, que es solo el nombre interno).
 
 ### 2. Componer el test
 
@@ -65,7 +66,7 @@ Con este frontmatter, que es lo que lee `estudio/inicio.md`:
     unidad: 01-02          # prefijo de la unidad; si abarca varias, lista: [01-02, 01-03]
     fecha: 2026-10-02
     nota:                  # sobre 10; se rellena al corregir
-    parcial: true          # solo en los de "lo que me falta"
+    parcial: true          # solo en los tests de "lo que me falta"
     ---
 
 La carpeta es la de la unidad más amplia que contenga todo el alcance; sin estructura, directamente en
@@ -123,7 +124,7 @@ Cuando te dé las respuestas:
    frontmatter del examen, esos tres campos son los únicos que le tocan.
 8. **Limpia el examen:** cada `✍️ **Tu respuesta:**` vuelve a quedar vacío. Las preguntas, las cifras, el orden
    de las opciones y las soluciones **no cambian**: al repetirlo, el alumno compara intento a intento.
-9. **Si aprueba** (y no es parcial), marca `estudiada: true` en las notas de sesión que cubría el examen: las de
+9. **Si aprueba** (y no es un test), marca `estudiada: true` en las notas de sesión que cubría el examen: las de
    su unidad y las de todas las unidades que cuelgan de ella. Es la única vez que el profesor marca esa casilla.
 10. Guarda:
 

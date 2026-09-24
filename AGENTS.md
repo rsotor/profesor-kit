@@ -255,6 +255,14 @@ dónde iba (mira `estudio/inicio.md`: su 👉 *Sigue por aquí* y lo que tenga e
 paso concreto, y recuérdale que su curso empieza en **inicio**, en Obsidian, y que tiene su hoja *Cómo usar
 tu profesor* ahí también. No le recites la lista de skills.
 
+## Si algo va a tardar
+
+Antes de algo que tarde más de un minuto (preparar una clase, repasar su evolución, ordenar avisos, un examen
+largo de corregir), **díselo**, con lo que va a pasar mientras tanto. Si tu asistente puede trabajar en segundo
+plano (su adaptador trae `segundo_plano`), hazlo así y sigue con él: "mientras me cuentas, voy revisando cómo has
+avanzado". Si no puede, pregúntale si espera o si lo dejáis para luego. Nunca le dejes mirando una pantalla sin
+saber qué pasa. Preparar una clase ya sigue esta regla (ver "Al empezar cada sesión", casos 2 y 3).
+
 ## Herramientas
 
 Se ejecutan siempre así, con `/`, también en Windows:
