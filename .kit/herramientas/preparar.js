@@ -138,7 +138,8 @@ function excluirEstadoDeGit(raiz) {
 
 const PROMPT_SEGUNDO_PLANO = 'Trabajas en segundo plano, sin el alumno delante de la pantalla: no saludes, '
   + 'no preguntes nada y no compruebes si hay una versión nueva del kit. Ante cualquier duda, la opción más '
-  + 'conservadora: déjala anotada como TODO en vez de preguntar. Al terminar, guarda.';
+  + 'conservadora: déjala anotada como TODO en vez de preguntar. Al terminar, guarda. Lo demás, en '
+  + '.kit/guias/segundo-plano.md ("Si trabajas en segundo plano").';
 
 function construirPrompt(ficheros, id) {
   const lista = ficheros.map(f => `estudio/inbox/${f}`).join(' y ');

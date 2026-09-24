@@ -17,7 +17,7 @@ Las reglas propias del dominio de `config/curso.md` se cumplen siempre.
 AGENTS.md · CLAUDE.md · .claude/settings.json · .kit/                ← MOTOR: no se edita; lo reemplaza /actualizar
 config/                                                              ← DATOS: cómo es el curso, el profesor y el alumno
 estudio/                                                             ← DATOS: todo el material del alumno
-README.md                                                            ← DATOS: la portada del curso en GitHub; la mantienes tú (Estado y la tabla de Obsidian)
+README.md                                                            ← DATOS: la portada del curso en GitHub (su tabla de Obsidian, tú; su Estado, guardar.js)
 ```
 
 - **`estudio/` es la carpeta que el alumno abre en Obsidian.** Desde ahí no ve el motor ni `config/`, y así
@@ -33,24 +33,14 @@ README.md                                                            ← DATOS: 
   exámenes nace en la carpeta de su unidad y con el id de la sesión delante. `estudio/conceptos/` es plano: un
   concepto pertenece a varias unidades. Si el curso ya tiene sesiones y **no** tiene estructura, **propón una**
   al alumno (como en `/configurar`) y, con su sí, escríbela y ejecuta `node .kit/herramientas/organizar.js`.
-- **`estudio/auditoria-del-material.md` también lo escribe `guardar.js`**: reúne las secciones "Auditoría del
-  material" de todas las sesiones, por bloque. Antes de auditar el material de una clase, míralo: si una
-  plantilla o un error ya salió, dilo ("la misma hoja que en la 1.2") en vez de descubrirlo de nuevo.
-- **`estudio/pendientes.md` lo escribe `guardar.js`** con todos los `TODO`, `FALTA INFO` y dudas abiertas,
-  por bloques. No lo edites ni lo cites como fuente: se regenera en cada guardado.
-- **`estudio/formulario.md` y `estudio/ejercicios/_index.md` también los escribe `guardar.js`**: el primero,
-  por bloque, con la fórmula de cada concepto que la tiene y la definición en una frase de los demás; el segundo, desde el `ejercicio:`
-  del frontmatter de cada concepto y los ficheros de `estudio/ejercicios/`. No los edites ni los cites como
-  fuente de lo que ya sabe el alumno: son un índice, no contenido.
-- **`estudio/mi-perfil.md` también lo escribe `guardar.js`**: copia de `config/alumno.md` y `config/profesor.md`
-  lo que el alumno tiene que ver de sí mismo (cómo le explicas y por qué, qué le cuesta, qué le entró a la
-  primera, los cambios en cómo le explicas) y calcula su evolución (exámenes intento a intento, conceptos por
-  estado y bloque, dónde más dudas). No lo edites: si el alumno dice que algo no es verdad, lo corriges en
-  `config/alumno.md` con la prueba `corrección del alumno, <fecha>`.
-- **`estudio/inicio.md` y el pie de navegación de cada sesión también los escribe `guardar.js`**: el temario
-  entero, qué ha estudiado el alumno (la casilla `estudiada` de cada sesión, que marca él) y qué tiene probado
-  (sale de `estudio/progreso.md`). No los edites ni los cites como fuente. Es la puerta del alumno al curso
-  cuando estudia sin ti.
+- **Lo escribe `guardar.js` en cada guardado: no lo edites ni lo cites como fuente de lo que sabe el alumno.**
+  `estudio/inicio.md` y el pie de cada sesión (el temario, qué ha estudiado —la casilla `estudiada`, que marca él—
+  y qué tiene probado: su puerta al curso cuando estudia sin ti) · `estudio/pendientes.md` (TODO, FALTA INFO y dudas
+  abiertas) · `estudio/formulario.md` y `estudio/ejercicios/_index.md` (índices) · la sección Estado del `README.md` ·
+  `estudio/auditoria-del-material.md` (las auditorías de todas las sesiones: míralo antes de auditar una clase, y si un
+  error ya salió, dilo —"la misma hoja que en la 1.2"—) · `estudio/mi-perfil.md` (lo que el alumno ve de sí mismo, sacado
+  de `config/alumno.md` y `config/profesor.md`, y su evolución: si dice que algo no es verdad, corrígelo en
+  `config/alumno.md` con la prueba `corrección del alumno, <fecha>`).
 - **Si el alumno ha movido el curso a otra carpeta** y su atajo ha dejado de abrirlo:
   `node .kit/herramientas/crear-atajo.js --nombre <su palabra> --actualizar`.
 - **Si falta algo** (`comprobar.js` da `pieza-ausente`: alguien borró o movió una carpeta o un fichero),
@@ -172,24 +162,9 @@ apoya en eso.
 
 ## Cuando el alumno escribe a su manera
 
-El alumno también escribe en sus notas desde Obsidian: marca casillas, pone notas, cambia propiedades. Hay mil
-formas de escribir lo mismo (`estudiada: sí`, `ok`, `hecho`, `nota: 7/10`) y las herramientas solo entienden una.
-No adivinan: `comprobar.js` lo señala con el aviso `propiedad-no-estandar`. Tú entiendes qué quería decir.
-
-1. **Mira `## Cómo escribe en sus notas` en `config/alumno.md`.** Si esa forma ya está apuntada, ya sabes qué
-   significa: reescríbela en el estándar sin preguntarle y díselo en una línea ("he marcado la 1.3 como
-   estudiada, la tenías con un *sí*").
-2. **Si es nueva, pregúntale** en una frase qué quería decir, con tu interpretación delante: "en la 1.3 pusiste
-   *sí* en estudiada, entiendo que ya la has estudiado, ¿la marco?". Con su respuesta, reescríbela.
-3. **Apúntala en la tabla** (crea la sección si no existe): propiedad, lo que escribió literal, lo que quería
-   decir, veces y última fecha. Cada vez que vuelva a salir, sube las veces.
-4. **A la tercera vez de la misma propiedad, propón una issue al kit** ("Feedback al kit"): si escribe así de
-   forma natural, el estándar tiene que entenderlo. La issue describe **el patrón, nunca su valor**: "los
-   alumnos escriben con palabras lo que el kit espera como casilla", no "que acepte *sí*"; el siguiente alumno
-   escribirá *ok*. Cómo resolverlo (otro formato, entender toda la familia de respuestas) se decide en el kit.
-
-Lo que el aviso marca como "no sabe leer" puede ser una propiedad que el alumno ha añadido para él: si no la
-usa ninguna herramienta y él la quiere, déjala y apúntalo en la tabla para no volver a preguntar.
+Marca casillas, pone notas, cambia propiedades a su manera (`estudiada: sí`, `ok`, `nota: 7/10`). Las herramientas no
+adivinan: `comprobar.js` da el aviso `propiedad-no-estandar`. Cuando salga, lee y sigue
+`.kit/guias/cuando-escribe-a-su-manera.md` (su tabla en `config/alumno.md`, cuándo preguntarle, cuándo escalarlo).
 
 ## Al empezar cada sesión
 
@@ -244,16 +219,8 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
    haciendo genial, ¿quieres un par de preguntas más, un poco más difíciles?"; si falló algo, "¿repasamos eso
    mientras termino?". Así hasta que la clase esté lista o prefiera parar.
 
-5. **Cómo se prepara en segundo plano** (casos 2 y 3, cuando el alumno dice que sí):
-   1. **Antes de lanzar, pregunta lo que solo él sabe**: el id de cada sesión si la regla de `config/curso.md` no
-      basta, y cualquier duda del material que no puedas resolver tú. Lo que se lanza ya no pregunta nada.
-   2. `node .kit/herramientas/preparar.js --lanzar <ficheros de inbox> --id <id>`. Una sola a la vez.
-   3. Sigue con él (calentamiento, repaso, dudas, examen). **Al terminar cada actividad**, mira
-      `node .kit/herramientas/preparar.js --estado`. En cuanto esté **terminada**, júntala con `--juntar <id>` y
-      díselo: "la clase 3 ya está lista: empieza por la nota de la sesión". Si **falla**, díselo en una frase y
-      ofrécele prepararla aquí, en la conversación.
-   4. Si se va a por un café, déjala lanzada y díselo: al volver (o en la sesión siguiente, si cierra la ventana)
-      la juntas antes que nada. Si apaga o duerme el ordenador, se para: `estado.js` la verá **interrumpida**.
+5. **Preparar en segundo plano** (casos 2 y 3, cuando el alumno dice que sí): cómo se lanza, se sigue y se junta,
+   en `.kit/guias/segundo-plano.md`.
 
 ## Si el alumno anda perdido
 
@@ -317,17 +284,8 @@ Mensajes de guardado: `sesion(<id>): <tema>` · `dudas: N resueltas` · `examen:
 
 ## Si trabajas en segundo plano
 
-Esto no te pasa a ti solo: te lanza `preparar.js --trabajar` en una copia aparte del curso
-(`.preparacion/<id>/`), sin el alumno delante — el prompt te lo dice. Entonces:
-
-- **No saludes, no preguntes nada** (ni al empezar ni por el camino): lo dudoso, `**TODO:**`, nunca una
-  pregunta. Tampoco compruebes si hay una versión nueva del kit.
-- Procesa el material con la skill `/sesion`, siguiendo el id que te den. Si son varios ficheros, son la
-  misma clase.
-- Al terminar, `node .kit/herramientas/guardar.js "sesion(<id>): <tema>"` como siempre. Estás en una rama
-  `preparacion/<id>`: `guardar.js` ya sabe que no tiene que subir (se sube cuando el profesor la junte con
-  `--juntar`). No hagas nada más — nadie está mirando la pantalla, así que no hay nada que "contar" al
-  terminar.
+Si te lanza `preparar.js --trabajar` (el prompt te lo dice), lee y sigue `.kit/guias/segundo-plano.md`: no saludas,
+no preguntas, procesas con `/sesion` y guardas.
 
 ## Material del alumno
 
@@ -350,36 +308,13 @@ lo mismo a mano dos veces · un paso de la instalación no encaja con este siste
 mejora que valdría para **cualquier** alumno. No escales lo que es de este curso (errores del material, del
 temario, del centro) ni de este alumno.
 
-1. Escribe el cuerpo en un fichero temporal, en llano: **Esperado** · **Qué pasó** · **Propuesta** · **Arreglo
-   aplicado** (si lo hubo). Sin material del curso, sin `config/alumno.md`, sin rutas con su usuario.
-2. `node .kit/herramientas/issue.js --titulo "[skill o herramienta] qué pasa" --cuerpo <fichero>` → añade el
-   entorno solo, busca issues parecidas y **se niega si detecta datos personales**. Te enseña la vista previa.
-3. **Enséñasela al alumno y espera su sí.** Si hay una parecida, comenta ahí (`gh issue comment`) en vez de abrir otra.
-4. Repite con `--enviar`. Si no hay sesión de `gh`, el texto va a `config/feedback-pendiente.md` y el alumno se
-   lo pasa a quien le dio el kit.
+Cómo se abre la issue (con `issue.js` y el sí del alumno): `.kit/guias/feedback-al-kit.md`.
 
 ## Si el alumno cambia de asistente
 
-El curso no está atado a un LLM: el atajo abre el que diga `config/ajustes.json` (`"llm"`), y las
-herramientas (`instalar-skills.js`, `crear-atajo.js`, `diagnostico.js`) leen su **adaptador**:
-`.kit/adaptadores/<llm>.json` si el kit ya lo trae (hoy, solo `claude-code`), o
-`config/adaptador-llm.json` si lo escribiste tú para este curso, que manda sobre el del kit. Para
-cambiar (por ejemplo de Claude Code a Codex):
-
-1. Que instale el asistente nuevo con su guía oficial e inicie sesión en él.
-2. `config/ajustes.json` → `"llm": "<id>"`.
-3. Si no existe `.kit/adaptadores/<id>.json`, sigue `.kit/ESTANDARES.md`: escribe
-   `config/adaptador-llm.json` con la forma que pide (comando, skills, puente, permisos, probado).
-4. `node .kit/herramientas/instalar-skills.js` (toma el destino del adaptador) y el resto de
-   `.kit/ESTANDARES.md` (fichero puente, permisos).
-5. `node .kit/herramientas/crear-atajo.js --nombre <su palabra>`: vuelve a escribir el atajo con el
-   comando nuevo. Nada más cambia: su material, su configuración y su historial son los mismos.
-6. `node .kit/herramientas/diagnostico.js` hasta "Todo listo".
-7. Propón devolver el adaptador al kit (ver "Si no eres Claude Code"): así el siguiente alumno con este
-   mismo LLM no tiene que montarlo de cero.
+El curso no está atado a un asistente. Para cambiar de uno a otro, lee y sigue `.kit/guias/cambiar-de-asistente.md`.
 
 ## Si no eres Claude Code
 
-Lee `.kit/ESTANDARES.md`: dice qué necesita el kit de ti, cómo escribir tu adaptador
-(`config/adaptador-llm.json`, en este curso) y cómo proponerlo al kit para el siguiente alumno con tu
-mismo LLM — una issue `[adaptador] <id>`, con el sí del alumno delante, como en "Feedback al kit".
+Lee `.kit/ESTANDARES.md` y la segunda parte de `.kit/guias/cambiar-de-asistente.md`: qué necesita el kit de ti,
+cómo escribir tu adaptador y cómo proponerlo al kit.
