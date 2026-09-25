@@ -539,3 +539,16 @@ test('lineaDePaso: cada paso en una línea, con su resultado, lo que tardó y lo
   assert.equal(lineaDePaso({ paso: '/dudas', ok: true, duracionMs: 63700, detalle: 'ok', denegaciones: [] }), '  ✅ /dudas (64 s) — ok');
   assert.equal(lineaDePaso({ paso: '/repaso', ok: false, duracionMs: 1000, detalle: 'sin html', denegaciones: [{}, {}] }), '  ❌ /repaso (1 s) — sin html · 2 permiso(s) denegado(s)');
 });
+
+// El examen del oráculo lo pone la prueba real en el curso de ejemplo: si incumple una regla del propio curso
+// (`patrones_prohibidos`), comprobar da errores, el profesor no puede guardar sin retocarlo y la prueba falla o no
+// según lo arregle o no (pruebas reales 3 y 4 de la 0.25.0, 2026-09-25).
+test('el examen del oráculo cumple los patrones prohibidos del curso de ejemplo', () => {
+  const ajustes = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'config', 'ajustes.json'), 'utf8'));
+  const texto = fs.readFileSync(path.join(EJEMPLO, 'oraculo', 'examen-oraculo.md'), 'utf8');
+  const fallos = [];
+  for (const { patron } of ajustes.patrones_prohibidos || []) {
+    texto.split(/\r?\n/).forEach((linea, i) => { if (new RegExp(patron).test(linea)) fallos.push(`línea ${i + 1}: ${linea}`); });
+  }
+  assert.deepEqual(fallos, []);
+});
