@@ -130,7 +130,7 @@ test('codex.eventos: sin citar ninguna SKILL.md, o citando dos, es una herramien
 test('codex.eventos: agent_message es texto; turn.completed/turn.failed son fin; "error" NO es fin (el proceso sigue)', () => {
   assert.deepEqual(codex.eventos(itemCompleted({ id: 'i5', type: 'agent_message', text: 'hola' })), [{ tipo: 'texto', texto: 'hola' }]);
   assert.deepEqual(codex.eventos(JSON.stringify({ type: 'turn.completed', usage: {} })), [{ tipo: 'fin', ok: true }]);
-  assert.deepEqual(codex.eventos(JSON.stringify({ type: 'turn.failed', error: {} })), [{ tipo: 'fin', ok: false }]);
+  assert.deepEqual(codex.eventos(JSON.stringify({ type: 'turn.failed', error: {} })), [{ tipo: 'fin', ok: false, error: 'turn.failed' }]);
   assert.deepEqual(codex.eventos(JSON.stringify({ type: 'error', message: 'x' })), [{ tipo: 'texto', texto: 'x' }]);
 });
 

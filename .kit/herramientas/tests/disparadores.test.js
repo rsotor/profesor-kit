@@ -199,3 +199,27 @@ test('crearPreparacion: estado.js la lee "terminada", y "interrumpida" cuando el
   casosGuia.crearPreparacion(otro, { id: '02-02', resultado: 'en-curso' });
   assert.deepEqual(leerPreparaciones(otro).map(p => p.resultado), ['interrumpida']);
 });
+
+// 2026-09-25: la medición se cruzó con el límite de uso de la cuenta y cada frase sin ejecutar salió como
+// "ninguna" (57/76 falso). Un asistente que falla no elige nada: esa frase queda sin medir, no como fallo.
+test('decidirEleccion: si el asistente falla (result con is_error), la frase queda sin medir', () => {
+  const lineas = [JSON.stringify({ type: 'result', is_error: true, result: "You've hit your session limit · resets 12:40pm" })];
+  const d = decidirEleccion(lineas);
+  assert.equal(d.decidido, true);
+  assert.equal(d.sinMedir, true);
+  assert.match(d.nota, /session limit/);
+  assert.equal(decidirEleccion([JSON.stringify({ type: 'result', is_error: false, result: 'hola' })]).sinMedir, undefined);
+});
+
+test('abrioGuia: si el asistente falla, el caso queda sin medir', () => {
+  const d = abrioGuia([JSON.stringify({ type: 'result', is_error: true, result: 'API Error: 429' })], 'segundo-plano.md');
+  assert.equal(d.sinMedir, true);
+  assert.equal(d.abierta, false);
+});
+
+test('Codex: turn.failed deja la frase sin medir, con el mensaje del error', () => {
+  const codex = require('../../../pruebas/lib/asistentes/codex');
+  const d = decidirEleccion([JSON.stringify({ type: 'turn.failed', error: { message: 'usage limit reached' } })], codex);
+  assert.equal(d.sinMedir, true);
+  assert.match(d.nota, /usage limit/);
+});

@@ -65,7 +65,7 @@ function argsSondeo({ prompt, modelo }) {
 function eventos(linea) {
   let m;
   try { m = JSON.parse(linea); } catch { return []; }
-  if (m.type === 'result') return [{ tipo: 'fin', ok: !m.is_error }];
+  if (m.type === 'result') return [{ tipo: 'fin', ok: !m.is_error, ...(m.is_error ? { error: String(m.result || m.subtype || 'error') } : {}) }];
   if (m.type !== 'assistant') return [];
   const salida = [];
   for (const c of (m.message && m.message.content) || []) {

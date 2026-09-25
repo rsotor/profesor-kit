@@ -69,7 +69,7 @@ function eventos(linea) {
   // Solo turn.completed/turn.failed terminan el turno de verdad (event_processor_with_jsonl_output.rs):
   // un evento `error` NO corta el proceso, sigue habiendo item.* después — se trata como texto, no como fin.
   if (m.type === 'turn.completed') return [{ tipo: 'fin', ok: true }];
-  if (m.type === 'turn.failed') return [{ tipo: 'fin', ok: false }];
+  if (m.type === 'turn.failed') return [{ tipo: 'fin', ok: false, error: String((m.error && m.error.message) || 'turn.failed') }];
   if (m.type === 'error') return [{ tipo: 'texto', texto: m.message || '' }];
   if (m.type !== 'item.started' && m.type !== 'item.completed') return [];
   const item = m.item || {};

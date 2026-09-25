@@ -58,12 +58,28 @@ function contarUnaVez(vistos, ev) {
 // Las líneas de stream del asistente → { decidido, skill }. Puro, para poder probarlo. `lanzador` normaliza
 // cada línea en eventos (pruebas/lib/asistentes/): por defecto, Claude Code, para no romper nada de lo que ya
 // medía esta función.
+// El asistente falló (límite de uso, error de la API…): no ha elegido nada, así que esa frase no cuenta ni como
+// acierto ni como fallo. Medición del 2026-09-25: un límite de uso a mitad dejó 19 frases como "ninguna".
+function sinMedir(ev) {
+  return { sinMedir: true, nota: `el asistente falló: ${String(ev.error || '').slice(0, 120)}` };
+}
+
+// Si el asistente falló en alguna (límite de uso…), la medición no vale: se dice y no se escribe el resultado,
+// para no dejar en el repo una tabla con fallos que no lo son.
+function quedoSinMedir(resultados) {
+  const sin = resultados.filter(r => r && r.sinMedir);
+  if (!sin.length) return false;
+  console.error(`\n⚠️  ${sin.length} sin medir: ${sin[0].nota}. No se escribe el resultado; repítelo cuando se pueda.`);
+  process.exitCode = 1;
+  return true;
+}
+
 function decidirEleccion(lineas, lanzador = claudeCode) {
   const vistos = new Set();
   let herramientas = 0;
   for (const linea of lineas) {
     for (const ev of lanzador.eventos(linea)) {
-      if (ev.tipo === 'fin') return { decidido: true, skill: null };
+      if (ev.tipo === 'fin') return ev.ok === false ? { decidido: true, skill: null, ...sinMedir(ev) } : { decidido: true, skill: null };
       if (ev.tipo === 'skill') return { decidido: true, skill: ev.skill };
       if (ev.tipo !== 'herramienta' || !contarUnaVez(vistos, ev)) continue;
       if (++herramientas >= LIMITE_HERRAMIENTAS) return { decidido: true, skill: null, nota: `${LIMITE_HERRAMIENTAS} herramientas sin skill` };
@@ -91,7 +107,7 @@ function abrioGuia(lineas, guia, lanzador = claudeCode) {
   let herramientas = 0;
   for (const linea of lineas) {
     for (const ev of lanzador.eventos(linea)) {
-      if (ev.tipo === 'fin') return { decidido: true, abierta: false, nota: 'terminó sin abrir la guía' };
+      if (ev.tipo === 'fin') return { decidido: true, abierta: false, ...(ev.ok === false ? sinMedir(ev) : { nota: 'terminó sin abrir la guía' }) };
       if (ev.tipo !== 'herramienta' && ev.tipo !== 'skill') continue;
       if (!contarUnaVez(vistos, ev)) continue;
       if (abreLaGuia(ev, guia)) return { decidido: true, abierta: true };
@@ -236,7 +252,7 @@ function lanzarFrase({ frase, destino, modelo, lanzador, adaptador, volcarDir })
     lanzador, adaptador, frase, destino, modelo, volcarDir, etiquetaVolcado: `frase-${frase}`,
     detectar: lineas => decidirEleccion(lineas, lanzador),
     sinDecidir: nota => ({ decidido: true, skill: null, nota }),
-  }).then(({ skill, nota }) => ({ skill, nota }));
+  }).then(({ skill, nota, sinMedir: s }) => ({ skill, nota, sinMedir: s }));
 }
 
 function lanzarCasoGuia({ frase, destino, modelo, guia, lanzador, adaptador, volcarDir }) {
@@ -244,7 +260,7 @@ function lanzarCasoGuia({ frase, destino, modelo, guia, lanzador, adaptador, vol
     lanzador, adaptador, frase, destino, modelo, volcarDir, etiquetaVolcado: `guia-${guia}`,
     detectar: lineas => abrioGuia(lineas, guia, lanzador),
     sinDecidir: nota => ({ decidido: true, abierta: false, nota }),
-  }).then(({ abierta, nota }) => ({ abierta, nota }));
+  }).then(({ abierta, nota, sinMedir: s }) => ({ abierta, nota, sinMedir: s }));
 }
 
 // El curso de ejemplo configurado, con lo que dejó la última prueba real encima (sesiones procesadas, dudas, examen):
@@ -279,8 +295,10 @@ async function ejecutarCasoGuia({ caso, modelo, asistente, volcarDir }) {
     const modeloUsado = modelo || modeloRecomendado(destino);
     const preparado = casosGuia.preparar(destino, caso.preparar);
     if (!preparado.ok) return { ...caso, abierta: false, nota: `no se pudo preparar la situación: ${preparado.motivo}`, modeloUsado };
-    const { abierta, nota } = await lanzarCasoGuia({ frase: caso.frase, destino, modelo: modeloUsado, guia: caso.guia, lanzador, adaptador, volcarDir });
-    return { ...caso, abierta, nota, modeloUsado };
+    const { abierta, nota, sinMedir: s } = await lanzarCasoGuia({
+      frase: caso.frase, destino, modelo: modeloUsado, guia: caso.guia, lanzador, adaptador, volcarDir,
+    });
+    return { ...caso, abierta, nota, sinMedir: s, modeloUsado };
   } finally {
     borrar(destino);
     borrar(datos);
@@ -318,7 +336,7 @@ async function ejecutar({ modelo, solo, frase, veces = 1, soloGuias = false, asi
         fecha, version: fs.readFileSync(path.join(RAIZ_KIT, '.kit', 'VERSION'), 'utf8').trim(),
         modelo: modeloUsado, resultados: [], resultadosGuia, asistente,
       });
-    fs.writeFileSync(RESULTADO, md);
+    if (!quedoSinMedir(resultadosGuia)) fs.writeFileSync(RESULTADO, md);
     return md;
   }
   const destino = carpetaTemporal();
@@ -338,9 +356,9 @@ async function ejecutar({ modelo, solo, frase, veces = 1, soloGuias = false, asi
     const trabajador = async () => {
       while (siguiente < frases.length) {
         const i = siguiente++;
-        const { skill, nota } = await lanzarFrase({ frase: frases[i].frase, destino, modelo, lanzador, adaptador, volcarDir });
-        resultados[i] = { ...frases[i], elegida: skill, nota };
-        console.log(`  ${acierta(skill, frases[i].esperada) ? '✅' : '❌'} "${frases[i].frase}" → ${nombre(skill)}${nota ? ` (${nota})` : ''}`);
+        const { skill, nota, sinMedir: s } = await lanzarFrase({ frase: frases[i].frase, destino, modelo, lanzador, adaptador, volcarDir });
+        resultados[i] = { ...frases[i], elegida: skill, nota, sinMedir: s };
+        console.log(`  ${s ? '⚠️' : acierta(skill, frases[i].esperada) ? '✅' : '❌'} "${frases[i].frase}" → ${nombre(skill)}${nota ? ` (${nota})` : ''}`);
       }
     };
     // Los casos de guía montan su propio curso: pueden correr a la vez que las frases, que comparten el suyo.
@@ -351,7 +369,8 @@ async function ejecutar({ modelo, solo, frase, veces = 1, soloGuias = false, asi
       fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
       modelo, resultados, resultadosGuia, asistente,
     });
-    if (!frase) fs.writeFileSync(RESULTADO, md);   // repetir una frase suelta no pisa la medición completa
+    // Repetir una frase suelta no pisa la medición completa; una medición con frases sin medir, tampoco.
+    if (!quedoSinMedir([...resultados, ...resultadosGuia]) && !frase) fs.writeFileSync(RESULTADO, md);
     return md;
   } finally {
     borrar(destino);
@@ -381,7 +400,7 @@ async function cli(args) {
     soloGuias: args.includes('--solo-guias'), asistente, volcarDir: valor('--volcar'),
   });
   console.log('\n' + md.split('\n').slice(0, 20).join('\n') + `\nResultado completo: ${path.relative(RAIZ_KIT, rutaResultado(asistente))}`);
-  return 0;
+  return process.exitCode || 0;
 }
 
 if (require.main === module) cli(process.argv.slice(2)).then(c => process.exit(c));
