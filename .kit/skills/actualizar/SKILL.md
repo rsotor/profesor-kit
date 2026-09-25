@@ -82,9 +82,5 @@ copia al configurar). Esas llegan como ofertas: en las novedades que leíste en 
 
 Guarda al terminar con `node .kit/herramientas/guardar.js "config: al día con la <versión>"`.
 
-Si tras actualizar el curso ya tiene sesiones pero no `config/estructura.json`, propón al alumno la estructura
-(ver `AGENTS.md`, "El material se organiza como el curso") antes de la siguiente clase.
-
-Al terminar, cierra con una línea `Del kit: nada` o `Del kit: <qué>` (si algo de la actualización no fue como
-dice esta skill; si no es "nada", sigue "Feedback al kit" de `AGENTS.md`). Las skills no hace falta reinstalarlas:
-`actualizar.js` ya lo hace con el destino de tu adaptador.
+Cierra con `Del kit: nada` o `Del kit: <qué>` (ver "Feedback al kit" en `AGENTS.md`). No hace falta reinstalar
+las skills: `actualizar.js` ya lo hace con el destino de tu adaptador.

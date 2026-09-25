@@ -4,8 +4,8 @@
 // de esto llama a `claude`: eso lo hace prueba-real.js, que es quien decide el prompt de cada paso.
 const fs = require('node:fs');
 const path = require('node:path');
-const { MARCA_INICIO } = require('../../.kit/herramientas/lib/indice');
-const { sinCodigo, aPosix } = require('../../.kit/herramientas/lib/vault');
+const { MARCA_INICIO, leerExamenes } = require('../../.kit/herramientas/lib/indice');
+const { sinCodigo, aPosix, leerFrontmatter } = require('../../.kit/herramientas/lib/vault');
 const examenesLib = require('../../.kit/herramientas/lib/examenes');
 
 // Inserta contenido en el cuerpo de la nota, antes del pie de navegación (`%% navegación %%` de
@@ -402,6 +402,101 @@ function preguntasLiteralesDelCentro(destino, ficheroExamen, textoReferencia) {
   return { ok: true, detalle: `${literales.length} de ${bloques.length} preguntas son literales del centro (máximo ${mitad}), marcadas y con su respuesta` };
 }
 
+// --- Reutilizar preguntas falladas en un segundo examen (plan 0.26, punto 4) -----------------------------
+//
+// /examen §3 manda, antes de escribir nada nuevo en un examen posterior de la misma unidad, reutilizar tal
+// cual lo que el alumno falló en el anterior (`examen.js --falladas <unidad>`), marcado en la clave del
+// examen nuevo con `origen: "examen anterior"` y `de: "<examen>"`, con el tope de 3 preguntas por concepto.
+// Aquí se comprueba eso en disco, sin LLM: lo mismo que ya falló el alumno (patrón determinista de
+// contestarExamenTest) tiene que reaparecer, literal, en la clave del examen nuevo.
+
+// Sin el número de la pregunta delante: el examen nuevo la renumera (ya no es la 6, ahora la 3), así que
+// comparar el bloque entero (enunciado + opciones) hace falta sin él.
+const sinNumeroDePregunta = bloque => String(bloque).replace(NUMERO_PREGUNTA, '').trim();
+
+// Las falladas del examen anterior, recortadas a 3 por concepto — el tope que respeta la skill al
+// reutilizar (apartado 3): es lo máximo que puede exigirse que reaparezca en el examen nuevo.
+function falladasTopeTres(falladas) {
+  const porConcepto = new Map();
+  for (const f of falladas) {
+    const clave = f.concepto || null;
+    porConcepto.set(clave, [...(porConcepto.get(clave) || []), f]);
+  }
+  const tope = [];
+  for (const grupo of porConcepto.values()) tope.push(...grupo.slice(0, 3));
+  return tope;
+}
+
+// Las preguntas del examen nuevo que su clave marca como reutilizadas del examen anterior (`origen: "examen
+// anterior"`), con el bloque tal cual sale de su propio `.md` (para compararlo con el de las falladas).
+function preguntasReutilizadas(destino, ficheroExamen) {
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  const clave = examenesLib.leerClave(destino, relExamen);
+  const clavePreguntas = Array.isArray(clave.preguntas) ? clave.preguntas : [];
+  const preguntasMd = examenesLib.preguntasDelMd(fs.readFileSync(ficheroExamen, 'utf8'));
+  return clavePreguntas
+    .map((c, i) => ({ numero: i + 1, enunciado: preguntasMd[i] || '', concepto: c.concepto || null, origen: c.origen || null, de: c.de || null }))
+    .filter(pr => pr.origen === 'examen anterior');
+}
+
+// El examen nuevo, tal como lo deja la skill al pedir "otra vez el examen del módulo X": reutiliza, marcada
+// y trazada, cada pregunta que el alumno falló en el examen anterior (tope 3 por concepto) y respeta el
+// número de preguntas de su tipo (`config/examenes.json`). `ficheroAnterior` es el examen ya corregido (su
+// histórico de intentos es de donde sale qué falló); `unidad` es el prefijo de la unidad, como en
+// `examen.js --falladas`.
+function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
+  const nuevo = examenMasReciente(destino);
+  if (!nuevo) return { ok: false, detalle: 'no hay ningún examen en estudio/examenes/' };
+  if (path.resolve(nuevo) === path.resolve(ficheroAnterior)) {
+    return { ok: false, detalle: 'sigue siendo el mismo fichero que el primer examen: no se ha escrito uno nuevo' };
+  }
+
+  const relAnterior = aPosix(path.relative(path.join(destino, 'estudio'), ficheroAnterior));
+  const todos = leerExamenes(destino);
+  const deLaUnidad = todos.filter(e => e.rel === relAnterior && (!unidad || e.unidades.some(u => u === unidad || u.startsWith(`${unidad}-`))));
+  const falladas = examenesLib.preguntasFalladas(destino, deLaUnidad);
+  if (!falladas.length) return { ok: false, detalle: 'el examen anterior no dejó ninguna pregunta fallada: no se puede comprobar la reutilización', ficheroNuevo: nuevo };
+
+  const esperadas = falladasTopeTres(falladas);
+  const reutilizadas = preguntasReutilizadas(destino, nuevo);
+  const mismoBloque = (a, b) => normalizarTexto(sinNumeroDePregunta(a)) === normalizarTexto(sinNumeroDePregunta(b));
+  const problemas = [];
+
+  for (const r of reutilizadas) {
+    if (r.de !== relAnterior) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}"`);
+    if (!esperadas.some(f => mismoBloque(f.enunciado, r.enunciado))) {
+      problemas.push(`la pregunta ${r.numero} está marcada como reutilizada pero su enunciado no coincide con ninguna fallada`);
+    }
+  }
+
+  const porConcepto = new Map();
+  for (const f of esperadas) porConcepto.set(f.concepto || null, [...(porConcepto.get(f.concepto || null) || []), f]);
+  for (const [concepto, grupo] of porConcepto) {
+    const entraron = grupo.filter(f => reutilizadas.some(r => mismoBloque(f.enunciado, r.enunciado)));
+    if (entraron.length < grupo.length) problemas.push(`del concepto ${concepto || '(sin concepto)'} solo entraron ${entraron.length} de ${grupo.length} falladas esperadas (tope 3)`);
+  }
+  const porConceptoReutilizadas = new Map();
+  for (const r of reutilizadas) porConceptoReutilizadas.set(r.concepto, (porConceptoReutilizadas.get(r.concepto) || 0) + 1);
+  const masDeTres = [...porConceptoReutilizadas].filter(([, n]) => n > 3);
+  if (masDeTres.length) problemas.push(`más de 3 preguntas reutilizadas del mismo concepto: ${masDeTres.map(([c]) => c || '(sin concepto)').join(', ')}`);
+
+  const fmNuevo = leerFrontmatter(fs.readFileSync(nuevo, 'utf8')) || {};
+  const tipo = fmNuevo.tipo_examen || 'modulo';
+  const preguntasNuevoMd = examenesLib.preguntasDelMd(fs.readFileSync(nuevo, 'utf8'));
+  const tipoCfg = tipo !== 'final' ? examenesLib.leer(destino).tipos[tipo] : null;
+  const esperadoPreguntas = tipoCfg ? tipoCfg.preguntas : null;
+  if (esperadoPreguntas && preguntasNuevoMd.length !== esperadoPreguntas) {
+    problemas.push(`el examen nuevo tiene ${preguntasNuevoMd.length} pregunta(s) y el tipo "${tipo}" pide ${esperadoPreguntas}`);
+  }
+
+  return {
+    ok: problemas.length === 0,
+    detalle: problemas.length ? problemas.join(' · ')
+      : `${reutilizadas.length} pregunta(s) reutilizadas del examen anterior (de ${esperadas.length} falladas esperadas, tope 3 por concepto) · ${preguntasNuevoMd.length} preguntas en total`,
+    ficheroNuevo: nuevo,
+  };
+}
+
 // --- La corrección, medida (issue #39, H08) ---------------------------------------------------------------
 
 // El veredicto de una celda "Resultado" de la tabla de un intento, en los tres de "Cuando preguntas para medir"
@@ -492,4 +587,5 @@ module.exports = {
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
   casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
   referenciaCoherente, formatoDeOpciones, preguntasReferencia, preguntasLiteralesDelCentro,
+  falladasTopeTres, preguntasReutilizadas, verificarReutilizacionFalladas,
 };

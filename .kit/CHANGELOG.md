@@ -13,6 +13,18 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.26.0
+- **Tu progreso dice de dónde sale.** Cada casilla que no está en ⬜ lleva la pregunta que la decidió, por
+  ejemplo "🟡 flojo · examen del módulo 1, p.1: confunde unidad de cuenta con medio de cambio". Así ves qué
+  parte te falla, no solo que algo va flojo.
+- **Menos notas repetidas.** Antes de crear un concepto nuevo, tu profesor mira cuáles se le parecen por lo
+  que significan, no solo por el nombre, y si es lo mismo amplía la nota que ya tenías. Y lo que se evalúa por
+  separado tiene su propia nota, en vez de esconderse como "otro nombre" de otra.
+- **Tu profesor va más ligero.** Sus instrucciones se han recortado sin quitarle nada: lo mismo, dicho una
+  vez. Cabe mejor en la memoria de cualquier asistente.
+- **Si ya tenías tu curso:** al actualizar, las casillas de progreso que ya tenías quedan marcadas "antes de la
+  0.26, sin prueba": no se puede saber de qué respuesta salieron, y así no se inventa.
+
 ## 0.25.0
 - **Tu progreso se ve en inicio:** por módulo, cuántas sesiones has estudiado y cuántos conceptos dominas (no
   cuántos has visto: los que de verdad has entendido). Y cuando apruebas un módulo, queda una línea con la fecha

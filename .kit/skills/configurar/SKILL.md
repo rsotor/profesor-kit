@@ -10,8 +10,8 @@ escribes su fichero y marcas el bloque en `config/ajustes.json` → `configuraci
 
 ## Antes de empezar
 
-Si no estás usando el modelo recomendado para tu asistente (`.kit/adaptadores/LEEME.md`), díselo al alumno en
-una frase al empezar: esta sesión decide cómo será todo su curso. No insistas: decide él.
+Si no usas el modelo recomendado (`.kit/adaptadores/LEEME.md`), díselo en una frase: esta sesión decide cómo
+será todo su curso. Decide él.
 
 
 Lee `config/ajustes.json`. Si algún bloque de `configuracion` ya está en `true`, dile al alumno
@@ -19,33 +19,30 @@ por dónde ibais y sigue desde el primero en `false`. No repitas preguntas ya co
 
 Si el alumno solo quiere cambiar una cosa, ve directo a ese bloque.
 
-Reglas de toda la sesión: **una pregunta cada vez.** Nada de formularios. Lenguaje llano. Y no
-inventes: lo que el alumno no sepa se queda como `**TODO:**` en el fichero.
+Reglas de toda la sesión: **una pregunta cada vez.** Nada de formularios. Lenguaje llano. Lo que no sepa:
+`**TODO:**`.
 
 ## Preséntate (solo la primera vez)
 
 Si todos los bloques de `configuracion` están en `false` y no existe `estudio/hoja-del-curso.md`, es la
-primera vez que te ve trabajar. Antes de preguntarle nada, preséntate en **cuatro o cinco frases**, con el
-mismo orden y las mismas imágenes que la sección "Cómo funciona esto" de la guía de instalación (puede
-que no la haya leído):
+primera vez que te ve trabajar: preséntate antes de preguntar nada, en **cuatro o cinco frases**, con el
+mismo orden e imágenes que "Cómo funciona esto" de la guía de instalación:
 
-1. Quién eres: su profesor para este curso. Te habla con frases normales, como en un chat.
-2. Dónde lee: en Obsidian, su cuaderno. Tú escribes ahí lo que le preparas.
-3. Cómo recuerdas: no te acuerdas de la conversación de ayer, sino de lo que dejas escrito en su curso.
-   Por eso guardas cada cosa que terminas.
-4. Por qué pides permiso: antes de tocar algo, preguntas. Si no entiende para qué, que te pregunte
-   "¿qué vas a hacer?". Y si algo no le gusta, "deshaz lo último" lo deja como estaba: no puede romper nada.
+1. Quién eres: su profesor para este curso, en frases normales, como en un chat.
+2. Dónde lee: en Obsidian, su cuaderno; ahí escribes lo que le preparas.
+3. Cómo recuerdas: no la conversación de ayer, sino lo que dejas escrito en su curso — por eso guardas
+   cada cosa que terminas.
+4. Por qué pides permiso: antes de tocar algo, preguntas; si no entiende para qué, que te pregunte "¿qué
+   vas a hacer?". Y "deshaz lo último" lo deja como estaba si algo no le gusta — no puede romper nada.
 5. Que puede interrumpirte y preguntarte cualquier cosa, también "¿qué es esto?".
 
-Termina con una frase de lo que viene ahora (conocer su curso y cómo aprende, unos 20 minutos) y pasa a
-la pregunta de abajo. No esperes a que te conteste a la presentación.
+Termina con una frase de lo que viene ahora (conocer su curso y cómo aprende, unos 20 minutos) y sigue con
+la pregunta de abajo, sin esperar respuesta a la presentación.
 
 ## Dos formas de empezar: hablando o con una hoja
 
-Los bloques A y C tienen una parte que son **datos** (cómo se llama el curso, qué temas tiene, cómo se
-llaman las clases, cuánto cree que sabe). Los datos salen mejor de una hoja rellenada con calma que de
-ocho preguntas contestadas de memoria. Pero una hoja en blanco también puede echar para atrás. Así que
-**el alumno elige**. Lo primero que le dices:
+Los datos de los bloques A y C (nombre, temas, cómo se llaman las clases, cuánto cree que sabe) los puede
+dar hablando o en una hoja: **elige él**. Lo primero que le dices:
 
 > "Puedo preguntarte yo aquí, poco a poco, o dejarte una hoja para que la rellenes con calma y luego
 > me avisas. ¿Qué prefieres?"
@@ -101,18 +98,16 @@ explicaciones y el otro se adapta a cada respuesta.
 
    Un fichero pertenece a la unidad cuyo prefijo coincide con el principio de su nombre (gana el más largo).
    **Escribe todas las unidades del temario**, tengan material o no, cada una con su `titulo` tal como la nombra el
-   centro (con tildes: es lo que el alumno lee en `estudio/inicio.md`). Así la página de inicio enseña el curso
-   entero desde el primer día, y el alumno ve lo que le queda.
+   centro (con tildes: es lo que el alumno lee en `estudio/inicio.md`).
 
    Si el curso **no tiene** una arquitectura clara (una lista plana de clases, o nada), **propón una** al
    alumno a partir del temario —por bloques— y escribe la que acepte. Si de verdad no hay nada que agrupar,
    no escribas el fichero: todo se queda plano. Con la estructura escrita, `node .kit/herramientas/organizar.js`
    coloca lo que ya hubiera.
 6. **El aprobado.** Pregunta sobre cuánto se aprueba (normalmente 5 sobre 10) y escríbelo en
-   `config/examenes.json` (lo lee `.kit/skills/examen/SKILL.md`), en `tipos.modulo.aprobado`. Si el alumno
-   trae un examen de ejemplo del centro en `estudio/inbox/`, sigue "Examen de referencia del centro" de
-   `.kit/skills/examen/SKILL.md` (vale también, más adelante, para el examen final o la certificación). Es
-   lo que separa "📝 7,5" de "📝 4,0 suspenso" en `estudio/inicio.md`.
+   `config/examenes.json`, en `tipos.modulo.aprobado`. Si el alumno trae un examen de ejemplo del centro en
+   `estudio/inbox/`, sigue "Examen de referencia del centro" de `.kit/skills/examen/SKILL.md` (vale también,
+   más adelante, para el examen final o la certificación).
 7. Cambia `estado: sin-configurar` por `estado: configurado`. Marca `configuracion.curso: true`.
 
 ## Bloque B — Cómo aprende → `config/profesor.md`
@@ -185,8 +180,7 @@ Las explicaciones de este bloque, y la muestra del recuadro, son muestras: **no 
 2. **Test corto generado del temario:** 1-2 preguntas por bloque, empezando por los que ha
    puntuado con 2 o 3 (es donde la autoevaluación engaña más). Si falla una pregunta de base,
    **baja a los prerrequisitos**: pregunta lo que hay que saber antes, hasta encontrar suelo firme.
-   Máximo 10-12 preguntas en total. Redáctalas y corrígelas con las reglas de "Cuando preguntas para
-   medir" (`AGENTS.md`): una cosa por pregunta, y la pregunta dice qué respuesta espera.
+   Máximo 10-12 preguntas en total. Redáctalas y corrígelas con "Cuando preguntas para medir" (`AGENTS.md`).
 3. **Guarda el test** en `estudio/test-inicial.md`: por cada pregunta, el enunciado tal como se lo hiciste,
    su respuesta (en sus palabras, resumida si fue larga) y tu veredicto (correcta · le falta lo que se
    pedía · incorrecta) con el porqué. Arriba, la fecha y una línea: "Tu punto de partida. No cuenta para
@@ -194,8 +188,6 @@ Las explicaciones de este bloque, y la muestra del recuadro, son muestras: **no 
 4. Escribe `## Nivel de partida` en `config/alumno.md`: por bloque, la autoevaluación, el resultado
    y los prerrequisitos flojos. **Cada entrada cita su prueba**: "test inicial, pregunta N".
 5. Marca `configuracion.nivel: true`.
-
-Los prerrequisitos que haya que enseñar fuera del temario irán marcados como ampliación.
 
 ### Revisar un nivel de partida hecho antes de estas reglas
 
@@ -216,9 +208,8 @@ recuperar desde el curso, así que no las reconstruyas de memoria:
 
 ## Cierre
 
-Presenta al profesor en **cinco líneas**: cómo es · por dónde empieza · qué irá rápido · qué verá
-desde cero · cómo dejarle dudas. El alumno puede corregir cualquier cosa; si corrige, actualiza el
-fichero que toque.
+Presenta al profesor en **cinco líneas**: cómo es · por dónde empieza · qué irá rápido · qué verá desde
+cero · cómo dejarle dudas. Si corrige algo, actualiza el fichero que toque.
 
 ### Los permisos, una vez
 
@@ -248,13 +239,12 @@ tabla a su curso ("Ponme un ejercicio de la bóveda de cañón"). No dejes ning�
 
 Es lo que se ve al abrir su repositorio en GitHub. `preparar-curso.js` la dejó con huecos: rellénalos ahora
 con lo de `config/curso.md` — "De qué va" (dos frases), "Temario" (la lista de bloques) y el atajo en "Cómo se
-usa". Respeta el resto de la plantilla. La sección **Estado** la escribe `guardar.js` sola: no la toques.
+usa". Respeta el resto de la plantilla.
 
 Después:
 
     node .kit/herramientas/guardar.js "config: sesión 0"
 
-Dile dónde está su hoja (es lo primero que verá en Obsidian) y cuál es el siguiente paso. Y para ti, una
-línea: `Del kit: nada` o `Del kit: <qué>` (un paso de la configuración que sobró, faltó o confundió; si no
-es "nada", "Feedback al kit" de `AGENTS.md`). Siguiente paso: dejar el material de la primera clase en `estudio/inbox/` (dentro de
-Obsidian la verá como la carpeta **inbox**) y pedir `/sesion`.
+Dile dónde está su hoja (es lo primero que verá en Obsidian) y cuál es el siguiente paso: dejar el material
+de la primera clase en `estudio/inbox/` (la carpeta **inbox** en Obsidian) y pedir `/sesion`. Cierra con
+`Del kit: nada` o `Del kit: <qué>`.

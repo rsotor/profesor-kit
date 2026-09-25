@@ -1,64 +1,61 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
+bloques: [1.2 Presupuesto personal]
 visto_en: [01-02-01-presupuesto-personal]
-dificultad: 1
+dificultad: 2
 requiere: [funciones-del-dinero]
-alias: [presupuesto, ingreso medio]
-tags: [presupuesto]
-ejercicio: 01-02-01-un-mes-flojo-y-tu-colchon
+alias: [presupuesto]
+tags: [presupuesto, ahorro]
+ejercicio: 01-02-01-presupuesto-personal
 ---
 # Presupuesto personal
 
-> **En una frase:** apuntar lo que entra y lo que sale cada mes para saber cuánto te queda; si tus ingresos varían, se presupuesta con su media de los últimos 6-12 meses, no con el mejor mes.
+> **En una frase:** un presupuesto es apuntar lo que entra y lo que sale cada mes; lo que sobra es el ahorro del mes.
 
 ## El problema
 
-Sin apuntar nada, a final de mes no sabes cuánto has ganado de verdad ni adónde se ha ido. No hace falta
-ninguna herramienta complicada: dos columnas, ingresos y gastos.
+Si lo llevas todo de cabeza, a final de mes no sabes dónde se ha ido el dinero. No hace falta ninguna
+herramienta complicada: bastan dos columnas, ingresos y gastos.
 
 ## El ejemplo
 
-Este mes ingresas **1.850,00 €** y gastas **1.195,00 €** (el detalle, en [[gastos-fijos-y-variables]]). Te queda
-**655,00 €**.
-
-Y si facturas por tu cuenta, los ingresos no son siempre iguales: un mes 2.400,00 €, otro 1.300,00 €. Con la
-media del ejemplo de clase (1.850,00 €), presupuestar con el mejor mes te haría contar con 550,00 € que en un
-mes normal no llegan.
-
-## El nombre
-
-**Presupuesto personal.** Con ingresos irregulares, el ingreso que se usa es el **ingreso medio** de los últimos
-6-12 meses.
+En un mes entran 1.850,00 € y salen 1.195,00 €. Lo que queda es el ahorro del mes:
+1.850,00 € − 1.195,00 € = **655,00 €**.
 
 ## La fórmula
 
-$$ \text{ahorro del mes} = \text{ingresos del mes} - \text{gastos del mes} $$
+$$\text{ahorro del mes} = \text{ingresos del mes} - \text{gastos del mes}$$
 
-Lo que entra menos lo que sale. Si sale un número negativo, ese mes gastas más de lo que ingresas.
+Si sale negativo, has gastado más de lo que entró: ese mes se ha tirado de lo ahorrado.
 
 ## El error típico
 
-Presupuestar con el ingreso del mejor mes. Los apuntes piden la media de los últimos 6-12 meses: es la cifra con
-la que se puede contar sin sustos.
+> [!info] Ampliación fuera de los apuntes
+> Presupuestar con el mejor mes. Si un mes facturas 2.400,00 € y otro 1.300,00 €, el número con el que
+> se cuenta es la **media** de los últimos 6-12 meses (aquí, 1.850,00 €), no el 2.400,00 €.
+
+El curso no trae un error típico para este concepto; este es una propuesta del profesor.
 
 ## Practícalo
 
-→ **[Un mes flojo y tu colchón](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-un-mes-flojo-y-tu-colchon.html)**
+→ **[Presupuesto con ingresos irregulares](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal.html)**
 
-Baja los ingresos de un mes flojo por debajo de tus gastos. Lo que debería sorprender: el mes sale en negativo
-justo cuando los ingresos bajan de los gastos, y cada mes flojo seguido suma.
+Mueve lo que facturas en el mes y mira dónde el ahorro deja de ser positivo: lo que debería sorprenderte es
+que los gastos fijos no se mueven contigo.
 
-> [!tip] Visto desde tus ingresos irregulares
-> Tu presupuesto no parte de lo que ingresaste este mes, sino de la media. Un mes por encima de la media no es
-> dinero extra para gastar: es lo que compensa el próximo mes flojo.
+## Visto desde tus ingresos irregulares
+
+> [!tip] Lectura del profesor, no del curso
+> Con nómina, ingresos y gastos son casi siempre la misma cuenta. En tu caso el ingreso baila de un mes a otro,
+> pero el alquiler no: por eso se presupuesta con la media y no con el mes bueno. Con la media de 1.850,00 €,
+> un mes de 1.300,00 € sigue cerrando en positivo (1.300,00 € − 1.195,00 € = 105,00 €); un mes de 1.000,00 €
+> ya no (−195,00 €).
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el presupuesto usa el dinero como unidad de cuenta
-- [[gastos-fijos-y-variables]] — cómo se ordena la columna de gastos
-- [[tasa-de-ahorro]] — qué parte de lo que ingresas te queda
-- [[colchon-financiero]] — para cubrir los meses en que los ingresos no llegan
+- [[gastos-fijos-y-variables]] — las dos columnas de gastos del presupuesto.
+- [[tasa-de-ahorro]] — el ahorro del mes medido como parte de lo que ingresas.
+- [[colchon-financiero]] — a dónde va lo ahorrado primero, y lo que cubre los meses en negativo.
 
 ## Historial
 

@@ -5,15 +5,8 @@ description: Use when the student wants a new practice exercise for a concept, o
 
 # Crear un ejercicio
 
-**Antes de nada:** lee `config/curso.md`, `config/profesor.md` y `config/alumno.md` (regla común
-de `AGENTS.md`).
-
-Ejercicios nuevos, a demanda, sobre cualquier concepto del curso. No solo los que trajo la
-sesión: **si un concepto se puede practicar, se le puede escribir un ejercicio.**
-
-El kit no trae plantillas ni código de ejercicios: cada ejercicio es un fichero autocontenido
-que tú generas. Esta skill es una guía —qué reto diseñar, qué formato elegir, cómo
-verificarlo— no una receta con un único molde.
+Ejercicios nuevos, a demanda, de cualquier concepto que se pueda practicar. El kit no trae plantillas: cada
+uno es un fichero autocontenido que generas tú; esto es una guía, no un molde.
 
 ## El principio, antes que nada
 
@@ -68,7 +61,7 @@ tablas, enunciados— es andamiaje para esa pregunta.
 | pide producir algo (un texto, un esquema, un cálculo largo, código) | **Markdown con enunciado y criterios de corrección** plegados; el alumno entrega su fichero en `estudio/ejercicios/entregas/` y el profesor lo corrige contra los criterios | lo que se evalúa es lo producido |
 
 En los de respuesta abierta y los de producir algo, la pregunta y los criterios siguen "Cuando preguntas para
-medir" (`AGENTS.md`): el enunciado dice qué respuesta espera, y los criterios solo piden lo que el enunciado pidió.
+medir" (`AGENTS.md`).
 
 Si dos formatos valen, manda `tipo_ejercicio` de `config/profesor.md`. Si ninguno encaja,
 propón otro y explica por qué: la tabla es una guía, no un corsé.
@@ -107,8 +100,8 @@ pesan causas entre sí, no hay ningún número que mover—.
    casos a mano, cada uno con su `esperado` si lo sabes). Los casos a mano van en
    `config/casos/<ejercicio>.json`, fuera de su bóveda, y **se quedan**: sirven para volver a comprobarlo si
    cambias el ejercicio. No los borres (`rm` se deniega). Comprueba que no hay excepciones, casos degenerados
-   ni empates entre lo que sale y lo que marca correcto. No lo compruebes con un script propio: se deniega
-   igual que el `sed … node --check` de antes.
+   ni empates entre lo que sale y lo que marca correcto.
+   Nunca con un script propio: se deniega; para eso está `verificar-ejercicio.js`.
 4. Antes de cerrar, comprueba que la moraleja del ejercicio es la misma que la de la nota.
    **Si enseña la contraria, se tira; no se matiza.**
 
@@ -126,14 +119,13 @@ sitios a mano, y `node .kit/herramientas/comprobar.js` valida que no falte el pr
    carpeta de unidad que la sesión, ver `/sesion`), con su versión a mano. Si nace suelto, va a
    `estudio/ejercicios/extra.md`.
 
-`estudio/ejercicios/_index.md` **se escribe solo al guardar**, con una fila en las dos tablas —por ejercicio
-y por concepto— por cada `ejercicio:` del punto 1, y *qué se descubre fallándolo* sale del `## Practícalo`
-de esa misma nota. No lo toques a mano: escribe bien el punto 1 y el índice sale solo.
+`estudio/ejercicios/_index.md` **se escribe solo al guardar**, a partir del `ejercicio:` y `## Practícalo`
+del punto 1: no lo toques a mano.
 
 ### 7. Lo que aprende el profesor
 
-Un fallo en un ejercicio es una prueba. Va a `config/alumno.md` citando el ejercicio, y mueve
-el eje *aplicación* de `estudio/progreso.md`.
+Un fallo en un ejercicio es una prueba: va a `config/alumno.md` citando el ejercicio, y mueve el eje
+*aplicación* de `estudio/progreso.md`, con su cita: `🟡 flojo · ejercicio velocidad-media: invierte la fórmula`.
 
 ### 8. Cerrar
 
@@ -147,5 +139,4 @@ Si `comprobar.js` da errores, se arreglan antes de guardar.
 Dile en una línea qué ejercicio hay y **qué se descubre fallándolo**. Nada más —el ejercicio
 se explica solo o está mal hecho.
 
-Y cierra con una línea `Del kit: nada` o `Del kit: <qué>` (algo que no es de este curso ni de este alumno; si no es
-"nada", sigue "Feedback al kit" de `AGENTS.md`).
+Cierra con `Del kit: nada` o `Del kit: <qué>` (ver "Feedback al kit" en `AGENTS.md`).

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presupuesto con ingresos irregulares</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: .5rem; padding: .75rem 1rem; margin: 1rem 0; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .6rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .4rem .8rem; margin: .25rem .25rem .25rem 0; cursor: pointer; }
+  #explicacion { min-height: 3rem; }
+  .ok { color: #2a7a2a; } .ko { color: #b03030; }
+</style>
+</head>
+<body>
+<h1>Presupuesto con ingresos irregulares</h1>
+<p>Conceptos: <strong>presupuesto personal</strong> y <strong>gastos fijos y variables</strong>. Ejemplo de la clase 1.2.</p>
+
+<section id="condiciones">
+  <h2>1 · Condiciones (muévelas)</h2>
+  <label for="ingresos">Lo que facturas este mes: <strong id="v-ingresos"></strong></label>
+  <input type="range" id="ingresos" min="0" max="3000" step="50" value="1300">
+  <label for="fijos">Gastos fijos del mes: <strong id="v-fijos"></strong></label>
+  <input type="range" id="fijos" min="400" max="1200" step="5" value="715">
+  <label for="variables">Gastos variables del mes: <strong id="v-variables"></strong></label>
+  <input type="range" id="variables" min="0" max="800" step="10" value="480">
+  <p id="resumen-gastos"></p>
+</section>
+
+<section id="reto">
+  <h2>2 · Reto</h2>
+  <p>Con estas condiciones, ¿cómo cierra el mes? Elige antes de ver la cuenta. <em>(una opción)</em></p>
+  <button data-r="ahorra">Me sobra dinero</button>
+  <button data-r="justo">Quedo en 0,00 €</button>
+  <button data-r="colchon">Falta dinero: toca tirar de ahorros</button>
+</section>
+
+<section id="explicacion-caja">
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+(function () {
+  var eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // Misma lógica que usa el botón: ahorro del mes = ingresos - (fijos + variables).
+  window.verificar = function (caso) {
+    var ahorro = caso.ingresos - (caso.fijos + caso.variables);
+    if (ahorro > 0) return 'ahorra';
+    if (ahorro === 0) return 'justo';
+    return 'colchon';
+  };
+
+  function leer() {
+    return {
+      ingresos: Number(document.getElementById('ingresos').value),
+      fijos: Number(document.getElementById('fijos').value),
+      variables: Number(document.getElementById('variables').value)
+    };
+  }
+
+  function pintar() {
+    var c = leer();
+    document.getElementById('v-ingresos').textContent = eur.format(c.ingresos);
+    document.getElementById('v-fijos').textContent = eur.format(c.fijos);
+    document.getElementById('v-variables').textContent = eur.format(c.variables);
+    document.getElementById('resumen-gastos').textContent = 'Gastos del mes: ' + eur.format(c.fijos) + ' + ' + eur.format(c.variables) + '. La cuenta del ahorro la verás al responder.';
+    document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+  }
+
+  function responder(elegida) {
+    var c = leer();
+    var correcta = window.verificar(c);
+    var gastos = c.fijos + c.variables;
+    var ahorro = c.ingresos - gastos;
+    var cuenta = eur.format(c.ingresos) + ' − ' + eur.format(gastos) + ' = ' + eur.format(ahorro) + '.';
+    var caja = document.getElementById('explicacion');
+    var texto = elegida === correcta ? 'Correcto. ' : 'No. ';
+    texto += cuenta + ' ';
+    if (correcta === 'colchon') {
+      texto += 'Los fijos no se mueven con lo que facturas: el mes flojo se ajusta con los variables o se cubre con el colchón. Para no tirar de ahorros hay que facturar al menos ' + eur.format(gastos) + '.';
+    } else if (correcta === 'justo') {
+      texto += 'Ingresos igual a gastos: ni ahorras ni gastas lo ahorrado. Es el suelo de lo que hay que facturar.';
+    } else {
+      texto += 'Sobra dinero: es el ahorro del mes. Fíjate en cuánto puedes bajar lo que facturas antes de que esto se dé la vuelta.';
+    }
+    caja.textContent = texto;
+    caja.className = elegida === correcta ? 'ok' : 'ko';
+  }
+
+  ['ingresos', 'fijos', 'variables'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', function () { pintar(); document.getElementById('explicacion').className = ''; });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('button[data-r]'), function (b) {
+    b.addEventListener('click', function () { responder(b.getAttribute('data-r')); });
+  });
+  pintar();
+})();
+</script>
+</body>
+</html>

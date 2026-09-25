@@ -1,58 +1,52 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
+bloques: [1.2 Presupuesto personal]
 visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
 requiere: [presupuesto-personal]
-alias: [porcentaje de ahorro]
-tags: [presupuesto]
+alias: []
+tags: [presupuesto, ahorro]
 ---
 # Tasa de ahorro
 
-> **En una frase:** qué parte de lo que ingresas te queda al final del mes, en porcentaje, para poder comparar entre personas con ingresos distintos.
+> **En una frase:** la tasa de ahorro es la parte de lo que ingresas que te queda, expresada por cada 100 € ingresados, para poder comparar personas con sueldos distintos.
 
 ## El problema
 
-La cifra de ahorro en euros no se puede comparar entre dos personas con sueldos distintos: 300,00 € son mucho
-o poco según lo que entra.
+Ahorrar 655,00 € al mes no dice si es mucho o poco: depende de lo que ganes. Quien ingresa 1.850,00 € y
+quien ingresa 6.000,00 € no se pueden comparar con la cifra absoluta.
 
 ## El ejemplo
 
-Ingresos del mes 1.850,00 € y ahorro del mes 655,00 €:
-
-655 ÷ 1.850 × 100 ≈ **35,4 % mensual**.
-
-> [!info] Ampliación fuera de los apuntes
-> Dos personas ahorran 300,00 € en un mes. Una ingresa 2.000,00 € (**15 % mensual**) y la otra 3.000,00 €
-> (**10 % mensual**). Ahorran lo mismo en euros, pero la primera se queda con más parte de lo que gana.
-
-## El nombre
-
-**Tasa de ahorro.** El periodo es el mes: es la parte de los ingresos *del mes* que se queda como ahorro.
+Con 1.850,00 € de ingresos y 655,00 € de ahorro, de cada 100,00 € que entran te quedan unos **35,40 €**.
+Otra persona que ingresa 6.000,00 € y ahorra 900,00 € se queda con 15,00 € de cada 100,00 €: ahorra más euros,
+pero una parte menor de lo que gana.
 
 ## La fórmula
 
-$$ \text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100 $$
+$$\text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100$$
 
-El ahorro entre lo que ingresas, pasado a porcentaje.
+- El ahorro del mes es el de [[presupuesto-personal]].
+- El resultado se lee "por cada 100 € ingresados". 655 ÷ 1.850 × 100 ≈ 35,4.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Comparar el ahorro en euros entre personas con ingresos distintos: es justo lo que la tasa evita.
+> Dividir entre los gastos en vez de entre los ingresos. La tasa de ahorro se mide contra lo que entra:
+> 655,00 € ÷ 1.195,00 € daría 54,8, que es otra cosa.
 
-> [!info] Ampliación fuera de los apuntes
-> La hoja de cálculo de la clase trae "Suscripciones" en 52,00 € pero un total de fijos que sigue contando 25,00 €.
-> Con el total corregido, la tasa del ejemplo sería 33,9 % mensual y no 35,4 % mensual. Ver la auditoría de la sesión.
+El curso no trae un error típico para este concepto; este es una propuesta del profesor.
 
-> [!tip] Visto desde tus ingresos irregulares
-> Con ingresos que cambian, la tasa también cambia de un mes a otro. Calcúlala con el ingreso medio y mira si en
-> los meses flojos se queda en cero o en negativo.
+## Visto desde tus ingresos irregulares
+
+> [!tip] Lectura del profesor, no del curso
+> Tu tasa cambia de un mes a otro solo porque cambian los ingresos, aunque gastes lo mismo. Mírala sobre la
+> media de varios meses, no sobre un solo mes.
 
 ## Relacionados
 
-- [[presupuesto-personal]] — de donde sale el ahorro del mes
-- [[colchon-financiero]] — lo primero que se hace con ese ahorro
+- [[presupuesto-personal]] — de ahí sale el ahorro del mes.
+- [[colchon-financiero]] — el primer destino de lo que ahorras.
 
 ## Historial
 

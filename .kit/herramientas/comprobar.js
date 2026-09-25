@@ -108,6 +108,31 @@ function comprobarProgreso(raiz, informe) {
   }
 }
 
+// P5+H12 (0.26.0): una casilla de progreso.md distinta de ⬜ cita de qué respuesta sale (`🟡 flojo · examen 1,
+// p.1: confunde X con Y`) — si no, "por qué está en 🟡" solo lo sabe la memoria del profesor. La migración 008
+// marca las de antes de esta versión, así el aviso no salta en cursos viejos hasta que se vuelvan a tocar. La
+// cita nunca lleva un `|` sin escapar: descuadraría la fila en Obsidian, igual que un alias con alias.
+const ESTADO_QUE_PIDE_PRUEBA = /(✅|🟡|🔴)/;
+function comprobarProgresoSinPrueba(raiz, informe) {
+  if (!existe(raiz, 'progreso.md')) return;
+  for (const linea of leer(raiz, 'progreso.md').split(/\r?\n/)) {
+    if (!/^\s*\|/.test(linea)) continue;
+    const celdas = linea.split(/(?<!\\)\|/).map(c => c.trim());
+    const m = /^\[\[([^\]]+)\]\]/.exec(celdas[1] || '');
+    if (!m) continue;
+    const concepto = m[1].split(/\\?\|/)[0].split('#')[0].trim();
+    if (celdas.length > 5) {
+      informe.avisos.push({ regla: 'no-se-vera-bien', fichero: 'progreso.md', detalle: `${concepto}: la cita trae un | sin escapar — descuadra la fila. Escribe \\|` });
+    }
+    [['Teoría', celdas[2]], ['Aplicación', celdas[3]]].forEach(([eje, celda]) => {
+      if (ESTADO_QUE_PIDE_PRUEBA.test(celda || '') && !/·\s*\S/.test(celda || '')) {
+        informe.avisos.push({ regla: 'progreso-sin-prueba', fichero: 'progreso.md',
+          detalle: `${concepto} (${eje}): "${celda.trim()}" no cita de qué respuesta sale — añade "· <examen o ejercicio>: <qué pasó>"` });
+      }
+    });
+  }
+}
+
 function comprobarEjercicios(raiz, notas, informe) {
   for (const nota of notas) {
     const dir = path.posix.dirname(nota);
@@ -544,6 +569,7 @@ function comprobar(raiz) {
   comprobarFrontmatter(raiz, informe);
   comprobarPropiedades(raiz, notas, informe);
   comprobarProgreso(raiz, informe);
+  comprobarProgresoSinPrueba(raiz, informe);
   const declarados = comprobarEjercicios(raiz, notas, informe);
   comprobarEjerciciosSueltos(raiz, declarados, informe);
   comprobarPaginasWeb(raiz, informe);

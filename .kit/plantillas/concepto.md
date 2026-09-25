@@ -4,7 +4,7 @@ bloques: []
 visto_en: []
 dificultad: 2
 requiere: []
-alias: []
+alias: []   # otro nombre de lo mismo; si se evalúa por separado (p. ej. en un examen), nota propia, no alias
 tags: []
 ejercicio: <slug del ejercicio que lo practica, o se borra la línea si no tiene>
 ---

@@ -195,3 +195,32 @@ test('borrar pendientes.md o auditoria-del-material.md tampoco es enlace roto', 
   fs.rmSync(path.join(raiz, 'estudio', 'auditoria-del-material.md'));
   assert.deepEqual(comprobar(raiz).errores.filter(e => e.regla === 'enlace-roto'), []);
 });
+
+// --- progreso-sin-prueba (P5+H12, 0.26.0): cada casilla distinta de ⬜ cita de qué respuesta sale -------------
+
+test('progreso-sin-prueba: una casilla flojo/sólido/falló sin cita avisa; ⬜ nunca, y con cita tampoco', () => {
+  const raiz = cursoTemporal({
+    'estudio/progreso.md': '| Concepto | Teoría | Aplicación |\n|---|---|---|\n'
+      + '| [[alfa]] | 🟡 flojo | ⬜ sin evaluar |\n',
+  });
+  const r = avisos(raiz, 'progreso-sin-prueba');
+  assert.equal(r.length, 1);
+  assert.match(r[0].detalle, /alfa \(Teoría\)/);
+});
+
+test('progreso-sin-prueba: con su cita, no avisa', () => {
+  const raiz = cursoTemporal({
+    'estudio/progreso.md': '| Concepto | Teoría | Aplicación |\n|---|---|---|\n'
+      + '| [[alfa]] | 🟡 flojo · examen 1, p.1: confunde velocidad con aceleración | ✅ sólido · ejercicio: caso 2 |\n',
+  });
+  assert.equal(avisos(raiz, 'progreso-sin-prueba').length, 0);
+});
+
+test('progreso-sin-prueba: una cita con | sin escapar descuadra la fila — no-se-vera-bien', () => {
+  const raiz = cursoTemporal({
+    'estudio/progreso.md': '| Concepto | Teoría | Aplicación |\n|---|---|---|\n'
+      + '| [[alfa]] | 🟡 flojo · examen 1, p.1: confunde a|b | ⬜ sin evaluar |\n',
+  });
+  const r = avisos(raiz, 'no-se-vera-bien');
+  assert.ok(r.some(a => a.fichero === 'progreso.md'));
+});

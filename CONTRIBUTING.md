@@ -82,8 +82,18 @@ material salió). Revisa ese resumen a mano: es la parte que ningún test autom�
 
 Opciones: `--modelo <id>` para probar otro modelo que el recomendado del adaptador; `--limite-ms <n>`
 para el tiempo máximo por llamada a `claude` (20 minutos por defecto). `--sin-llm` monta el curso y
-prueba el propio ejecutor sin llamar a `claude`: es lo que corre en los tests del repo (nunca cuesta
+prueba el propio ejecutor sin llamar a `claude`, en una carpeta temporal (nunca pisa el resultado de la
+última prueba real): es lo que corre en los tests del repo (nunca cuesta
 cuota), y lo único que **tú** deberías ejecutar salvo que quieras de verdad una prueba real.
+
+**Con otro asistente que Claude Code** (issue #45): `--asistente <id>` (el id de `.kit/adaptadores/<id>.json`,
+p. ej. `codex`) monta el curso con ese `llm` y lo lanza con `pruebas/lib/asistentes/<id>.js`. El resultado no
+pisa el de Claude: va a `pruebas/curso-ejemplo/resultado-<id>-<sistema>/`. `--volcar <dir>` guarda el stream
+crudo de cada llamada — obligatorio la primera vez que se mide un asistente nuevo, para poder revisar a mano
+qué llegó de verdad. Con un asistente sin lanzador propio, el error lo dice: "la prueba no sabe lanzar
+`<id>`: añade `pruebas/lib/asistentes/<id>.js`".
+
+    npm run prueba-real -- --asistente codex --volcar /tmp/volcado-codex
 
 **Cuánto tarda y cuánto gasta.** Primera ejecución (2026-09-23, kit 0.21.0, Sonnet): **unos 49 minutos** en total.
 Cada clase, entre 10 y 12 minutos; dudas, ejercicio, examen y repaso, entre 1,5 y 5 minutos cada uno. Son unas
