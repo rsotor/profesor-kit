@@ -64,7 +64,7 @@ Todas de opción múltiple, con las opciones de `config/examenes.json` (`opcione
    (`<unidad>` es un prefijo, como `01`; sin él, todo el curso). Su segunda línea es un JSON
    `{ "falladas": […], "centroUsadas": […] }`. Reutiliza `falladas` tal cual: cada entrada trae `enunciado`
    (con sus opciones, del propio `.md`), `correctas`, `explicacion`, `concepto` y `examen` (de dónde sale).
-   En la clave del examen nuevo, marca cada una con `origen: "examen anterior"` y `de: "<examen>"` (apartado
+   En la clave del examen nuevo, marca cada una con `origen: "examen anterior"` y `de: "<examen>, p.<n>"` (apartado
    4), para poder trazarla; si la fallada trae `origen: "centro"`, se queda `"centro"` (cuenta para el tope de la
    mitad) y lleva también su `de`. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
 2. **Las del examen de referencia del centro que todavía no han salido**, si el alumno trajo uno: `falladas`
@@ -155,7 +155,7 @@ nace el examen:
 Una entrada de `preguntas` por pregunta, **en el mismo orden**: `correctas` (la letra o letras que valen,
 minúscula), `explicacion` (por qué la correcta es correcta; si viene de internet, aquí la fuente externa),
 `concepto` (el slug de `estudio/conceptos/`, o `null`). Si está reutilizada (apartado 3), añade
-`origen: "examen anterior"` con `de: "<ruta del examen>"`, o `origen: "centro"` si es literal del test de
+`origen: "examen anterior"` con `de: "<ruta del examen>, p.<n>"`, o `origen: "centro"` si es literal del test de
 referencia; sin ninguna, es nueva.
 
 **En el final**, la clave lleva además `"escalones"`: el array completo de `tipos.final.escalones` tal como

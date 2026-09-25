@@ -789,3 +789,15 @@ test('verificarReutilizacionFalladas: marcada "centro" pero con "de" de otro exa
   const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
   assert.equal(r.ok, false);
 });
+
+// Prueba real de la 0.27.0 (2.ª): el profesor escribió `de: "<examen>, p.1"`. Nadie lee `de` salvo una persona, y
+// con el número se traza mejor: vale con o sin él, pero el examen tiene que ser el anterior.
+test('verificarReutilizacionFalladas: "de" con el número de pregunta (", p.N") también vale', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz, { ajustesClave: { 1: { de: `${RUTA_ANTERIOR}, p.3` }, 2: { de: `${RUTA_ANTERIOR}, p.1` } } });
+  assert.equal(p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior }).ok, true);
+  examenNuevoOk(raiz, { ajustesClave: { 1: { de: 'examenes/otro.md, p.3' } } });
+  assert.equal(p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior }).ok, false);
+});

@@ -469,7 +469,9 @@ function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
   const problemas = [];
 
   for (const r of reutilizadas) {
-    if ((r.origen === 'examen anterior' || r.de) && r.de !== relAnterior) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}"`);
+    // `de` es "<examen>" o "<examen>, p.<n>" (la skill pide el número; nadie lo lee salvo una persona).
+    const deExamen = r.de ? r.de.replace(/,\s*p\.\s*\d+\s*$/, '') : r.de;
+    if ((r.origen === 'examen anterior' || r.de) && deExamen !== relAnterior) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}"`);
     if (!esperadas.some(f => mismoBloque(f.enunciado, r.enunciado))) {
       problemas.push(`la pregunta ${r.numero} está marcada como reutilizada pero su enunciado no coincide con ninguna fallada`);
     }
