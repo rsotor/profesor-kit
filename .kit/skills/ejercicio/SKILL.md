@@ -125,7 +125,7 @@ del punto 1: no lo toques a mano.
 ### 7. Lo que aprende el profesor
 
 Un fallo en un ejercicio es una prueba: va a `config/alumno.md` citando el ejercicio, y mueve el eje
-*aplicación* de `estudio/progreso.md`.
+*aplicación* de `estudio/progreso.md`, con su cita: `🟡 flojo · ejercicio velocidad-media: invierte la fórmula`.
 
 ### 8. Cerrar
 

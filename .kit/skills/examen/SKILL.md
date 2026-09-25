@@ -189,7 +189,7 @@ Con ese JSON, sin inventar nada más (el "por qué" de cada fallo ya está en el
    examen como prueba, y su `dificultad` sube en la nota.
 3. **Actualiza `estudio/progreso.md`**: por cada concepto que preguntó el examen, acertó (todas sus
    preguntas bien) → `teoría ✅`; falló alguna → `🟡`, y si es el segundo fallo (el de "vuelve a la nota")
-   → `🔴`.
+   → `🔴`. Cada casilla cita este examen y la pregunta: `🟡 flojo · examen 1, p.3: confunde con liquidez`.
 4. Guarda:
 
        node .kit/herramientas/guardar.js "examen: <alcance>"

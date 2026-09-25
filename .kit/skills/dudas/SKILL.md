@@ -42,7 +42,7 @@ Un solo marcador, tú deduces qué quiere. Los cuatro casos:
 |---|---|
 | **Duda** — "no entiendo por qué…" | Responder con un ejemplo **nuevo**, distinto del que ya está en la nota |
 | **Corrección** — "esto no es lo que explicó el profesor" | Corregir la nota. El alumno estuvo en clase, tú no: **tiene razón por defecto**. Si además es incorrecto de fondo, dilo, pero corrige lo que dijo el profesor y márcalo `> [!warning]` |
-| **Ampliación** — "¿y si la condición cambia?" | Ampliar la nota (o crear el concepto nuevo si da para nota propia y añadirlo al índice) |
+| **Ampliación** — "¿y si la condición cambia?" | Ampliar la nota (o crear el concepto nuevo si da para nota propia y añadirlo al índice: antes, `node .kit/herramientas/candidatos.js "<nombre> — <definición>"` — si uno es lo mismo, amplíalo; un alias es otro nombre, nunca una parte que se evalúa aparte) |
 | **Nota mental** — "esto seguro que cae en el examen" | Sin respuesta: llevarlo a las flashcards y a `config/alumno.md` |
 
 Si no está claro qué quiere: **pregunta**. Responder a la duda equivocada gasta su tiempo.

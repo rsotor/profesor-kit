@@ -400,3 +400,23 @@ test('migración 007: config/examenes.json con los valores por defecto; el aprob
   m.migrar(raiz);
   assert.equal(JSON.parse(leer(raiz, 'config/examenes.json')).opciones, 9, 'ya existía: no se toca');
 });
+
+test('migración 008: las casillas de progreso.md sin cita se marcan "antes de la 0.26, sin prueba"; ⬜ y las que ya citan no se tocan; idempotente', () => {
+  const m = require('../migraciones/008-progreso-con-prueba');
+  const raiz = cursoTemporal({
+    'estudio/progreso.md': '| Concepto | Teoría | Aplicación |\n|---|---|---|\n'
+      + '| [[alfa]] | 🟡 flojo | ⬜ sin evaluar |\n'
+      + '| [[beta]] | ✅ sólido · examen 1, p.2: bien | 🔴 falló dos veces |\n',
+  });
+  m.migrar(raiz);
+  const despues = leer(raiz, 'estudio/progreso.md');
+  assert.match(despues, /\| \[\[alfa\]\] \| 🟡 flojo · antes de la 0\.26, sin prueba \| ⬜ sin evaluar \|/);
+  assert.match(despues, /\| \[\[beta\]\] \| ✅ sólido · examen 1, p\.2: bien \| 🔴 falló dos veces · antes de la 0\.26, sin prueba \|/);
+
+  m.migrar(raiz);
+  assert.equal(leer(raiz, 'estudio/progreso.md'), despues, 'idempotente: la segunda vuelta no añade nada más');
+
+  const sinProgreso = cursoTemporal();
+  fs.rmSync(path.join(sinProgreso, 'estudio', 'progreso.md'));
+  assert.doesNotThrow(() => m.migrar(sinProgreso));
+});

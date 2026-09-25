@@ -48,7 +48,8 @@ README.md                                              ← DATOS: la portada del
 
 1. **Un concepto = una nota, para siempre.** Antes de crear una nota se lee `estudio/conceptos/_index.md`
    entero, slugs y `alias`. Si existe con otro nombre, se amplía y se añade el alias. Si dudas de
-   si dos cosas son el mismo concepto, pregunta.
+   si dos cosas son el mismo concepto, pregunta. Un alias es otro nombre de lo mismo, nunca una parte que
+   se evalúa aparte: eso es nota propia.
 2. **Cada cosa lleva la marca de su origen:**
 
    | Origen | Marca |
@@ -92,9 +93,9 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 ## Avisos pedagógicos de `comprobar.js`
 
 La calidad del material no puede depender solo de que sigas la skill al pie de la letra: `comprobar.js`
-también vigila siete señales de calidad pedagógica, calculadas desde disco: `nota-larga`,
-`concepto-sin-ejemplo`, `sesion-incompleta`, `flashcards-fuera-de-rango`, `requiere-vacio`, `pregunta-doble`
-y `falta-info-mal-usado`. Cada aviso dice qué falta.
+también vigila ocho señales de calidad pedagógica, calculadas desde disco: `nota-larga`,
+`concepto-sin-ejemplo`, `sesion-incompleta`, `flashcards-fuera-de-rango`, `requiere-vacio`, `pregunta-doble`,
+`falta-info-mal-usado` y `progreso-sin-prueba`. Cada aviso dice qué falta.
 
 **Se arreglan siempre antes de guardar**, igual que `no-se-vera-bien`, salvo que tengas un motivo concreto
 para dejarlos (un concepto que de verdad no se puede partir sin perder sentido, una sesión cuyo material no
@@ -145,7 +146,10 @@ que no tiene) y **falsos positivos** (das por sabido lo que acertó de rebote).
 - **Cambios de estilo:** si la prueba contradice `config/profesor.md`, lo **propones** con la
   prueba delante. Solo lo cambias con su sí, y lo anotas en el historial de ese fichero.
 - `estudio/progreso.md` solo cambia con respuestas del alumno. Al procesar una sesión solo se añaden las filas
-  de sus conceptos nuevos, en ⬜ (sin evaluar); nunca se mueve el estado de una que ya estaba.
+  de sus conceptos nuevos, en ⬜ (sin evaluar); nunca se mueve el estado de una que ya estaba. **Toda casilla
+  que no sea ⬜ cita de qué respuesta sale:** `<emoji> <estado> · <examen o ejercicio>: <qué pasó>` (p. ej.
+  `🟡 flojo · examen 1, p.1: confunde unidad de cuenta con medio de cambio`). Sin cita, `comprobar.js` avisa
+  con `progreso-sin-prueba`.
 - **El profesor también evoluciona, cuando hay señal** (las `senales` de `estado.js --json`, un examen malo
   en general, varias notas del mismo bloque reescritas, o que el alumno diga que algo le estorba): revisa
   cómo explicas. Lo de este alumno (largo, orden, tipo de ejemplo, peso de la lente) va a `config/profesor.md`
@@ -200,8 +204,8 @@ sin que lo pida. Si no imprime nada, no digas nada.
 4. **Calentamiento, en los casos 1 y 3, y en el 2 si el alumno se queda:** dos preguntas de lo que ya vio y
    necesita la sesión siguiente (salen de `requiere:` de sus conceptos y de `estudio/progreso.md` — lo flojo o sin
    evaluar primero, y las flashcards que ya tocan: marca su casilla ✅/❌; reglas de "Cuando preguntas para medir"). Se puede saltar ("ahora no"); las respuestas
-   cuentan como prueba y mueven `estudio/progreso.md`. **Si lo salta tres veces seguidas**, deja de ofrecerlo y
-   apúntalo en `config/alumno.md` (sección "## Calentamiento"; créala si no existe).
+   cuentan como prueba y mueven `estudio/progreso.md`, con su cita ("Cómo aprendes del alumno"). **Si lo salta
+   tres veces seguidas**, deja de ofrecerlo y apúntalo en `config/alumno.md` (sección "## Calentamiento"; créala si no existe).
    Si en cualquier momento pide "hazme unas preguntas" o "¿repasamos?", es esto mismo, en el chat: no es `/examen`
    ni `/repaso` (la página).
 
@@ -236,6 +240,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Para que el alumno acepte los permisos una vez (con su sí) | `node .kit/herramientas/permisos.js --ver` · `--aplicar` · `--quitar` |
 | Para leer un Word, PowerPoint o Excel del material | `node .kit/herramientas/leer.js <fichero>` (`--parte N` si es largo) |
 | Para apuntar una duda en el registro de `config/alumno.md` | `node .kit/herramientas/dudas.js <concepto> --prueba "<fichero>"` |
+| Antes de crear una nota, ¿ya existe con otro nombre? | `node .kit/herramientas/candidatos.js "<nombre> — <definición>"` |
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 | Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |
 | Tras preparar el curso (paso 9) y tras actualizar un curso existente | `node .kit/herramientas/obsidian.js` |

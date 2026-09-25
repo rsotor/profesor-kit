@@ -63,6 +63,10 @@ Lista los conceptos que aparecen en la clase. Para cada uno (regla 1 de `AGENTS.
 - **Existe** → amplía la nota: añade lo nuevo, el nombre nuevo a `alias` si procede, el bloque a `bloques:`,
   y una línea al `## Historial`. **Nunca crees una segunda nota.**
 - **No existe** → nota nueva desde `.kit/plantillas/concepto.md`.
+- **No es evidente si ya existe** (otro nombre, otra clase): `node .kit/herramientas/candidatos.js "<nombre> — <definición en una frase>"`
+  antes de decidir. Si uno es lo mismo, amplíalo; si dudas, pregunta al alumno. Un `alias` es otro nombre de
+  lo mismo, nunca una parte que se evalúa aparte (eso es nota propia). En segundo plano, sin poder
+  preguntar: `**TODO:**` con el candidato y por qué dudas.
 
 ### 3. Escribir las notas de concepto
 

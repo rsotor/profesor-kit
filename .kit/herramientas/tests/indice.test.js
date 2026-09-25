@@ -69,6 +69,16 @@ test('leerProgreso lee teoría y aplicación de cada fila, aunque el estado llev
   assert.deepEqual(p.get('roe'), { teoria: '✅', aplicacion: '⬜' });
 });
 
+// P5+H12 (0.26.0): la casilla ahora cita su prueba (`🟡 flojo · examen 1, p.1: …`); leerProgreso solo lee el
+// emoji del principio, la cita no le afecta.
+test('leerProgreso: con la cita de "· <prueba>" detrás, el estado sigue siendo solo el emoji', () => {
+  const raiz = cursoTemporal({
+    'estudio/progreso.md': '| Concepto | Teoría | Aplicación |\n|---|---|---|\n'
+      + '| [[funciones-del-dinero]] | 🟡 flojo · examen 1, p.1: confunde unidad de cuenta con medio de cambio | ⬜ sin evaluar |\n',
+  });
+  assert.deepEqual(ix.leerProgreso(raiz).get('funciones-del-dinero'), { teoria: '🟡', aplicacion: '⬜' });
+});
+
 test('estadoProfesor: repasar > superada > faltan N > vacío', () => {
   const p = new Map([
     ['a', { teoria: '✅', aplicacion: '⬜' }],
