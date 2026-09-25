@@ -801,3 +801,14 @@ test('verificarReutilizacionFalladas: "de" con el número de pregunta (", p.N") 
   examenNuevoOk(raiz, { ajustesClave: { 1: { de: 'examenes/otro.md, p.3' } } });
   assert.equal(p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior }).ok, false);
 });
+
+// 3.ª prueba real de la 0.27.0: `de` sin el "examenes/" de delante. Lo que importa es que identifique el examen
+// anterior (el mismo fichero), no el texto exacto: con o sin "estudio/" o "examenes/" delante, y con o sin ", p.N".
+test('verificarReutilizacionFalladas: "de" identifica el examen anterior aunque no lleve "examenes/" delante', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  const sinPrefijo = RUTA_ANTERIOR.replace(/^examenes\//, '');
+  examenNuevoOk(raiz, { ajustesClave: { 1: { de: `${sinPrefijo}, p.3` }, 2: { de: `estudio/${RUTA_ANTERIOR}` } } });
+  assert.equal(p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior }).ok, true);
+});

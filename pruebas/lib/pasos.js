@@ -449,6 +449,8 @@ function preguntasReutilizadas(destino, ficheroExamen) {
 // número de preguntas de su tipo (`config/examenes.json`). `ficheroAnterior` es el examen ya corregido (su
 // histórico de intentos es de donde sale qué falló); `unidad` es el prefijo de la unidad, como en
 // `examen.js --falladas`.
+const sinPrefijos = rel => aPosix(String(rel)).trim().replace(/^\.?\/?(estudio\/)?(examenes\/)?/, '');
+
 function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
   const nuevo = examenMasReciente(destino, { excepto: ficheroAnterior });
   if (!nuevo) return { ok: false, detalle: 'solo está el mismo fichero que el primer examen: no se ha escrito uno nuevo' };
@@ -469,9 +471,10 @@ function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
   const problemas = [];
 
   for (const r of reutilizadas) {
-    // `de` es "<examen>" o "<examen>, p.<n>" (la skill pide el número; nadie lo lee salvo una persona).
-    const deExamen = r.de ? r.de.replace(/,\s*p\.\s*\d+\s*$/, '') : r.de;
-    if ((r.origen === 'examen anterior' || r.de) && deExamen !== relAnterior) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}"`);
+    // `de` lo lee una persona, no el código: basta con que identifique el examen anterior (mismo fichero), con o
+    // sin "estudio/" o "examenes/" delante y con o sin ", p.<n>" detrás (3 pruebas reales, 3 formas distintas).
+    const identifica = de => !!de && sinPrefijos(de.replace(/,\s*p\.\s*\d+\s*$/, '')) === sinPrefijos(relAnterior);
+    if ((r.origen === 'examen anterior' || r.de) && !identifica(r.de)) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}"`);
     if (!esperadas.some(f => mismoBloque(f.enunciado, r.enunciado))) {
       problemas.push(`la pregunta ${r.numero} está marcada como reutilizada pero su enunciado no coincide con ninguna fallada`);
     }
