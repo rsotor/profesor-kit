@@ -16,6 +16,7 @@
 // con otro asistente, en pruebas/curso-ejemplo/resultado-<id>-<sistema>/. Borra siempre la carpeta temporal,
 // también si algo falla.
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { borrar, montarCurso, comprobarJson } = require('./lib/montaje');
@@ -40,7 +41,69 @@ function rutaResultado(asistente, plataforma = process.platform) {
 // --sin-llm no ejecuta ningún LLM: su RESUMEN no vale como prueba y no puede pisar el de la última prueba real,
 // que va en el repo (lo lee .github/cambio-grande.js). Va a una carpeta temporal.
 function carpetaDeResultado({ sinLlm, asistente }) {
-  return sinLlm ? fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'prueba-real-sin-llm-')) : rutaResultado(asistente);
+  return sinLlm ? fs.mkdtempSync(path.join(os.tmpdir(), 'prueba-real-sin-llm-')) : rutaResultado(asistente);
+}
+
+// --- Repetir desde un paso (--desde), con la copia que guardó el paso anterior --------------------------
+//
+// Cada carpeta de pruebas/prueba-real-pasos-XXXX/ se llama "<NN>-<paso>" (guardarCopiaDelPaso), en el mismo
+// orden en el que se ejecutaron: el paso anterior a uno en la posición N (0-based) de la lista de pasos es
+// siempre la carpeta "N" (1-based) — sin tener que reconstruir el slug del nombre para encontrarla.
+class PasoDesconocidoError extends Error {
+  constructor(nombre, validos) { super(`paso desconocido: "${nombre}"`); this.validos = validos; }
+}
+class SinCopiasError extends Error {}
+
+const PREFIJO_COPIAS = 'prueba-real-pasos-';
+
+// La carpeta prueba-real-pasos-XXXX/ más reciente de `base` (por defecto, el temporal del sistema): lo que usa
+// --desde cuando no se le da --copias. Sin ninguna, null (quien llama decide cómo avisar).
+function carpetaCopiasMasReciente(base = os.tmpdir()) {
+  let candidatas;
+  try { candidatas = fs.readdirSync(base).filter(n => n.startsWith(PREFIJO_COPIAS)); } catch { return null; }
+  if (!candidatas.length) return null;
+  candidatas.sort((a, b) => fs.statSync(path.join(base, b)).mtimeMs - fs.statSync(path.join(base, a)).mtimeMs);
+  return path.join(base, candidatas[0]);
+}
+
+function carpetaDelPasoNumero(copiasDir, numero) {
+  const prefijo = `${String(numero).padStart(2, '0')}-`;
+  const encontrada = fs.readdirSync(copiasDir).find(n => n.startsWith(prefijo));
+  return encontrada ? path.join(copiasDir, encontrada) : null;
+}
+
+// Restaura, en la MISMA ruta que tenía (el `.git` de una preparación en segundo plano con worktree lleva
+// rutas absolutas: issue del plan 0.27), la copia del paso anterior al pedido, y da los pasos ya hechos
+// (marcados como de la ejecución anterior, con su commit si la copia lo trae) y desde qué índice de
+// `nombresPasos` seguir. Pedir el primer paso no restaura nada: no hay uno anterior, se ejecuta desde cero.
+function restaurarPasoAnterior(copiasDir, nombresPasos, desde) {
+  const indiceDesde = nombresPasos.indexOf(desde);
+  if (indiceDesde < 0) throw new PasoDesconocidoError(desde, nombresPasos);
+  if (indiceDesde === 0) return { destino: null, pasosAnteriores: [], ctxRestaurado: {}, indiceDesde };
+  if (!copiasDir || !fs.existsSync(copiasDir)) {
+    throw new SinCopiasError(`No hay ninguna copia que restaurar${copiasDir ? ` en ${copiasDir}` : ''}: usa --copias <carpeta>.`);
+  }
+  const carpeta = carpetaDelPasoNumero(copiasDir, indiceDesde);
+  if (!carpeta) throw new SinCopiasError(`No se encontró en ${copiasDir} la copia del paso anterior a "${desde}".`);
+  const estado = JSON.parse(fs.readFileSync(path.join(carpeta, 'estado.json'), 'utf8'));
+  // estado.destino sale de un fichero: solo se sustituye si es una carpeta de prueba del kit en el temporal.
+  const tmp = fs.realpathSync(require('node:os').tmpdir());
+  const padre = fs.existsSync(path.dirname(String(estado.destino))) ? fs.realpathSync(path.dirname(String(estado.destino))) : null;
+  if (padre !== tmp || !path.basename(String(estado.destino)).startsWith('profesor-kit-prueba-')) {
+    throw new SinCopiasError(`${estado.destino} no es una carpeta de prueba del temporal: no se sustituye nada.`);
+  }
+  if (fs.existsSync(estado.destino)) fs.rmSync(estado.destino, { recursive: true, force: true, maxRetries: 3 });
+  fs.mkdirSync(path.dirname(estado.destino), { recursive: true });
+  fs.cpSync(path.join(carpeta, 'curso'), estado.destino, { recursive: true });
+  const nota = `de la ejecución anterior${estado.commit ? ` (commit ${estado.commit})` : ''}`;
+  const pasosAnteriores = (estado.pasos || []).map(paso => ({ ...paso, detalle: `${paso.detalle} · ${nota}` }));
+  return {
+    destino: estado.destino, pasosAnteriores, indiceDesde,
+    ctxRestaurado: {
+      ficheroExamen: estado.ficheroExamen, ficheroExamenSegundo: estado.ficheroExamenSegundo,
+      contestacion: estado.contestacion, correccion: estado.correccion, referenciaCentro: estado.referenciaCentro,
+    },
+  };
 }
 
 function leerJson(f) { return JSON.parse(fs.readFileSync(f, 'utf8')); }
@@ -133,7 +196,7 @@ function guardarCopiaDelPaso(ctx, pasos) {
   const dir = path.join(copiasPorPaso, `${n}-${nombre}`);
   try {
     fs.cpSync(ctx.destino, path.join(dir, 'curso'), { recursive: true });
-    const estado = { destino: ctx.destino, pasos, ficheroExamen: ctx.ficheroExamen, ficheroExamenSegundo: ctx.ficheroExamenSegundo,
+    const estado = { destino: ctx.destino, pasos, commit: ctx.commit, ficheroExamen: ctx.ficheroExamen, ficheroExamenSegundo: ctx.ficheroExamenSegundo,
       contestacion: ctx.contestacion, correccion: ctx.correccion, referenciaCentro: ctx.referenciaCentro };
     fs.writeFileSync(path.join(dir, 'estado.json'), JSON.stringify(estado, null, 2));
   } catch (error) {
@@ -151,6 +214,18 @@ function ejecutarPaso(pasos, nombre, fn) {
     pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: false, detalle: `error: ${error.message}`, denegaciones: denegacionesDelPaso });
   }
   avisarPaso(pasos[pasos.length - 1]);
+}
+
+// El motor genérico de "ejecuta esta lista de pasos, a partir de los que ya había": lo usa ejecutar() con la
+// lista real (clases, examen...) y lo prueban los tests con pasos falsos, sin tocar el LLM ni el disco del
+// curso — la parte que sí depende de eso es `alTerminarPaso` (guardarCopiaDelPaso), que aquí es un parámetro.
+function ejecutarListaDePasos(definicion, pasosPrevios, alTerminarPaso) {
+  const pasos = [...pasosPrevios];
+  for (const { nombre, fn } of definicion) {
+    ejecutarPaso(pasos, nombre, fn);
+    if (alTerminarPaso) alTerminarPaso(pasos);
+  }
+  return pasos;
 }
 
 // Lo que comparten todos los pasos que llaman al asistente: su lanzador, adaptador, modelo, cwd, límite de
@@ -194,21 +269,59 @@ function pasoPrepararEnSegundoPlano(ctx, clase) {
 }
 
 // Espera (sondeando --estado, sin sleeps largos de un tirón) a que termine, y la junta con la principal.
+// Si venimos de restaurar una copia (--desde) y la preparación se tuvo que relanzar (ctx.preparacionReparada:
+// repararPreparacionSiHaceFalta), se cuenta en el propio detalle de este paso — no como un paso aparte.
 function pasoJuntarPreparacion(ctx, clase) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const reparada = ctx.preparacionReparada;
+  const nota = reparada ? `${reparada.motivo}: ${reparada.relanzada ? 'se relanzó antes de juntar' : `no se pudo relanzar (${reparada.detalleRelanzar})`}. ` : '';
+  if (reparada && !reparada.relanzada) return { ok: false, detalle: `${nota}no se puede juntar sin la preparación en marcha` };
   const limite = Date.now() + ctx.limiteMs;
   let estado;
   for (;;) {
     const r = preparar(ctx, '--estado', '--json');
-    if (!r.ok) return { ok: false, detalle: `preparar.js --estado falló: ${r.salida}` };
+    if (!r.ok) return { ok: false, detalle: `${nota}preparar.js --estado falló: ${r.salida}` };
     estado = JSON.parse(r.salida || '[]').find(e => e.id === clase.id);
     if (estado && estado.resultadoEnCaliente !== 'en-curso') break;
-    if (Date.now() > limite) return { ok: false, detalle: `la preparación de ${clase.id} no terminó a tiempo (${estado ? estado.resultadoEnCaliente : 'no se encuentra'})` };
+    if (Date.now() > limite) return { ok: false, detalle: `${nota}la preparación de ${clase.id} no terminó a tiempo (${estado ? estado.resultadoEnCaliente : 'no se encuentra'})` };
     dormir(2000);
   }
-  if (estado.resultadoEnCaliente !== 'terminada') return { ok: false, detalle: `la preparación de ${clase.id} quedó "${estado.resultadoEnCaliente}"` };
+  if (estado.resultadoEnCaliente !== 'terminada') return { ok: false, detalle: `${nota}la preparación de ${clase.id} quedó "${estado.resultadoEnCaliente}"` };
   const j = preparar(ctx, '--juntar', clase.id);
-  return { ok: j.ok, detalle: j.ok ? `${clase.id} juntada con la rama principal` : `no se pudo juntar: ${j.salida}` };
+  return { ok: j.ok, detalle: `${nota}${j.ok ? `${clase.id} juntada con la rama principal` : `no se pudo juntar: ${j.salida}`}` };
+}
+
+// Tras restaurar una copia (--desde): si la preparación en segundo plano se quedó "en curso" pero el proceso
+// que la hacía ya no existe (interrumpida: el ordenador de la ejecución anterior ya no está), o su carpeta se
+// copió a medias (estado.json ilegible), se descarta y se relanza con el mismo id y ficheros, antes de que el
+// paso de juntar tenga que esperarla. Una preparación de verdad fallida (el asistente terminó, pero mal) no
+// se toca aquí: eso lo dice --juntar, no se reintenta en silencio (nunca se inventa un resultado).
+// `preparar`/`relanzar` son inyectables para poder probar la detección sin un curso ni un git de verdad.
+function idsDePreparacion(destino) {
+  const base = path.join(destino, '.preparacion');
+  if (!fs.existsSync(base)) return [];
+  return fs.readdirSync(base, { withFileTypes: true }).filter(e => e.isDirectory() && e.name !== 'descartadas').map(e => e.name);
+}
+function estadoCrudoDePreparacion(destino, id) {
+  try { return JSON.parse(fs.readFileSync(path.join(destino, '.preparacion', id, 'estado.json'), 'utf8')); } catch { return null; }
+}
+function repararPreparacionSiHaceFalta(ctx, clase, { preparar: prepararLibInyectado, relanzar = () => pasoPrepararEnSegundoPlano(ctx, clase) } = {}) {
+  if (!idsDePreparacion(ctx.destino).includes(clase.id)) return null;
+  // `require` en lazy (no como valor por defecto del parámetro): un valor por defecto se evalúa siempre que
+  // no se pase el argumento, aunque no haga falta — y el caso sin ninguna preparación (arriba) no tiene ni
+  // curso montado en `ctx.destino`.
+  const prepararLib = prepararLibInyectado || require(path.join(ctx.destino, '.kit', 'herramientas', 'preparar.js'));
+  const estado = estadoCrudoDePreparacion(ctx.destino, clase.id);
+  const aMedias = !estado;
+  const interrumpida = !!estado && estado.resultado === 'en-curso' && !prepararLib.pidVivo(estado.pid);
+  if (!aMedias && !interrumpida) return null;
+  prepararLib.descartarCopia(ctx.destino, clase.id, { conservar: false });
+  const r = relanzar();
+  return {
+    motivo: aMedias ? 'la copia de la preparación en segundo plano se hizo a medias' : 'el proceso que la preparaba en segundo plano ya no existía',
+    relanzada: r.ok === true,
+    detalleRelanzar: r.detalle,
+  };
 }
 
 function pasoDudas(ctx) {
@@ -424,15 +537,18 @@ function agruparPorRegla(lista) {
   return [...grupos.entries()].sort((a, b) => b[1].length - a[1].length);
 }
 
-function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos, perfil, correccion, commit, asistente = 'claude-code' }) {
+function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos, perfil, correccion, commit, asistente = 'claude-code', desde }) {
   const l = [];
   l.push('# Resultado de la prueba real del profesor', '');
   if (sinLlm) l.push('> **Modo `--sin-llm`: no se ha ejecutado ningún LLM real.** Solo se ha montado el curso y probado', '> el propio ejecutor. Ejecuta `npm run prueba-real` (sin ese flag) para una prueba de verdad.', '');
+  if (desde) l.push(`> **Reanudada con \`--desde "${desde}"\`:** trae pasos de una ejecución anterior (marcados abajo).`, '> No cuenta como prueba real completa para el PR: hace falta una ejecución entera y seguida.', '');
   l.push(`- **Fecha:** ${fecha}`, `- **Versión del kit:** ${version}`, `- **Modelo:** ${modelo || 'el suyo por defecto'}`, `- **Asistente:** ${asistente}`, '');
-  // Línea fija que lee .github/cambio-grande.js: no se cambia su forma sin cambiar allí la expresión.
+  // Línea fija que lee .github/cambio-grande.js: no se cambia su forma sin cambiar allí la expresión. Con
+  // --desde lleva "(desde ...)" a propósito, para que esa lectura NO la reconozca como una prueba completa.
   const hechos = pasos.filter(x => x.ok !== null);
   const c = correccion || { bien: 0, total: 0 };
-  l.push(`Resultado: ${hechos.filter(x => x.ok).length}/${hechos.length} pasos bien · corrección ${c.bien}/${c.total} · commit ${commit || 'desconocido'}`, '');
+  const sufijoDesde = desde ? ` (desde "${desde}")` : '';
+  l.push(`Resultado: ${hechos.filter(x => x.ok).length}/${hechos.length} pasos bien${sufijoDesde} · corrección ${c.bien}/${c.total} · commit ${commit || 'desconocido'}`, '');
   const denegados = pasos.flatMap(x => (x.denegaciones || []).map(d => ({ paso: x.paso, ...d })));
   l.push(`Permisos denegados: ${denegados.length}`, '');
 
@@ -498,54 +614,98 @@ function copiarSinExtras(origen, destino) {
   });
 }
 
+// La lista ordenada de pasos, como datos (nombre + función a ejecutar): el caso de verdad con choques
+// posibles (plan 0.22, §4) — las clases del módulo del examen en primer plano, la que no hace falta para
+// ese examen en segundo plano (en paralelo con dudas, ejercicio y el examen), juntada al final. Como datos,
+// se puede saltar a mitad (`--desde`) sin repetir los pasos anteriores. `ctx` se lee al ejecutar cada
+// función, no al construir la lista: da igual que se rellene (destino, lanzador...) después de esto.
+function construirDefinicionDePasos(ctx, clases) {
+  const prefijoExamen = clases.examen_modulo.prefijo;
+  const clasesModuloDelExamen = clases.clases.filter(c => c.id.startsWith(prefijoExamen));
+  const clasesEnSegundoPlano = clases.clases.filter(c => !c.id.startsWith(prefijoExamen));
+  const [claseEnSegundoPlano, ...otrasEnSegundoPlano] = clasesEnSegundoPlano;
+  const progresoAntesPorClase = {};
+
+  const lista = [];
+  for (const clase of clasesModuloDelExamen) {
+    lista.push({
+      nombre: `/sesion ${clase.id}`,
+      fn: () => {
+        const ficheroProgreso = path.join(ctx.destino, 'estudio', 'progreso.md');
+        progresoAntesPorClase[clase.id] = fs.existsSync(ficheroProgreso) ? fs.readFileSync(ficheroProgreso, 'utf8') : '';
+        return pasoSesion(ctx, clase);
+      },
+    });
+    if (clase.trampa && !ctx.sinLlm) {
+      lista.push({
+        nombre: `material con órdenes (${clase.id})`,
+        fn: () => p.comprobarTrampa(ctx.destino, { id: clase.id, concepto: clase.trampa.concepto, progresoAntes: progresoAntesPorClase[clase.id] }),
+      });
+    }
+  }
+  if (claseEnSegundoPlano) lista.push({ nombre: `preparar.js --lanzar ${claseEnSegundoPlano.id}`, fn: () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano) });
+  lista.push({ nombre: '/dudas', fn: () => pasoDudas(ctx) });
+  lista.push({ nombre: '/ejercicio', fn: () => pasoEjercicio(ctx) });
+  lista.push({ nombre: '/examen (referencia del centro)', fn: () => pasoExamenReferencia(ctx) });
+  lista.push({ nombre: '/examen (generar)', fn: () => pasoExamenGenerar(ctx, clases.examen_modulo) });
+  lista.push({ nombre: '/examen (contestar)', fn: () => pasoExamenContestar(ctx) });
+  lista.push({ nombre: '/examen (corregir)', fn: () => pasoExamenCorregir(ctx, clases.examen_modulo) });
+  lista.push({ nombre: '/examen (progreso con prueba)', fn: () => pasoProgresoConPrueba(ctx) });
+  lista.push({ nombre: '/examen (otra vez, reutiliza falladas)', fn: () => pasoExamenSegundoGenerar(ctx, clases.examen_modulo) });
+  lista.push({ nombre: '/examen (corrección con veredictos esperados)', fn: () => pasoCorreccionOraculo(ctx) });
+  if (claseEnSegundoPlano) lista.push({ nombre: `preparar.js --juntar ${claseEnSegundoPlano.id}`, fn: () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano) });
+  for (const clase of otrasEnSegundoPlano) lista.push({ nombre: `/sesion ${clase.id}`, fn: () => pasoSesion(ctx, clase) });
+  lista.push({ nombre: '/repaso', fn: () => pasoRepaso(ctx, clases.examen_modulo) });
+
+  return { lista, claseEnSegundoPlano };
+}
+
+// Los nombres de la lista, sin construir sus funciones: lo que necesita cli() para validar --desde antes de
+// tocar nada (ni un curso montado, ni `claude`).
+function nombresDePasos(clases, sinLlm = false) {
+  return construirDefinicionDePasos({ sinLlm }, clases).lista.map(d => d.nombre);
+}
+
 function ejecutar({
-  sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, datosCurso = EJEMPLO, asistente, resultadoDir = rutaResultado(asistente), volcarDir,
+  sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, datosCurso = EJEMPLO, asistente, resultadoDir = rutaResultado(asistente),
+  volcarDir, desde, copiasDir,
 }) {
+  if (desde && sinLlm) throw new Error('--desde no se puede combinar con --sin-llm: hace falta una ejecución real para poder continuarla.');
   const clases = leerJson(path.join(datosCurso, 'clases.json'));
   const nombre = leerJson(path.join(datosCurso, 'config', 'ajustes.json')).nombre_curso;
-  const { destino, motor } = montarCurso({ trabajo, datosCurso, nombre, llm: asistente });
+
+  const ctx = { sinLlm, datosCurso, volcarDir };
+  const { lista: definicionDePasos, claseEnSegundoPlano } = construirDefinicionDePasos(ctx, clases);
+  const nombresPasos = definicionDePasos.map(d => d.nombre);
+
+  let destino, motor = null, pasosAnteriores = [], indiceDesde = 0;
+  if (desde) {
+    const restaurado = restaurarPasoAnterior(copiasDir, nombresPasos, desde);
+    indiceDesde = restaurado.indiceDesde;
+    if (restaurado.destino) { destino = restaurado.destino; pasosAnteriores = restaurado.pasosAnteriores; Object.assign(ctx, restaurado.ctxRestaurado); }
+  }
+  if (!destino) ({ destino, motor } = montarCurso({ trabajo, datosCurso, nombre, llm: asistente }));
+  ctx.destino = destino;
+
   try {
     const { llm, adaptador } = adaptadorDelCurso(destino);
     if (!adaptador) throw new Error(`el curso usa \`${llm}\` y no tiene adaptador`);
-    const lanzador = lanzadorPara(adaptador);
-    const modelo = modeloArg || modeloRecomendado(destino);
-    const ctx = { destino, sinLlm, modelo, limiteMs, datosCurso, lanzador, adaptador, volcarDir };
-    const pasos = [];
-    // Una copia del curso tras cada paso (con el estado de ctx), para poder repetir desde el que falle
-    // (`--desde`). Si todo pasa, se borran con el curso; si algo falla, se quedan y se dice dónde.
+    ctx.lanzador = lanzadorPara(adaptador);
+    ctx.adaptador = adaptador;
+    ctx.modelo = modeloArg || modeloRecomendado(destino);
+    ctx.limiteMs = limiteMs;
+    ctx.commit = (spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: trabajo, encoding: 'utf8' }).stdout || '').trim();
+
+    // Una copia del curso tras cada paso nuevo (con el estado de ctx), para poder repetir desde el que
+    // falle (`--desde`). Si todo pasa, se borran con el curso; si algo falla, se quedan y se dice dónde.
     pasosFallidos = true;
-    copiasPorPaso = sinLlm ? null : fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'prueba-real-pasos-'));
-    const paso = (nombre, fn) => { ejecutarPaso(pasos, nombre, fn); guardarCopiaDelPaso(ctx, pasos); };
+    copiasPorPaso = sinLlm ? null : fs.mkdtempSync(path.join(os.tmpdir(), PREFIJO_COPIAS));
 
-    // El caso de verdad con choques posibles (plan 0.22, §4): las clases del módulo del examen, en
-    // primer plano; la que no hace falta para ese examen (de otro módulo), en segundo plano — en
-    // paralelo con dudas, ejercicio y el examen. Al final se junta y sigue como si nada.
-    const prefijoExamen = clases.examen_modulo.prefijo;
-    const clasesModuloDelExamen = clases.clases.filter(c => c.id.startsWith(prefijoExamen));
-    const clasesEnSegundoPlano = clases.clases.filter(c => !c.id.startsWith(prefijoExamen));
-    const [claseEnSegundoPlano, ...otrasEnSegundoPlano] = clasesEnSegundoPlano;
+    // Si venimos de restaurar y la clase en segundo plano se quedó a medias, se repara antes de que el
+    // paso de juntar tenga que esperar algo que nunca va a terminar (se anota en su propio detalle).
+    if (desde && claseEnSegundoPlano) ctx.preparacionReparada = repararPreparacionSiHaceFalta(ctx, claseEnSegundoPlano);
 
-    for (const clase of clasesModuloDelExamen) {
-      const ficheroProgreso = path.join(destino, 'estudio', 'progreso.md');
-      const progresoAntes = fs.existsSync(ficheroProgreso) ? fs.readFileSync(ficheroProgreso, 'utf8') : '';
-      paso(`/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
-      if (clase.trampa && !sinLlm) {
-        paso(`material con órdenes (${clase.id})`, () => p.comprobarTrampa(destino, { id: clase.id, concepto: clase.trampa.concepto, progresoAntes }));
-      }
-    }
-    if (claseEnSegundoPlano) paso(`preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
-    paso('/dudas', () => pasoDudas(ctx));
-    paso('/ejercicio', () => pasoEjercicio(ctx));
-    paso('/examen (referencia del centro)', () => pasoExamenReferencia(ctx));
-    paso('/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
-    paso('/examen (contestar)', () => pasoExamenContestar(ctx));
-    paso('/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
-    paso('/examen (progreso con prueba)', () => pasoProgresoConPrueba(ctx));
-    paso('/examen (otra vez, reutiliza falladas)', () => pasoExamenSegundoGenerar(ctx, clases.examen_modulo));
-    paso('/examen (corrección con veredictos esperados)', () => pasoCorreccionOraculo(ctx));
-    if (claseEnSegundoPlano) paso(`preparar.js --juntar ${claseEnSegundoPlano.id}`, () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano));
-    for (const clase of otrasEnSegundoPlano) paso(`/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
-    paso('/repaso', () => pasoRepaso(ctx, clases.examen_modulo));
+    const pasos = ejecutarListaDePasos(definicionDePasos.slice(indiceDesde), pasosAnteriores, ps => guardarCopiaDelPaso(ctx, ps));
 
     const informe = comprobarJson(destino);
     const perfil = resumenPerfil(destino);
@@ -567,8 +727,7 @@ function ejecutar({
     fs.copyFileSync(path.join(destino, 'config', 'alumno.md'), path.join(resultadoDir, 'config', 'alumno.md'));
     const resumen = markdownResumen({
       fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
-      modelo, sinLlm, pasos, informe, conteos, perfil, correccion: ctx.correccion, asistente: llm,
-      commit: (spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: trabajo, encoding: 'utf8' }).stdout || '').trim(),
+      modelo: ctx.modelo, sinLlm, pasos, informe, conteos, perfil, correccion: ctx.correccion, asistente: llm, commit: ctx.commit, desde,
     });
     fs.writeFileSync(path.join(resultadoDir, 'RESUMEN.md'), resumen);
 
@@ -585,17 +744,43 @@ function ejecutar({
   }
 }
 
+// Todo lo que hay que validar de --desde antes de tocar nada (ni montar un curso, ni comprobar si hay
+// `claude`): un argumento mal puesto se dice al momento, sin esperar a que arranque el resto. Aparte de
+// cli(), para poder probarlo sin lanzar nada de verdad.
+function validarDesde(desde, sinLlm, copiasArg) {
+  if (!desde) return { ok: true, copiasDir: null };
+  if (sinLlm) return { ok: false, mensaje: '--desde no se puede combinar con --sin-llm: hace falta una ejecución real para poder continuarla.' };
+  const nombresValidos = nombresDePasos(leerJson(path.join(EJEMPLO, 'clases.json')), false);
+  const indiceDesde = nombresValidos.indexOf(desde);
+  if (indiceDesde < 0) return { ok: false, mensaje: `Paso desconocido: "${desde}". Pasos válidos:\n${nombresValidos.map(n => `  - ${n}`).join('\n')}` };
+  if (indiceDesde === 0) return { ok: true, copiasDir: null };   // el primer paso: nada que restaurar, es una ejecución normal
+  const copiasDir = copiasArg || carpetaCopiasMasReciente();
+  if (!copiasDir || !fs.existsSync(copiasDir)) {
+    return {
+      ok: false,
+      mensaje: `No hay ninguna copia que restaurar${copiasArg ? ` en ${copiasArg}` : ' (no se encontró ninguna carpeta prueba-real-pasos-* en el temporal)'}: indica --copias <carpeta>.`,
+    };
+  }
+  return { ok: true, copiasDir };
+}
+
 function cli(args) {
   const valor = nombre => { const i = args.indexOf(nombre); return i >= 0 ? args[i + 1] : undefined; };
   const sinLlm = args.includes('--sin-llm');
   const modelo = valor('--modelo') || null;
   const limiteMs = Number(valor('--limite-ms')) || LIMITE_POR_DEFECTO_MS;
   const volcarDir = valor('--volcar');
+  const desde = valor('--desde') || null;
+  const copiasArg = valor('--copias') || null;
   // Sin --asistente, el llm del curso de ejemplo: con Claude Code nada cambia (issue #45).
   const asistente = valor('--asistente') || leerJson(path.join(EJEMPLO, 'config', 'ajustes.json')).llm || 'claude-code';
   const ficheroAdaptador = path.join(RAIZ_KIT, '.kit', 'adaptadores', `${asistente}.json`);
   if (!fs.existsSync(ficheroAdaptador)) { console.error(`el curso usa \`${asistente}\` y no tiene adaptador`); return 1; }
   const lanzador = lanzadorPara(leerJson(ficheroAdaptador));
+
+  const validacion = validarDesde(desde, sinLlm, copiasArg);
+  if (!validacion.ok) { console.error(validacion.mensaje); return 2; }
+  const copiasDir = validacion.copiasDir;
 
   if (!sinLlm) {
     const chequeo = lanzador.comprobar();
@@ -603,7 +788,17 @@ function cli(args) {
   }
 
   const resultadoDir = carpetaDeResultado({ sinLlm, asistente });
-  const { pasos, informe } = ejecutar({ sinLlm, modelo, limiteMs, asistente, resultadoDir, volcarDir });
+  let pasos, informe;
+  try {
+    ({ pasos, informe } = ejecutar({ sinLlm, modelo, limiteMs, asistente, resultadoDir, volcarDir, desde, copiasDir }));
+  } catch (error) {
+    if (error instanceof PasoDesconocidoError) {
+      console.error(`Paso desconocido: "${desde}". Pasos válidos:\n${error.validos.map(n => `  - ${n}`).join('\n')}`);
+      return 2;
+    }
+    if (error instanceof SinCopiasError) { console.error(error.message); return 2; }
+    throw error;
+  }
   console.log(`Resultado en ${path.relative(RAIZ_KIT, resultadoDir)}/RESUMEN.md`);
   const denegados = pasos.reduce((n, x) => n + (x.denegaciones || []).length, 0);
   console.log(`${pasos.filter(x => x.ok).length}/${pasos.filter(x => x.ok !== null).length} pasos bien · ${denegados} permiso(s) denegado(s)`);
@@ -623,4 +818,6 @@ if (require.main === module) {
 module.exports = {
   ejecutar, cli, modeloRecomendado, adaptadorDelCurso, rutaResultado, carpetaDeResultado, markdownResumen, agruparPorRegla,
   argsClaude, entornoDeAlumno, leerSalidaClaude, lineaDePaso, invocarAsistente,
+  construirDefinicionDePasos, nombresDePasos, ejecutarListaDePasos, restaurarPasoAnterior, carpetaCopiasMasReciente,
+  repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError,
 };
