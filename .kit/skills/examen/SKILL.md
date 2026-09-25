@@ -236,10 +236,6 @@ sin insistir: "¿tienes algún examen de otros años o el modelo de la certifica
 al oficial". Si no tiene ninguno, sigue con el formato por defecto de `config/examenes.json` y dile que,
 sin una referencia real, no puedes garantizar que se parezca al oficial.
 
-## Al cerrar, una línea más
-
-Cierra con `Del kit: nada` o `Del kit: <qué>`.
-
 ## Después de corregir: el alumno también corrige al profesor (si quiere)
 
 Salvo en "lo que me falta" (muestra pequeña): al terminar, **ofrece** sin insistir dos preguntas en llano
@@ -247,6 +243,11 @@ sobre cómo le has explicado este bloque: "¿qué te ha ayudado más?" y "¿qué
 saltar**, y si la salta no se repite en ese examen. Lo que conteste va a `config/profesor.md` →
 **Historial de cambios**, con la prueba (`examen: <fichero>`); si contradice una preferencia, **propón** el
 cambio y aplícalo solo con su sí.
+
+## Al cerrar, una línea más
+
+Después de las dos preguntas (o si las salta), cierra con `Del kit: nada` o `Del kit: <qué>` (ver "Feedback
+al kit" en `AGENTS.md`).
 
 ## Exámenes de antes de esta versión
 
