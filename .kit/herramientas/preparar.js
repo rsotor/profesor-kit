@@ -19,7 +19,7 @@ const { spawn, spawnSync } = require('node:child_process');
 const v = require('./lib/vault');
 const g = require('./lib/git');
 const { comprobar } = require('./comprobar');
-const { regenerarGenerados, anotarEnDiario, subirSiProcede } = require('./guardar');
+const { guardar, regenerarGenerados, anotarEnDiario, subirSiProcede } = require('./guardar');
 const { instalarSkills } = require('./instalar-skills');
 const indice = require('./lib/indice');
 const { actualizarEstadoReadme } = require('./lib/generados');
@@ -424,6 +424,15 @@ function juntar(raiz, id) {
   if (!fs.existsSync(path.join(dir, 'estado.json'))) return { juntado: false, motivo: 'no-existe' };
   const estado = estadoEnCaliente(dir);
   if (estado.resultadoEnCaliente !== 'terminada') return { juntado: false, motivo: estado.resultadoEnCaliente, estado };
+
+  // Como actualizar.js: antes de tocar git, guarda lo que el alumno o el profesor hayan dejado sin guardar en el
+  // curso principal (por ejemplo, un examen corregido sin `guardar.js`). Sin esto, `git merge` revienta con su
+  // error crudo ("local changes would be overwritten"), que el profesor no sabe traducir. Si no se puede guardar
+  // (sin identidad, un secreto...), no se sigue: no se toca nada.
+  const previo = guardar({ raiz, mensaje: `guardado antes de juntar la preparación ${id}`, permitirErrores: true });
+  if (!previo.guardado && previo.motivo !== 'sin-cambios') {
+    return { juntado: false, motivo: 'sin-guardar', detalle: `no se pudo guardar tu trabajo pendiente antes de juntar (${previo.motivo}); no se toca nada` };
+  }
 
   configurarUnionParaDiario(raiz);
   const rMerge = g.intentarGit(raiz, ['merge', '--no-commit', '--no-ff', estado.rama]);

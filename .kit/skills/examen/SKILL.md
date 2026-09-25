@@ -313,3 +313,9 @@ deniega), y regístrala; `examen.js` la borra al terminar:
 (`nota`, `veredicto` y `preguntas` con `resultado` empezando por `✅ Correcta` · `⚠️ Le falta: <qué>` ·
 `❌ Incorrecta`, como antes). No lo migres a tipo test tú mismo: si el alumno quiere repetirlo, ofrécele
 mejor un examen nuevo, de test, sobre el mismo alcance.
+
+Después, igual que en el apartado 5: da el veredicto en el chat y **guarda**:
+
+    node .kit/herramientas/guardar.js "examen: <alcance>"
+
+Toda entrada que este examen añada a `config/alumno.md` cita como prueba el fichero del examen.
