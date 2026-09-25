@@ -120,6 +120,27 @@ function invocarAsistente({ lanzador, adaptador, prompt, modelo, cwd, limiteMs, 
 
 // Envuelve cada paso: si algo revienta (el LLM no encontró lo que esperaba, un fichero no existe…), se
 // anota como fallo de ESE paso y la prueba sigue con los demás. Nunca deja de escribir el resumen.
+let copiasPorPaso = null;
+let pasosFallidos = true;   // hasta que ejecutar() llegue al final sin fallos, el curso no se borra
+
+// Guarda el curso tal como queda tras un paso (y lo que los pasos siguientes necesitan de ctx), en
+// <copiasPorPaso>/<NN>-<paso>/. Nunca tumba la prueba: si no se puede copiar (la preparación en segundo plano
+// escribiendo a la vez), se dice y se sigue.
+function guardarCopiaDelPaso(ctx, pasos) {
+  if (!copiasPorPaso) return;
+  const n = String(pasos.length).padStart(2, '0');
+  const nombre = pasos[pasos.length - 1].paso.replace(/[^\w.-]+/g, '-').replace(/^-|-$/g, '');
+  const dir = path.join(copiasPorPaso, `${n}-${nombre}`);
+  try {
+    fs.cpSync(ctx.destino, path.join(dir, 'curso'), { recursive: true });
+    const estado = { destino: ctx.destino, pasos, ficheroExamen: ctx.ficheroExamen, ficheroExamenSegundo: ctx.ficheroExamenSegundo,
+      contestacion: ctx.contestacion, correccion: ctx.correccion, referenciaCentro: ctx.referenciaCentro };
+    fs.writeFileSync(path.join(dir, 'estado.json'), JSON.stringify(estado, null, 2));
+  } catch (error) {
+    console.log(`  (no se pudo guardar la copia tras "${pasos[pasos.length - 1].paso}": ${error.message})`);
+  }
+}
+
 function ejecutarPaso(pasos, nombre, fn) {
   const inicio = Date.now();
   denegacionesDelPaso = [];
@@ -490,6 +511,11 @@ function ejecutar({
     const modelo = modeloArg || modeloRecomendado(destino);
     const ctx = { destino, sinLlm, modelo, limiteMs, datosCurso, lanzador, adaptador, volcarDir };
     const pasos = [];
+    // Una copia del curso tras cada paso (con el estado de ctx), para poder repetir desde el que falle
+    // (`--desde`). Si todo pasa, se borran con el curso; si algo falla, se quedan y se dice dónde.
+    pasosFallidos = true;
+    copiasPorPaso = sinLlm ? null : fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'prueba-real-pasos-'));
+    const paso = (nombre, fn) => { ejecutarPaso(pasos, nombre, fn); guardarCopiaDelPaso(ctx, pasos); };
 
     // El caso de verdad con choques posibles (plan 0.22, §4): las clases del módulo del examen, en
     // primer plano; la que no hace falta para ese examen (de otro módulo), en segundo plano — en
@@ -502,24 +528,24 @@ function ejecutar({
     for (const clase of clasesModuloDelExamen) {
       const ficheroProgreso = path.join(destino, 'estudio', 'progreso.md');
       const progresoAntes = fs.existsSync(ficheroProgreso) ? fs.readFileSync(ficheroProgreso, 'utf8') : '';
-      ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+      paso(`/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
       if (clase.trampa && !sinLlm) {
-        ejecutarPaso(pasos, `material con órdenes (${clase.id})`, () => p.comprobarTrampa(destino, { id: clase.id, concepto: clase.trampa.concepto, progresoAntes }));
+        paso(`material con órdenes (${clase.id})`, () => p.comprobarTrampa(destino, { id: clase.id, concepto: clase.trampa.concepto, progresoAntes }));
       }
     }
-    if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
-    ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));
-    ejecutarPaso(pasos, '/ejercicio', () => pasoEjercicio(ctx));
-    ejecutarPaso(pasos, '/examen (referencia del centro)', () => pasoExamenReferencia(ctx));
-    ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
-    ejecutarPaso(pasos, '/examen (contestar)', () => pasoExamenContestar(ctx));
-    ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
-    ejecutarPaso(pasos, '/examen (progreso con prueba)', () => pasoProgresoConPrueba(ctx));
-    ejecutarPaso(pasos, '/examen (otra vez, reutiliza falladas)', () => pasoExamenSegundoGenerar(ctx, clases.examen_modulo));
-    ejecutarPaso(pasos, '/examen (corrección con veredictos esperados)', () => pasoCorreccionOraculo(ctx));
-    if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --juntar ${claseEnSegundoPlano.id}`, () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano));
-    for (const clase of otrasEnSegundoPlano) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
-    ejecutarPaso(pasos, '/repaso', () => pasoRepaso(ctx, clases.examen_modulo));
+    if (claseEnSegundoPlano) paso(`preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
+    paso('/dudas', () => pasoDudas(ctx));
+    paso('/ejercicio', () => pasoEjercicio(ctx));
+    paso('/examen (referencia del centro)', () => pasoExamenReferencia(ctx));
+    paso('/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
+    paso('/examen (contestar)', () => pasoExamenContestar(ctx));
+    paso('/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
+    paso('/examen (progreso con prueba)', () => pasoProgresoConPrueba(ctx));
+    paso('/examen (otra vez, reutiliza falladas)', () => pasoExamenSegundoGenerar(ctx, clases.examen_modulo));
+    paso('/examen (corrección con veredictos esperados)', () => pasoCorreccionOraculo(ctx));
+    if (claseEnSegundoPlano) paso(`preparar.js --juntar ${claseEnSegundoPlano.id}`, () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano));
+    for (const clase of otrasEnSegundoPlano) paso(`/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
+    paso('/repaso', () => pasoRepaso(ctx, clases.examen_modulo));
 
     const informe = comprobarJson(destino);
     const perfil = resumenPerfil(destino);
@@ -546,9 +572,16 @@ function ejecutar({
     });
     fs.writeFileSync(path.join(resultadoDir, 'RESUMEN.md'), resumen);
 
+    pasosFallidos = pasos.some(x => x.ok === false);
     return { pasos, informe, motor, resultadoDir };
   } finally {
-    borrar(destino);
+    if (!pasosFallidos) {
+      borrar(destino);
+      if (copiasPorPaso) borrar(copiasPorPaso);
+    } else {
+      console.log(`\nAlgo ha fallado: el curso de la prueba se queda en ${destino}`
+        + (copiasPorPaso ? ` y la copia tras cada paso en ${copiasPorPaso}` : '') + '. Bórralos cuando ya no hagan falta.');
+    }
   }
 }
 
