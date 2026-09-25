@@ -9,26 +9,35 @@
 //   node pruebas/prueba-real.js                 # de verdad, con claude
 //   node pruebas/prueba-real.js --sin-llm       # solo monta y prueba el propio ejecutor, sin gastar cuota
 //   node pruebas/prueba-real.js --modelo opus   # otro modelo que el recomendado del adaptador
+//   node pruebas/prueba-real.js --asistente codex   # con el adaptador de otro asistente (issue #45)
+//   node pruebas/prueba-real.js --volcar /tmp/volcado   # guarda el stream crudo de cada llamada
 //
-// Guarda el resultado en pruebas/curso-ejemplo/resultado/ (sustituye el anterior entero) y borra
-// siempre la carpeta temporal, también si algo falla.
+// Con Claude Code, guarda el resultado en pruebas/curso-ejemplo/resultado/ (sustituye el anterior entero);
+// con otro asistente, en pruebas/curso-ejemplo/resultado-<id>-<sistema>/. Borra siempre la carpeta temporal,
+// también si algo falla.
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { borrar, montarCurso, comprobarJson } = require('./lib/montaje');
+// "vault", no "v": este fichero ya usa `v` como nombre local para el resultado de validaciones (p.ej. en
+// pasoExamenReferencia) — con el mismo nombre para el vault del kit, uno de los dos taparía al otro.
+const vault = require('../.kit/herramientas/lib/vault');
+const { lanzadorPara, claudeCode } = require('./lib/asistentes');
 const p = require('./lib/pasos');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
 const EJEMPLO = path.join(__dirname, 'curso-ejemplo');
 const RESULTADO = path.join(EJEMPLO, 'resultado');
-const LIMITE_POR_DEFECTO_MS = 20 * 60 * 1000;   // 20 min por llamada a claude: una clase densa puede tardar
+const LIMITE_POR_DEFECTO_MS = 20 * 60 * 1000;   // 20 min por llamada al asistente: una clase densa puede tardar
+// Con Claude, la ruta de siempre (la leen cambio-grande.js, datosDelCurso, eslint, CONTRIBUTING, la plantilla
+// de PR); con otro asistente, una carpeta aparte, por id y sistema operativo, para no pisar la de Claude.
+const NOMBRE_SISTEMA = { darwin: 'macos', win32: 'windows', linux: 'linux' };
+function rutaResultado(asistente, plataforma = process.platform) {
+  if (!asistente || asistente === 'claude-code') return RESULTADO;
+  return path.join(EJEMPLO, `resultado-${asistente}-${NOMBRE_SISTEMA[plataforma] || plataforma}`);
+}
 
 function leerJson(f) { return JSON.parse(fs.readFileSync(f, 'utf8')); }
-
-function comando(comando_, args) {
-  const r = spawnSync(comando_, args, { encoding: 'utf8' });
-  return { ok: !r.error && r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
-}
 
 // Sondear sin gastar CPU mientras se espera a que termine algo en segundo plano.
 function dormir(ms) { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms); }
@@ -37,66 +46,69 @@ function preparar(ctx, ...args) {
   return { ok: !r.error && r.status === 0, salida: ((r.stdout || '') + (r.stderr || '')).trim() };
 }
 
-// El modelo recomendado del adaptador del LLM que use el curso montado (hoy, siempre claude-code):
-// `config/adaptador-llm.json` si el curso lo escribió, si no `.kit/adaptadores/<llm>.json`.
-function modeloRecomendado(destino) {
+// El adaptador del LLM que use el curso montado (issue #45): `config/adaptador-llm.json` si el curso lo
+// escribió, si no `.kit/adaptadores/<llm>.json` (vault del propio kit del curso montado). Sin ninguno de los
+// dos, `adaptador` sale null: quien llama decide cómo avisar (nunca gastar lanzando un asistente a ciegas).
+function adaptadorDelCurso(destino) {
   const ajustes = leerJson(path.join(destino, 'config', 'ajustes.json'));
   const llm = ajustes.llm || 'claude-code';
-  for (const ruta of [path.join(destino, 'config', 'adaptador-llm.json'), path.join(destino, '.kit', 'adaptadores', `${llm}.json`)]) {
-    if (fs.existsSync(ruta)) { const a = leerJson(ruta); if (a.modelo_recomendado) return a.modelo_recomendado.id || a.modelo_recomendado.modelo; }
-  }
-  return 'sonnet';   // la prueba real solo sabe lanzar claude (issue #39, H09: pendiente con otro asistente)
+  return { llm, adaptador: vault.leerAdaptador(destino, llm) };
 }
 
-// Como en el ordenador de un alumno (prueba real del 2026-09-24, 7/12): el alumno acepta una vez que confía en la
-// carpeta del curso y desde entonces se aplican sus reglas (.claude/settings.json); una carpeta temporal nueva no es
-// de confianza y Claude Code las ignora. Se las pasamos al lanzarlo (--allowedTools, al final: admite varias), y sin
-// las variables de la sesión que lanza la prueba, que cambian cómo pide permisos.
-// La salida en JSON trae qué se denegó (permission_denials): sin eso, un paso que se quedó sin hacer por un permiso
-// solo se podía adivinar (prueba real del 2026-09-24).
-function argsClaude({ prompt, modelo, permitidas }) {
-  const args = ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none', '--output-format', 'json'];
-  return permitidas.length ? [...args, '--allowedTools', ...permitidas] : args;
-}
-const VARIABLES_DE_SESION = /^(CLAUDECODE|CLAUDE_CODE_[A-Z_]+|CLAUDE_EFFORT|CLAUDE_JOB_DIR|CLAUDE_PID)$/;
-function entornoDeAlumno(entorno = process.env) {
-  return Object.fromEntries(Object.entries(entorno).filter(([k]) => !VARIABLES_DE_SESION.test(k)));
-}
-function reglasDelCurso(cwd) {
-  try {
-    return JSON.parse(fs.readFileSync(path.join(cwd, '.claude', 'settings.json'), 'utf8')).permissions.allow || [];
-  } catch { return []; }
+// El modelo recomendado del adaptador. Sin uno propio: 'sonnet' si el curso usa Claude Code (como siempre,
+// issue #39 H09), o sin adaptador ninguno (para no romper un curso con un `llm` desconocido); con cualquier
+// otro asistente ya identificado (Codex, sin modelo_recomendado hoy) se deja sin modelo: el suyo por defecto.
+function modeloRecomendado(destino) {
+  const { llm, adaptador } = adaptadorDelCurso(destino);
+  if (adaptador && adaptador.modelo_recomendado) return adaptador.modelo_recomendado.id || adaptador.modelo_recomendado.modelo;
+  return llm === 'claude-code' || !adaptador ? 'sonnet' : null;
 }
 
-// El texto de la respuesta y lo que se denegó, de la salida JSON de claude -p. Si no hay JSON (claude falló antes de
-// empezar), el texto tal cual: es lo que hay que leer para saber qué pasó.
-function leerSalidaClaude(stdout) {
-  const linea = String(stdout || '').split('\n').reverse().find(l => l.trim().startsWith('{'));
-  let json;
-  try { json = linea && JSON.parse(linea); } catch { json = null; }
-  if (!json || typeof json !== 'object') return { texto: String(stdout || '').trim(), denegaciones: [] };
-  const denegaciones = (json.permission_denials || []).map(d => {
-    const e = d.tool_input || {};
-    return { herramienta: d.tool_name, detalle: String(e.command || e.file_path || e.path || JSON.stringify(e)).slice(0, 300) };
-  });
-  return { texto: String(json.result ?? '').trim(), denegaciones };
-}
+// argsClaude, entornoDeAlumno, leerSalidaClaude: movidos a pruebas/lib/asistentes/claude-code.js (issue #45).
+// Se reexportan aquí, byte a byte, para que nada de lo que ya los usaba (tests incluidos) tenga que cambiar.
+const { argsClaude, entornoDeAlumno, leerSalidaClaude } = claudeCode;
 
-// Las denegaciones del paso que se está ejecutando: invocarClaude las apunta aquí y ejecutarPaso se las lleva.
+// Las denegaciones del paso que se está ejecutando: invocarAsistente las apunta aquí y ejecutarPaso se las lleva.
 let denegacionesDelPaso = [];
 
-function invocarClaude({ prompt, modelo, cwd, limiteMs }) {
+// Un nombre de fichero legible para --volcar: el stream crudo de cada llamada (obligatorio en la primera
+// medición con un asistente nuevo, para poder revisar a mano qué llegó de verdad).
+let contadorVolcado = 0;
+function volcarSiHaceFalta(dir, etiqueta, texto) {
+  if (!dir) return;
+  fs.mkdirSync(dir, { recursive: true });
+  const nombreFichero = `${String(++contadorVolcado).padStart(3, '0')}-${etiqueta.replace(/[^\w-]+/g, '_').slice(0, 60)}.txt`;
+  fs.writeFileSync(path.join(dir, nombreFichero), texto);
+}
+
+// Lanza el asistente del adaptador del curso (issue #45): con Claude Code, exactamente lo que hacía
+// invocarClaude (mismos args, mismo entorno, prompt como argumento); con otros, argsTarea decide cómo (Codex:
+// prompt por stdin, con permisos de escritura ya aceptados por permisos.js en el curso montado).
+// `lanzador.comoEjecutar` resuelve el ejecutable de verdad (en Windows, un `.cmd` de npm no se puede lanzar
+// tal cual: preparar.js#comoLanzar), con `windowsVerbatimArguments` cuando toca.
+function invocarAsistente({ lanzador, adaptador, prompt, modelo, cwd, limiteMs, volcarDir, etiquetaVolcado }) {
   const inicio = Date.now();
-  const r = spawnSync('claude', argsClaude({ prompt, modelo, permitidas: reglasDelCurso(cwd) }), {
-    cwd, encoding: 'utf8', timeout: limiteMs, maxBuffer: 64 * 1024 * 1024, env: entornoDeAlumno(),
+  const plan = lanzador.comoEjecutar(lanzador.argsTarea({ prompt, modelo, cwd, adaptador }));
+  if (plan.error) {
+    return { ok: false, duracionMs: Date.now() - inicio, codigo: null, agotado: false, denegaciones: [], salida: `no se pudo preparar el lanzamiento: ${plan.error}` };
+  }
+  // Las mismas opciones que invocarClaude antes de los lanzadores, con el entorno del lanzador (sin él, el
+  // asistente heredaría las variables de la sesión que lanza la prueba) y, si hay, el prompt por stdin.
+  const r = spawnSync(plan.ejecutable, plan.args, {
+    cwd, encoding: 'utf8', timeout: limiteMs, maxBuffer: 64 * 1024 * 1024, env: lanzador.entorno(),
+    input: plan.entrada, windowsVerbatimArguments: plan.literal === true,
   });
   const duracionMs = Date.now() - inicio;
   const agotado = !!(r.error && r.error.code === 'ETIMEDOUT');
-  const { texto, denegaciones } = leerSalidaClaude(r.stdout);
+  // El proceso no llegó ni a arrancar (comando no encontrado, sin permiso...): antes se leía un stdout vacío
+  // y salía un fallo sin explicación; ahora se dice qué pasó.
+  const noArranco = !!(r.error && !agotado);
+  const { texto, denegaciones } = lanzador.leerSalida(r.stdout);
   denegacionesDelPaso.push(...denegaciones);
+  volcarSiHaceFalta(volcarDir, etiquetaVolcado || 'paso', String(r.stdout || ''));
   return {
-    ok: !agotado && r.status === 0, duracionMs, codigo: r.status, agotado, denegaciones,
-    salida: [texto, (r.stderr || '').trim()].filter(Boolean).join('\n'),
+    ok: !agotado && !noArranco && r.status === 0, duracionMs, codigo: r.status, agotado, denegaciones,
+    salida: noArranco ? `no arrancó: ${r.error.message}` : [texto, (r.stderr || '').trim()].filter(Boolean).join('\n'),
   };
 }
 
@@ -112,6 +124,15 @@ function ejecutarPaso(pasos, nombre, fn) {
     pasos.push({ paso: nombre, duracionMs: Date.now() - inicio, ok: false, detalle: `error: ${error.message}`, denegaciones: denegacionesDelPaso });
   }
   avisarPaso(pasos[pasos.length - 1]);
+}
+
+// Lo que comparten todos los pasos que llaman al asistente: su lanzador, adaptador, modelo, cwd, límite de
+// tiempo y carpeta de volcado salen siempre de `ctx` (ejecutar() los deja puestos).
+function invocar(ctx, prompt, etiqueta) {
+  return invocarAsistente({
+    lanzador: ctx.lanzador, adaptador: ctx.adaptador, prompt, modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
+    volcarDir: ctx.volcarDir, etiquetaVolcado: etiqueta,
+  });
 }
 
 // Cada paso, en cuanto acaba: un fallo se ve en el minuto en que pasa, no al final de una prueba de 20.
@@ -133,8 +154,8 @@ function promptSesion(clase) {
 
 function pasoSesion(ctx, clase) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
-  const r = invocarClaude({ prompt: promptSesion(clase), modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs });
-  return { ok: r.ok, detalle: r.ok ? `claude terminó (código ${r.codigo})` : `claude falló (código ${r.codigo}${r.agotado ? ', tiempo agotado' : ''})`, salidaLlm: r.salida };
+  const r = invocar(ctx, promptSesion(clase), `sesion-${clase.id}`);
+  return { ok: r.ok, detalle: r.ok ? `${ctx.lanzador.nombre} terminó (código ${r.codigo})` : `${ctx.lanzador.nombre} falló (código ${r.codigo}${r.agotado ? ', tiempo agotado' : ''})`, salidaLlm: r.salida };
 }
 
 // El caso de verdad con choques posibles (plan 0.22, §4): la clase que no hace falta para el examen del
@@ -173,11 +194,10 @@ function pasoDudas(ctx) {
   const antes = comprobarJson(ctx.destino);
   const hayDudaPendienteAntes = antes.avisos.some(a => a.regla === 'duda-pendiente');
   const hayPropiedadAntes = antes.avisos.some(a => a.regla === 'propiedad-no-estandar');
-  const r = invocarClaude({
-    prompt: `Tengo dudas: he dejado un par de comentarios con el marcador de dudas en mis notas (en ${tocado.concepto || 'un concepto'} y en ${tocado.sesion || 'una sesión'}), y he marcado una casilla "estudiada" a mi manera. Resuélvelas siguiendo la skill /dudas. ${PROMPT_COMUN}`,
-    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
-  });
-  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const r = invocar(ctx,
+    `Tengo dudas: he dejado un par de comentarios con el marcador de dudas en mis notas (en ${tocado.concepto || 'un concepto'} y en ${tocado.sesion || 'una sesión'}), y he marcado una casilla "estudiada" a mi manera. Resuélvelas siguiendo la skill /dudas. ${PROMPT_COMUN}`,
+    'dudas');
+  if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
   const quedaAlguno = p.quedaMarcador(ctx.destino, marca);
   const despues = comprobarJson(ctx.destino);
   const sigueLaPropiedad = tocado.casillaNoEstandar && despues.avisos.some(a => a.regla === 'propiedad-no-estandar' && a.fichero === tocado.sesion);
@@ -195,11 +215,8 @@ function pasoEjercicio(ctx) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   const slug = p.conceptoConFormula(ctx.destino);
   if (!slug) return { ok: false, detalle: 'no se encontró ningún concepto con la sección "## La fórmula" rellena: no hay sobre qué pedir el ejercicio' };
-  const r = invocarClaude({
-    prompt: `Ponme un ejercicio del concepto ${slug}, siguiendo la skill /ejercicio. ${PROMPT_COMUN}`,
-    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
-  });
-  return { ok: r.ok, detalle: r.ok ? `ejercicio pedido sobre "${slug}" (código ${r.codigo})` : `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const r = invocar(ctx, `Ponme un ejercicio del concepto ${slug}, siguiendo la skill /ejercicio. ${PROMPT_COMUN}`, 'ejercicio');
+  return { ok: r.ok, detalle: r.ok ? `ejercicio pedido sobre "${slug}" (código ${r.codigo})` : `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
 }
 
 // El fichero del test de autoevaluación del centro que ya trae pruebas/curso-ejemplo/estudio/inbox/
@@ -214,13 +231,12 @@ const REFERENCIA_CENTRO = 'test-autoevaluacion-modulo-1.md';
 function pasoExamenReferencia(ctx) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   const origen = path.join(ctx.datosCurso, 'estudio', 'inbox', REFERENCIA_CENTRO);
-  const r = invocarClaude({
-    prompt: `Te dejo en estudio/inbox/${REFERENCIA_CENTRO} el test de autoevaluación del módulo 1 del centro. `
+  const r = invocar(ctx,
+    `Te dejo en estudio/inbox/${REFERENCIA_CENTRO} el test de autoevaluación del módulo 1 del centro. `
       + 'Quiero que mis próximos exámenes se parezcan a este en formato: sigue "Examen de referencia del '
       + `centro" de la skill /examen y ajusta config/examenes.json a lo que declara, sin inventar nada que no diga. ${PROMPT_COMUN}`,
-    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
-  });
-  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+    'examen-referencia');
+  if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
   const v = p.referenciaCoherente(ctx.destino, fs.readFileSync(origen, 'utf8'));
   if (v.ok) ctx.referenciaCentro = true;
   return { ok: v.ok, detalle: v.detalle, salidaLlm: v.ok ? undefined : r.salida };
@@ -233,10 +249,10 @@ function pasoExamenGenerar(ctx, examenModulo) {
       + 'test de referencia del centro te dejé: reutiliza algunas de sus preguntas, literales y marcadas '
       + `como del centro, tal como pide la sección "Examen de referencia del centro". ${PROMPT_COMUN}`
     : `Hazme el examen del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /examen. ${PROMPT_COMUN}`;
-  const r = invocarClaude({ prompt, modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs });
-  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const r = invocar(ctx, prompt, 'examen-generar');
+  if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
   const fichero = p.examenMasReciente(ctx.destino);
-  if (!fichero) return { ok: false, detalle: 'claude terminó pero no hay ningún examen en estudio/examenes/', salidaLlm: r.salida };
+  if (!fichero) return { ok: false, detalle: `${ctx.lanzador.nombre} terminó pero no hay ningún examen en estudio/examenes/`, salidaLlm: r.salida };
   ctx.ficheroExamen = fichero;
   // El examen tiene que respetar el formato fijado en config/examenes.json (nº de opciones por pregunta,
   // según su propia clave): lo que el paso de la referencia del centro tenía que dejar listo antes.
@@ -271,11 +287,10 @@ function pasoExamenCorregir(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: se omite la corrección' };
   const progresoAntes = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
-  const r = invocarClaude({
-    prompt: `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (usa node .kit/herramientas/examen.js --corregir). ${PROMPT_COMUN}`,
-    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
-  });
-  if (!r.ok) return { ok: false, detalle: `claude falló al corregir (código ${r.codigo})`, salidaLlm: r.salida };
+  const r = invocar(ctx,
+    `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (usa node .kit/herramientas/examen.js --corregir). ${PROMPT_COMUN}`,
+    'examen-corregir');
+  if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló al corregir (código ${r.codigo})`, salidaLlm: r.salida };
   const v = p.verificarCorreccionTest(ctx.destino, ctx.ficheroExamen, ctx.contestacion);
   const progresoDespues = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const progresoMovido = progresoAntes !== progresoDespues;
@@ -295,11 +310,10 @@ function pasoCorreccionOraculo(ctx) {
   fs.writeFileSync(fichero, fs.readFileSync(path.join(dirOraculo, 'examen-oraculo.md'), 'utf8').replace('{{fecha}}', hoy));
   const puesto = p.ponerRespuestas(fichero, esperado.map(e => e.respuesta));
   if (!puesto.ok) return { ok: false, detalle: `el test fijo tiene ${puesto.huecos} huecos y ${puesto.respuestas} respuestas preparadas` };
-  const r = invocarClaude({
-    prompt: `He terminado el test ${path.basename(fichero)}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
-    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
-  });
-  if (!r.ok) return { ok: false, detalle: `claude falló al corregir el test fijo (código ${r.codigo})`, salidaLlm: r.salida };
+  const r = invocar(ctx,
+    `He terminado el test ${path.basename(fichero)}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
+    'examen-oraculo');
+  if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló al corregir el test fijo (código ${r.codigo})`, salidaLlm: r.salida };
   const c = p.compararVeredictos(esperado, p.leerVeredictos(fs.readFileSync(fichero, 'utf8')));
   ctx.correccion = c;
   return { ok: c.bien === c.total, detalle: `corrección: ${c.bien}/${c.total} veredictos como se esperaban${c.fallos.length ? ` · ${c.fallos.join(' · ')}` : ''}`, salidaLlm: c.fallos.length ? r.salida : undefined };
@@ -308,15 +322,12 @@ function pasoCorreccionOraculo(ctx) {
 function pasoRepaso(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   const antes = new Set(p.repasosGenerados(ctx.destino));
-  const r = invocarClaude({
-    prompt: `Hazme un repaso visual del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /repaso. ${PROMPT_COMUN}`,
-    modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
-  });
-  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const r = invocar(ctx, `Hazme un repaso visual del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /repaso. ${PROMPT_COMUN}`, 'repaso');
+  if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
   const despues = p.repasosGenerados(ctx.destino).filter(f => !antes.has(f));
   return {
     ok: despues.length > 0,
-    detalle: despues.length ? `repaso generado: ${despues.map(f => path.relative(ctx.destino, f)).join(', ')}` : 'claude terminó pero no hay ningún .html nuevo en estudio/repasos/',
+    detalle: despues.length ? `repaso generado: ${despues.map(f => path.relative(ctx.destino, f)).join(', ')}` : `${ctx.lanzador.nombre} terminó pero no hay ningún .html nuevo en estudio/repasos/`,
     salidaLlm: r.salida,
   };
 }
@@ -357,11 +368,11 @@ function agruparPorRegla(lista) {
   return [...grupos.entries()].sort((a, b) => b[1].length - a[1].length);
 }
 
-function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos, perfil, correccion, commit }) {
+function markdownResumen({ fecha, version, modelo, sinLlm, pasos, informe, conteos, perfil, correccion, commit, asistente = 'claude-code' }) {
   const l = [];
   l.push('# Resultado de la prueba real del profesor', '');
   if (sinLlm) l.push('> **Modo `--sin-llm`: no se ha ejecutado ningún LLM real.** Solo se ha montado el curso y probado', '> el propio ejecutor. Ejecuta `npm run prueba-real` (sin ese flag) para una prueba de verdad.', '');
-  l.push(`- **Fecha:** ${fecha}`, `- **Versión del kit:** ${version}`, `- **Modelo:** ${modelo}`, '');
+  l.push(`- **Fecha:** ${fecha}`, `- **Versión del kit:** ${version}`, `- **Modelo:** ${modelo || 'el suyo por defecto'}`, `- **Asistente:** ${asistente}`, '');
   // Línea fija que lee .github/cambio-grande.js: no se cambia su forma sin cambiar allí la expresión.
   const hechos = pasos.filter(x => x.ok !== null);
   const c = correccion || { bien: 0, total: 0 };
@@ -431,13 +442,18 @@ function copiarSinExtras(origen, destino) {
   });
 }
 
-function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, datosCurso = EJEMPLO, resultadoDir = RESULTADO }) {
+function ejecutar({
+  sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, datosCurso = EJEMPLO, asistente, resultadoDir = rutaResultado(asistente), volcarDir,
+}) {
   const clases = leerJson(path.join(datosCurso, 'clases.json'));
   const nombre = leerJson(path.join(datosCurso, 'config', 'ajustes.json')).nombre_curso;
-  const { destino, motor } = montarCurso({ trabajo, datosCurso, nombre });
+  const { destino, motor } = montarCurso({ trabajo, datosCurso, nombre, llm: asistente });
   try {
+    const { llm, adaptador } = adaptadorDelCurso(destino);
+    if (!adaptador) throw new Error(`el curso usa \`${llm}\` y no tiene adaptador`);
+    const lanzador = lanzadorPara(adaptador);
     const modelo = modeloArg || modeloRecomendado(destino);
-    const ctx = { destino, sinLlm, modelo, limiteMs, datosCurso };
+    const ctx = { destino, sinLlm, modelo, limiteMs, datosCurso, lanzador, adaptador, volcarDir };
     const pasos = [];
 
     // El caso de verdad con choques posibles (plan 0.22, §4): las clases del módulo del examen, en
@@ -488,7 +504,7 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     fs.copyFileSync(path.join(destino, 'config', 'alumno.md'), path.join(resultadoDir, 'config', 'alumno.md'));
     const resumen = markdownResumen({
       fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
-      modelo, sinLlm, pasos, informe, conteos, perfil, correccion: ctx.correccion,
+      modelo, sinLlm, pasos, informe, conteos, perfil, correccion: ctx.correccion, asistente: llm,
       commit: (spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: trabajo, encoding: 'utf8' }).stdout || '').trim(),
     });
     fs.writeFileSync(path.join(resultadoDir, 'RESUMEN.md'), resumen);
@@ -504,14 +520,21 @@ function cli(args) {
   const sinLlm = args.includes('--sin-llm');
   const modelo = valor('--modelo') || null;
   const limiteMs = Number(valor('--limite-ms')) || LIMITE_POR_DEFECTO_MS;
+  const volcarDir = valor('--volcar');
+  // Sin --asistente, el llm del curso de ejemplo: con Claude Code nada cambia (issue #45).
+  const asistente = valor('--asistente') || leerJson(path.join(EJEMPLO, 'config', 'ajustes.json')).llm || 'claude-code';
+  const ficheroAdaptador = path.join(RAIZ_KIT, '.kit', 'adaptadores', `${asistente}.json`);
+  if (!fs.existsSync(ficheroAdaptador)) { console.error(`el curso usa \`${asistente}\` y no tiene adaptador`); return 1; }
+  const lanzador = lanzadorPara(leerJson(ficheroAdaptador));
 
   if (!sinLlm) {
-    const disponible = comando('claude', ['--version']);
-    if (!disponible.ok) { console.error('No se encuentra `claude` (o falló al arrancar). Instálalo o usa --sin-llm.\n' + disponible.salida); return 1; }
+    const chequeo = lanzador.comprobar();
+    if (!chequeo.ok) { console.error(chequeo.mensaje); return 1; }
   }
 
-  const { pasos, informe } = ejecutar({ sinLlm, modelo, limiteMs });
-  console.log(`Resultado en ${path.relative(RAIZ_KIT, RESULTADO)}/RESUMEN.md`);
+  const resultadoDir = rutaResultado(asistente);
+  const { pasos, informe } = ejecutar({ sinLlm, modelo, limiteMs, asistente, resultadoDir, volcarDir });
+  console.log(`Resultado en ${path.relative(RAIZ_KIT, resultadoDir)}/RESUMEN.md`);
   const denegados = pasos.reduce((n, x) => n + (x.denegaciones || []).length, 0);
   console.log(`${pasos.filter(x => x.ok).length}/${pasos.filter(x => x.ok !== null).length} pasos bien · ${denegados} permiso(s) denegado(s)`);
   const fallo = pasos.some(x => x.ok === false) || informe.errores.length > 0;
@@ -527,4 +550,7 @@ if (require.main === module) {
   }
 }
 
-module.exports = { ejecutar, cli, modeloRecomendado, markdownResumen, agruparPorRegla, argsClaude, entornoDeAlumno, leerSalidaClaude, lineaDePaso };
+module.exports = {
+  ejecutar, cli, modeloRecomendado, adaptadorDelCurso, rutaResultado, markdownResumen, agruparPorRegla,
+  argsClaude, entornoDeAlumno, leerSalidaClaude, lineaDePaso, invocarAsistente,
+};

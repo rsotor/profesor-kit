@@ -66,7 +66,10 @@ function copiarMotor(trabajo, destino) {
 // (pruebas/curso-ejemplo/: config/, estudio/, README.md), que pisan lo que dejó preparar-curso.js.
 // `version_datos` de config/ajustes.json se ajusta siempre al motor que se está montando: así el
 // curso de ejemplo no se queda desincronizado el día que suba `.kit/motor.json#version_datos`.
-function montarCurso({ trabajo, datosCurso, nombre, destino = carpetaTemporal() }) {
+// `llm` (issue #45): fuerza `ajustes.llm` antes de instalar las skills, para que vayan al sitio que
+// diga su adaptador (`.agents/skills` para Codex); sin él, el llm de `datosCurso` (siempre claude-code
+// en pruebas/curso-ejemplo/, así que con Claude Code nada cambia).
+function montarCurso({ trabajo, datosCurso, nombre, destino = carpetaTemporal(), llm }) {
   fs.mkdirSync(destino, { recursive: true });
   const motor = copiarMotor(trabajo, destino);
   ejecutarNodo(path.join(destino, '.kit', 'herramientas', 'preparar-curso.js'), ['--subir', 'no', '--nombre', nombre], destino);
@@ -76,10 +79,16 @@ function montarCurso({ trabajo, datosCurso, nombre, destino = carpetaTemporal() 
   const ficheroAjustes = path.join(destino, 'config', 'ajustes.json');
   const ajustes = JSON.parse(fs.readFileSync(ficheroAjustes, 'utf8'));
   ajustes.version_datos = motor.version_datos;
+  if (llm) ajustes.llm = llm;
   fs.writeFileSync(ficheroAjustes, JSON.stringify(ajustes, null, 2) + '\n');
 
   iniciarGit(destino);
   ejecutarNodo(path.join(destino, '.kit', 'herramientas', 'instalar-skills.js'), [], destino);
+  // Con Codex, el curso montado queda con los permisos aceptados de una vez, como los dejaría un alumno de
+  // verdad (permisos.js --aplicar): sin sesión, `codex exec` con approval_policy=never necesita ya de
+  // entrada un curso "de confianza" para que la denegación que mida la prueba sea la de verdad, no un
+  // rechazo por no haber aceptado nada.
+  if (ajustes.llm === 'codex') ejecutarNodo(path.join(destino, '.kit', 'herramientas', 'permisos.js'), ['--aplicar'], destino);
 
   return { destino, motor };
 }

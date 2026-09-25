@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const {
-  decidirEleccion, abrioGuia, acierta, markdownResumen, markdownGuias, datosDelCurso,
+  decidirEleccion, abrioGuia, acierta, markdownResumen, markdownGuias, datosDelCurso, reemplazarGuias,
   LIMITE_HERRAMIENTAS, LIMITE_HERRAMIENTAS_GUIA,
 } = require('../../../pruebas/disparadores');
 const casosGuia = require('../../../pruebas/lib/casos-guia');
@@ -126,6 +126,29 @@ test('markdownGuias: su propia tabla, con aciertos y la lista de fallos', () => 
 
 test('markdownGuias: sin casos de guía, no añade nada', () => {
   assert.deepEqual(markdownGuias([]), []);
+});
+
+// --- reemplazarGuias: --solo-guias no puede pisar la tabla de frases de una ejecución completa anterior ------
+
+test('reemplazarGuias: sustituye solo desde "## Guías" hasta el final, conserva la cabecera', () => {
+  const anterior = '# Disparadores · claude-code\n\n- **Fecha:** 2026-01-01\n\n**2 de 3** frases eligen lo esperado.\n\n'
+    + '## Guías\n\n**0 de 1** situaciones abren la guía esperada.\n\nVieja.\n';
+  const nuevas = ['## Guías', '', '**1 de 1** situaciones abren la guía esperada.', '', 'Nueva.'];
+  const resultado = reemplazarGuias(anterior, nuevas);
+  assert.match(resultado, /\*\*2 de 3\*\* frases eligen lo esperado\./, 'conserva la tabla de frases de antes');
+  assert.match(resultado, /\*\*1 de 1\*\* situaciones abren la guía esperada\./);
+  assert.doesNotMatch(resultado, /Vieja\./);
+});
+
+test('reemplazarGuias: si no había sección "## Guías", la añade al final', () => {
+  const anterior = '# Disparadores · claude-code\n\n**2 de 3** frases eligen lo esperado.\n';
+  const resultado = reemplazarGuias(anterior, ['## Guías', '', 'Nueva.']);
+  assert.match(resultado, /\*\*2 de 3\*\* frases eligen lo esperado\.[\s\S]*## Guías[\s\S]*Nueva\./);
+});
+
+test('reemplazarGuias: sin líneas de guías nuevas, deja la cabecera sola (sin sección "## Guías")', () => {
+  const anterior = '# Disparadores · claude-code\n\n**2 de 3** frases eligen lo esperado.\n\n## Guías\n\nVieja.\n';
+  assert.equal(reemplazarGuias(anterior, []), '# Disparadores · claude-code\n\n**2 de 3** frases eligen lo esperado.\n');
 });
 
 test('markdownResumen: sin frases de skills (--solo-guias), lo dice y saca solo la tabla de guías', () => {

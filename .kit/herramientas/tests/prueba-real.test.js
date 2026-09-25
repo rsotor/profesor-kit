@@ -552,3 +552,23 @@ test('el examen del oráculo cumple los patrones prohibidos del curso de ejemplo
   }
   assert.deepEqual(fallos, []);
 });
+
+// Antes de los lanzadores (0.26.0), invocarClaude pasaba env: entornoDeAlumno() — sin él, el asistente heredaba
+// las variables de la sesión que lanza la prueba. Cada lanzador decide su entorno, y invocarAsistente lo usa.
+test('invocarAsistente lanza con el entorno del lanzador, no con el de quien lanza la prueba', () => {
+  const { invocarAsistente } = require('../../../pruebas/prueba-real');
+  const dir = temporal();
+  const lanzador = {
+    argsTarea: () => ({ args: ['-e', 'process.stdout.write(String(process.env.SOLO_DEL_LANZADOR) + "|" + String(process.env.DE_LA_SESION))'] }),
+    comoEjecutar: plan => ({ ejecutable: process.execPath, args: plan.args, entrada: undefined, literal: false }),
+    entorno: () => ({ PATH: process.env.PATH, SOLO_DEL_LANZADOR: 'si' }),
+    leerSalida: stdout => ({ texto: stdout, denegaciones: [] }),
+  };
+  process.env.DE_LA_SESION = 'no-deberia-llegar';
+  try {
+    const r = invocarAsistente({ lanzador, prompt: 'x', cwd: dir, limiteMs: 10000 });
+    assert.equal(r.salida, 'si|undefined');
+  } finally {
+    delete process.env.DE_LA_SESION;
+  }
+});
