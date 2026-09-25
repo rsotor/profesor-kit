@@ -1,26 +1,27 @@
 ---
-tipo: ejercicio
+tipo: ejercicios
 sesion: 01-01-01-el-dinero-y-sus-funciones
 ---
-# Ejercicios · 01-01-01 El dinero y sus funciones
+# Ejercicios · 01-01-01 · El dinero y sus funciones
 
 ## Inflación y poder de compra
 
-Versión a mano del ejercicio interactivo (`01-01-01-inflacion-poder-de-compra.html`).
+Versión web: `01-01-01-inflacion-poder-de-compra.html` (en esta misma carpeta, ábrelo con doble clic).
 
-**Caso:** guardas 100,00 € un año sin tocarlos.
+Versión a mano, para practicar sin la página:
 
-1. Con una inflación de 3 % anual, ¿compras más, lo mismo o menos que hoy? *(una palabra)*
-2. Con una inflación de 0 % anual, ¿y ahora? *(una palabra)*
+Hace un año ganabas 2.000,00 € en un mes normal. Este año ganas 2.060,00 € (subida de 3 % anual del total). La
+inflación es del 5 % anual. Respuesta esperada: una palabra.
+
+**¿Puedes comprar más, lo mismo o menos que hace un año?**
 
 > [!success]- Respuesta
-> 1. **Menos:** en compra real valen unos 97,00 € de hoy (100 ÷ 1,03 ≈ 97,09).
-> 2. **Lo mismo:** sin subida de precios no se pierde poder de compra. Cambiar la inflación de 3 % anual a
->    0 % anual invierte el veredicto.
+> Menos. Tus ingresos suben 3 % anual, pero los precios suben 5 % anual: cobras más euros, pero cada euro compra
+> menos. Se invertiría si tus ingresos subieran más que la inflación.
 
 Concepto: [[inflacion]]
 
-## Los otros dos conceptos
+## Por qué los demás conceptos no llevan ejercicio
 
-[[funciones-del-dinero]] es una clasificación cerrada y [[liquidez]] una definición con una comparación fija
-(cartera frente a piso): no se mueve ninguna condición que cambie el veredicto, así que no llevan ejercicio.
+[[trueque]], [[funciones-del-dinero]] y [[liquidez]] son definiciones y clasificaciones cerradas: no hay una
+condición que, al moverla, invierta el resultado.

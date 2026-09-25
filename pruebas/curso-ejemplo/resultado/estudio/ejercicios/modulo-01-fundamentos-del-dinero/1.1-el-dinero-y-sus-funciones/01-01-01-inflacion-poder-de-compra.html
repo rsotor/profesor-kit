@@ -6,79 +6,100 @@
 <title>Inflación y poder de compra</title>
 <style>
   :root { color-scheme: light dark; }
-  body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
-  section { border: 1px solid #8886; border-radius: 8px; padding: .8rem 1rem; margin: 1rem 0; }
-  h2 { margin: 0 0 .5rem; font-size: 1.05rem; }
-  label { display: block; margin: .6rem 0 .1rem; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8886; border-radius: .5rem; padding: 1rem; margin: 1rem 0; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .75rem 0 .25rem; }
   input[type=range] { width: 100%; }
-  button { font: inherit; padding: .4rem .9rem; margin: .3rem .3rem 0 0; }
+  button { font: inherit; padding: .5rem 1rem; margin: .25rem .25rem 0 0; cursor: pointer; }
   #explicacion { min-height: 3rem; }
+  .ok { color: #1a7f37; } .ko { color: #c62828; }
 </style>
 </head>
 <body>
 <h1>Inflación y poder de compra</h1>
-<p>Concepto: <a href="../../../conceptos/inflacion.md">inflacion</a></p>
+<p>Concepto: <a href="../../../conceptos/inflacion.md">inflacion</a>. Mueve las condiciones y decide antes de ver nada.</p>
 
 <section>
   <h2>1 · Condiciones</h2>
-  <label for="dinero">Dinero guardado en el cajón: <strong id="dineroTxt"></strong></label>
-  <input type="range" id="dinero" min="50" max="500" step="50" value="100">
-  <label for="inflacion">Inflación anual: <strong id="inflacionTxt"></strong></label>
-  <input type="range" id="inflacion" min="0" max="10" step="1" value="3">
+  <label for="base">Tus ingresos de un mes normal hace un año: <b><span id="v-base"></span></b></label>
+  <input type="range" id="base" min="500" max="5000" step="100" value="2000">
+  <label for="inflacion">Inflación: <b><span id="v-inflacion"></span></b></label>
+  <input type="range" id="inflacion" min="0" max="10" step="0.5" value="3">
+  <label for="subida">Cuánto han subido tus ingresos en el año: <b><span id="v-subida"></span></b></label>
+  <input type="range" id="subida" min="0" max="10" step="0.5" value="3">
 </section>
 
 <section>
   <h2>2 · Reto</h2>
-  <p id="pregunta"></p>
-  <button type="button" data-r="menos">Compraré menos</button>
-  <button type="button" data-r="igual">Compraré lo mismo</button>
-  <button type="button" data-r="mas">Compraré más</button>
+  <p>Con estas condiciones, ¿cuánto podrás comprar este año con tus ingresos de un mes normal, comparado con hace un año? (elige una)</p>
+  <button data-r="mas">Más</button>
+  <button data-r="igual">Lo mismo</button>
+  <button data-r="menos">Menos</button>
 </section>
 
 <section>
   <h2>3 · Explicación</h2>
-  <p id="explicacion">Elige una respuesta y aquí verás por qué.</p>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
 </section>
 
 <script>
-function euros(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
+function fmtEuro(n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+function fmtPct(n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' % anual'; }
+
+function poderDeCompra(caso) {
+  return caso.base * (1 + caso.subida / 100) / (1 + caso.inflacion / 100);
+}
 
 window.verificar = function (caso) {
-  return caso.inflacion === 0 ? 'igual' : 'menos';
+  var actual = Math.round(poderDeCompra(caso) * 100);
+  var antes = Math.round(caso.base * 100);
+  if (actual > antes) return 'mas';
+  if (actual < antes) return 'menos';
+  return 'igual';
 };
 
 function leer() {
-  return { dinero: Number(document.getElementById('dinero').value), inflacion: Number(document.getElementById('inflacion').value) };
+  return {
+    base: Number(document.getElementById('base').value),
+    inflacion: Number(document.getElementById('inflacion').value),
+    subida: Number(document.getElementById('subida').value)
+  };
 }
 
 function pintar() {
   var c = leer();
-  document.getElementById('dineroTxt').textContent = euros(c.dinero);
-  document.getElementById('inflacionTxt').textContent = c.inflacion + ' % anual';
-  document.getElementById('pregunta').textContent = 'Guardas ' + euros(c.dinero) + ' un año sin tocarlos, con una inflación de '
-    + c.inflacion + ' % anual. Dentro de un año, ¿con esos mismos euros comprarás más, lo mismo o menos que hoy? (elige una)';
+  document.getElementById('v-base').textContent = fmtEuro(c.base);
+  document.getElementById('v-inflacion').textContent = fmtPct(c.inflacion);
+  document.getElementById('v-subida').textContent = fmtPct(c.subida);
   document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
 }
 
-function responder(r) {
-  var c = leer();
-  var correcta = window.verificar(c);
-  var real = c.dinero / (1 + c.inflacion / 100);
-  var txt = r === correcta ? '✔ Correcto. ' : '✘ No. ';
-  if (correcta === 'igual') {
-    txt += 'Con inflación de 0 % anual los precios no se mueven: tus ' + euros(c.dinero) + ' compran lo mismo.';
-  } else {
-    txt += 'Con inflación de ' + c.inflacion + ' % anual los precios suben y tus ' + euros(c.dinero) + ' valen en compra real '
-      + 'unos ' + euros(real) + ' de hoy (dinero ÷ (1 + inflación)). Mueve la inflación hasta 0 y verás cuándo deja de perderse.';
-  }
-  document.getElementById('explicacion').textContent = txt;
-}
-
-document.getElementById('dinero').addEventListener('input', pintar);
-document.getElementById('inflacion').addEventListener('input', pintar);
-document.querySelectorAll('button[data-r]').forEach(function (b) {
-  b.addEventListener('click', function () { responder(b.getAttribute('data-r')); });
+['base', 'inflacion', 'subida'].forEach(function (id) {
+  document.getElementById(id).addEventListener('input', pintar);
 });
+
+document.querySelectorAll('button[data-r]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var c = leer();
+    var correcta = window.verificar(c);
+    var etiqueta = { mas: 'más', igual: 'lo mismo', menos: 'menos' };
+    var cesta = poderDeCompra(c);
+    var acierto = b.getAttribute('data-r') === correcta;
+    var causa;
+    if (correcta === 'igual') causa = 'Tus ingresos han subido lo mismo que los precios: compras exactamente igual.';
+    else if (correcta === 'mas') causa = 'Tus ingresos han subido más que los precios: ganas poder de compra.';
+    else causa = 'Los precios han subido más que tus ingresos: aunque cobres más euros, compras menos.';
+    document.getElementById('explicacion').innerHTML =
+      '<p class="' + (acierto ? 'ok' : 'ko') + '"><b>' + (acierto ? 'Correcto.' : 'No.') +
+      '</b> Lo correcto era: ' + etiqueta[correcta] + '.</p>' +
+      '<p>' + causa + '</p>' +
+      '<p>Tus ' + fmtEuro(c.base) + ' de hace un año equivalen hoy a ' + fmtEuro(cesta) +
+      ' de los de entonces. El punto donde se invierte: subida de ingresos igual a inflación.</p>' +
+      '<p><small>Ampliación fuera de los apuntes: el cálculo exacto divide entre 1 + inflación.</small></p>';
+  });
+});
+
 pintar();
 </script>
 </body>

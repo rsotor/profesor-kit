@@ -1,81 +1,60 @@
 ---
-tipo: ejercicio
+tipo: ejercicios
 sesion: 01-02-01-presupuesto-personal
 ---
-# Ejercicios · 01-02-01 Presupuesto personal
+# Ejercicios · 01-02-01 · Presupuesto personal
 
-## Un mes flojo y el colchón
+## Un mes flojo y tu colchón
 
-Versión a mano del ejercicio interactivo (`01-02-01-mes-flojo-y-colchon.html`).
+Versión web: `01-02-01-un-mes-flojo-y-tu-colchon.html` (en esta misma carpeta, ábrelo con doble clic).
 
-**Caso:** los gastos del mes son 1.195,00 € y tienes un colchón de 3 meses de gastos.
+Versión a mano, para practicar sin la página:
 
-1. Si entran 1.300,00 €, ¿el mes cierra con ahorro, en cero o con déficit? *(una palabra)*
-2. Si entran 1.000,00 €, ¿y ahora? *(una palabra)*
+Tus gastos son 1.200,00 € al mes. Facturas 800,00 € cada mes durante 3 meses seguidos y tienes un colchón de
+1.000,00 € guardado. Respuesta esperada: una palabra.
 
-> [!success]- Respuesta
-> 1. **Ahorro:** 1.300,00 € − 1.195,00 € = 105,00 €.
-> 2. **Déficit:** faltan 195,00 €, y el colchón (3.585,00 €) los cubre. Cambiar los ingresos de 1.300,00 € a
->    1.000,00 € invierte el veredicto.
-
-Conceptos: [[presupuesto]] · [[colchon-financiero]]
-
-## Una racha de meses flojos
-
-Respuesta abierta: contesta por escrito y lo corregimos en la conversación.
-
-**Caso:** un freelance tiene unos gastos de 900,00 € al mes y un colchón de 3 meses de gastos, en una
-cuenta de la que puede sacar el dinero hoy. Le llega una racha de meses flojos:
-
-| Mes | Ingresos | Gastos |
-|---|---|---|
-| Febrero | 300,00 € | 900,00 € |
-| Marzo | 0,00 € | 900,00 € |
-| Abril | 0,00 € | 900,00 € |
-
-1. ¿Cuántos euros faltan entre febrero y abril para cubrir los gastos, y alcanza el colchón? *(una cifra y sí o no)*
-2. La racha se alarga: en mayo tampoco entra nada (0,00 €). Con el colchón de 3 meses, ¿cuántos euros quedan sin cubrir? *(una cifra)*
-3. ¿Cuántos meses de colchón haría falta tener para cubrir la racha de febrero a mayo? *(un número de meses)*
-4. Marta calcula su colchón de 3 meses como 3 × sus ingresos medios (1.000,00 € al mes), en vez de 3 × sus gastos (900,00 € al mes). ¿Es correcto ese cálculo? *(sí o no, y el porqué en 1-2 líneas)*
-5. Ese mismo colchón de 2.700,00 € está en un depósito que no se puede retirar hasta dentro de 12 meses. ¿Sirve para cubrir marzo? *(sí o no, y el porqué en una frase)*
+**¿Tu colchón aguanta esos 3 meses o se agota?**
 
 > [!success]- Respuesta
-> 1. **2.400,00 €, y sí alcanza.** Gastos de tres meses: 3 × 900,00 € = 2.700,00 €; ingresos: 300,00 € +
->    0,00 € + 0,00 € = 300,00 €; faltan 2.700,00 € − 300,00 € = 2.400,00 €. El colchón (3 × 900,00 € =
->    2.700,00 €) los cubre y sobran 300,00 €.
-> 2. **600,00 €.** Con mayo faltan 2.400,00 € + 900,00 € = 3.300,00 €, y el colchón es de 2.700,00 €:
->    3.300,00 € − 2.700,00 € = 600,00 €.
-> 3. **4 meses.** 4 × 900,00 € = 3.600,00 €, que cubre los 3.300,00 € y deja 300,00 €. Con 3 meses no llega:
->    esta racha es el punto donde el veredicto se invierte.
-> 4. **No.** El colchón se mide sobre los **gastos**, no sobre los ingresos: 3 × 900,00 € = 2.700,00 €. Con
->    los ingresos le salen 3.000,00 €, 300,00 € de más que no existen. Con la media de ingresos por encima de
->    los gastos el error hace creerse más cubierto de lo que está; si la media fuera menor, el error iría al revés.
-> 5. **No.** Un colchón es útil solo si se puede gastar ya: en marzo no puede sacar los 900,00 €. Si pudiera
->    retirarlo al momento, sí serviría.
->
-> Criterios: 1-3 son correctas con la cifra bien (con sus palabras vale). En la 4 y la 5, "no" sin el porqué
-> pide repreguntar "¿por qué?" antes de darlo por sabido.
+> Se agota. Cada mes faltan 400,00 € (1.200,00 € − 800,00 €), y en 3 meses faltan 1.200,00 €; tienes 1.000,00 €.
+> Se invertiría con un colchón de 1.200,00 € o más, o con ingresos de 900,00 € o más al mes (faltarían 300,00 € al mes,
+> 900,00 € en total).
 
-Conceptos: [[colchon-financiero]] · [[presupuesto]] · [[liquidez]]
+Conceptos: [[presupuesto-personal]] · [[colchon-financiero]]
 
-## Tasa de ahorro
+## Cuánto aguanta tu colchón
 
-**Caso:**
+Ejercicio a mano, de respuesta corta. Intenta cada pregunta antes de abrir su respuesta.
 
-- Ana ingresa 3.000,00 € al mes y ahorra 300,00 €.
-- Luis ingresa 1.000,00 € al mes y ahorra 200,00 €.
+**El caso.** Tus gastos son 1.195,00 € al mes y tienes un colchón de 3 meses de gastos: 3.585,00 €, todo líquido.
+Entra una racha de meses flojos.
 
-¿Quién ahorra más en proporción a lo que gana? *(el nombre)*
+**Pregunta 1.** Si facturas 0,00 € cada mes, ¿cuántos meses aguanta el colchón? *(un número de meses)*
 
 > [!success]- Respuesta
-> **Luis.** Su tasa es 200,00 € ÷ 1.000,00 € × 100 = 20 % mensual; la de Ana, 300,00 € ÷ 3.000,00 € × 100 =
-> 10 % mensual. Ana ahorra más euros, pero Luis se queda con una parte mayor de lo que gana. Si Ana ahorrara
-> 600,00 € (la misma tasa de 20 % mensual), el veredicto sería un empate.
+> 3 meses. Sin ingresos falta todo el gasto cada mes: 3.585,00 € ÷ 1.195,00 € = 3. Es el caso para el que se mide
+> en "meses de gastos cubiertos".
 
-Concepto: [[tasa-de-ahorro]]
+**Pregunta 2.** Ahora facturas 600,00 € cada mes, también en racha. ¿Cuántos meses seguidos aguanta el colchón? *(un
+número de meses, y la cuenta en una línea)*
 
-## Los otros dos conceptos
+> [!success]- Respuesta
+> 6 meses. Cada mes solo falta lo que no cubres: 1.195,00 € − 600,00 € = 595,00 €. Y 3.585,00 € ÷ 595,00 € ≈ 6,02, así
+> que llegas a 6 meses completos (6 × 595,00 € = 3.570,00 €) y te sobran 15,00 €.
+> Lo que se descubre: el colchón de "3 meses" dura 3 meses **solo si no facturas nada**; con ingresos parciales dura
+> más. Lo que manda es lo que falta cada mes, no el gasto entero.
 
-[[gastos-fijos-y-variables]] es una clasificación cerrada y [[ingreso-medio]] una media aritmética con una
-regla fija (medias de 6-12 meses, no el mejor mes): no se mueve ninguna condición que dé un veredicto
-distinto, así que no llevan ejercicio propio.
+**Pregunta 3.** Mismo caso (600,00 € al mes), pero 2.000,00 € de tu colchón están en un depósito bloqueado durante 12
+meses, y solo 1.585,00 € son líquidos. ¿Cuántos meses seguidos cubre sin quedarte corto? *(un número de meses)*
+
+> [!success]- Respuesta
+> 2 meses. Con 1.585,00 € líquidos cubres 2 × 595,00 € = 1.190,00 € y te quedan 395,00 €; el mes 3 faltan 200,00 €
+> (595,00 € − 395,00 €) y no puedes tocar el depósito. Aunque el total sea 3.585,00 €, el colchón que cuenta es el
+> líquido: pasa de 6 a 2 meses. Con el depósito líquido, volvería a 6.
+
+Conceptos: [[colchon-financiero]] · [[liquidez]]
+
+## Por qué los demás conceptos no llevan ejercicio
+
+[[gastos-fijos-y-variables]] es una clasificación con una regla clara y [[tasa-de-ahorro]] es una fórmula directa:
+no hay una condición que, al moverla, invierta el veredicto de forma que enseñe algo.

@@ -1,48 +1,52 @@
 ---
 tipo: concepto
-bloques: [01-01]
+bloques: [modulo-01]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
-dificultad: 2
+dificultad: 1
 requiere: [funciones-del-dinero]
-alias: [liquidez de un activo]
-tags: [dinero, ahorro]
+alias: [líquido]
+tags: [fundamentos]
 ---
 # Liquidez
 
-> **En una frase:** La liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor guardado no basta: hay que poder usarlo cuando hace falta. Si para conseguir dinero tienes
-que esperar meses o malvender, ese valor no te sirve para una urgencia.
+Tener valor no basta: hay que poder usarlo cuando hace falta. Algo que vale mucho pero tarda meses en
+convertirse en dinero no sirve para una urgencia.
 
 ## El ejemplo
 
-| Lo que tienes | Cuánto tardas en gastarlo | Liquidez |
+| Lo que tienes | Cuánto tarda en ser dinero | Liquidez |
 |---|---|---|
-| 50,00 € en la cartera | Al instante | Totalmente líquido |
-| Un piso | Meses, para venderlo bien | Muy poco líquido |
+| Euros en la cartera | Al instante | Total |
+| Un piso | Meses, si quieres venderlo bien | Muy poca |
 
-Si mañana te hace falta pagar 50,00 €, la cartera resuelve el problema. El piso, aunque valga muchísimo
-más, no.
+Si tienes prisa por vender el piso, lo normal es aceptar menos de lo que vale: pierdes valor por las prisas.
+
+## El nombre
+
+**Liquidez.** Un activo es *líquido* si se convierte en dinero rápido y sin perder valor.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundir "vale mucho" con "es líquido". Un piso vale mucho y es poco líquido; lo importante para una
-> urgencia no es cuánto vale, sino con qué rapidez y sin perder valor puedes gastarlo.
-
-> [!info] Ampliación fuera de los apuntes · Visto desde tus ingresos irregulares
-> Un mes flojo es justo cuando necesitas dinero rápido. Lo que guardes para esos meses conviene que sea
-> muy líquido.
-
-Los apuntes anticipan que el módulo 2 comparará ahorrar (muy líquido) con invertir (a veces, menos líquido).
+> Creer que "líquido" significa "valioso". Un piso puede valer mucho más que lo que llevas en la cartera y ser
+> mucho menos líquido.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el depósito de valor solo sirve si se puede usar cuando hace falta.
-- [[inflacion]] — la otra cara de guardar dinero: el enemigo.
+- [[funciones-del-dinero]] — el dinero es lo más líquido que hay
+- [[inflacion]] — lo muy líquido es cómodo, pero parado pierde poder de compra
+
+> [!note] Para más adelante
+> En el módulo 2 se compara ahorrar (muy líquido) con invertir (a veces, menos líquido).
+
+> [!tip] Visto desde tus ingresos irregulares
+> En un mes flojo necesitas dinero ya, no dentro de unos meses: lo que guardes para cubrir esos meses tiene que
+> ser líquido.
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

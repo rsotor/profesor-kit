@@ -6,118 +6,101 @@
 <title>Simple frente a compuesto</title>
 <style>
   :root { color-scheme: light dark; }
-  body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
-  section { border: 1px solid #8886; border-radius: 8px; padding: .8rem 1rem; margin: 1rem 0; }
-  h2 { margin: 0 0 .5rem; font-size: 1.05rem; }
-  label { display: block; margin: .6rem 0 .1rem; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8886; border-radius: .5rem; padding: 1rem; margin: 1rem 0; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .75rem 0 .25rem; }
   input[type=range] { width: 100%; }
-  button { font: inherit; padding: .4rem .9rem; margin: .3rem .3rem 0 0; }
+  button { font: inherit; padding: .5rem 1rem; margin: .25rem .25rem 0 0; cursor: pointer; }
   #explicacion { min-height: 3rem; }
+  .ok { color: #1a7f37; } .ko { color: #c62828; }
 </style>
 </head>
 <body>
 <h1>Simple frente a compuesto</h1>
-<p>Conceptos: <a href="../../../conceptos/interes-simple.md">interes-simple</a> · <a href="../../../conceptos/interes-compuesto.md">interes-compuesto</a></p>
+<p>Conceptos: <a href="../../../conceptos/interes-simple.md">interes-simple</a> e <a href="../../../conceptos/interes-compuesto.md">interes-compuesto</a>. Mueve las condiciones y decide antes de ver nada.</p>
 
 <section>
   <h2>1 · Condiciones</h2>
-  <label for="capital">Capital: <strong id="capitalTxt"></strong></label>
+  <p>Dos cuentas con el mismo capital y el mismo tipo: una paga interés simple y la otra, compuesto (capitalización anual).</p>
+  <label for="capital">Capital: <b><span id="v-capital"></span></b></label>
   <input type="range" id="capital" min="500" max="5000" step="100" value="1000">
-  <label for="tipoSimple">Opción A, interés simple: <strong id="tipoSimpleTxt"></strong></label>
-  <input type="range" id="tipoSimple" min="1" max="12" step="0.5" value="8">
-  <label for="tipoCompuesto">Opción B, interés compuesto: <strong id="tipoCompuestoTxt"></strong></label>
-  <input type="range" id="tipoCompuesto" min="1" max="12" step="0.5" value="5">
-  <label for="anios">Tiempo: <strong id="aniosTxt"></strong></label>
-  <input type="range" id="anios" min="1" max="40" step="1" value="10">
+  <label for="tipo">Tipo de interés: <b><span id="v-tipo"></span></b></label>
+  <input type="range" id="tipo" min="0" max="10" step="0.5" value="5">
+  <label for="anios">Tiempo: <b><span id="v-anios"></span></b></label>
+  <input type="range" id="anios" min="1" max="30" step="1" value="3">
 </section>
 
 <section>
   <h2>2 · Reto</h2>
-  <p id="pregunta"></p>
-  <button type="button" data-r="simple">A: el interés simple</button>
-  <button type="button" data-r="compuesto">B: el interés compuesto</button>
-  <button type="button" data-r="empate">Acaban con lo mismo</button>
+  <p>Al final de ese tiempo, ¿qué cuenta tendrá más dinero? (elige una)</p>
+  <button data-r="simple">La de interés simple</button>
+  <button data-r="compuesto">La de interés compuesto</button>
+  <button data-r="igual">Las dos igual</button>
 </section>
 
 <section>
   <h2>3 · Explicación</h2>
-  <p id="explicacion">Elige una respuesta y aquí verás por qué.</p>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
 </section>
 
 <script>
-function euros(n) {
-  var partes = n.toFixed(2).split('.');
-  var ent = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  return ent + ',' + partes[1] + ' €';
-}
-function tipo(n) { return n.toFixed(1).replace('.', ',') + ' % anual'; }
+function fmtEuro(n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+function fmtPct(n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' % anual'; }
+function fmtAnios(n) { return n + (n === 1 ? ' año' : ' años'); }
 
-function finalSimple(c, t, a) { return Math.round(c * (1 + t / 100 * a) * 100) / 100; }
-function finalCompuesto(c, t, a) { return Math.round(c * Math.pow(1 + t / 100, a) * 100) / 100; }
+function finalSimple(c) { return c.capital + c.capital * (c.tipo / 100) * c.anios; }
+function finalCompuesto(c) { return c.capital * Math.pow(1 + c.tipo / 100, c.anios); }
 
 window.verificar = function (caso) {
-  var s = finalSimple(caso.capital, caso.tipoSimple, caso.anios);
-  var k = finalCompuesto(caso.capital, caso.tipoCompuesto, caso.anios);
-  if (s > k) { return 'simple'; }
-  if (k > s) { return 'compuesto'; }
-  return 'empate';
+  var s = Math.round(finalSimple(caso) * 100);
+  var k = Math.round(finalCompuesto(caso) * 100);
+  if (k > s) return 'compuesto';
+  if (k < s) return 'simple';
+  return 'igual';
 };
 
 function leer() {
   return {
     capital: Number(document.getElementById('capital').value),
-    tipoSimple: Number(document.getElementById('tipoSimple').value),
-    tipoCompuesto: Number(document.getElementById('tipoCompuesto').value),
+    tipo: Number(document.getElementById('tipo').value),
     anios: Number(document.getElementById('anios').value)
   };
 }
 
 function pintar() {
   var c = leer();
-  document.getElementById('capitalTxt').textContent = euros(c.capital);
-  document.getElementById('tipoSimpleTxt').textContent = tipo(c.tipoSimple);
-  document.getElementById('tipoCompuestoTxt').textContent = tipo(c.tipoCompuesto);
-  document.getElementById('aniosTxt').textContent = c.anios + (c.anios === 1 ? ' año' : ' años');
-  document.getElementById('pregunta').textContent = 'Dejas ' + euros(c.capital) + ' durante ' + c.anios
-    + (c.anios === 1 ? ' año' : ' años') + '. A paga ' + tipo(c.tipoSimple) + ' con interés simple; B paga '
-    + tipo(c.tipoCompuesto) + ' con interés compuesto. ¿Con cuál acabas con más dinero? (elige una)';
+  document.getElementById('v-capital').textContent = fmtEuro(c.capital);
+  document.getElementById('v-tipo').textContent = fmtPct(c.tipo);
+  document.getElementById('v-anios').textContent = fmtAnios(c.anios);
   document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
 }
 
-// Primer año en que el compuesto supera al simple (hasta 100 años); 0 si no lo hace.
-function anioDelAdelanto(c) {
-  for (var a = 1; a <= 100; a++) {
-    if (finalCompuesto(c.capital, c.tipoCompuesto, a) > finalSimple(c.capital, c.tipoSimple, a)) { return a; }
-  }
-  return 0;
-}
-
-function responder(r) {
-  var c = leer();
-  var correcta = window.verificar(c);
-  var s = finalSimple(c.capital, c.tipoSimple, c.anios);
-  var k = finalCompuesto(c.capital, c.tipoCompuesto, c.anios);
-  var txt = r === correcta ? '✔ Correcto. ' : '✘ No. ';
-  txt += 'A (simple) = ' + euros(c.capital) + ' × (1 + ' + (c.tipoSimple / 100).toString().replace('.', ',') + ' × ' + c.anios + ') = ' + euros(s)
-    + '. B (compuesto) = ' + euros(c.capital) + ' × ' + (1 + c.tipoCompuesto / 100).toString().replace('.', ',') + '^' + c.anios + ' = ' + euros(k) + '. ';
-  var adelanto = anioDelAdelanto(c);
-  if (adelanto === 0) {
-    txt += 'Con estos tipos, el compuesto no adelanta al simple en 100 años: el tipo de A es demasiado alto para B. Sube el tipo de B.';
-  } else if (adelanto === 1) {
-    txt += 'Con estos tipos el compuesto ya va por delante desde el primer año. Baja su tipo hasta acercarlo al de A y mira cuándo cambia.';
-  } else {
-    txt += 'El compuesto adelanta al simple a partir del año ' + adelanto + '. Mueve los años a uno y otro lado de ese punto y verás invertirse el veredicto.';
-  }
-  txt += ' El capital no cambia quién gana: prueba a moverlo.';
-  document.getElementById('explicacion').textContent = txt;
-}
-
-['capital', 'tipoSimple', 'tipoCompuesto', 'anios'].forEach(function (id) {
+['capital', 'tipo', 'anios'].forEach(function (id) {
   document.getElementById(id).addEventListener('input', pintar);
 });
+
 document.querySelectorAll('button[data-r]').forEach(function (b) {
-  b.addEventListener('click', function () { responder(b.getAttribute('data-r')); });
+  b.addEventListener('click', function () {
+    var c = leer();
+    var correcta = window.verificar(c);
+    var etiqueta = { simple: 'la de interés simple', compuesto: 'la de interés compuesto', igual: 'las dos igual' };
+    var acierto = b.getAttribute('data-r') === correcta;
+    var causa;
+    if (correcta === 'compuesto') causa = 'Desde el segundo año, el compuesto cobra intereses también sobre los intereses ya ganados; el simple, solo sobre el capital inicial.';
+    else if (correcta === 'igual' && c.anios === 1) causa = 'Con 1 año solo hay un periodo: todavía no hay intereses anteriores que generen nada, así que simple y compuesto coinciden.';
+    else if (correcta === 'igual' && c.tipo === 0) causa = 'Con un tipo del 0 % anual no hay intereses que reinvertir: las dos se quedan en el capital.';
+    else causa = 'La diferencia es tan pequeña que, redondeada al céntimo, sale igual.';
+    document.getElementById('explicacion').innerHTML =
+      '<p class="' + (acierto ? 'ok' : 'ko') + '"><b>' + (acierto ? 'Correcto.' : 'No.') +
+      '</b> Lo correcto era: ' + etiqueta[correcta] + '.</p>' +
+      '<p>' + causa + '</p>' +
+      '<p>Simple: ' + fmtEuro(finalSimple(c)) + ' · Compuesto: ' + fmtEuro(finalCompuesto(c)) +
+      ' (diferencia: ' + fmtEuro(finalCompuesto(c) - finalSimple(c)) + ').</p>' +
+      '<p>El punto donde se separan: a partir del segundo año, con un tipo mayor que 0 % anual.</p>';
+  });
 });
+
 pintar();
 </script>
 </body>

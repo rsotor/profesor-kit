@@ -2,42 +2,42 @@
 tipo: flashcards
 sesion: 01-02-01-presupuesto-personal
 ---
-# Flashcards · 01-02-01
+# Flashcards · 01-02-01-presupuesto-personal
 
 > El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
 > y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Todos los meses gastas algo en ocio. ¿Es por eso un gasto fijo? (sí o no, y por qué en una frase)**
+**Todos los meses gastas algo en ocio. ¿Es un gasto fijo o variable? (uno, con el porqué en una frase)**
 > [!success]- Respuesta
-> No, es variable. Que gastes algo siempre no lo hace fijo: la cifra exacta la decides tú cada mes.
+> Variable: que gastes algo siempre no lo hace fijo; la cifra exacta la decides tú cada mes. [[gastos-fijos-y-variables]]
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 24/9*
+*Caja 1 de 5 · te toca el 25/9*
 
-**Un mes facturas 2.400,00 € y otro 1.300,00 €. ¿Con qué cifra presupuestas: la del mejor mes u otra? (explícalo en una frase)**
+**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso presupuestas: el del mejor mes o otro? (el criterio, en una frase)**
 > [!success]- Respuesta
-> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes: el mejor mes te promete un margen que la mayoría de los meses no existe.
+> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes. [[presupuesto-personal]]
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 24/9*
+*Caja 1 de 5 · te toca el 25/9*
 
-**Ana ahorra 300,00 € al mes con ingresos de 3.000,00 €. Luis ahorra 200,00 € con ingresos de 1.000,00 €. ¿Quién ahorra más en proporción? (el nombre)**
+**Un mes ingresas 2.000,00 € y ahorras 500,00 €. ¿Cuál es tu tasa de ahorro? (una cifra, con su periodo)**
 > [!success]- Respuesta
-> Luis: 20 % mensual frente al 10 % mensual de Ana. La tasa de ahorro compara personas con ingresos distintos; la cifra de ahorro sola, no.
+> 25 % mensual: 500 ÷ 2.000 × 100. [[tasa-de-ahorro]]
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 24/9*
+*Caja 1 de 5 · te toca el 25/9*
 
-**¿Por qué a alguien con ingresos irregulares se le recomienda un colchón financiero mayor que a alguien con nómina? (en una frase)**
+**Dos personas tienen los mismos gastos: una cobra nómina fija y la otra factura por su cuenta. ¿Cuál debería apuntar a más meses de colchón? (una, con el porqué en una frase)**
 > [!success]- Respuesta
-> Porque puede haber varios meses flojos seguidos: 5-6 meses de gastos en vez de 3.
+> La que factura por su cuenta: sus ingresos son irregulares, así que necesita más meses cubiertos (5-6 en vez de 3). [[colchon-financiero]]
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 24/9*
+*Caja 1 de 5 · te toca el 25/9*
 
 ---
-Conceptos que cubren: [[gastos-fijos-y-variables]] · [[ingreso-medio]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
