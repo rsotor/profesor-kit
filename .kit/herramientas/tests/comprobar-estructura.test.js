@@ -94,3 +94,31 @@ test('un ejercicio HTML que carga algo de internet es aviso: tiene que funcionar
   assert.deepEqual(avisos.map(a => a.fichero), ['ejercicios/s01/red.html'], 'un enlace para leer más no carga nada');
   assert.match(avisos[0].detalle, /cdn\.example\.com.*fonts\.example\.com/);
 });
+
+// Revisión de la 0.27 (alta 4): un merge mal resuelto (a mano, o una excepción a medias) nunca puede quedar
+// guardado con los marcadores de git dentro de una nota.
+test('marcadores-de-conflicto: los tres juntos (<<<<<<< / ======= / >>>>>>>) son error; uno suelto no', () => {
+  const conConflicto = cursoTemporal({
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# Alfa\n\n## El ejemplo\n\n'
+      + '<<<<<<< HEAD\nUno.\n=======\nDos.\n>>>>>>> origin/main\n',
+  });
+  const errores = comprobar(conConflicto).errores.filter(e => e.regla === 'marcadores-de-conflicto');
+  assert.deepEqual(errores.map(e => e.fichero), ['conceptos/alfa.md']);
+
+  const soloMenciona = cursoTemporal({
+    'estudio/conceptos/alfa.md': '---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# Alfa\n\n## El ejemplo\n\n'
+      + 'Git marca un conflicto con `<<<<<<<`, pero aquí no hay ninguno.\n',
+  });
+  assert.deepEqual(reglas(comprobar(soloMenciona)).filter(r => r === 'marcadores-de-conflicto'), []);
+});
+
+// Revisión de la 0.27, segunda ronda (baja 4): con fin de línea de Windows, "=======\r\n" no coincidía con el
+// "$" sin \r? opcional, y el marcador se colaba sin avisar.
+test('marcadores-de-conflicto: también con fin de línea de Windows (CRLF)', () => {
+  const raiz = cursoTemporal({
+    'estudio/conceptos/alfa.md': '---\r\ntipo: concepto\r\nalias: []\r\nrequiere: []\r\n---\r\n# Alfa\r\n\r\n## El ejemplo\r\n\r\n'
+      + '<<<<<<< HEAD\r\nUno.\r\n=======\r\nDos.\r\n>>>>>>> origin/main\r\n',
+  });
+  const errores = comprobar(raiz).errores.filter(e => e.regla === 'marcadores-de-conflicto');
+  assert.deepEqual(errores.map(e => e.fichero), ['conceptos/alfa.md']);
+});

@@ -159,6 +159,7 @@ function comprobarEjercicios(raiz, notas, informe) {
 function comprobarPendientes(raiz, informe) {
   const marcador = new RegExp(generados.escaparRegex(v.leerMarcador(raiz)), 'g');
   for (const nota of v.listarNotas(raiz, { conInbox: true })) {
+    if (v.GENERADOS_ENTEROS.includes(nota)) continue;   // copia de otras notas: su TODO ya cuenta en el original (#51)
     const limpio = v.sinCodigo(leer(raiz, nota));
     const dudas = (limpio.match(marcador) || []).length;
     const todos = (limpio.match(/\*\*TODO:\*\*|^TODO:|\bTBD\b/gm) || []).length;
@@ -178,6 +179,21 @@ function comprobarFaltaInfoMalUsado(raiz, informe) {
     const seccion = capturarSeccion(leer(raiz, fichero), 'El error típico');
     if (seccion !== null && /FALTA INFO:/.test(seccion)) {
       informe.avisos.push({ regla: 'falta-info-mal-usado', fichero, detalle: '"## El error típico" lleva FALTA INFO — no es algo que el curso tuviera que entregar: propón uno marcado como ampliación, o borra la sección' });
+    }
+  }
+}
+
+// Un merge mal resuelto (a mano, o una excepción a medio resolver) puede dejar los marcadores de conflicto de
+// git dentro de una nota: eso nunca puede llegar a guardarse (revisión de la 0.27, alta 4). Los tres marcadores
+// juntos, no uno suelto: una nota puede citar "<<<<<<<" como ejemplo de texto sin ser un conflicto de verdad.
+function comprobarMarcadoresDeConflicto(raiz, notas, informe) {
+  for (const nota of notas) {
+    const texto = leer(raiz, nota);
+    // \r?$ (revisión, segunda ronda, baja 4): con fin de línea de Windows, la línea "=======" es en
+    // realidad "=======\r" antes del \n — sin el \r? opcional, $ no la reconocía y el marcador se colaba.
+    if (/^<<<<<<< /m.test(texto) && /^=======\r?$/m.test(texto) && /^>>>>>>> /m.test(texto)) {
+      informe.errores.push({ regla: 'marcadores-de-conflicto', fichero: nota,
+        detalle: 'quedan marcadores de un merge sin resolver (<<<<<<< / ======= / >>>>>>>): no se puede guardar así' });
     }
   }
 }
@@ -574,6 +590,7 @@ function comprobar(raiz) {
   comprobarEjerciciosSueltos(raiz, declarados, informe);
   comprobarPaginasWeb(raiz, informe);
   comprobarPatrones(raiz, notas, informe);
+  comprobarMarcadoresDeConflicto(raiz, notas, informe);
   comprobarQueSeVeraBien(raiz, notas, informe);
   comprobarPendientes(raiz, informe);
   comprobarFaltaInfoMalUsado(raiz, informe);

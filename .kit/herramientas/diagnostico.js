@@ -10,8 +10,8 @@ const { MARCA, pathGuardado } = require('./crear-atajo');
 
 const NODE_MINIMO = 24;
 
-function ejecutarReal(comando, args, cwd) {
-  return ejecutar(comando, args, { cwd });
+function ejecutarReal(comando, args, cwd, opciones = {}) {
+  return ejecutar(comando, args, { cwd, ...opciones });
 }
 
 // Repasa la instalación entera y devuelve una lista de comprobaciones. Es la respuesta objetiva a
@@ -24,14 +24,30 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
 
   anota('node', parseInt(versionNode, 10) >= NODE_MINIMO, `Node ${versionNode}`, `Hace falta Node ${NODE_MINIMO} o superior: instala la versión LTS.`);
   anota('git', ejecutar('git', ['--version'], raiz).ok, 'Git', 'Instala Git. Si acabas de instalarlo, abre una ventana de terminal nueva.');
+  // Sin gh, actualizar.js y guardar.js siguen funcionando (issue #50: caen a git y a la API pública de GitHub sin
+  // credenciales). Un asistente en la nube (Claude Code en claude.ai/code, por ejemplo) no trae gh y no es cosa
+  // del alumno instalarlo ahí: no es un fallo del kit ni de la instalación, así que no bloquea. Con gh, la
+  // comprobación es más completa (privacidad de un vistazo, y feedback al kit con issue.js).
   const hayGh = ejecutar('gh', ['--version'], raiz).ok;
-  anota('gh', hayGh, 'GitHub CLI (gh)', 'Instala GitHub CLI. Si acabas de instalarlo, abre una ventana de terminal nueva.');
+  anota('gh', hayGh, 'GitHub CLI (gh)',
+    'No tienes gh: el kit funciona igual (actualizar y guardar caen a git y a la API pública de GitHub), pero sin él no puedes enviar feedback al kit con issue.js ni ver aquí la privacidad de tu copia de un vistazo. Si tu entorno lo permite, instala GitHub CLI.', false);
 
   const motor = v.leerMotor(raiz);
   const sesion = hayGh && ejecutar('gh', ['auth', 'status'], raiz).ok;
-  anota('sesion-github', sesion, 'Sesión de GitHub iniciada', 'Inicia sesión: gh auth login --web -h github.com -p https (ver la guía: en segundo plano o en otra ventana).');
-  anota('acceso-al-kit', sesion && ejecutar('gh', ['api', `repos/${motor.repo}`, '--jq', '.name'], raiz).ok, 'Acceso al kit (para recibir mejoras)',
-    'No se puede leer el kit en GitHub: comprueba la conexión a internet y la sesión (gh auth status).');
+  anota('sesion-github', sesion, 'Sesión de GitHub iniciada', 'Inicia sesión: gh auth login --web -h github.com -p https (ver la guía: en segundo plano o en otra ventana).', hayGh);
+  // Sin gh, "acceso al kit" se comprueba igual con git a secas (issue #50, revisión de la 0.27): un
+  // `ls-remote` anónimo al repo público del kit dice si hay conexión, sin necesitar ninguna sesión. Con
+  // timeout y sin prompts (revisión, segunda ronda, baja 5): nunca se queda colgado esperando una contraseña
+  // que nadie va a teclear.
+  const accesoAlKit = hayGh
+    ? sesion && ejecutar('gh', ['api', `repos/${motor.repo}`, '--jq', '.name'], raiz).ok
+    : ejecutar('git', ['ls-remote', `https://github.com/${motor.repo}.git`], raiz,
+      { env: g.entornoSinPrompt(raiz), timeout: 20000, killSignal: 'SIGKILL' }).ok;
+  anota('acceso-al-kit', accesoAlKit, 'Acceso al kit (para recibir mejoras)',
+    hayGh
+      ? 'No se puede leer el kit en GitHub: comprueba la conexión a internet y la sesión (gh auth status).'
+      : 'No se puede leer el kit en GitHub (ni con git ls-remote, sin gh): comprueba la conexión a internet.',
+    hayGh);
 
   // En un entorno restringido que no deja ejecutar git (#36), se dice en una línea y se sigue con lo demás.
   let repo = null;

@@ -257,13 +257,117 @@ test('un secreto en un guardado intermedio que aún no se ha subido bloquea la s
 
 test('destinoSeguro: una carpeta del disco vale; en GitHub, solo si es privado y no es el kit; si no se sabe, no', () => {
   const gh = respuesta => () => respuesta;
+  const sinAnonimo = () => ({ conocido: false });   // nunca red real en los tests: se inyecta siempre
   assert.equal(destinoSeguro('/ruta/a/remoto.git', 'rsotor/profesor-kit', gh({ ok: false })).ok, true);
   assert.equal(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PRIVATE\n' })).ok, true);
   assert.equal(destinoSeguro('git@github.com:ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PRIVATE\n' })).ok, true);
   assert.match(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PUBLIC\n' })).motivo, /privad/);
-  assert.match(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: false, salida: 'sin red' })).motivo, /comprobar/);
+  assert.match(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: false, salida: 'sin red' }), sinAnonimo).motivo, /comprobar/);
   assert.match(destinoSeguro('https://github.com/rsotor/profesor-kit.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PRIVATE' })).motivo, /kit/);
   assert.match(destinoSeguro('https://gitlab.com/ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true })).motivo, /GitHub/);
+});
+
+// Revisión de la 0.27 (grave 1): la regex vieja no anclaba el host — "github.com" en cualquier parte de la URL
+// bastaba para que se tratara como GitHub, y con gh fallando (típico sin sesión) caía a la API anónima, que
+// respondía 404 para un repo que no existe en absoluto y eso se leía como "privado, se puede subir": un push a
+// un servidor cualquiera que no es GitHub.
+test('destinoSeguro: un host que no es github.com de verdad (aunque lo mencione) nunca se trata como GitHub', () => {
+  const gh = () => ({ ok: false, motivo: 'no-existe' });   // como si no hubiera gh
+  const anonimoQueDiceQueEsPrivado = () => ({ conocido: true, privado: true });   // si llegara a consultarse
+  for (const url of [
+    'https://gitlab.com/github.com/ana/curso.git',
+    'https://notgithub.com/ana/curso.git',
+    'git@evil.org:github.com/ana/curso.git',
+    'https://github.com.evil.org/ana/curso.git',
+  ]) {
+    const r = destinoSeguro(url, 'rsotor/profesor-kit', gh, anonimoQueDiceQueEsPrivado);
+    assert.equal(r.ok, false, url);
+    assert.match(r.motivo, /no está en GitHub/, url);
+  }
+});
+
+// Revisión de la 0.27, segunda ronda (grave 1): la forma corta SSH SIN usuario (`host:ruta`, sin `usuario@`)
+// no coincidía con ninguna de las dos regex de "parece remota" — ni esquema (`scheme://`) ni `user@host:` — y
+// se trataba como si fuera una carpeta local: {ok:true} sin comprobar nada, subiendo sin más.
+test('destinoSeguro: la forma corta SSH sin usuario (host:ruta) se trata como remota, y pasa por repoGithubDe', () => {
+  const gh = respuesta => () => respuesta;
+  // github.com:owner/repo SÍ es GitHub de verdad (sintaxis SSH corta válida): se comprueba como cualquier otro.
+  assert.equal(destinoSeguro('github.com:ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PRIVATE\n' })).ok, true);
+  assert.match(destinoSeguro('github.com:ana/curso.git', 'rsotor/profesor-kit', gh({ ok: true, salida: 'PUBLIC\n' })).motivo, /privad/);
+  // evil.org:curso.git y servidor:/srv/curso.git no son GitHub: se reconocen como remotas (no como local), y
+  // se rechazan por no ser GitHub — nunca se suben sin comprobar.
+  for (const url of ['evil.org:curso.git', 'servidor:/srv/curso.git']) {
+    const r = destinoSeguro(url, 'rsotor/profesor-kit', gh({ ok: false }));
+    assert.equal(r.ok, false, url);
+    assert.match(r.motivo, /no está en GitHub/, url);
+  }
+});
+
+test('destinoSeguro: una carpeta local de verdad (ruta sin esquema, o una letra de unidad de Windows) sigue dando ok', () => {
+  const gh = () => ({ ok: false });
+  for (const url of ['/ruta/a/remoto.git', '../otra/carpeta', 'C:\\Users\\ana\\curso', 'C:/Users/ana/curso']) {
+    assert.equal(destinoSeguro(url, 'rsotor/profesor-kit', gh).ok, true, url);
+  }
+});
+
+test('lib/git.urlPush: sin pushurl propio, cae al de lectura; con uno distinto, ese manda', () => {
+  const g = require('../lib/git');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  git(raiz, 'remote', 'add', 'origin', 'https://github.com/ana/lectura.git');
+  assert.equal(g.urlPush(raiz), 'https://github.com/ana/lectura.git');
+  git(raiz, 'remote', 'set-url', '--push', 'origin', 'https://github.com/ana/push-de-verdad.git');
+  assert.equal(g.urlPush(raiz), 'https://github.com/ana/push-de-verdad.git');
+  assert.equal(g.urlOrigen(raiz), 'https://github.com/ana/lectura.git', 'la de lectura no cambia');
+});
+
+// Revisión de la 0.27 (grave 1): subirSiProcede comprueba el destino de PUSH, no el de lectura — si son
+// distintos, no basta con que la de lectura parezca segura (una carpeta local) o esté vacía.
+test('subirSiProcede: comprueba la privacidad de la URL de push, no la de lectura, cuando son distintas', () => {
+  const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true) });
+  iniciarGit(raiz);
+  git(raiz, 'remote', 'add', 'origin', temporal('kit-lectura-'));   // local: por sí sola, "segura"
+  git(raiz, 'remote', 'set-url', '--push', 'origin', 'https://github.com/ana/curso.git');
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nx\n' });
+  const informe = require('../comprobar').comprobar(raiz);
+  const gh = () => ({ ok: true, salida: 'PUBLIC\n' });   // la de push es pública: no debe subir
+  const r = require('../guardar').subirSiProcede(raiz, informe, { ejecutarGh: gh });
+  assert.equal(r.subido, false);
+  assert.match(r.motivoSubida, /privad/);
+});
+
+// issue #50: un entorno sin `gh` (Claude Code en la nube), con la API anónima de GitHub como segunda vía.
+test('destinoSeguro sin gh: 404 (no visible sin identificarse) es privado; 200 público no sube; sin saberlo, tampoco (fail-closed)', () => {
+  const sinGh = () => ({ ok: false, motivo: 'no-existe', salida: 'no encuentro "gh"' });
+  const anonimo = respuesta => () => respuesta;
+  assert.equal(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', sinGh,
+    anonimo({ conocido: true, privado: true })).ok, true, '404: no visible sin identificarse, se trata como privado');
+  assert.match(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', sinGh,
+    anonimo({ conocido: true, privado: false })).motivo, /privad/, '200 con private:false: público, no sube');
+  assert.match(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', sinGh,
+    anonimo({ conocido: false })).motivo, /comprobar/, 'sin red o 403 de límite: no se sabe, no sube');
+});
+
+test('destinoSeguro: gh presente pero que falla también cae a la API anónima (no solo cuando gh no existe)', () => {
+  const ghFalla = () => ({ ok: false, motivo: 'fallo', salida: 'sin sesión de gh' });
+  const anonimo = respuesta => () => respuesta;
+  assert.equal(destinoSeguro('https://github.com/ana/curso.git', 'rsotor/profesor-kit', ghFalla,
+    anonimo({ conocido: true, privado: true })).ok, true);
+});
+
+test('consultaPrivacidadAnonima: 404 privado, 200 según "private", otro código o sin red no se sabe', () => {
+  const { consultaPrivacidadAnonima } = require('../lib/red');
+  const obtener = respuesta => () => respuesta;
+  assert.deepEqual(consultaPrivacidadAnonima('a/b', { obtener: obtener({ ok: true, status: 404, cuerpo: JSON.stringify({ message: 'Not Found' }) }) }), { conocido: true, privado: true });
+  assert.deepEqual(consultaPrivacidadAnonima('a/b', { obtener: obtener({ ok: true, status: 200, cuerpo: JSON.stringify({ private: false }) }) }), { conocido: true, privado: false });
+  assert.deepEqual(consultaPrivacidadAnonima('a/b', { obtener: obtener({ ok: true, status: 200, cuerpo: JSON.stringify({ private: true }) }) }), { conocido: true, privado: true });
+  assert.deepEqual(consultaPrivacidadAnonima('a/b', { obtener: obtener({ ok: true, status: 403, cuerpo: '{}' }) }), { conocido: false });
+  assert.deepEqual(consultaPrivacidadAnonima('a/b', { obtener: obtener({ ok: false, detalle: 'sin red' }) }), { conocido: false });
+  assert.deepEqual(consultaPrivacidadAnonima('a/b', { obtener: obtener({ ok: true, status: 200, cuerpo: 'no es json' }) }), { conocido: false });
+  // Revisión de la 0.27 (grave 1): un 404 que no es de verdad la API de GitHub (un proxy, un balanceador que no
+  // sepa nada del repo) no cuenta como "privado" solo por el código de estado.
+  assert.deepEqual(consultaPrivacidadAnonima('a/b', { obtener: obtener({ ok: true, status: 404, cuerpo: '{}' }) }), { conocido: false }, 'un 404 sin el cuerpo real de GitHub no cuenta');
+  assert.deepEqual(consultaPrivacidadAnonima('a/b', { obtener: obtener({ ok: true, status: 404, cuerpo: 'not found' }) }), { conocido: false }, 'un 404 con cuerpo no-JSON tampoco');
 });
 
 test('regenerarGenerados: escribe mi-perfil.md e inicio.md la enlaza desde el primer guardado', () => {

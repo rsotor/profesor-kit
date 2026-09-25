@@ -20,9 +20,7 @@ const PENDIENTES = [
 // se importa aquí para no crear un ciclo: preparar.js → guardar.js → generados.js). Su contenido es una
 // copia de lo que ya se lee como fuente en la nota original (un concepto, una sesión...): si también se
 // miran aquí, cada TODO/FALTA INFO del original sale dos veces (issue #51).
-const GENERADOS_ENTEROS = new Set([
-  'inicio.md', 'pendientes.md', 'formulario.md', 'auditoria-del-material.md', 'mi-perfil.md', 'ejercicios/_index.md',
-]);
+const GENERADOS_ENTEROS = new Set(v.GENERADOS_ENTEROS);
 function bloqueDe(raiz, nota, texto) {
   const fm = v.leerFrontmatter(texto) || {};
   if (fm.bloque) return String(fm.bloque);

@@ -40,9 +40,35 @@ test('una instalación completa sale entera en verde', () => {
 test('dice exactamente qué falta, con su arreglo, y no da por bueno lo que no puede comprobar', () => {
   const { raiz, carpetaBin, entorno } = cursoInstalado();
   const lista = diagnostico({ raiz, carpetaBin, entorno, versionNode: '20.11.0',
-    ejecutar: ordenador({ 'gh --version': { ok: false, salida: 'gh: no se reconoce' } }) });
+    ejecutar: ordenador({ 'gh --version': { ok: false, salida: 'gh: no se reconoce' }, 'git ls-remote': { ok: false, salida: 'sin red' } }) });
   assert.deepEqual(fallos(lista), ['node', 'gh', 'sesion-github', 'acceso-al-kit']);
   assert.ok(lista.filter(c => !c.ok).every(c => c.arreglo.length > 10));
+});
+
+// issue #50: un entorno sin gh (un asistente en la nube) no es un fallo del kit: actualizar.js y guardar.js
+// siguen funcionando sin él. No bloquea la instalación, aunque siga apareciendo como lo que falta.
+test('sin gh, no bloquea la instalación (aviso, no obligatorio); con gh mal instalado sí lo hace', () => {
+  const { raiz, carpetaBin, entorno } = cursoInstalado();
+  const sinGhNiRed = ordenador({ 'gh --version': { ok: false, salida: 'no se reconoce' }, 'git ls-remote': { ok: false, salida: 'sin red' } });
+  const sinGh = diagnostico({ raiz, carpetaBin, entorno, ejecutar: sinGhNiRed });
+  for (const id of ['gh', 'sesion-github', 'acceso-al-kit']) {
+    assert.equal(sinGh.find(c => c.id === id).ok, false, id);
+    assert.equal(sinGh.find(c => c.id === id).obligatorio, false, id);
+  }
+  assert.equal(cli([], raiz, { carpetaBin, entorno, ejecutar: sinGhNiRed }), 0);
+
+  // gh instalado pero sin sesión: eso sí es algo que arreglar (gh está, y no funciona).
+  const conGhSinSesion = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador({ 'gh auth status': { ok: false, salida: 'no logueado' } }) });
+  assert.equal(conGhSinSesion.find(c => c.id === 'sesion-github').obligatorio, true);
+});
+
+// Revisión de la 0.27 (baja): sin gh pero con red, "acceso al kit" se comprueba igual, con git ls-remote a
+// secas, sin necesitar ninguna sesión.
+test('sin gh pero con red: "acceso al kit" pasa con git ls-remote, sin necesitar sesión', () => {
+  const { raiz, carpetaBin, entorno } = cursoInstalado();
+  const sinGhConRed = diagnostico({ raiz, carpetaBin, entorno, ejecutar: ordenador({ 'gh --version': { ok: false, salida: 'no se reconoce' } }) });
+  assert.equal(sinGhConRed.find(c => c.id === 'acceso-al-kit').ok, true);
+  assert.equal(sinGhConRed.find(c => c.id === 'acceso-al-kit').obligatorio, false);
 });
 
 // issue #36: Claudian abre el asistente en estudio/, y Codex solo busca AGENTS.md y las skills hacia arriba hasta

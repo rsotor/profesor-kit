@@ -21,9 +21,8 @@ const g = require('./lib/git');
 const { comprobar } = require('./comprobar');
 const { guardar, regenerarGenerados, anotarEnDiario, subirSiProcede } = require('./guardar');
 const { instalarSkills } = require('./instalar-skills');
-const indice = require('./lib/indice');
 const { actualizarEstadoReadme } = require('./lib/generados');
-const os = require('node:os');
+const { ficheroResoluble, juntarPorFilas, configurarUnionParaDiario, resolverConflictos, ficherosEnConflicto } = require('./lib/mezcla');
 
 const CARPETA_PREPARACION = '.preparacion';
 const dirDe = (raiz, id) => path.join(raiz, CARPETA_PREPARACION, id);
@@ -310,102 +309,11 @@ function lanzarAsistente(plan, cwd, limiteMs) {
 
 // --- Juntar --------------------------------------------------------------------------------------------
 
-// Ficheros que se resuelven solos al juntar (plan §3.3). Dos clases:
-//  - generados enteros (lo que escribe regenerarGenerados()): se toma cualquier lado y se regeneran después;
-//  - con una parte generada y otra escrita (las sesiones con su pie de navegación, el README con su sección
-//    Estado): se quita lo generado y el resto se fusiona a tres bandas. Si los dos lados cambiaron la misma parte
-//    escrita, es un choque de verdad y se para, nunca se queda un lado entero (issue #39, H04).
-function generadoEntero(rel) {
-  if (rel === 'estudio/ejercicios/_index.md') return true;
-  const base = path.posix.basename(rel);
-  return rel.startsWith('estudio/') && !rel.startsWith('estudio/sesiones/') && ['inicio.md', 'pendientes.md', 'formulario.md', 'auditoria-del-material.md', 'mi-perfil.md'].includes(base);
-}
-const sinEstadoReadme = texto => texto.replace(/^## Estado\s*\n[\s\S]*?(?=^## |(?![\s\S]))/m, '## Estado\n\n');
-function parteEscrita(rel) {
-  if (rel === 'README.md') return sinEstadoReadme;
-  if (rel.startsWith('estudio/sesiones/') && rel.endsWith('.md')) return indice.sinPie;
-  return null;
-}
-function ficheroResoluble(rel) {
-  return generadoEntero(rel) || parteEscrita(rel) !== null;
-}
+// Qué se resuelve solo al juntar y cómo (generados enteros, partes escritas a tres bandas, filas por concepto):
+// en lib/mezcla.js, que también usa guardar.js --traer (plan 0.27, B.2). Aquí solo el flujo propio de --juntar.
 
-// Fusión a tres bandas de la parte escrita de un fichero en conflicto. true si se ha podido sin choque.
-function fusionarParteEscrita(raiz, rel) {
-  const quitar = parteEscrita(rel);
-  const version = etapa => { const r = g.intentarGit(raiz, ['show', `:${etapa}:${rel}`]); return r.ok ? quitar(r.stdout) : ''; };
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-juntar-'));
-  try {
-    const [nuestra, comun, suya] = ['nuestra', 'comun', 'suya'].map(n => path.join(dir, n));
-    fs.writeFileSync(nuestra, version(2));
-    fs.writeFileSync(comun, version(1));
-    fs.writeFileSync(suya, version(3));
-    const r = spawnSync('git', ['merge-file', '-p', nuestra, comun, suya], { encoding: 'utf8' });
-    if (r.status !== 0) return false;
-    fs.writeFileSync(path.join(raiz, ...rel.split('/')), r.stdout);
-    g.git(raiz, ['add', '--', rel]);
-    return true;
-  } finally {
-    fs.rmSync(dir, { recursive: true, force: true });
-  }
-}
-
-// Ficheros que los dos lados tocan a la vez con filas, una por concepto: la tutoría cambia el estado de filas que
-// ya existían (un examen) y la preparación añade filas nuevas al final. Si quedan pegadas, git no sabe juntarlas
-// (visto en la prueba real de la 0.22). Se juntan por concepto: todas las filas del curso principal (que llevan
-// lo que el alumno ha demostrado) y, detrás de la última, las filas nuevas de la preparación.
-const POR_FILAS = {
-  'estudio/progreso.md': linea => (/^\|\s*\[\[([^\]|\\#]+)/.exec(linea) || [])[1],
-  'estudio/conceptos/_index.md': linea => (/^([a-z0-9][a-z0-9-]*) *\|/.exec(linea) || [])[1],
-};
-
-// Con la versión común (`base`), una fila que existe en los dos lados y que solo cambió en uno se queda con ese
-// cambio (la preparación añade un alias a un concepto que ya existía); si cambió en los dos, es un choque (null).
-// Sin `base`, mandan las filas del curso principal.
-function juntarPorFilas(ours, theirs, clave, base = null) {
-  const eol = ours.includes('\r\n') ? '\r\n' : '\n';
-  const porClave = texto => new Map(texto.split(/\r?\n/).filter(l => clave(l)).map(l => [clave(l), l]));
-  const suyas = porClave(theirs);
-  const comunes = base === null ? null : porClave(base);
-  const nuestras = ours.split(/\r?\n/);
-  for (let i = 0; i < nuestras.length; i++) {
-    const k = clave(nuestras[i]);
-    if (!k || !comunes || !suyas.has(k) || suyas.get(k) === nuestras[i]) continue;
-    const comun = comunes.get(k);
-    if (comun === nuestras[i]) nuestras[i] = suyas.get(k);
-    else if (comun !== suyas.get(k)) return null;
-  }
-  const tenemos = new Set(nuestras.map(clave).filter(Boolean));
-  const nuevas = theirs.split(/\r?\n/).filter(l => clave(l) && !tenemos.has(clave(l)));
-  let ultima = -1;
-  nuestras.forEach((l, i) => { if (clave(l)) ultima = i; });
-  if (ultima < 0) return null;   // sin filas propias: no se sabe dónde van; que decida una persona
-  nuestras.splice(ultima + 1, 0, ...nuevas);
-  return nuestras.join(eol);
-}
-
-function resolverPorFilas(raiz, rel) {
-  const ours = g.intentarGit(raiz, ['show', `:2:${rel}`]);
-  const theirs = g.intentarGit(raiz, ['show', `:3:${rel}`]);
-  if (!ours.ok || !theirs.ok) return false;
-  const comun = g.intentarGit(raiz, ['show', `:1:${rel}`]);
-  const texto = juntarPorFilas(ours.stdout, theirs.stdout, POR_FILAS[rel], comun.ok ? comun.stdout : null);
-  if (texto === null) return false;
-  fs.writeFileSync(path.join(raiz, ...rel.split('/')), texto.endsWith('\n') ? texto : texto + '\n');
-  g.git(raiz, ['add', '--', rel]);
-  return true;
-}
-
-// El driver "union" es de git de fábrica (no hace falta declarar merge.union.driver): basta con la
-// marca en .git/info/attributes. No toca .gitattributes del curso, así que no es nada que el alumno vea.
-function configurarUnionParaDiario(raiz) {
-  const linea = 'config/diario.md merge=union';
-  const fichero = path.join(raiz, '.git', 'info', 'attributes');
-  const previo = fs.existsSync(fichero) ? fs.readFileSync(fichero, 'utf8') : '';
-  if (previo.split(/\r?\n/).includes(linea)) return;
-  fs.mkdirSync(path.dirname(fichero), { recursive: true });
-  fs.writeFileSync(fichero, previo.replace(/\n*$/, '') + (previo ? '\n' : '') + linea + '\n');
-}
+// Cuando abortarMerge tuvo que rescatar algo sin guardar antes de descartarlo (revisión de la 0.27, media 1).
+const notaRescate = r => (r && r.rescatado) ? ` (lo que había sin guardar se puso a salvo en ${r.rescatado})` : '';
 
 // El título de la sesión que acaba de mezclarse, para el mensaje de commit ("sesion(<id>): <tema>").
 function temaDeSesion(raiz, id) {
@@ -434,38 +342,55 @@ function juntar(raiz, id) {
     return { juntado: false, motivo: 'sin-guardar', detalle: `no se pudo guardar tu trabajo pendiente antes de juntar (${previo.motivo}); no se toca nada` };
   }
 
+  // Revisión de la 0.27 (alta 3): una excepción entre el merge y el commit (una carpeta donde se esperaba un
+  // fichero, un checkout que no encuentra su lado en un conflicto DU/UD…) nunca deja MERGE_HEAD colgado.
+  // `commitHecho` decide, si algo falla, si de verdad no se tocó nada (se aborta y se dice que no) o si la
+  // mezcla ya se había guardado y lo que falló fue después: eso no es un fallo de juntar, es un aviso aparte
+  // (revisión, media 5 — antes decía siempre "no se ha tocado nada", aunque el commit ya existiera).
   configurarUnionParaDiario(raiz);
-  const rMerge = g.intentarGit(raiz, ['merge', '--no-commit', '--no-ff', estado.rama]);
-  const lineasEstado = g.intentarGit(raiz, ['status', '--porcelain']).salida.split(/\r?\n/).filter(Boolean);
-  const conflictos = lineasEstado.filter(l => /^(UU|AA|DD|AU|UA|UD|DU) /.test(l)).map(l => l.slice(3).trim());
+  let commitHecho = false;
+  try {
+    const rMerge = g.intentarGit(raiz, ['merge', '--no-commit', '--no-ff', estado.rama]);
+    const conflictos = ficherosEnConflicto(raiz);
 
-  if (!rMerge.ok && !conflictos.length) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'error-merge', detalle: rMerge.salida }; }
-  if (conflictos.length) {
-    const noResolubles = conflictos.filter(f => !ficheroResoluble(f) && !POR_FILAS[f]);
-    if (noResolubles.length) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'choque', ficheros: noResolubles }; }
-    for (const f of conflictos.filter(x => POR_FILAS[x])) {
-      if (!resolverPorFilas(raiz, f)) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'choque', ficheros: [f] }; }
+    if (!rMerge.ok && !conflictos.length) {
+      const abortado = g.abortarMerge(raiz);
+      return { juntado: false, motivo: 'error-merge', detalle: `${rMerge.salida}${notaRescate(abortado)}` };
     }
-    for (const f of conflictos.filter(x => !POR_FILAS[x] && parteEscrita(x))) {
-      if (!fusionarParteEscrita(raiz, f)) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'choque', ficheros: [f] }; }
+    if (conflictos.length) {
+      const r = resolverConflictos(raiz, conflictos);
+      if (!r.ok) {
+        const abortado = g.abortarMerge(raiz);
+        return { juntado: false, motivo: 'choque', ficheros: r.ficheros, rescatado: abortado.rescatado };
+      }
     }
-    for (const f of conflictos.filter(x => generadoEntero(x))) { g.git(raiz, ['checkout', '--ours', '--', f]); g.git(raiz, ['add', '--', f]); }
+
+    regenerarGenerados(raiz);
+    actualizarEstadoReadme(raiz);
+    const informe = comprobar(raiz);
+    if (informe.errores.length) {
+      const abortado = g.abortarMerge(raiz);
+      return { juntado: false, motivo: 'errores', informe, rescatado: abortado.rescatado };
+    }
+
+    const hoy = new Date().toISOString().slice(0, 10);
+    const mensaje = `sesion(${id}): ${temaDeSesion(raiz, id)} (preparada en segundo plano)`;
+    anotarEnDiario(raiz, mensaje, hoy);
+    g.git(raiz, ['add', '-A']);
+    g.git(raiz, ['commit', '-q', '-m', mensaje]);
+    commitHecho = true;
+    const subida = subirSiProcede(raiz, informe);
+
+    descartarCopia(raiz, id);
+    return { juntado: true, mensaje, informe, ...subida };
+  } catch (error) {
+    if (!commitHecho) {
+      const abortado = g.abortarMerge(raiz);
+      return { juntado: false, motivo: 'error', detalle: `${error.message}${notaRescate(abortado)}` };
+    }
+    return { juntado: true, mensaje: `sesion(${id}): ${temaDeSesion(raiz, id)} (preparada en segundo plano)`,
+      aviso: `la mezcla se guardó, pero algo falló justo después (revísalo, y comprueba si la copia de preparación sigue sin borrar): ${error.message}` };
   }
-
-  regenerarGenerados(raiz);
-  actualizarEstadoReadme(raiz);
-  const informe = comprobar(raiz);
-  if (informe.errores.length) { g.intentarGit(raiz, ['merge', '--abort']); return { juntado: false, motivo: 'errores', informe }; }
-
-  const hoy = new Date().toISOString().slice(0, 10);
-  const mensaje = `sesion(${id}): ${temaDeSesion(raiz, id)} (preparada en segundo plano)`;
-  anotarEnDiario(raiz, mensaje, hoy);
-  g.git(raiz, ['add', '-A']);
-  g.git(raiz, ['commit', '-q', '-m', mensaje]);
-  const subida = subirSiProcede(raiz, informe);
-
-  descartarCopia(raiz, id);
-  return { juntado: true, mensaje, informe, ...subida };
 }
 
 // --- CLI -------------------------------------------------------------------------------------------

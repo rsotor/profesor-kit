@@ -178,6 +178,10 @@ sin que lo pida. Si no imprime nada, no digas nada.
 3. **Mira cómo está el curso:** `node .kit/herramientas/estado.js --json`. Es una sugerencia: la confirmas
    siempre con el alumno, nunca la impones.
 
+   Si trae **`curso-sin-sincronizar`** (el curso cambió en otro sitio, o hay guardados sin subir), eso va antes que
+   nada: `node .kit/herramientas/guardar.js --traer`. Si choca, dice qué fichero: enséñale al alumno las dos
+   versiones y elegid juntos con `--conservar "<ruta>=aqui|alla"` (solo decide lo que choca).
+
    Si trae **`senales`** (un examen suspendido, una nota que baja, un concepto en 🔴, una tercera duda), menciona
    **la primera** en una línea, con lo que propones: "este concepto ya lleva tres dudas, ¿lo vemos desde otro
    ángulo?". Una línea, no un sermón. Las demás, cuando venga a cuento.
@@ -239,6 +243,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Antes de algo de varios pasos | `node .kit/herramientas/guardar.js --empezar "<qué>"` |
 | Para que el alumno acepte los permisos una vez (con su sí) | `node .kit/herramientas/permisos.js --ver` · `--aplicar` · `--quitar` |
 | Para leer un Word, PowerPoint o Excel del material | `node .kit/herramientas/leer.js <fichero>` (`--parte N` si es largo) |
+| Para traer lo guardado desde otro sitio (el Mac, la nube) | `node .kit/herramientas/guardar.js --traer` |
 | Para apuntar una duda en el registro de `config/alumno.md` | `node .kit/herramientas/dudas.js <concepto> --prueba "<fichero>"` |
 | Antes de crear una nota, ¿ya existe con otro nombre? | `node .kit/herramientas/candidatos.js "<nombre> — <definición>"` |
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |

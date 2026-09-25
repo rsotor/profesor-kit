@@ -77,6 +77,84 @@ test('se niega si lo último no es un guardado del alumno, sino del kit', () => 
   assert.equal(deshacer({ raiz: raiz2 }).motivo, 'no-es-guardado');
 });
 
+// Revisión de la 0.27 (grave 2): deshacer lo que trajo --traer no puede borrarlo de aquí después de haberlo
+// (posiblemente) subido también: quedaría distinto en los dos sitios sin que nadie lo pidiera.
+test('se niega si lo último es de --traer (fusión con choque, o el guardado previo que hace antes de traer)', () => {
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
+  guardar({ raiz, mensaje: 'traer: fusión con origin/main' });
+  const cabeza = git(raiz, 'rev-parse', 'HEAD');
+  assert.equal(deshacer({ raiz }).motivo, 'no-es-guardado');
+  assert.equal(git(raiz, 'rev-parse', 'HEAD'), cabeza);
+
+  const raiz2 = cursoTemporal();
+  iniciarGit(raiz2);
+  escribir(raiz2, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
+  guardar({ raiz: raiz2, mensaje: 'guardado antes de traer' });
+  assert.equal(deshacer({ raiz: raiz2 }).motivo, 'no-es-guardado');
+});
+
+// Un avance rápido no crea ningún commit propio: HEAD se mueve al commit que trajo el otro sitio, con SU
+// mensaje (uno cualquiera, no reconocible por texto). Se detecta por el reflog, no por el mensaje.
+test('se niega si lo último fue un avance rápido de --traer, aunque su mensaje no lo delate', () => {
+  const { traer } = require('../guardar');
+  const remoto = require('./ayuda').temporal('kit-remoto-');
+  git(remoto, 'init', '-q', '--bare', '-b', 'main');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  git(raiz, 'remote', 'add', 'origin', remoto);
+  git(raiz, 'push', '-q', '-u', 'origin', 'main');
+
+  const otroClon = path.join(require('./ayuda').temporal('kit-otro-'), 'clon');
+  git(path.dirname(otroClon), 'clone', '-q', remoto, otroClon);
+  git(otroClon, 'config', 'user.name', 'Test');
+  git(otroClon, 'config', 'user.email', 'test@example.com');
+  git(otroClon, 'config', 'commit.gpgsign', 'false');
+  escribir(otroClon, { 'estudio/mapa-del-curso.md': '# Mapa\n\ndesde otro sitio\n' });
+  git(otroClon, 'add', '-A');
+  git(otroClon, 'commit', '-q', '-m', 'sesion(s02): tema');
+  git(otroClon, 'push', '-q', 'origin', 'main');
+
+  const r = traer(raiz);
+  assert.equal(r.motivo, 'avance-rapido');
+  assert.equal(git(raiz, 'log', '-1', '--format=%s'), 'sesion(s02): tema', 'el mensaje del commit traído no delata nada por sí solo');
+  const cabeza = git(raiz, 'rev-parse', 'HEAD');
+
+  const d = deshacer({ raiz });
+  assert.equal(d.motivo, 'no-es-guardado');
+  assert.equal(git(raiz, 'rev-parse', 'HEAD'), cabeza, 'no toca nada');
+});
+
+// Revisión de la 0.27, segunda ronda (baja 1): la regex vieja (`/fast-forward/i`, sin anclar) se colaba con
+// cualquier guardado normal cuyo asunto mencionase la palabra como texto — el reflog de un commit normal repite
+// su mensaje ("commit: <asunto>"), así que "fast-forward" ahí dentro bastaba para bloquearlo por error.
+test('un guardado normal cuyo asunto dice "fast-forward" (como texto) sí se puede deshacer', () => {
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
+  guardar({ raiz, mensaje: 'sesion(4): qué es un fast-forward en redes' });
+  const antes = fs.readFileSync(en(raiz, 'estudio/mapa-del-curso.md'), 'utf8');
+
+  const r = deshacer({ raiz });
+  assert.equal(r.deshecho, true, JSON.stringify(r));
+  assert.notEqual(fs.readFileSync(en(raiz, 'estudio/mapa-del-curso.md'), 'utf8'), antes);
+});
+
+// Revisión, baja 2: "guardado antes de traer/actualizar" lleva DENTRO lo que el alumno tenía pendiente en ese
+// momento (guardado junto a la marca): el mensaje explica que deshacerlo también se lo llevaría a él.
+test('el mensaje de "guardado antes de traer/actualizar" explica que se llevaría también lo del alumno', t => {
+  const lineas = [];
+  t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
+  guardar({ raiz, mensaje: 'guardado antes de traer' });
+  assert.equal(cli([], raiz), 1);
+  assert.match(lineas.join('\n'), /lo tuyo está ahí, pero junto a lo traído/);
+  assert.doesNotMatch(lineas.join('\n'), /pide ayuda aparte/, 'no es el mensaje genérico');
+});
+
 test('deshacer un deshacer es rehacer: se permite', () => {
   const raiz = cursoTemporal();
   iniciarGit(raiz);
