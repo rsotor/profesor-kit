@@ -82,7 +82,8 @@ material salió). Revisa ese resumen a mano: es la parte que ningún test autom�
 
 Opciones: `--modelo <id>` para probar otro modelo que el recomendado del adaptador; `--limite-ms <n>`
 para el tiempo máximo por llamada a `claude` (20 minutos por defecto). `--sin-llm` monta el curso y
-prueba el propio ejecutor sin llamar a `claude`: es lo que corre en los tests del repo (nunca cuesta
+prueba el propio ejecutor sin llamar a `claude`, en una carpeta temporal (nunca pisa el resultado de la
+última prueba real): es lo que corre en los tests del repo (nunca cuesta
 cuota), y lo único que **tú** deberías ejecutar salvo que quieras de verdad una prueba real.
 
 **Con otro asistente que Claude Code** (issue #45): `--asistente <id>` (el id de `.kit/adaptadores/<id>.json`,

@@ -572,3 +572,186 @@ test('invocarAsistente lanza con el entorno del lanzador, no con el de quien lan
     delete process.env.DE_LA_SESION;
   }
 });
+
+// --- Reutilizar preguntas falladas en un segundo examen (plan 0.26, punto 4) -----------------------------
+//
+// `raiz` es la carpeta del curso (como la reciben examenesLib y verificarReutilizacionFalladas): los
+// exámenes van bajo raiz/estudio/examenes/, las claves bajo raiz/config/claves/ — nunca dentro de estudio/.
+
+const RUTA_ANTERIOR = 'examenes/01-examen-2026-10-01.md';   // relativo a estudio/, como lo da lib/indice
+const RUTA_NUEVO = 'examenes/01-examen-2026-10-05.md';
+
+function escribirRaiz(raiz, rel, contenido) {
+  const f = path.join(raiz, ...rel.split('/'));
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, contenido);
+}
+const escribirExamen = (raiz, relExamen, contenido) => escribirRaiz(raiz, `estudio/${relExamen}`, contenido);
+const escribirClave = (raiz, relExamen, datos) => escribirRaiz(raiz, `config/claves/${relExamen.replace(/^examenes\//, '').replace(/\.md$/, '.json')}`, JSON.stringify(datos));
+
+// Un bloque de pregunta tipo test, literal (mismo enunciado y opciones si se reutiliza en otro examen,
+// solo cambia el número delante — lo que tiene que ignorar la comparación).
+function bloquePregunta(n, concepto) {
+  return `**${n}.** ¿Pregunta de ${concepto}? *(elige una)*\n\n- [ ] a) correcta\n- [ ] b) distractor\n- [ ] c) distractor\n- [ ] d) distractor\n`;
+}
+
+// El examen anterior (ya corregido): 6 preguntas — concepto-a en 1, 2, 4 y 6 (falla las 4: se recorta a 3
+// al reutilizar), concepto-b en 3 (falla), concepto-c en 5 (acierta, no se reutiliza).
+function examenAnteriorCorregido(raiz) {
+  const conceptos = ['concepto-a', 'concepto-a', 'concepto-b', 'concepto-a', 'concepto-c', 'concepto-a'];
+  const resultado = ['❌ Incorrecta', '❌ Incorrecta', '❌ Incorrecta', '❌ Incorrecta', '✅ Correcta', '❌ Incorrecta'];
+  const preguntas = conceptos.map((c, i) => bloquePregunta(i + 1, c)).join('\n');
+  const filas = resultado.map((r, i) => `> | ${i + 1} | a | ${r} | porque sí |`).join('\n');
+  escribirExamen(raiz, RUTA_ANTERIOR, [
+    '---', 'tipo: examen', 'unidad: "01"', 'fecha: 2026-10-01', 'nota: 5', 'intentos: 1', 'tipo_examen: modulo', 'aprobado: 6', '---',
+    '# Examen', '', preguntas,
+    '## Histórico de intentos', '', '| Intento | Fecha | Nota |', '|---|---|---|', '| 1 | 2026-10-01 | 5 |', '',
+    '> [!example]- Intento 1 · 2026-10-01 · tus respuestas y la corrección', '>',
+    '> | # | Tu respuesta | Resultado | Por qué |', '> |---|---|---|---|', filas, '',
+  ].join('\n'));
+  escribirClave(raiz, RUTA_ANTERIOR, {
+    opciones: 4, resta_fallo: 0, aprobado: 6,
+    preguntas: conceptos.map(concepto => ({ correctas: ['a'], explicacion: 'porque sí', concepto })),
+  });
+  return path.join(raiz, 'estudio', ...RUTA_ANTERIOR.split('/'));
+}
+
+// El examen nuevo "correcto": reutiliza, trazadas, las 3 de concepto-a (tope) y la de concepto-b, más dos
+// nuevas — mismo orden que exigiría el tipo `modulo` con `preguntas: 6` (ajustado en config/examenes.json).
+function examenNuevoOk(raiz, { ajustesClave = {} } = {}) {
+  const orden = [
+    { n: 1, concepto: 'concepto-b', reutilizada: true },
+    { n: 2, concepto: 'concepto-a', reutilizada: true },
+    { n: 3, concepto: 'concepto-nueva-1', reutilizada: false },
+    { n: 4, concepto: 'concepto-a', reutilizada: true },
+    { n: 5, concepto: 'concepto-a', reutilizada: true },
+    { n: 6, concepto: 'concepto-nueva-2', reutilizada: false },
+  ];
+  const preguntas = orden.map(q => bloquePregunta(q.n, q.concepto)).join('\n');
+  escribirExamen(raiz, RUTA_NUEVO, [
+    '---', 'tipo: examen', 'unidad: "01"', 'fecha: 2026-10-05', 'tipo_examen: modulo', '---',
+    '# Examen', '', preguntas,
+  ].join('\n'));
+  const clavePreguntas = orden.map(q => ({
+    correctas: ['a'], explicacion: 'x', concepto: q.concepto,
+    ...(q.reutilizada ? { origen: 'examen anterior', de: RUTA_ANTERIOR } : {}),
+    ...(ajustesClave[q.n] || {}),
+  }));
+  escribirClave(raiz, RUTA_NUEVO, { opciones: 4, resta_fallo: 0, aprobado: 6, preguntas: clavePreguntas });
+  return path.join(raiz, 'estudio', ...RUTA_NUEVO.split('/'));
+}
+
+const escribirConfigExamenes = (raiz, datos) => escribirRaiz(raiz, 'config/examenes.json', JSON.stringify(datos));
+
+test('falladasTopeTres: recorta cada concepto a 3, respetando el orden en que llegan las falladas', () => {
+  const falladas = [
+    { concepto: 'a', numero: 1 }, { concepto: 'a', numero: 2 }, { concepto: 'b', numero: 3 },
+    { concepto: 'a', numero: 4 }, { concepto: 'a', numero: 6 },
+  ];
+  const tope = p.falladasTopeTres(falladas);
+  assert.deepEqual(tope.map(f => f.numero), [1, 2, 4, 3]);
+});
+
+test('preguntasReutilizadas: solo las que la clave marca con origen "examen anterior"', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroNuevo = examenNuevoOk(raiz);
+  const reutilizadas = p.preguntasReutilizadas(raiz, ficheroNuevo);
+  assert.deepEqual(reutilizadas.map(r => r.numero), [1, 2, 4, 5]);
+  assert.ok(reutilizadas.every(r => r.de === RUTA_ANTERIOR));
+});
+
+test('verificarReutilizacionFalladas: todas las falladas del anterior reaparecen, trazadas y con el tope de 3 por concepto', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz);
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, true, r.detalle);
+  assert.match(r.detalle, /4 pregunta\(s\) reutilizadas.*4 falladas esperadas.*6 preguntas en total/);
+});
+
+test('verificarReutilizacionFalladas: sin examen nuevo (mismo fichero), lo dice', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /mismo fichero/);
+});
+
+test('verificarReutilizacionFalladas: un examen sin falladas no se puede comprobar', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  // Todas acertadas: nada que reutilizar.
+  fs.writeFileSync(ficheroAnterior, fs.readFileSync(ficheroAnterior, 'utf8').replace(/❌ Incorrecta/g, '✅ Correcta'));
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz);
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /no dejó ninguna pregunta fallada/);
+});
+
+test('verificarReutilizacionFalladas: "de" apuntando a otro examen, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz, { ajustesClave: { 2: { de: 'examenes/otro-examen.md' } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /trae "de": examenes\/otro-examen\.md/);
+});
+
+test('verificarReutilizacionFalladas: marcada como reutilizada pero con otro enunciado, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  const ficheroNuevo = examenNuevoOk(raiz);
+  const bloqueOriginal = bloquePregunta(2, 'concepto-a');
+  const bloqueCambiado = '**2.** ¿Otra pregunta, sin relación? *(elige una)*\n\n- [ ] a) x\n- [ ] b) y\n- [ ] c) z\n- [ ] d) w\n';
+  fs.writeFileSync(ficheroNuevo, fs.readFileSync(ficheroNuevo, 'utf8').replace(bloqueOriginal, bloqueCambiado));
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /su enunciado no coincide con ninguna fallada/);
+});
+
+test('verificarReutilizacionFalladas: falta una fallada por reutilizar (concepto-b nunca reaparece), no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  // La pregunta 1 (concepto-b) deja de estar marcada como reutilizada: entra como si fuera nueva.
+  examenNuevoOk(raiz, { ajustesClave: { 1: { origen: undefined, de: undefined, concepto: 'concepto-b' } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /del concepto concepto-b solo entraron 0 de 1 falladas esperadas \(tope 3\)/);
+});
+
+test('verificarReutilizacionFalladas: más de 3 preguntas reutilizadas del mismo concepto, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  // La 3 (nueva) pasa a ser también concepto-a reutilizada: 4 preguntas de concepto-a en el examen nuevo.
+  examenNuevoOk(raiz, { ajustesClave: { 3: { origen: 'examen anterior', de: RUTA_ANTERIOR, concepto: 'concepto-a' } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /más de 3 preguntas reutilizadas del mismo concepto: concepto-a/);
+});
+
+test('verificarReutilizacionFalladas: el examen nuevo no respeta el número de preguntas del tipo, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  // El tipo modulo pide 15 (valor por defecto), pero el examen nuevo trae solo 6.
+  escribirConfigExamenes(raiz, { tipos: { modulo: { aprobado: 6 } } });
+  examenNuevoOk(raiz);
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /tiene 6 pregunta\(s\) y el tipo "modulo" pide 15/);
+});
+
+// --sin-llm es lo que se ejecuta a mano para probar el ejecutor (CONTRIBUTING): no puede pisar el resultado de la
+// última prueba real, que va en el repo y lo lee cambio-grande.js (2026-09-25: un --sin-llm lo sobrescribió).
+test('carpetaDeResultado: con --sin-llm, una carpeta temporal; sin él, la del asistente', () => {
+  const { carpetaDeResultado, rutaResultado } = require('../../../pruebas/prueba-real');
+  const temporalSinLlm = carpetaDeResultado({ sinLlm: true, asistente: 'claude-code' });
+  assert.notEqual(temporalSinLlm, rutaResultado('claude-code'));
+  assert.ok(temporalSinLlm.startsWith(require('node:os').tmpdir()) || temporalSinLlm.startsWith(fs.realpathSync(require('node:os').tmpdir())));
+  assert.equal(carpetaDeResultado({ sinLlm: false, asistente: 'claude-code' }), rutaResultado('claude-code'));
+});

@@ -37,6 +37,12 @@ function rutaResultado(asistente, plataforma = process.platform) {
   return path.join(EJEMPLO, `resultado-${asistente}-${NOMBRE_SISTEMA[plataforma] || plataforma}`);
 }
 
+// --sin-llm no ejecuta ningún LLM: su RESUMEN no vale como prueba y no puede pisar el de la última prueba real,
+// que va en el repo (lo lee .github/cambio-grande.js). Va a una carpeta temporal.
+function carpetaDeResultado({ sinLlm, asistente }) {
+  return sinLlm ? fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'prueba-real-sin-llm-')) : rutaResultado(asistente);
+}
+
 function leerJson(f) { return JSON.parse(fs.readFileSync(f, 'utf8')); }
 
 // Sondear sin gastar CPU mientras se espera a que termine algo en segundo plano.
@@ -297,6 +303,35 @@ function pasoExamenCorregir(ctx, examenModulo) {
   return { ok: v.ok && progresoMovido, detalle: `${v.detalle} · progreso.md movido: ${progresoMovido ? 'sí' : 'no'}`, salidaLlm: r.salida };
 }
 
+// Punto 3 del plan 0.26 (P5+H12): tras corregir el examen, cada casilla de progreso.md que la corrección
+// movió (🟡/🔴/✅, nunca ⬜) tiene que citar de qué respuesta sale — comprobar.js ya lo vigila con
+// `progreso-sin-prueba`; aquí solo se comprueba que, tras este examen, no queda ningún aviso de esos.
+function pasoProgresoConPrueba(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const avisos = comprobarJson(ctx.destino).avisos.filter(a => a.regla === 'progreso-sin-prueba');
+  return {
+    ok: avisos.length === 0,
+    detalle: avisos.length
+      ? `${avisos.length} casilla(s) de progreso.md sin citar de qué respuesta salen: ${avisos.map(a => a.detalle).join(' · ')}`
+      : 'todas las casillas de progreso.md citan su prueba (comprobar.js: progreso-sin-prueba)',
+  };
+}
+
+// Punto 4 del plan 0.26: un segundo examen del mismo módulo, pedido como lo pediría un alumno — sin
+// decirle al asistente que reutilice nada; eso lo tiene que sacar por sí sola la skill /examen (apartado
+// 3: "antes de escribir nada nuevo, reutiliza lo que el alumno falló"). La comprobación (p.verificarReutilizacionFalladas)
+// es en disco, sin LLM: calcula con la misma lib que usa `examen.js --falladas` qué preguntas se fallaron
+// en el primer examen y comprueba que todas reaparecen en la clave del segundo, trazadas.
+function pasoExamenSegundoGenerar(ctx, examenModulo) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen anterior: no se puede pedir uno nuevo para comprobar la reutilización' };
+  const r = invocar(ctx, `Otra vez el examen del ${examenModulo.titulo.toLowerCase()}. Sigue la skill /examen. ${PROMPT_COMUN}`, 'examen-segundo-generar');
+  if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const v = p.verificarReutilizacionFalladas(ctx.destino, { unidad: examenModulo.prefijo, ficheroAnterior: ctx.ficheroExamen });
+  if (v.ficheroNuevo) ctx.ficheroExamenSegundo = v.ficheroNuevo;
+  return { ok: v.ok, detalle: v.detalle, salidaLlm: v.ok ? undefined : r.salida };
+}
+
 // La corrección, medida (issue #39, H08): un test fijo con las respuestas ya escritas y, para cada una, el veredicto
 // que tendría que dar el profesor según "Cuando preguntas para medir" (AGENTS.md). Solo vale 6 de 6.
 function pasoCorreccionOraculo(ctx) {
@@ -479,6 +514,8 @@ function ejecutar({
     ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
     ejecutarPaso(pasos, '/examen (contestar)', () => pasoExamenContestar(ctx));
     ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));
+    ejecutarPaso(pasos, '/examen (progreso con prueba)', () => pasoProgresoConPrueba(ctx));
+    ejecutarPaso(pasos, '/examen (otra vez, reutiliza falladas)', () => pasoExamenSegundoGenerar(ctx, clases.examen_modulo));
     ejecutarPaso(pasos, '/examen (corrección con veredictos esperados)', () => pasoCorreccionOraculo(ctx));
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --juntar ${claseEnSegundoPlano.id}`, () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano));
     for (const clase of otrasEnSegundoPlano) ejecutarPaso(pasos, `/sesion ${clase.id}`, () => pasoSesion(ctx, clase));
@@ -532,7 +569,7 @@ function cli(args) {
     if (!chequeo.ok) { console.error(chequeo.mensaje); return 1; }
   }
 
-  const resultadoDir = rutaResultado(asistente);
+  const resultadoDir = carpetaDeResultado({ sinLlm, asistente });
   const { pasos, informe } = ejecutar({ sinLlm, modelo, limiteMs, asistente, resultadoDir, volcarDir });
   console.log(`Resultado en ${path.relative(RAIZ_KIT, resultadoDir)}/RESUMEN.md`);
   const denegados = pasos.reduce((n, x) => n + (x.denegaciones || []).length, 0);
@@ -551,6 +588,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  ejecutar, cli, modeloRecomendado, adaptadorDelCurso, rutaResultado, markdownResumen, agruparPorRegla,
+  ejecutar, cli, modeloRecomendado, adaptadorDelCurso, rutaResultado, carpetaDeResultado, markdownResumen, agruparPorRegla,
   argsClaude, entornoDeAlumno, leerSalidaClaude, lineaDePaso, invocarAsistente,
 };
