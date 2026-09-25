@@ -40,7 +40,7 @@ aprobarlo; solo entonces se pasa al siguiente.
 medio punto por fallo"), edítala en `config/examenes.json` con tu herramienta de ficheros. Solo afecta a los
 exámenes que se creen desde ahora: los ya escritos guardan su propia configuración en su clave (más abajo).
 
-Si trae un examen de referencia del centro: sección de abajo, antes de seguir.
+Si trae un examen de referencia del centro: sigue "Examen de referencia del centro", más abajo, antes de seguir.
 
 ## 2. Alcance
 

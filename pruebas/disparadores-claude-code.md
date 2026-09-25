@@ -1,20 +1,21 @@
 # Disparadores · claude-code
 
-- **Fecha:** 2026-09-24
-- **Versión del kit:** 0.24.0
+- **Fecha:** 2026-09-25
+- **Versión del kit:** 0.25.0
 - **Modelo:** sonnet
 
-**70 de 72** frases eligen lo esperado.
+**76 de 76** frases eligen lo esperado.
 
 | Esperada | Aciertos |
 |---|---|
 | sesion | 4 / 4 |
 | sesion o ninguna | 3 / 3 |
-| ninguna | 21 / 22 |
-| dudas | 9 / 10 |
+| ninguna | 21 / 21 |
+| dudas | 10 / 10 |
 | ejercicio | 5 / 5 |
 | repaso | 5 / 5 |
-| examen | 12 / 12 |
+| examen | 15 / 15 |
+| ninguna o examen | 2 / 2 |
 | configurar | 4 / 4 |
 | configurar o ninguna | 2 / 2 |
 | actualizar | 4 / 4 |
@@ -22,5 +23,18 @@
 
 ## Fallos
 
-- "¿qué es la liquidez?" → esperada dudas, eligió `ninguna`
-- "¿cuándo puedo hacer el examen final?" → esperada ninguna, eligió `examen`
+Ninguno.
+
+## Guías
+
+**2 de 3** situaciones abren la guía esperada.
+
+| Frase | Preparación | Guía esperada | Abrió |
+|---|---|---|---|
+| "ya he estudiado la clase 1.1, guárdalo y seguimos" | estudiada-a-su-manera | cuando-escribe-a-su-manera.md | ✅ |
+| "hola" | preparacion-terminada | segundo-plano.md | ✅ |
+| "hola" | preparacion-interrumpida | segundo-plano.md | ❌ (terminó sin abrir la guía) |
+
+### Fallos de guías
+
+- "hola" (preparacion-interrumpida) → no abrió `segundo-plano.md` (terminó sin abrir la guía)

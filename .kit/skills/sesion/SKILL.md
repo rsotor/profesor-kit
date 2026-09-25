@@ -127,7 +127,8 @@ errores típicos.
 
 ### 6. Ejercicios — solo donde algo se mueve
 
-Los ejercicios de la clase se crean aquí, al procesarla, siguiendo `/ejercicio` (léela antes del primero).
+Los ejercicios de la clase se crean aquí, al procesarla, siguiendo los puntos 1-7 de `/ejercicio`
+(léela antes del primero); se guardan con la sesión, en el punto 8.
 Donde nada se mueve, una línea de por qué no lo lleva.
 
 ### 7. Actualizar los ficheros vivos
