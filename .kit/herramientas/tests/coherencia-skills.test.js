@@ -105,7 +105,7 @@ test('las ofertas "Si ya tenías tu curso" del CHANGELOG usan la etiqueta que bu
 test('el frontmatter de cada skill cumple Agent Skills y es YAML válido para cualquier lector', () => {
   const fallos = [];
   for (const s of fs.readdirSync(path.join(RAIZ, '.kit', 'skills'))) {
-    const texto = fs.readFileSync(path.join(RAIZ, '.kit', 'skills', s, 'SKILL.md'), 'utf8');
+    const texto = fs.readFileSync(path.join(RAIZ, '.kit', 'skills', s, 'SKILL.md'), 'utf8').replace(/\r\n/g, '\n');   // CRLF en Windows
     const fm = /^---\n([\s\S]*?)\n---\n/.exec(texto);
     if (!fm) { fallos.push(`${s}: sin frontmatter`); continue; }
     const campos = Object.fromEntries(fm[1].split('\n').map(l => /^([a-z-]+):\s?(.*)$/.exec(l)).filter(Boolean).map(m => [m[1], m[2]]));
