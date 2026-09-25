@@ -89,8 +89,11 @@ function conceptoConFormula(destino) {
 }
 
 // El examen más reciente de estudio/examenes/ (el que acaba de escribir el paso 4a).
-function examenMasReciente(destino) {
-  const ficheros = recorrerMd(path.join(destino, 'estudio', 'examenes'));
+// `excepto`: un examen que no cuenta (el anterior, al buscar el nuevo). Sin él, si los dos tienen la misma hora
+// (se escribieron en el mismo milisegundo, CI del 2026-09-25), "el más reciente" podía salir el anterior.
+function examenMasReciente(destino, { excepto } = {}) {
+  const fuera = excepto ? path.resolve(excepto) : null;
+  const ficheros = recorrerMd(path.join(destino, 'estudio', 'examenes')).filter(f => path.resolve(f) !== fuera);
   if (!ficheros.length) return null;
   return ficheros.map(f => ({ f, mtime: fs.statSync(f).mtimeMs })).sort((a, b) => b.mtime - a.mtime)[0].f;
 }
@@ -445,11 +448,8 @@ function preguntasReutilizadas(destino, ficheroExamen) {
 // histórico de intentos es de donde sale qué falló); `unidad` es el prefijo de la unidad, como en
 // `examen.js --falladas`.
 function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
-  const nuevo = examenMasReciente(destino);
-  if (!nuevo) return { ok: false, detalle: 'no hay ningún examen en estudio/examenes/' };
-  if (path.resolve(nuevo) === path.resolve(ficheroAnterior)) {
-    return { ok: false, detalle: 'sigue siendo el mismo fichero que el primer examen: no se ha escrito uno nuevo' };
-  }
+  const nuevo = examenMasReciente(destino, { excepto: ficheroAnterior });
+  if (!nuevo) return { ok: false, detalle: 'solo está el mismo fichero que el primer examen: no se ha escrito uno nuevo' };
 
   const relAnterior = aPosix(path.relative(path.join(destino, 'estudio'), ficheroAnterior));
   const todos = leerExamenes(destino);

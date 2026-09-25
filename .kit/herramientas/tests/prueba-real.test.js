@@ -755,3 +755,17 @@ test('carpetaDeResultado: con --sin-llm, una carpeta temporal; sin él, la del a
   assert.ok(temporalSinLlm.startsWith(require('node:os').tmpdir()) || temporalSinLlm.startsWith(fs.realpathSync(require('node:os').tmpdir())));
   assert.equal(carpetaDeResultado({ sinLlm: false, asistente: 'claude-code' }), rutaResultado('claude-code'));
 });
+
+// CI de main, 2026-09-25: el examen anterior y el nuevo se escribieron en el mismo milisegundo y "el más reciente"
+// salió el anterior. El nuevo es el más reciente que NO es el anterior, empaten o no en la hora.
+test('verificarReutilizacionFalladas: aunque los dos exámenes tengan la misma hora, encuentra el nuevo', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz);
+  const misma = new Date('2026-10-05T10:00:00Z');
+  for (const f of p.recorrerMd(path.join(raiz, 'estudio', 'examenes'))) fs.utimesSync(f, misma, misma);
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.doesNotMatch(r.detalle, /mismo fichero/);
+  assert.equal(r.ok, true, r.detalle);
+});
