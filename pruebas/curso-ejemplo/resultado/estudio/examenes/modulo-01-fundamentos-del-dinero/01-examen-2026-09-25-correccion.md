@@ -63,15 +63,16 @@ intentos: 1
 
 > [!example]- Intento 1 · 2026-09-25 · tus respuestas y la corrección
 >
-> ✅ Dominado → tasa-de-ahorro, liquidez (la idea)
-> ⚠️ Hay que repasar → gastos-fijos-y-variables (1 fallo, pregunta 5), colchon-financiero (pregunta 6 en blanco), decir siempre el periodo de una tasa (pregunta 4), el nombre «liquidez» (pregunta 3)
-> 🔴 Vuelve a la nota → ninguno (ningún concepto con 2 o más fallos en este test)
+> ✅ Dominado → tasa-de-ahorro
+> ⚠️ Hay que repasar → liquidez (la idea bien, falta el nombre), gastos-fijos-y-variables (1 fallo)
+> 🔴 Vuelve a la nota → ninguno
+> TODO: la pregunta 4 (interés mensual) no tiene concepto en el curso; solo se anota el periodo que faltó.
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20&nbsp;% | ✅ Correcta | La cifra es correcta. Apunte, no fallo: la pregunta no pedía el periodo, pero es una tasa mensual (300 € ÷ 1.500 € al mes) y en este curso toda tasa lleva su periodo. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Lo tiene inmovilizado en el piso y no puede convertirlo en dinero disponible a tiempo: la idea está completa. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre (liquidez) | Describe bien la idea (no lo puede vender rápido para tener el dinero ya), pero la pregunta pedía el nombre del concepto y no lo dice: es liquidez. |
-> | 4 | 2&nbsp;% | ⚠️ Le falta: el periodo (mensual) | La cifra es correcta, pero la pregunta pedía la cifra con su periodo: un 2 % mensual. Sin periodo, no dice cuánto pagas. |
-> | 5 | Variable. | ❌ Incorrecta | Es un gasto fijo: 700 € iguales cada mes. Que el contrato lo actualice una vez al año con el IPC no lo convierte en variable, porque durante ese año no cambia. |
-> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin respuesta. El curso recomienda cubrir 3 meses de gastos con nómina fija. TODO: no se apunta como hueco de conocimiento hasta que conteste (puede ser que no supiera o que se saltara la pregunta). |
+> | 1 | 20 por ciento de sus ingresos (escribió la cifra sin periodo, que aquí no lo pide: no es un interés) | ✅ Correcta | 300 ÷ 1.500 = 0,20 de sus ingresos. La pregunta pedía una cifra y la cifra es la correcta. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Explica bien que el dinero está inmovilizado en el piso y no se convierte en efectivo a tiempo. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre. La idea es correcta (no lo puede vender rápido), pero la pregunta pedía el nombre del concepto: liquidez. | El nombre se pedía expresamente, por eso no es un acierto completo. |
+> | 4 | 2 por ciento, sin periodo | ⚠️ Le falta: el periodo. La cifra es correcta, pero la pregunta pedía la cifra con su periodo: 2 % mensual. | Sin el periodo la cifra no dice cuánto pagas. |
+> | 5 | Variable. | ❌ Incorrecta | Es un gasto fijo: se repite cada mes con la misma cifra sin que decidas nada; que suba una vez al año con el IPC no lo convierte en variable, porque la cifra no la decides tú cada mes. |
+> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | El curso apunta a unos 3 meses de gastos para alguien con nómina fija. |

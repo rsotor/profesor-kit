@@ -26,13 +26,7 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 ### Conceptos que te costaron
 
-- **colchon-financiero:** pidió otro ejemplo sin decir qué parte no entendía. Se añadió un caso con dos meses
-  flojos seguidos, en tabla. **TODO:** comprobar si lo desbloqueó. — *duda en conceptos/colchon-financiero.md, 2026-09-25*
-- **gastos-fijos-y-variables:** en un alquiler de 700 € cada mes, que se actualiza una vez al año con el IPC,
-  contestó "variable" (es fijo: no cambia durante el año). Un solo fallo, aún no es error repetido. —
-  *estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-25-correccion.md, pregunta 5*
-- **Periodo de una tasa:** escribió "2 %" cuando se pedía la cifra con su periodo (mensual), y "20 %" sin
-  periodo en la tasa de ahorro. — *mismo examen, preguntas 1 y 4*
+- **colchon-financiero** — pidió otro ejemplo sin decir qué parte no entendía; el ejemplo de la nota (3 meses × gastos) no le bastó. Se le ha dado un caso de freelance con dos meses flojos. Qué lo desbloquea: TODO, pendiente de que diga qué parte era. — *conceptos/colchon-financiero.md, 2026-09-25*
 
 ## Lo que te entró a la primera
 
@@ -52,8 +46,9 @@ Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces 
 
 | Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |
 |---|---|---|
-| modulo-01 | 4 · 4 · 0 · 0 | 0 · 0 · 0 · 8 |
-| modulo-02 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
+| Bloque 1.1 El dinero y sus funciones | 2 · 1 · 0 · 0 | 0 · 0 · 0 · 3 |
+| Bloque 1.2 Presupuesto personal | 1 · 3 · 0 · 0 | 0 · 0 · 0 · 4 |
+| Bloque 2.1 Interés simple y compuesto | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
 
 ### Donde más dudas
 

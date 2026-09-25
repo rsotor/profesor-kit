@@ -14,14 +14,13 @@ Estados: `⬜ sin evaluar` · `🟡 flojo` · `✅ sólido` · `🔴 falló dos 
 
 | Concepto | Teoría | Aplicación |
 |---|---|---|
-| [[trueque]] | ✅ sólido | ⬜ sin evaluar |
-| [[funciones-del-dinero]] | 🟡 flojo | ⬜ sin evaluar |
-| [[inflacion]] | ✅ sólido | ⬜ sin evaluar |
-| [[liquidez]] | ✅ sólido | ⬜ sin evaluar |
-| [[presupuesto-personal]] | 🟡 flojo | ⬜ sin evaluar |
-| [[gastos-fijos-y-variables]] | 🟡 flojo | ⬜ sin evaluar |
-| [[tasa-de-ahorro]] | ✅ sólido | ⬜ sin evaluar |
-| [[colchon-financiero]] | 🟡 flojo | ⬜ sin evaluar |
+| [[funciones-del-dinero]] | 🟡 flojo · examen del módulo 1, p.1: marca la falta de unidad de cuenta en vez de la doble coincidencia de deseos (la p.2 sí la acierta) | ⬜ sin evaluar |
+| [[inflacion]] | ✅ sólido · examen del módulo 1, p.3: acierta | ⬜ sin evaluar |
+| [[liquidez]] | ✅ sólido · examen del módulo 1, p.4: acierta; test de corrección, p.2-3: la idea bien, pero no dice el nombre "liquidez" cuando se le pide | ⬜ sin evaluar |
+| [[presupuesto-personal]] | 🟡 flojo · examen del módulo 1, p.6: cree que presupuestar con el mejor mes no tiene riesgo (la p.8 sí la acierta) | ⬜ sin evaluar |
+| [[gastos-fijos-y-variables]] | 🟡 flojo · test de corrección, p.5: dice que el alquiler es variable porque sube con el IPC (es fijo: la cifra no la decide él cada mes); antes, examen del módulo 1, p.7: acierta | ⬜ sin evaluar |
+| [[tasa-de-ahorro]] | ✅ sólido · test de corrección, p.1: acierta la cifra (300 ÷ 1.500 = 0,20 de sus ingresos); antes, examen del módulo 1, p.5: en blanco | ⬜ sin evaluar |
+| [[colchon-financiero]] | 🟡 flojo · examen del módulo 1, p.10: en blanco (la p.9 sí la acierta); test de corrección, p.6: en blanco otra vez | ⬜ sin evaluar |
 | [[capital-y-tipo-de-interes]] | ⬜ sin evaluar | ⬜ sin evaluar |
 | [[interes-simple]] | ⬜ sin evaluar | ⬜ sin evaluar |
 | [[interes-compuesto]] | ⬜ sin evaluar | ⬜ sin evaluar |

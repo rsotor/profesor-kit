@@ -1,54 +1,47 @@
 ---
 tipo: concepto
-bloques: [modulo-02]
+bloques: [2.1 Interés simple y compuesto]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [interes-compuesto]
-alias: [capitalización mensual, frecuencia de capitalización]
-tags: [interes]
+alias: [frecuencia de capitalización]
+tags: [interes, ahorro]
 ---
 # Capitalización
 
-> **En una frase:** cuántas veces al año se suman los intereses al capital; cuanto más a menudo, más rápido crece el dinero.
+> **En una frase:** la capitalización es cada cuánto se suman los intereses al capital (cada año, trimestre o mes); cuanto más frecuente, más rápido crece el dinero.
 
 ## El problema
 
-Un tipo anual no siempre se aplica de golpe una vez al año: puede aplicarse cada mes o cada trimestre. Hace falta
-saber cómo cambia el resultado.
+Un interés anual no siempre se aplica de golpe una vez al año. Si te lo van sumando cada mes, el segundo mes
+ya cobra sobre un capital un poco mayor. ¿Cambia eso el resultado?
 
 ## El ejemplo
 
+1.000,00 € al 5 % anual, un año.
+
+- **Capitalización anual:** 1.000,00 € × 1,05 = **1.050,00 €**.
+- **Capitalización mensual:** cada mes se aplica una doceava parte del tipo anual, pero sobre el capital ya crecido.
+
 > [!info] Ampliación fuera de los apuntes
-> Los apuntes explican la idea sin cifras; este ejemplo es mío. **1.000,00 €** a un 12 % anual durante 1 año.
->
-> - Capitalización anual: 1.000 × 1,12 = **1.120,00 €**.
-> - Capitalización mensual: cada mes se aplica una doceava parte del tipo, un 1 % mensual, al capital ya crecido:
->   1.000 × 1,01¹² ≈ **1.126,83 €**.
->
-> Diferencia: 6,83 €, solo por sumar los intereses más a menudo.
+> La clase solo dice que el resultado mensual "es algo mayor", sin cifra. El cálculo es
+> 1.000 × (1 + 0,05 ÷ 12)¹² ≈ **1.051,16 €**: 1,16 € más que con capitalización anual.
 
-## El nombre
-
-**Capitalización:** el momento en que los intereses se suman al capital. Mensual, trimestral, anual…
-
-Con capitalización mensual se aplica **una doceava parte del tipo anual** cada mes, pero **al capital ya crecido**.
-
-## La fórmula
-
-Los apuntes no traen una fórmula propia para esto.
-
-**TODO:** ¿la clase dio la fórmula con `m` capitalizaciones al año, o solo la idea? Si la dio, añadirla aquí.
+Cuanto más frecuente, más sube, pero la ganancia entre anual y mensual es pequeña.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que un 12 % anual capitalizado cada mes rinde un 12 % anual exacto. Rinde algo más (12,68 % anual en el ejemplo),
-> porque cada mes se calcula sobre un capital mayor.
+> Pensar que "5 % anual con capitalización mensual" significa 5 % anual de verdad al final del año. No: el
+> resultado real es algo mayor que el tipo anual anunciado. Para comparar dos ofertas hay que comparar lo que
+> queda al final del año, no solo el tipo.
+
+El curso no trae un error típico para este concepto; este es una propuesta del profesor.
 
 ## Relacionados
 
-- [[interes-compuesto]] — es lo mismo con la capitalización en el periodo del tipo
-- [[capital-y-tipo-de-interes]] — el tipo anual del que se parte
+- [[interes-compuesto]] — la capitalización es lo que hace repetirse el "interés sobre interés".
+- [[capital-y-tipo-de-interes]] — el tipo anual, que se reparte en periodos más cortos.
 
 ## Historial
 

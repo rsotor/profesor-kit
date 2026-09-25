@@ -31,13 +31,7 @@
 
 ## Conceptos que costaron
 
-- **colchon-financiero:** pidió otro ejemplo sin decir qué parte no entendía. Se añadió un caso con dos meses
-  flojos seguidos, en tabla. **TODO:** comprobar si lo desbloqueó. — *duda en conceptos/colchon-financiero.md, 2026-09-25*
-- **gastos-fijos-y-variables:** en un alquiler de 700 € cada mes, que se actualiza una vez al año con el IPC,
-  contestó "variable" (es fijo: no cambia durante el año). Un solo fallo, aún no es error repetido. —
-  *estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-25-correccion.md, pregunta 5*
-- **Periodo de una tasa:** escribió "2 %" cuando se pedía la cifra con su periodo (mensual), y "20 %" sin
-  periodo en la tasa de ahorro. — *mismo examen, preguntas 1 y 4*
+- **colchon-financiero** — pidió otro ejemplo sin decir qué parte no entendía; el ejemplo de la nota (3 meses × gastos) no le bastó. Se le ha dado un caso de freelance con dos meses flojos. Qué lo desbloquea: TODO, pendiente de que diga qué parte era. — *conceptos/colchon-financiero.md, 2026-09-25*
 
 ## Conceptos que entraron a la primera
 
@@ -51,7 +45,7 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-09-25 · 01-01-01-el-dinero-y-sus-funciones, respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-09-25 · sesión 01-01-01, respuesta del alumno en /dudas |
 
 ## Registro de dudas
 

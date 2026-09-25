@@ -1,51 +1,49 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
+bloques: [1.1 El dinero y sus funciones]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
-dificultad: 1
+dificultad: 2
 requiere: [funciones-del-dinero]
-alias: [líquido]
-tags: [fundamentos]
+alias: []
+tags: [dinero, ahorro]
 ---
 # Liquidez
 
-> **En una frase:** lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor no basta: hay que poder usarlo cuando hace falta. Algo que vale mucho pero tarda meses en
-convertirse en dinero no sirve para una urgencia.
+Tener valor no basta: hay que poder usarlo cuando hace falta. Si necesitas dinero mañana y lo tienes metido
+en algo que tarda meses en venderse, o lo vendes con prisa y a mal precio, o no llegas.
 
 ## El ejemplo
 
-| Lo que tienes | Cuánto tarda en ser dinero | Liquidez |
+- El dinero de la cartera es totalmente líquido: se gasta al instante.
+- Un piso es muy poco líquido: venderlo bien lleva meses.
+
+| | Cartera | Piso |
 |---|---|---|
-| Euros en la cartera | Al instante | Total |
-| Un piso | Meses, si quieres venderlo bien | Muy poca |
-
-Si tienes prisa por vender el piso, lo normal es aceptar menos de lo que vale: pierdes valor por las prisas.
-
-## El nombre
-
-**Liquidez.** Un activo es *líquido* si se convierte en dinero rápido y sin perder valor.
+| Tiempo en convertirlo en dinero | Ninguno | Meses |
+| Riesgo de perder valor por las prisas | Ninguno | Alto |
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que "líquido" significa "valioso". Un piso puede valer mucho más que lo que llevas en la cartera y ser
-> mucho menos líquido.
+> Confundir liquidez con valor. Un piso puede valer mucho más que lo que llevas en la cartera y aun así ser mucho menos líquido: cuánto vale y lo fácil que es usarlo ya son dos cosas distintas.
+
+El curso no trae un error típico para este concepto; este es una propuesta del profesor.
+
+## Visto desde tus ingresos irregulares
+
+> [!tip] Lectura del profesor, no del curso
+> El dinero que reservas para los meses en que factures poco tiene que estar en algo líquido, porque lo vas
+> a necesitar en una fecha que no controlas. Lo verás con más detalle cuando el curso compare ahorrar
+> (muy líquido) con invertir (a veces, menos líquido), en el módulo 2.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero es lo más líquido que hay
-- [[inflacion]] — lo muy líquido es cómodo, pero parado pierde poder de compra
-
-> [!note] Para más adelante
-> En el módulo 2 se compara ahorrar (muy líquido) con invertir (a veces, menos líquido).
-
-> [!tip] Visto desde tus ingresos irregulares
-> En un mes flojo necesitas dinero ya, no dentro de unos meses: lo que guardes para cubrir esos meses tiene que
-> ser líquido.
+- [[funciones-del-dinero]] — algo es líquido cuando puede hacer de medio de cambio ya.
+- [[inflacion]] — el dinero más líquido es también el que la inflación va restando mientras espera.
 
 ## Historial
 

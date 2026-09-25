@@ -1,55 +1,53 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
+bloques: [1.1 El dinero y sus funciones]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
-alias: [subida general de precios]
-tags: [fundamentos]
-ejercicio: 01-01-01-inflacion-poder-de-compra
+alias: []
+tags: [dinero, precios]
 ---
 # Inflación
 
-> **En una frase:** subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** la inflación es la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-Si guardas dinero para usarlo más adelante (el *depósito de valor* de [[funciones-del-dinero]]), necesitas que
-mañana compre lo mismo que hoy. La inflación hace que no ocurra.
+El dinero es un depósito de valor porque mantiene (más o menos) su valor con el tiempo. Cuando los precios suben
+en general, ese "más o menos" se rompe: lo que guardaste compra cada vez menos.
 
 ## El ejemplo
 
-Los precios suben un 3 % anual. Hoy, 100 € compran una cesta de la compra. Dentro de un año esa cesta cuesta
-más, y esos mismos 100 € equivalen, en compra real, a unos 97 €.
+Los precios suben una media de 3 % anual. Hoy con 100,00 € llenas un carrito de la compra; dentro de un año
+ese mismo carrito cuesta 103,00 €. Tus 100,00 € guardados compran, en términos reales, como unos 97,00 € de hoy.
+
+## La fórmula
+
+$$P = \frac{D}{1 + i}$$
+
+- $D$: el dinero que guardas (100,00 €).
+- $i$: la inflación de ese año, en tanto por uno (0,03 si es 3 % anual).
+- $P$: lo que ese dinero compra, medido en euros de hoy.
 
 > [!info] Ampliación fuera de los apuntes
-> Los apuntes dicen "unos 97 €". El cálculo exacto para un año es dividir entre 1,03: 100 € ÷ 1,03 ≈ **97,09 €**.
-
-## El nombre
-
-**Inflación:** nivel general de precios de casi todo a la vez. Con una inflación del 3 % anual, el dinero parado
-pierde poder de compra cada año.
+> La diapositiva dice "unos 97 €". Con la fórmula sale 97,09 €: 97,00 € es una aproximación válida para tasas pequeñas.
 
 ## El error típico
 
-Confundir "sube el precio de una cosa" con inflación. Un producto puede encarecerse por moda o por escasez
-propia; eso no es inflación. Inflación es que sube el nivel general, de casi todo a la vez.
+Confundir "sube el precio de una cosa" con "inflación". Un precio puede subir por moda o por escasez de esa cosa
+en concreto (el aguacate tras una mala cosecha). Inflación es que sube el nivel general de precios, de casi
+todo a la vez.
 
-## Practícalo
+## Visto desde tus ingresos irregulares
 
-→ **[Inflación y poder de compra](../ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion-poder-de-compra.html)**
-
-Mueve la inflación anual y la subida de tus ingresos. Lo que debería sorprender: subir tus ingresos no basta
-para ganar poder de compra; hay que subir más que la inflación.
-
-> [!tip] Visto desde tus ingresos irregulares
-> Si facturas más unos meses que otros, el dinero que guardas para los meses flojos es justo el que sufre la
-> inflación: cuanto más tiempo lo tienes parado, menos compra cuando lo necesitas.
+> [!tip] Lectura del profesor, no del curso
+> Si guardas dinero para los meses flojos, la inflación se lo come poco a poco mientras espera. Cuanto más
+> tiempo lo tengas parado, más compra de menos. Cuánto se pierde y cómo evitarlo se ve en el módulo 2.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la inflación es el fallo del depósito de valor
-- [[liquidez]] — guardar dinero líquido es cómodo, pero es el que más la sufre
+- [[funciones-del-dinero]] — la inflación es lo que hace fallar al depósito de valor.
+- [[liquidez]] — guardar dinero líquido es cómodo, pero la inflación le afecta igual.
 
 ## Historial
 

@@ -1,49 +1,43 @@
 ---
 tipo: concepto
-bloques: [modulo-02]
+bloques: [2.1 Interés simple y compuesto]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [interes-compuesto]
-alias: [regla del 72, años para doblar]
-tags: [interes]
+alias: []
+tags: [interes, ahorro]
 ---
 # Regla del 72
 
-> **En una frase:** una cuenta de cabeza para saber cuántos años tarda un capital en doblarse a interés compuesto.
+> **En una frase:** la regla del 72 es un atajo aproximado para saber cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo de interés anual.
 
 ## El problema
 
-Quieres saber, sin calculadora, cuánto tarda tu dinero en duplicarse. La fórmula exacta pide potencias, y a
-mitad de una conversación no las tienes a mano.
+Quieres saber, a ojo y sin calculadora, cuánto tiempo hace falta para que tu dinero se doble.
 
 ## El ejemplo
 
-Un capital al 6 % anual: 72 ÷ 6 = **12 años**, aproximadamente.
+Un dinero al 6 % anual. 72 ÷ 6 = **12 años**, aproximadamente.
 
-El cálculo exacto con la fórmula del [[interes-compuesto]] da 11,9 años. La regla se queda a una décima.
-
-## El nombre
-
-**Regla del 72:** una aproximación, no el resultado exacto.
+Con la fórmula exacta salen **11,9 años**: la regla es una aproximación, no el resultado exacto.
 
 ## La fórmula
 
-$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número, sin el símbolo de porcentaje}} $$
+$$\text{años para doblar} \approx \frac{72}{\text{tipo de interés anual (el número, sin el símbolo)}}$$
 
-72 entre el tipo anual, escrito como número (6, no 0,06).
+Se usa el número del tipo anual tal cual: para un 6 % anual, se divide entre 6 (no entre 0,06).
 
 ## El error típico
 
-Usarla como si fuera exacta, o con interés simple. Es una aproximación y solo vale para interés compuesto.
-
 > [!info] Ampliación fuera de los apuntes
-> Cuánto se aleja: al 8 % anual da 9 años y el exacto es 9,0; al 2 % anual da 36 y el exacto es 35,0; al 20 % anual
-> da 3,6 y el exacto es 3,8. Va mejor con tipos medios.
+> Tomarla por exacta, o usarla con interés simple (la clase la presenta solo para interés compuesto). Es una
+> estimación rápida; para decidir con dinero de verdad, mejor la fórmula de [[interes-compuesto]].
+
+El curso no trae un error típico para este concepto; este es una propuesta del profesor.
 
 ## Relacionados
 
-- [[interes-compuesto]] — la regla sale de esa fórmula
-- [[interes-simple]] — con él no vale: crece en línea recta
+- [[interes-compuesto]] — de donde sale la regla (y donde se calcula lo exacto).
 
 ## Historial
 

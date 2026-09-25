@@ -1,28 +1,19 @@
 ---
-tipo: ejercicios
+tipo: ejercicio
 sesion: 02-01-01-interes-simple-y-compuesto
 ---
-# Ejercicios · 02-01-01 · Interés simple y compuesto
+# Ejercicio · Simple frente a compuesto
 
-## Simple frente a compuesto
+Versión a mano del ejercicio interactivo [Simple frente a compuesto](02-01-01-interes-simple-y-compuesto.html).
+Conceptos: [[interes-simple]] · [[interes-compuesto]].
 
-Versión web: `02-01-01-simple-frente-a-compuesto.html` (en esta misma carpeta, ábrelo con doble clic).
+## Caso
 
-Versión a mano, para practicar sin la página:
+1.000,00 € al 5 % anual. A 3 años, el compuesto da 7,63 € más que el simple.
 
-Dos cuentas con 1.000,00 € cada una, a un 5 % anual, durante 1 año. Una paga interés simple y la otra compuesto
-(capitalización anual). Respuesta esperada: una frase corta.
-
-**¿Cuál de las dos tendrá más dinero al final del año?**
+**Si el tiempo fuera de 6 años en vez de 3, ¿la diferencia sería menos del doble, el doble o más del doble de 7,63 €? (elige una y explica el porqué en 2-3 líneas)**
 
 > [!success]- Respuesta
-> Ninguna: las dos dan 1.050,00 €. Con un solo periodo no hay intereses anteriores que generen nada. Con 2 años
-> ya se separan: 1.100,00 € el simple y 1.102,50 € el compuesto.
-
-Conceptos: [[interes-simple]] · [[interes-compuesto]]
-
-## Por qué los demás conceptos no llevan ejercicio
-
-[[capital-y-tipo-de-interes]] es una definición. [[regla-del-72]] es una cuenta directa cuyo resultado siempre
-va en la misma dirección (más tipo, menos años). [[capitalizacion]] no lleva ejercicio propio: falta la fórmula
-de la clase (ver Pendiente de la sesión).
+> Más del doble. A 6 años: simple 1.300,00 €, compuesto 1.000 × 1,05⁶ = 1.340,10 €; diferencia 40,10 €, más de 5 veces
+> los 7,63 €. El simple suma los mismos 50,00 € cada año; el compuesto suma intereses sobre intereses, y eso se
+> acumula cada vez más deprisa. Nunca sería el doble ni menos con un tipo positivo y más de 1 año.
