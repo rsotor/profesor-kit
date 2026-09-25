@@ -5,15 +5,9 @@ description: Use when the student has doubts, either left as markers in their no
 
 # Resolver las dudas pendientes
 
-**Antes de nada:** lee `config/curso.md`, `config/profesor.md` y `config/alumno.md` (regla común
-de `AGENTS.md`).
-
 El alumno estudia por su cuenta y deja el marcador de dudas donde tiene una duda, ve un error o
 quiere que se amplíe algo. El marcador es el de `config/profesor.md` (`@@` por defecto). Puede
 ponerlo **en cualquier fichero**: en apuntes de `estudio/inbox/`, o dentro de una nota ya escrita.
-
-**Ninguna duda se borra sin responderla.** Es el único canal que tiene para dejarte comentarios
-cuando estudia sin ti delante.
 
 ## Checklist
 
@@ -82,7 +76,7 @@ En `config/alumno.md`:
 
   Si te dice que es la tercera duda, es el tercer tropiezo (abajo).
 - Si es la 1ª vez: apunta en `## Conceptos que costaron` qué falló y qué lo desbloqueó.
-- **Si es la 3ª duda del mismo concepto** (`estado.js --json` la da como señal `tercer-tropiezo`): tercer tropiezo, bandera roja. Reexplica la nota
+- **Si es la 3ª duda del mismo concepto**: tercer tropiezo, bandera roja. Reexplica la nota
   entera desde otro ángulo sin que lo pida, y díselo: _"Es la tercera vez que <X> te frena. He
   reescrito la nota con otro enfoque."_
 - Si la duda revela un prerrequisito flojo, comprueba el `requiere:` de la nota: puede que el
@@ -95,8 +89,7 @@ En `config/alumno.md`:
 
 ## Al terminar, resume
 
-Y cierra con una línea `Del kit: nada` o `Del kit: <qué>` (algo que no es de este curso ni de este alumno; si no es
-"nada", sigue "Feedback al kit" de `AGENTS.md`).
+Cierra con `Del kit: nada` o `Del kit: <qué>` (ver "Feedback al kit" en `AGENTS.md`).
 
 ```
 3 dudas resueltas

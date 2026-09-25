@@ -37,3 +37,15 @@ test('AGENTS.md cabe con margen en lo que lee Codex (24 KB), y cada guía que no
     assert.ok(fs.existsSync(path.join(KIT, 'guias', guia)), `AGENTS.md nombra .kit/guias/${guia}, que no existe`);
   }
 });
+
+// Una skill se carga entera cada vez que se usa, junto a AGENTS.md. Tras adelgazarlas (0.26.0) la mayor ronda los
+// 16 KB: 18 KB deja margen sin que vuelvan a crecer sin darnos cuenta.
+test('cada skill cabe en 18 KB', () => {
+  const skills = path.join(KIT, 'skills');
+  for (const nombre of fs.readdirSync(skills)) {
+    const fichero = path.join(skills, nombre, 'SKILL.md');
+    if (!fs.existsSync(fichero)) continue;
+    const bytes = Buffer.byteLength(fs.readFileSync(fichero, 'utf8').replace(/\r\n/g, '\n'));
+    assert.ok(bytes <= 18 * 1024, `/${nombre} pesa ${bytes} bytes: recorta lo repetido o mueve a .kit/guias/ lo que abra una herramienta`);
+  }
+});

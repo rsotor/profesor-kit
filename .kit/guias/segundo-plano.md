@@ -7,13 +7,18 @@
 1. **Antes de lanzar, pregunta lo que solo él sabe**: el id de cada sesión si la regla de `config/curso.md` no
    basta, y cualquier duda del material que no puedas resolver tú. Lo que se lanza ya no pregunta nada.
 2. `node .kit/herramientas/preparar.js --lanzar <ficheros de inbox> --id <id>`. Una sola a la vez.
-3. Sigue con él (calentamiento, repaso, dudas, examen). **Al terminar cada actividad**, mira
-   `node .kit/herramientas/preparar.js --estado`. En cuanto esté **terminada**, júntala con `--juntar <id>` y
-   díselo: "la clase 3 ya está lista: empieza por la nota de la sesión". Si algo de lo que hicisteis mientras
-   tanto (un examen, unas dudas) se quedó sin guardar, `--juntar` lo guarda solo antes de mezclar — no hace
-   falta un `guardar.js` aparte. Si **falla**, díselo en una frase y ofrécele prepararla aquí, en la conversación.
-4. Si se va a por un café, déjala lanzada y díselo: al volver (o en la sesión siguiente, si cierra la ventana)
-   la juntas antes que nada. Si apaga o duerme el ordenador, se para: `estado.js` la verá **interrumpida**.
+3. Sigue con él (calentamiento, repaso, dudas, examen), y no lo dejes parado mientras se prepara: sigue según
+   cómo va — si acierta, "lo estás haciendo genial, ¿quieres un par de preguntas más, un poco más difíciles?";
+   si falla algo, "¿repasamos eso mientras termino?". Así hasta que la clase esté lista o prefiera parar.
+4. **Al terminar cada actividad**, mira `node .kit/herramientas/preparar.js --estado`:
+   - **Terminada:** va antes que nada — júntala con `--juntar <id>` y díselo: "la clase 3 ya está lista: empieza
+     por la nota de la sesión". Si algo de lo que hicisteis mientras tanto (un examen, unas dudas) se quedó sin
+     guardar, `--juntar` lo guarda solo antes de mezclar — no hace falta un `guardar.js` aparte.
+   - **Fallida:** díselo en una frase y ofrécele prepararla aquí, en la conversación.
+   - **Interrumpida** (se apagó o se durmió el ordenador a medio camino): díselo y ofrécele volver a
+     prepararla.
+5. Si se va a por un café, déjala lanzada y díselo: al volver (o en la sesión siguiente, si cierra la ventana)
+   resuelve lo de arriba —terminada, fallida o interrumpida— antes que nada.
 
 ## Si trabajas en segundo plano (te lanza `preparar.js --trabajar`)
 

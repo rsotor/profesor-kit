@@ -11,7 +11,7 @@ recomendado (nadie ha comparado modelos todavía): esa fila lleva **"— (sin co
 | `codex` | Windows · Codex CLI 0.156.1 · 2026-09-24 | — (sin comparar) | — | — | sí |
 
 **Segundo plano** dice si el asistente puede preparar una clase sin conversación (`preparar.js`, ver
-`AGENTS.md`, "Si trabajas en segundo plano"): "sí" si su JSON trae `segundo_plano`, "no" si no. Sin él, el
+`.kit/guias/segundo-plano.md`): "sí" si su JSON trae `segundo_plano`, "no" si no. Sin él, el
 caso 2 de `AGENTS.md` se queda en primer plano.
 
 ## Matriz de soporte

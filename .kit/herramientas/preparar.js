@@ -520,7 +520,8 @@ function cliLanzar(raiz, args) {
   for (let i = iLanzar + 1; i < args.length; i++) { if (args[i] === '--id') break; ficheros.push(args[i]); }
   const r = lanzar(raiz, { ficheros, id });
   if (!r.lanzada) { console.log(`No se ha lanzado: ${explicar(EXPLICACION_LANZAR, r)}`); return 1; }
-  console.log(`Preparando la clase ${r.id} en segundo plano (rama ${r.rama}). Usa --estado para ver cómo va.`);
+  console.log(`Preparando la clase ${r.id} en segundo plano (rama ${r.rama}). Usa --estado para ver cómo va. `
+    + 'Mientras, sigue .kit/guias/segundo-plano.md.');
   return 0;
 }
 

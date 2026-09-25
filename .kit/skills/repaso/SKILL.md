@@ -5,9 +5,6 @@ description: Use when the student wants a visual review page of a block or a con
 
 # Repaso visual
 
-**Antes de nada:** lee `config/curso.md`, `config/profesor.md` y `config/alumno.md` (regla común
-de `AGENTS.md`).
-
 Genera un fichero HTML local a partir del material del curso. **La web se genera del
 markdown; nunca al revés.** El material es la fuente de verdad —si algo está mal en la
 página, se arregla en la nota y se regenera la página, no al contrario.
@@ -58,8 +55,7 @@ lectura; nunca decide qué se explica ni cuánto, y nunca puntúa.
 Escribe el fichero en su carpeta (ver el punto 1) con tu herramienta de ficheros. `comprobar.js` compila su JS y
 avisa si carga algo de internet: lo que diga, se arregla antes de guardar.
 
-No lo abras tú (`open`, `start`…): es un comando distinto en cada sistema y pide permiso. Dile dónde está: en
-Obsidian, en la carpeta **repasos**, y se abre con doble clic.
+No lo abras tú: dile dónde está (en Obsidian, carpeta **repasos**, doble clic).
 
 ### 5. Cerrar
 
@@ -72,5 +68,4 @@ El repaso es un fichero del alumno como cualquier otro: se guarda.
 Dile en una línea qué alcance cubre la página y cuántos conceptos, ejercicios y flashcards
 incluye. Nada más —la página se explica sola o está mal hecha.
 
-Y cierra con una línea `Del kit: nada` o `Del kit: <qué>` (algo que no es de este curso ni de este alumno; si no es
-"nada", sigue "Feedback al kit" de `AGENTS.md`).
+Cierra con `Del kit: nada` o `Del kit: <qué>` (ver "Feedback al kit" en `AGENTS.md`).
