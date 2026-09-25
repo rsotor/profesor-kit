@@ -31,8 +31,6 @@
 
 ## Conceptos que costaron
 
-- **colchon-financiero** — pidió otro ejemplo sin decir qué parte no entendía; el ejemplo de la nota (3 meses × gastos) no le bastó. Se le ha dado un caso de freelance con dos meses flojos. Qué lo desbloquea: TODO, pendiente de que diga qué parte era. — *conceptos/colchon-financiero.md, 2026-09-25*
-
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
@@ -45,10 +43,10 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-09-25 · sesión 01-01-01, respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-09-25 · 01-01-01-el-dinero-y-sus-funciones.md |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-09-25 · conceptos/colchon-financiero.md, 2026-09-25 |
+| colchon-financiero | 1 | 2026-09-25 · conceptos/colchon-financiero.md |

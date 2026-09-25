@@ -168,43 +168,79 @@ function gh(args) {
   return ejecutarProceso('gh', args);
 }
 
+// Sin `gh` (issue #50: un asistente en la nube no lo trae, pero el proxy de git de ese entorno sí deja
+// clonar y hacer fetch de un repo público sin ninguna sesión). Repo del kit siempre público: HTTPS anónimo,
+// nunca SSH (urlPublica solo genera https://), así que no hace falta la variante con core.sshCommand de
+// lib/git.js. Con timeout y sin prompts (revisión de la 0.27, media 6): nunca se queda colgado esperando un
+// usuario/contraseña que nadie va a teclear, y mata el proceso al vencer, sin dejar nada huérfano.
+const TIMEOUT_GIT_MS = 30000;
+const ENV_SIN_PROMPT = { ...process.env, GIT_TERMINAL_PROMPT: '0', GCM_INTERACTIVE: 'never', SSH_ASKPASS_REQUIRE: 'never' };
+function ejecutarGit(args) {
+  return ejecutarProceso('git', args, { env: ENV_SIN_PROMPT, timeout: TIMEOUT_GIT_MS, killSignal: 'SIGKILL' });
+}
+const urlPublica = repo => `https://github.com/${repo}.git`;
+
 function consultaEtiqueta(repo, ejecutar) {
   return ejecutar(['api', `repos/${repo}/releases/latest`, '--jq', '.tag_name']);
 }
 const esEtiqueta = r => r.ok && /^v\d+\.\d+\.\d+$/.test(r.salida);
 
+// La etiqueta más reciente (`vX.Y.Z`) de las referencias del propio git, sin clonar nada: solo hace falta
+// para saber cuál es la última. Sin `gh`, es la única vía (issue #50); git no distingue una release
+// "borrador" o "preliminar" de una normal (eso es metadato de la API), así que se asume que toda etiqueta
+// con ese formato en el remoto público es una release publicada de verdad, como ya hace el kit al filtrar.
+function etiquetaViaGit(repo, ejecutarG = ejecutarGit) {
+  const r = ejecutarG(['ls-remote', '--tags', '--refs', urlPublica(repo)]);
+  if (!r.ok) return null;
+  const etiquetas = r.stdout.split(/\r?\n/)
+    .map(l => (/refs\/tags\/(v\d+\.\d+\.\d+)$/.exec(l.trim()) || [])[1])
+    .filter(Boolean);
+  return etiquetas.reduce((mejor, t) => (!mejor || esMasNueva(t.slice(1), mejor.slice(1)) ? t : mejor), null);
+}
+
 // La versión publicada es la última **release** del kit (etiqueta `vX.Y.Z`), nunca lo que haya en `main`:
 // así a los cursos solo les llega lo que se ha decidido publicar, y se puede volver a una versión concreta.
-function etiquetaPublicada(repo, ejecutar = gh) {
+// `gh` primero (distingue de verdad una release de un simple tag); sin él, o si falla, `git ls-remote`.
+function etiquetaPublicada(repo, ejecutar = gh, ejecutarG = ejecutarGit) {
   const r = consultaEtiqueta(repo, ejecutar);
-  return esEtiqueta(r) ? r.salida : null;
+  return esEtiqueta(r) ? r.salida : etiquetaViaGit(repo, ejecutarG);
 }
 
 // Sin sesión de `gh` o sin red, la consulta a la API falla igual que si `gh` no pudiera ni lanzarse
 // (sandbox) o no estuviera instalado: `motivo` (de proceso.js) distingue esos dos últimos casos, que no
 // son "sin sesión ni release" sino del entorno de quien lo ejecuta.
 // Sin `etiqueta`, la última publicada (para --ver: su CHANGELOG trae las novedades de todas las intermedias).
-function descargar(repo, etiquetaPedida = null, ejecutar = gh) {
+function descargar(repo, etiquetaPedida = null, ejecutar = gh, ejecutarG = ejecutarGit) {
   let etiqueta = etiquetaPedida;
+  let consulta = null;
   if (!etiqueta) {
-    const consulta = consultaEtiqueta(repo, ejecutar);
-    if (!esEtiqueta(consulta)) {
-      const razon = ['permiso', 'no-existe'].includes(consulta.motivo) ? `: ${explicar(consulta)}` : ' (¿sesión de gh iniciada? ¿hay alguna release?)';
+    consulta = consultaEtiqueta(repo, ejecutar);
+    etiqueta = esEtiqueta(consulta) ? consulta.salida : etiquetaViaGit(repo, ejecutarG);
+    if (!etiqueta) {
+      const razon = consulta && ['permiso', 'no-existe'].includes(consulta.motivo) ? `: ${explicar(consulta)}` : ' (¿sesión de gh iniciada, o hay red para git? ¿hay alguna release?)';
       throw new Error(`No se pudo saber cuál es la última versión publicada del kit${razon}`);
     }
-    etiqueta = consulta.salida;
   }
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'profesor-kit-'));
   const r = ejecutar(['repo', 'clone', repo, tmp, '--', '--depth', '1', '--branch', etiqueta, '-q']);
-  if (!r.ok) throw new Error(`No se pudo descargar el kit ${etiqueta}: ${explicar(r)}`);
-  return tmp;
+  if (r.ok) return tmp;
+  // Sin `gh` (o si su clon falla), un `git clone` normal al repo público: mismo resultado, sin sesión ninguna.
+  fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 3 });
+  const tmpGit = fs.mkdtempSync(path.join(os.tmpdir(), 'profesor-kit-'));
+  const rg = ejecutarG(['clone', '--depth', '1', '--branch', etiqueta, '-q', urlPublica(repo), tmpGit]);
+  if (!rg.ok) { fs.rmSync(tmpGit, { recursive: true, force: true, maxRetries: 3 }); throw new Error(`No se pudo descargar el kit ${etiqueta}: ${explicar(rg)}`); }
+  return tmpGit;
 }
 
 // Todas las releases publicadas (sin borradores ni versiones de prueba). null si no se puede saber.
-function listarReleases(repo, ejecutar = gh) {
+function listarReleases(repo, ejecutar = gh, ejecutarG = ejecutarGit) {
   const r = ejecutar(['api', `repos/${repo}/releases?per_page=100`, '--paginate', '--jq', '.[] | select((.draft or .prerelease) | not) | .tag_name']);
-  if (!r.ok) return null;
-  return r.salida.split(/\r?\n/).map(t => t.trim()).filter(Boolean);
+  if (r.ok) return r.salida.split(/\r?\n/).map(t => t.trim()).filter(Boolean);
+  // Sin `gh`: las etiquetas del remoto público (issue #50). git no sabe qué release es borrador o preliminar,
+  // así que se toman todas las que tengan forma de versión (ver etiquetaViaGit).
+  const rg = ejecutarG(['ls-remote', '--tags', '--refs', urlPublica(repo)]);
+  if (!rg.ok) return null;
+  return rg.stdout.split(/\r?\n/).map(l => (/refs\/tags\/(v\d+\.\d+\.\d+)$/.exec(l.trim()) || [])[1]).filter(Boolean);
 }
 
 // Las releases posteriores a la instalada, de la más vieja a la más nueva: los pasos que faltan.
@@ -229,8 +265,8 @@ function novedades(origen, versionActual) {
 }
 
 // Consulta ligera (sin clonar): ¿qué versión hay publicada? Devuelve null si no hay red, sesión ni releases.
-function versionPublicada(repo, ejecutar = gh) {
-  const etiqueta = etiquetaPublicada(repo, ejecutar);
+function versionPublicada(repo, ejecutar = gh, ejecutarG = ejecutarGit) {
+  const etiqueta = etiquetaPublicada(repo, ejecutar, ejecutarG);
   return etiqueta ? etiqueta.slice(1) : null;
 }
 
@@ -309,6 +345,6 @@ function cli(args, raiz, descargarKit = descargar, consultar = versionPublicada,
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'actualizar.js');
 
 module.exports = {
-  actualizar, restaurar, validarMotor, novedades, comprobarNovedades, fusionarGitignore, etiquetaPublicada, versionPublicada,
+  actualizar, restaurar, validarMotor, novedades, comprobarNovedades, fusionarGitignore, etiquetaPublicada, etiquetaViaGit, versionPublicada,
   descargar, listarReleases, pasosPendientes, cli,
 };

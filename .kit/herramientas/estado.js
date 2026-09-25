@@ -98,7 +98,58 @@ function senalDeAvisos(raiz) {
   }
 }
 
-function calcularEstado(raiz) {
+// El curso vive en más de un sitio (el Mac del alumno, un asistente en la nube: plan 0.27, B). Antes de
+// trabajar sobre uno atrasado (lo que crea el lío), un `git fetch` rápido dice si el otro sitio ha guardado
+// algo que aquí no se ha traído, o si aquí hay guardados que allí no se han subido. Nunca bloquea: sin
+// remoto, sin red o si el fetch tarda más de `timeoutMs`, no dice nada (ver `guardar.js --traer`, que sí
+// hace el trabajo de traer y mezclar). `ejecutarFetch` se inyecta en los tests: así no hay que esperar de
+// verdad a un timeout de red para probar "sin red" o "tarda demasiado".
+const TIMEOUT_FETCH_MS = 8000;
+// El repo del kit, para no ofrecer nunca "sincronizar" con él (revisión de la 0.27, media 7). Un curso a medio
+// reparar puede no tener motor.json: entonces no hay con qué comparar, y no bloquea la señal por eso.
+function repoDelKit(raiz) {
+  try { return v.leerMotor(raiz).repo; } catch { return null; }
+}
+function senalSincronizacion(raiz, { ejecutarFetch = args => g.intentarGitRed(raiz, args, { timeoutMs: TIMEOUT_FETCH_MS }) } = {}) {
+  try {
+    if (!g.esRepo(raiz)) return null;
+    const url = g.urlOrigen(raiz);
+    if (!url || g.esUrlDelKit(url, repoDelKit(raiz))) return null;
+    const rRama = g.intentarGit(raiz, ['rev-parse', '--abbrev-ref', 'HEAD']);
+    if (!rRama.ok) return null;
+    const rama = rRama.stdout.trim();
+    // 'HEAD' es detached (no debería pasar en un curso normal); una copia de preparación en segundo plano
+    // (rama `preparacion/<id>`) es de preparar.js --juntar, no de esto.
+    if (!rama || rama === 'HEAD' || rama.startsWith('preparacion/')) return null;
+
+    const fetch = ejecutarFetch(['fetch', '-q', 'origin', rama]);
+    if (!fetch.ok) return null;   // sin red, timeout o la rama todavía no existe en el remoto: no se dice nada
+    if (!g.intentarGit(raiz, ['rev-parse', '--verify', `refs/remotes/origin/${rama}`]).ok) return null;
+
+    const contar = rango => { const n = parseInt(g.intentarGit(raiz, ['rev-list', '--count', rango]).stdout.trim(), 10); return Number.isFinite(n) ? n : 0; };
+    const detras = contar(`HEAD..origin/${rama}`);
+    // "Sin subir" solo importa si el curso de verdad quiere publicar (revisión, baja): sin subir_a_github, unos
+    // commits locales sin subir no son ningún problema que resolver, así que no cuentan para la señal.
+    const publica = v.leerAjustes(raiz).subir_a_github === true;
+    const delante = publica ? contar(`origin/${rama}..HEAD`) : 0;
+    if (!detras && !delante) return null;
+
+    const sinGuardar = g.hayCambios(raiz) ? ' (además, hay cambios sin guardar aquí)' : '';
+    if (detras && delante) {
+      return { tipo: 'curso-sin-sincronizar', detalle: `el curso y GitHub han cambiado cada uno por su lado (${delante} tuyo${delante === 1 ? '' : 's'} sin subir, `
+        + `${detras} desde otro sitio sin traer): tráelos con node .kit/herramientas/guardar.js --traer${sinGuardar}` };
+    }
+    if (detras) {
+      return { tipo: 'curso-sin-sincronizar', detalle: `hay cambios hechos desde otro sitio (${detras} guardado${detras === 1 ? '' : 's'}): `
+        + `tráelos antes de seguir con node .kit/herramientas/guardar.js --traer${sinGuardar}` };
+    }
+    return { tipo: 'curso-sin-sincronizar', detalle: `hay ${delante} guardado${delante === 1 ? '' : 's'} sin subir a GitHub${sinGuardar}` };
+  } catch {
+    return null;
+  }
+}
+
+function calcularEstado(raiz, { ejecutarFetch } = {}) {
   const preparaciones = leerPreparaciones(raiz);
   // Lo que ya está en una preparación en marcha o terminada (sin juntar todavía) no es material nuevo: si lo
   // fuera, el profesor ofrecería prepararlo otra vez (visto en la prueba real de la 0.22).
@@ -119,7 +170,9 @@ function calcularEstado(raiz) {
     enRepaso,
     preparaciones,
     caso,
-    senales: [...perfil.senales(raiz), senalDeAvisos(raiz)].filter(Boolean),
+    // La sincronización va la primera (AGENTS.md, plan 0.27): trabajar sobre un curso atrasado es lo que crea
+    // el lío, antes que cualquier otra cosa que ver con este alumno.
+    senales: [senalSincronizacion(raiz, { ejecutarFetch }), ...perfil.senales(raiz), senalDeAvisos(raiz)].filter(Boolean),
   };
 }
 
@@ -154,4 +207,4 @@ function cli(args, raizPorDefecto) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'estado.js');
 
-module.exports = { materialNuevo, pidVivo, leerPreparaciones, calcularEstado, imprimir, cli, senalAvisos };
+module.exports = { materialNuevo, pidVivo, leerPreparaciones, calcularEstado, imprimir, cli, senalAvisos, senalSincronizacion };

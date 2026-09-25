@@ -1,48 +1,47 @@
 ---
 tipo: concepto
-bloques: [1.1 El dinero y sus funciones]
+bloques: [modulo-01]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
-requiere: []
-alias: [tres funciones del dinero]
-tags: [dinero, fundamentos]
+requiere: [doble-coincidencia-de-deseos]
+alias: [medio-de-cambio, unidad-de-cuenta, deposito-de-valor, tres-funciones-del-dinero]
+tags: [dinero]
 ---
 # Funciones del dinero
 
-> **En una frase:** el dinero hace tres trabajos a la vez: sirve para pagar (medio de cambio), para poner precio a todo (unidad de cuenta) y para guardar valor hasta mañana (depósito de valor).
+> **En una frase:** El dinero sirve para tres cosas a la vez: pagar (medio de cambio), poner precio a todo (unidad de cuenta) y guardar valor para más adelante (depósito de valor).
 
 ## El problema
 
-Antes del dinero se hacía **trueque**: dos gallinas por un saco de grano. Para que funcione, los dos tienen
-que querer justo lo que el otro ofrece y en el mismo momento (la "doble coincidencia de deseos"). Si el pastor
-quiere grano pero el agricultor no quiere carne esa semana, no hay trato.
+Sin dinero, cada intercambio depende de la [[doble-coincidencia-de-deseos]]. Hace falta algo que todo el mundo acepte, que sirva para comparar cosas distintas y que se pueda guardar.
 
 ## El ejemplo
 
-Un pescador vende una caja de pescado y cobra 40,00 €.
+Un pescador vende una caja de pescado por 40,00 €.
 
-- Le pagan en dinero y no en lo que el comprador tenga por casa: **medio de cambio**.
-- Sabe que la caja vale 40,00 € sin tener que decir a cuántas gallinas equivale: **unidad de cuenta**. Así también se comparan directamente un café de 1,50 € y un corte de pelo de 12,00 €.
-- Guarda parte de esos 40,00 € para el mes que no salga a pescar: **depósito de valor**.
+- Cobra en dinero y el comprador no tiene que querer nada suyo: **medio de cambio**.
+- Sabe que la caja vale 40,00 € sin decir a cuántas gallinas equivale. Y un café a 1,50 € se compara directamente con un corte de pelo a 12,00 €: **unidad de cuenta**.
+- Guarda parte de esos 40,00 € para el mes en que no salga a pescar: **depósito de valor**.
 
-| Función | Qué resuelve | En el ejemplo |
+## El nombre
+
+| Función | Qué permite | En el ejemplo |
 |---|---|---|
-| Medio de cambio | Que el vendedor no tenga que querer lo que ofreces | Cobra en dinero |
-| Unidad de cuenta | Comparar precios con la misma vara | La caja vale 40,00 € |
-| Depósito de valor | Poder gastar más adelante | Guarda para el mes sin pesca |
+| **Medio de cambio** | Pagar cualquier cosa sin que el vendedor quiera lo tuyo | Cobrar la caja en dinero |
+| **Unidad de cuenta** | Comparar precios con la misma vara | 1,50 € frente a 12,00 € |
+| **Depósito de valor** | Guardar hoy, usar mañana | Ahorrar para el mes sin pesca |
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundir **unidad de cuenta** con **medio de cambio**. Poner precio a algo ("vale 40,00 €") no es lo mismo que pagar con dinero: se puede fijar un precio sin que nadie pague nada todavía.
-
-El curso no trae un error típico para este concepto; este es una propuesta del profesor.
+> Quedarse con "el dinero sirve para comprar cosas" y no distinguir las otras dos. Comprar es solo el **medio de cambio**. Poner precio y guardar son funciones distintas, y la tercera es la que puede fallar (ver [[inflacion]]).
 
 ## Relacionados
 
-- [[inflacion]] — es lo que hace fallar al depósito de valor.
-- [[liquidez]] — lo fácil que es usar algo como medio de cambio ya mismo.
+- [[doble-coincidencia-de-deseos]] — el problema que resuelven las tres funciones
+- [[inflacion]] — cuando el depósito de valor falla
+- [[liquidez]] — lo fácil que es usar algo como medio de cambio
 
 ## Historial
 
-- **01-01-01-el-dinero-y-sus-funciones** · primera vez
+- **01-01-01** · primera vez

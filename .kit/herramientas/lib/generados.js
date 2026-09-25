@@ -16,6 +16,11 @@ const PENDIENTES = [
   ['falta-info', /FALTA INFO:\s*(.*)/],
   ['todo', /\*\*TODO:\*\*\s*(.*)|^TODO:\s*(.*)/],
 ];
+// Ficheros que escribe el propio kit enteros (mismo criterio que `generadoEntero()` en preparar.js, que no
+// se importa aquí para no crear un ciclo: preparar.js → guardar.js → generados.js). Su contenido es una
+// copia de lo que ya se lee como fuente en la nota original (un concepto, una sesión...): si también se
+// miran aquí, cada TODO/FALTA INFO del original sale dos veces (issue #51).
+const GENERADOS_ENTEROS = new Set(v.GENERADOS_ENTEROS);
 function bloqueDe(raiz, nota, texto) {
   const fm = v.leerFrontmatter(texto) || {};
   if (fm.bloque) return String(fm.bloque);
@@ -23,16 +28,53 @@ function bloqueDe(raiz, nota, texto) {
   if (fm.sesion && existe(raiz, `sesiones/${fm.sesion}.md`)) return bloqueDe(raiz, `sesiones/${fm.sesion}.md`, leer(raiz, `sesiones/${fm.sesion}.md`));
   return null;
 }
+// Corta en la siguiente barra sin escapar: dentro de una fila de tabla, lo que sigue de ahí en adelante son
+// las demás celdas, no parte de la marca. Una barra escapada (`\|`, la de un alias de enlace) no cuenta.
+const hastaBarraSinEscapar = texto => {
+  const m = /(?<!\\)\|/.exec(texto);
+  return m ? texto.slice(0, m.index) : texto;
+};
+// Un `)` o un `**` sueltos al final: se abrieron antes de la marca, en una parte de la celda que no se
+// capturó. Se quitan, de fuera hacia dentro, hasta que no sobre ninguno.
+function limpiarSueltos(texto) {
+  let t = texto.trim();
+  for (;;) {
+    const antes = t;
+    t = t.replace(/\*\*\s*$/, '').trim();
+    const abiertos = (t.match(/\(/g) || []).length;
+    const cerrados = (t.match(/\)/g) || []).length;
+    if (cerrados > abiertos && t.endsWith(')')) t = t.slice(0, -1).trim();
+    if (t === antes) return t;
+  }
+}
+// Las celdas de una fila de tabla, respetando las barras escapadas de los enlaces con alias (`[[a\|b]]`).
+function celdasDeFila(linea) {
+  const partes = linea.split(/(?<!\\)\|/).map(c => c.trim());
+  if (partes[0] === '') partes.shift();
+  if (partes.length && partes[partes.length - 1] === '') partes.pop();
+  return partes;
+}
 function pendientes(raiz) {
   const lista = [];
   const marcador = new RegExp(escaparRegex(v.leerMarcador(raiz)) + '\\s*(.*)');
   for (const nota of v.listarNotas(raiz, { conInbox: true })) {
+    if (GENERADOS_ENTEROS.has(nota)) continue;
     const texto = leer(raiz, nota);
     const bloque = bloqueDe(raiz, nota, texto);
     v.sinCodigo(texto).split(/\r?\n/).forEach((linea, i) => {
       for (const [tipo, regex] of [...PENDIENTES, ['duda', marcador]]) {
         const m = regex.exec(linea);
-        if (m) { lista.push({ bloque, fichero: nota, linea: i + 1, tipo, texto: (m[1] || m[2] || '').replace(/^[*_\s]+|[*_\s]+$/g, '') }); break; }
+        if (!m) continue;
+        let cuerpo = (m[1] || m[2] || '').replace(/^[*_\s]+|[*_\s]+$/g, '');
+        // Una marca dentro de una fila de tabla (`| ... | FALTA INFO: ... |`) pierde de qué va sin su
+        // primera celda, y arrastra el resto de la fila si no se corta en la barra.
+        if ((tipo === 'falta-info' || tipo === 'todo') && /^\s*\|/.test(linea)) {
+          cuerpo = limpiarSueltos(hastaBarraSinEscapar(cuerpo));
+          const contexto = (celdasDeFila(linea)[0] || '').replace(/\\\|/g, '|');
+          if (contexto && !regex.test(contexto)) cuerpo = `${contexto}: ${cuerpo}`;   // la marca en la 1.ª celda: sin contexto
+        }
+        lista.push({ bloque, fichero: nota, linea: i + 1, tipo, texto: cuerpo });
+        break;
       }
     });
   }

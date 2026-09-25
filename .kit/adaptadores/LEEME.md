@@ -32,4 +32,15 @@ con tu sí, lo propone al kit con una issue `[adaptador] <llm>`, que incluye su 
 has comparado modelos con ese asistente, no hace falta que lo hagas para proponer el adaptador: deja "— (sin
 comparar)" y ábrelo igual.
 
+**Sin `gh`, no es un fallo de tu entorno ni de este adaptador (issue #50).** Un asistente en la nube (Claude
+Code en claude.ai/code, por ejemplo) trae git y red, pero no la CLI `gh`: `actualizar.js` y `guardar.js` caen
+solos a git y a la API pública de GitHub sin credenciales, así que el kit funciona igual. Solo se pierde el
+envío de feedback al kit con `issue.js`.
+
+**Claude Code en la nube, por verificar de verdad:** ese entorno habla con GitHub a través de un proxy local
+del propio contenedor (no directo), y solo deja subir a la rama de la sesión. El kit ya reconoce ese proxy
+para comprobar la privacidad del repo, pero un `push` y un `--traer` reales ahí, y trabajar en una rama
+`claude/…` en vez de en `main`, no se han probado todavía en ese entorno concreto — no lo des por bueno sin
+comprobarlo.
+
 Estas tablas y los ficheros `<llm>.json` de esta carpeta dicen lo mismo: un test del kit falla si no coinciden.

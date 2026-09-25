@@ -49,6 +49,20 @@ fichero de proyecto. **No des por hecho que tu asistente hace lo mismo.** Codex 
   kit ni de tu adaptador — es una capa aparte, y quien esté delante tiene que autorizar la ejecución
   fuera de ese entorno restringido cuando lo pida (`lib/arranque.js` y las herramientas que lanzan `git`
   o `gh` ya distinguen este caso de un fallo real: no dicen "abre una issue").
+- **Tu entorno puede no traer `gh` (issue #50).** Un asistente en la nube (por ejemplo, Claude Code en
+  claude.ai/code) llega con git y con red, pero sin la CLI `gh`, y no es cosa tuya ni del alumno instalarla
+  ahí. No es un fallo del kit ni de tu adaptador: `actualizar.js` y `guardar.js` ya caen solos a git y a la
+  API pública de GitHub sin credenciales cuando `gh` falta o falla, y `diagnostico.js` lo trata como un
+  aviso, no como algo que bloquee la instalación. Lo único que se pierde sin `gh` es enviar feedback al kit
+  con `issue.js` (`prepararIssue`/`enviarIssue` ya lo dicen y dejan el texto listo para pegarlo a mano).
+  **Por verificar en la nube de verdad:** Claude Code en claude.ai/code no habla con GitHub directo, sino con
+  un proxy local del propio contenedor (`origin` con pinta de `http://usuario@127.0.0.1:<puerto>/git/<owner>/
+  <repo>`), que solo deja subir a la rama de esa sesión. `lib/git.js` reconoce ese formato para la comprobación
+  de privacidad (la API pública se consulta igual, con el `owner/repo` de la ruta) y `lib/red.js` pasa
+  `NODE_USE_ENV_PROXY` al proceso que hace la petición HTTP, para que respete el proxy si el entorno lo exige.
+  Lo que no se ha probado de verdad ahí (nadie lo ha corrido en ese entorno todavía): que un `push`/`--traer`
+  reales pasen por ese proxy sin más ajuste, y qué pasa si el curso se trabaja en una rama `claude/…` en vez de
+  en `main`. Compruébalo antes de darlo por bueno, y dilo en la issue del adaptador si algo no encaja.
 
 Vive en dos sitios posibles, y las herramientas del kit (`instalar-skills.js`, `crear-atajo.js`,
 `diagnostico.js`) miran primero el segundo:

@@ -9,6 +9,10 @@ const FICHEROS_VIVOS = ['progreso.md', 'mapa-del-curso.md'];
 // Generados por guardar.js que enlazan a otras notas: se comprueban sus enlaces, pero no se exigen ni se reparan
 // (antes de que exista el primer guardado, un enlace a uno de ellos no es un enlace roto).
 const GENERADOS_CON_ENLACES = ['inicio.md', 'formulario.md'];
+// Ficheros de estudio/ que guardar.js escribe enteros en cada guardado. Una sola lista para todo el kit: no se
+// leen como fuente de pendientes (su contenido es copia de otras notas, #51), se regeneran al mezclar y se pueden
+// limpiar tras un merge fallido (lib/mezcla.js, lib/git.js).
+const GENERADOS_ENTEROS = ['inicio.md', 'pendientes.md', 'formulario.md', 'auditoria-del-material.md', 'mi-perfil.md', 'ejercicios/_index.md'];
 // Todo lo del alumno vive en una sola carpeta: es la que abre en Obsidian, y así no ve ni toca el motor.
 const CARPETA_ALUMNO = 'estudio';
 // Carpetas del alumno que no son notas: 'inbox' es su material en bruto y 'repasos' es HTML generado.
@@ -260,7 +264,8 @@ function leerVersion(dir) {
 
 module.exports = {
   revisarAjustes,
-  CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, GENERADOS_CON_ENLACES, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
+  CARPETA_ALUMNO, OTRAS_CARPETAS_ALUMNO, GUIA_DE_USO, CARPETAS_NOTAS, FICHEROS_VIVOS, GENERADOS_CON_ENLACES,
+  GENERADOS_ENTEROS, RUTAS_PROTEGIDAS, AJUSTES_POR_DEFECTO,
   aPosix, baseAlumno,
   recorrer, listarNotas, listarConceptos, sinCodigo, leerFrontmatter, revisarPropiedades, PROPIEDADES, esCierto, numero,
   leerAjustes, escribirAjustes, leerMarcador, leerMotor, leerVersion, leerAdaptador, leerAdaptadorDelCurso, piezasAusentes,

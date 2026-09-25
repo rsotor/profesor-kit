@@ -1,17 +1,17 @@
 # Disparadores · claude-code
 
 - **Fecha:** 2026-09-25
-- **Versión del kit:** 0.25.0
+- **Versión del kit:** 0.26.0
 - **Modelo:** sonnet
 
-**76 de 76** frases eligen lo esperado.
+**75 de 76** frases eligen lo esperado.
 
 | Esperada | Aciertos |
 |---|---|
 | sesion | 4 / 4 |
 | sesion o ninguna | 3 / 3 |
 | ninguna | 21 / 21 |
-| dudas | 10 / 10 |
+| dudas | 9 / 10 |
 | ejercicio | 5 / 5 |
 | repaso | 5 / 5 |
 | examen | 15 / 15 |
@@ -23,7 +23,7 @@
 
 ## Fallos
 
-Ninguno.
+- "¿qué es la liquidez?" → esperada dudas, eligió `ninguna`
 
 ## Guías
 

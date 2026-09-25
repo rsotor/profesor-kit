@@ -64,8 +64,9 @@ Todas de opción múltiple, con las opciones de `config/examenes.json` (`opcione
    (`<unidad>` es un prefijo, como `01`; sin él, todo el curso). Su segunda línea es un JSON
    `{ "falladas": […], "centroUsadas": […] }`. Reutiliza `falladas` tal cual: cada entrada trae `enunciado`
    (con sus opciones, del propio `.md`), `correctas`, `explicacion`, `concepto` y `examen` (de dónde sale).
-   En la clave del examen nuevo, marca cada una con `origen: "examen anterior"` y `de: "<examen>"` (apartado
-   4), para poder trazarla. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
+   En la clave del examen nuevo, marca cada una con `origen: "examen anterior"` y `de: "<examen>, p.<numero>"`,
+   con `examen` y `numero` tal cual los da el JSON (apartado 4), para poder trazarla; si la fallada trae
+   `origen: "centro"`, se queda `"centro"` (cuenta para el tope de la mitad) y lleva también su `de`. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
 2. **Las del examen de referencia del centro que todavía no han salido**, si el alumno trajo uno: `falladas`
    ya trae marcadas `origen: "centro"` si las falló; `centroUsadas` (del mismo JSON) trae **todas** las que ya
    salieron, las haya fallado o no — prioriza las que no estén en ninguna de las dos. Ver "Examen de
@@ -154,7 +155,7 @@ nace el examen:
 Una entrada de `preguntas` por pregunta, **en el mismo orden**: `correctas` (la letra o letras que valen,
 minúscula), `explicacion` (por qué la correcta es correcta; si viene de internet, aquí la fuente externa),
 `concepto` (el slug de `estudio/conceptos/`, o `null`). Si está reutilizada (apartado 3), añade
-`origen: "examen anterior"` con `de: "<ruta del examen>"`, o `origen: "centro"` si es literal del test de
+`origen: "examen anterior"` con `de: "<ruta del examen>, p.<n>"`, o `origen: "centro"` si es literal del test de
 referencia; sin ninguna, es nueva.
 
 **En el final**, la clave lleva además `"escalones"`: el array completo de `tipos.final.escalones` tal como
@@ -236,10 +237,6 @@ sin insistir: "¿tienes algún examen de otros años o el modelo de la certifica
 al oficial". Si no tiene ninguno, sigue con el formato por defecto de `config/examenes.json` y dile que,
 sin una referencia real, no puedes garantizar que se parezca al oficial.
 
-## Al cerrar, una línea más
-
-Cierra con `Del kit: nada` o `Del kit: <qué>`.
-
 ## Después de corregir: el alumno también corrige al profesor (si quiere)
 
 Salvo en "lo que me falta" (muestra pequeña): al terminar, **ofrece** sin insistir dos preguntas en llano
@@ -247,6 +244,11 @@ sobre cómo le has explicado este bloque: "¿qué te ha ayudado más?" y "¿qué
 saltar**, y si la salta no se repite en ese examen. Lo que conteste va a `config/profesor.md` →
 **Historial de cambios**, con la prueba (`examen: <fichero>`); si contradice una preferencia, **propón** el
 cambio y aplícalo solo con su sí.
+
+## Al cerrar, una línea más
+
+Después de las dos preguntas (o si las salta), cierra con `Del kit: nada` o `Del kit: <qué>` (ver "Feedback
+al kit" en `AGENTS.md`).
 
 ## Exámenes de antes de esta versión
 

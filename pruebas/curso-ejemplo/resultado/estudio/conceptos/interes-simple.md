@@ -1,56 +1,56 @@
 ---
 tipo: concepto
-bloques: [2.1 Interés simple y compuesto]
+bloques: [modulo-02]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
-requiere: [capital-y-tipo-de-interes]
+requiere: [tipo-de-interes]
 alias: []
-tags: [interes, ahorro]
-ejercicio: 02-01-01-interes-simple-y-compuesto
+tags: [interes]
+ejercicio: 02-01-01-simple-frente-a-compuesto
 ---
 # Interés simple
 
-> **En una frase:** con interés simple, los intereses se calculan siempre sobre el capital inicial, periodo a periodo, y no se reinvierten.
+> **En una frase:** Los intereses se calculan siempre sobre el capital inicial, periodo a periodo, y no se reinvierten.
 
 ## El problema
 
-Quieres saber cuánto te darán de más por dejar un dinero varios años. Lo más sencillo es cobrar cada año lo mismo:
-un porcentaje del dinero que pusiste al principio.
+Quieres saber cuánto te darán por un depósito. Lo más sencillo es cobrar lo mismo cada año: los intereses de cada periodo salen del dinero con el que empezaste, sin darle vueltas a lo ya cobrado.
 
 ## El ejemplo
 
-Depositas 1.000,00 € a un interés simple del 5 % anual durante 3 años.
+**1.000,00 €** a un interés simple del **5 % anual**, durante **3 años**.
 
-- Cada año cobras 5 % anual de 1.000,00 €: **50,00 €** (siempre los mismos).
-- En 3 años: 3 × 50,00 € = **150,00 €** de intereses.
-- Capital final: 1.000,00 € + 150,00 € = **1.150,00 €**.
+- Cada año cobras 1.000,00 × 0,05 = 50,00 €.
+- En 3 años: 50,00 × 3 = **150,00 €**.
+- Capital final: 1.000,00 + 150,00 = **1.150,00 €**.
 
-Crece en línea recta: cada año, los mismos 50,00 €.
+Los 50,00 € del primer año no generan nada el segundo: el cálculo siempre parte de 1.000,00 €.
 
 ## La fórmula
 
-$$I = C \cdot i \cdot t \qquad C_f = C + I$$
+$$ I = C \cdot i \cdot t \qquad C_f = C + I $$
 
-- $C$: el capital inicial (1.000,00 €).
-- $i$: el tipo de interés en tanto por uno (5 % anual es 0,05).
-- $t$: el tiempo, **en el mismo periodo que $i$** (si $i$ es anual, $t$ en años).
-- $I$: los intereses. $C_f$: el capital final.
+- `C`: capital inicial.
+- `i`: tipo de interés en tanto por uno (5 % anual = 0,05).
+- `t`: el tiempo, **en el mismo periodo que `i`** (si `i` es anual, `t` va en años).
+- `I`: los intereses. `C_f`: el capital final.
 
 ## El error típico
 
-Mezclar periodos: usar un tipo anual con un tiempo en meses. Si $i$ es anual, $t$ va en años (6 meses son 0,5).
+> [!info] Ampliación fuera de los apuntes
+> Mezclar periodos: usar un tipo anual con el tiempo en meses. Con un 5 % anual y 18 meses, `t` es 1,5 (años), no 18.
 
 ## Practícalo
 
-→ **[Simple frente a compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto.html)**
+→ **[Simple frente a compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-frente-a-compuesto.md)**
 
-Aquí verás el lado simple: la línea recta a la que el compuesto acaba adelantando.
+Desde aquí: mira qué le pasa al interés simple cuando pasan muchos años. Crece siempre lo mismo, en línea recta.
 
 ## Relacionados
 
-- [[capital-y-tipo-de-interes]] — de dónde salen $C$ e $i$.
-- [[interes-compuesto]] — el mismo capital y el mismo tipo, pero reinvirtiendo los intereses.
+- [[tipo-de-interes]] — de dónde salen `C` e `i`
+- [[interes-compuesto]] — el mismo caso, reinvirtiendo los intereses
 
 ## Historial
 
-- **02-01-01-interes-simple-y-compuesto** · primera vez
+- **02-01-01** · primera vez

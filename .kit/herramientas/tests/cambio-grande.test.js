@@ -96,3 +96,12 @@ test('evaluar: el resumen tiene que decir que todo salió bien, con la correcci�
   assert.equal(con('Resultado: 15/15 pasos bien · corrección 0/0 · commit abc1234').ok, false, 'sin corrección');
   assert.equal(con('Resultado: 15/15 pasos bien · corrección 6/6 · commit abc1234').ok, true);
 });
+
+// prueba-real.js --desde (repetir desde un paso, con la copia del anterior): aunque salga entera bien, un
+// resumen reanudado nunca cuenta como prueba real completa para el PR — markdownResumen mete "(desde ...)" a
+// propósito, justo para que esta línea deje de encajar con el formato que exige la barrera.
+test('evaluar: un resumen reanudado con --desde no cuenta, aunque todos los pasos y la corrección salgan bien', () => {
+  const reanudado = '# Prueba real\n\nResultado: 15/15 pasos bien (desde "/dudas") · corrección 6/6 · commit abc1234\n';
+  const r = evaluar(['AGENTS.md', RESUMEN], reanudado);
+  assert.deepEqual([r.ok, r.completo], [false, false]);
+});

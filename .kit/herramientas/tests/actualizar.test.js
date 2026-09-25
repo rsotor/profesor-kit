@@ -276,13 +276,56 @@ test('la versión publicada es la última release (etiqueta vX.Y.Z), y se descar
   assert.deepEqual(clon.slice(0, 3), ['repo', 'clone', 'rsotor/profesor-kit']);
   assert.ok(clon.includes('--branch') && clon[clon.indexOf('--branch') + 1] === 'v0.20.0');
 
-  assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: false, salida: 'HTTP 404' }))), null, 'sin release o sin red: null');
-  assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: true, salida: 'main' }))), null, 'solo vale una etiqueta de versión');
-  assert.throws(() => descargar('x/y', null, gh(() => ({ ok: false, salida: '' }))), /última versión publicada/);
+  const sinGit = () => ({ ok: false, salida: '', stdout: '' });   // git ls-remote también sin nada (simulado: nunca red real)
+  assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: false, salida: 'HTTP 404' })), sinGit), null, 'sin release, sin gh ni git: null');
+  assert.equal(etiquetaPublicada('x/y', gh(() => ({ ok: true, salida: 'main' })), sinGit), null, 'solo vale una etiqueta de versión');
+  assert.throws(() => descargar('x/y', null, gh(() => ({ ok: false, salida: '' })), sinGit), /última versión publicada/);
   const pedida = descargar('rsotor/profesor-kit', 'v0.19.0', conRelease);
   fs.rmSync(pedida, { recursive: true, force: true });
   const ultimo = llamadas[llamadas.length - 1];
   assert.equal(ultimo[ultimo.indexOf('--branch') + 1], 'v0.19.0', 'con etiqueta, descarga esa y no pregunta cuál es la última');
+});
+
+// issue #50: un entorno sin `gh` (Claude Code en la nube) pero con git y red al repo público del kit.
+test('sin gh (ENOENT o cualquier fallo), la etiqueta, el listado y la descarga salen de git contra el repo público', () => {
+  const { etiquetaPublicada, etiquetaViaGit, listarReleases, descargar } = require('../actualizar');
+  const sinGh = () => ({ ok: false, motivo: 'no-existe', salida: 'no encuentro "gh"' });
+
+  // Un remoto de mentira, con etiquetas de verdad en COMMITS DISTINTOS (no las tres en el mismo HEAD: si no,
+  // "baja exactamente la pedida" no probaría nada — v0.9.0 y v0.10.0 tendrían el mismo contenido por accidente).
+  // ejecutarG lo usa en vez de "https://github.com/<repo>.git" para no tocar la red real.
+  const remoto = temporal('kit-releases-');
+  git(remoto, 'init', '-q', '--bare', '-b', 'main');
+  const trabajo = cursoTemporal({ 'AGENTS.md': 'v0.2.0' });
+  iniciarGit(trabajo);
+  git(trabajo, 'remote', 'add', 'origin', remoto);
+  git(trabajo, 'push', '-q', 'origin', 'HEAD:main');
+  git(trabajo, 'tag', 'v0.2.0');
+  escribir(trabajo, { 'AGENTS.md': 'v0.9.0' });
+  git(trabajo, 'commit', '-q', '-am', 'a la 0.9.0');
+  git(trabajo, 'tag', 'v0.9.0');
+  escribir(trabajo, { 'AGENTS.md': 'v0.10.0' });
+  git(trabajo, 'commit', '-q', '-am', 'a la 0.10.0');
+  git(trabajo, 'tag', 'v0.10.0');
+  git(trabajo, 'push', '-q', 'origin', 'main', 'v0.2.0', 'v0.9.0', 'v0.10.0');
+  const ejecutarG = args => require('../lib/proceso').ejecutar('git', args.map(a => (a.startsWith('https://github.com/') ? remoto : a)));
+
+  assert.equal(etiquetaViaGit('cualquiera/repo', ejecutarG), 'v0.10.0', 'la más nueva por número, no por orden alfabético ni por fecha del commit');
+  assert.equal(etiquetaPublicada('cualquiera/repo', sinGh, ejecutarG), 'v0.10.0', 'sin gh, cae a git');
+  assert.deepEqual(listarReleases('cualquiera/repo', sinGh, ejecutarG).sort(), ['v0.10.0', 'v0.2.0', 'v0.9.0']);
+
+  // Sin etiqueta pedida: la última publicada.
+  const ultima = descargar('cualquiera/repo', null, sinGh, ejecutarG);
+  assert.equal(fs.readFileSync(path.join(ultima, 'AGENTS.md'), 'utf8'), 'v0.10.0');
+  fs.rmSync(ultima, { recursive: true, force: true });
+
+  // Con una etiqueta pedida (una vieja, no la última): baja exactamente esa, no la más reciente.
+  const vieja = descargar('cualquiera/repo', 'v0.9.0', sinGh, ejecutarG);
+  assert.equal(fs.readFileSync(path.join(vieja, 'AGENTS.md'), 'utf8'), 'v0.9.0', 'la pedida, no la última');
+  fs.rmSync(vieja, { recursive: true, force: true });
+
+  assert.equal(etiquetaViaGit('sin/tags', () => ({ ok: false, salida: '', stdout: '' })), null);
+  assert.equal(etiquetaViaGit('sin/tags', () => ({ ok: true, salida: '', stdout: '' })), null, 'sin ninguna etiqueta con forma de versión');
 });
 
 test('con un posible secreto en el curso no actualiza ni hace el commit previo: primero hay que quitarlo', () => {

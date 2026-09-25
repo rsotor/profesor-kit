@@ -7,8 +7,12 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { temporal } = require('./ayuda');
-const { ejecutar, markdownResumen, agruparPorRegla, modeloRecomendado } = require('../../../pruebas/prueba-real');
+const { temporal, escribir } = require('./ayuda');
+const {
+  ejecutar, cli, markdownResumen, agruparPorRegla, modeloRecomendado,
+  construirDefinicionDePasos, nombresDePasos, ejecutarListaDePasos, restaurarPasoAnterior, carpetaCopiasMasReciente,
+  repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError,
+} = require('../../../pruebas/prueba-real');
 const p = require('../../../pruebas/lib/pasos');
 
 const RAIZ = path.resolve(__dirname, '..', '..', '..');
@@ -768,4 +772,281 @@ test('verificarReutilizacionFalladas: aunque los dos exámenes tengan la misma h
   const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
   assert.doesNotMatch(r.detalle, /mismo fichero/);
   assert.equal(r.ok, true, r.detalle);
+});
+
+// Prueba real de la 0.27.0: una fallada que era del examen del centro vuelve marcada `origen: "centro"` (cuenta para
+// el tope de la mitad y para rotarlas), no "examen anterior". También vale, si es la misma pregunta.
+test('verificarReutilizacionFalladas: una fallada del centro puede volver marcada "centro" (con o sin "de")', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz, { ajustesClave: { 1: { origen: 'centro', de: undefined }, 2: { origen: 'centro' } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, true, r.detalle);
+});
+
+test('verificarReutilizacionFalladas: marcada "centro" pero con "de" de otro examen, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz, { ajustesClave: { 1: { origen: 'centro', de: 'examenes/otro.md' } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+});
+
+// Prueba real de la 0.27.0 (2.ª): el profesor escribió `de: "<examen>, p.1"`. Nadie lee `de` salvo una persona, y
+// con el número se traza mejor: vale con o sin él, pero el examen tiene que ser el anterior.
+test('verificarReutilizacionFalladas: "de" con el número de pregunta (", p.N") también vale', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz, { ajustesClave: { 1: { de: `${RUTA_ANTERIOR}, p.3` }, 2: { de: `${RUTA_ANTERIOR}, p.1` } } });
+  assert.equal(p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior }).ok, true);
+  examenNuevoOk(raiz, { ajustesClave: { 1: { de: 'examenes/otro.md, p.3' } } });
+  assert.equal(p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior }).ok, false);
+});
+
+// 3.ª prueba real de la 0.27.0: `de` sin el "examenes/" de delante. Lo que importa es que identifique el examen
+// anterior (el mismo fichero), no el texto exacto: con o sin "estudio/" o "examenes/" delante, y con o sin ", p.N".
+test('verificarReutilizacionFalladas: "de" identifica el examen anterior aunque no lleve "examenes/" delante', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  const sinPrefijo = RUTA_ANTERIOR.replace(/^examenes\//, '');
+  examenNuevoOk(raiz, { ajustesClave: { 1: { de: `${sinPrefijo}, p.3` }, 2: { de: `estudio/${RUTA_ANTERIOR}` } } });
+  assert.equal(p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior }).ok, true);
+});
+
+// --- Repetir desde un paso (--desde): la lista de pasos como datos, restaurar y saltar --------------------
+
+const CLASES_EJEMPLO = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'clases.json'), 'utf8'));
+
+test('nombresDePasos: el orden real del curso de ejemplo, con la trampa y sin ella', () => {
+  const conTrampa = nombresDePasos(CLASES_EJEMPLO, false);
+  // La única clase en segundo plano (02-01) se procesa entera con --lanzar/--juntar: no hay un "/sesion 02-01"
+  // aparte (eso lo hace el asistente en segundo plano, no un paso más del ejecutor).
+  assert.deepEqual(conTrampa, [
+    '/sesion 01-01', 'material con órdenes (01-01)', '/sesion 01-02', 'preparar.js --lanzar 02-01',
+    '/dudas', '/ejercicio', '/examen (referencia del centro)', '/examen (generar)', '/examen (contestar)',
+    '/examen (corregir)', '/examen (progreso con prueba)', '/examen (otra vez, reutiliza falladas)',
+    '/examen (corrección con veredictos esperados)', 'preparar.js --juntar 02-01', '/repaso',
+  ]);
+  // --sin-llm nunca pide el paso de la trampa (sin LLM no hay nada que comprobar en la auditoría): un
+  // paso menos, mismo orden en lo demás.
+  const sinTrampa = nombresDePasos(CLASES_EJEMPLO, true);
+  assert.equal(sinTrampa.length, conTrampa.length - 1);
+  assert.ok(!sinTrampa.includes('material con órdenes (01-01)'));
+});
+
+test('construirDefinicionDePasos: cada paso trae su función, sin ejecutarla (ctx vacío no revienta al construir)', () => {
+  const { lista, claseEnSegundoPlano } = construirDefinicionDePasos({ sinLlm: true }, CLASES_EJEMPLO);
+  assert.equal(claseEnSegundoPlano.id, '02-01');
+  assert.equal(lista.length, nombresDePasos(CLASES_EJEMPLO, true).length);
+  assert.equal(lista.every(d => typeof d.fn === 'function'), true);
+});
+
+test('ejecutarListaDePasos: pasos falsos — mantiene los anteriores y ejecuta solo los nuevos, en orden', () => {
+  const llamados = [];
+  const guardados = [];
+  const definicion = [
+    { nombre: 'c', fn: () => { llamados.push('c'); return { ok: true, detalle: 'c ok' }; } },
+    { nombre: 'd', fn: () => { llamados.push('d'); return { ok: false, detalle: 'd mal' }; } },
+  ];
+  const anteriores = [
+    { paso: 'a', ok: true, duracionMs: 1, detalle: 'a ok · de la ejecución anterior' },
+    { paso: 'b', ok: true, duracionMs: 1, detalle: 'b ok · de la ejecución anterior' },
+  ];
+  const pasos = ejecutarListaDePasos(definicion, anteriores, ps => guardados.push(ps.map(x => x.paso)));
+  assert.deepEqual(llamados, ['c', 'd'], 'solo se ejecutan los pasos nuevos, nunca los de antes');
+  assert.deepEqual(pasos.map(x => x.paso), ['a', 'b', 'c', 'd']);
+  assert.equal(pasos[0].detalle, 'a ok · de la ejecución anterior', 'los anteriores se conservan tal cual');
+  assert.equal(pasos[2].ok, true);
+  assert.equal(pasos[3].ok, false);
+  // guardarCopia (aquí, el espía) se llama una vez por paso nuevo, con el acumulado hasta ese momento.
+  assert.deepEqual(guardados, [['a', 'b', 'c'], ['a', 'b', 'c', 'd']]);
+});
+
+test('carpetaCopiasMasReciente: la carpeta prueba-real-pasos-* más reciente de la base indicada; sin ninguna, null', () => {
+  const base = temporal('copias-base-');
+  assert.equal(carpetaCopiasMasReciente(base), null);
+  const vieja = fs.mkdtempSync(path.join(base, 'prueba-real-pasos-'));
+  const nueva = fs.mkdtempSync(path.join(base, 'prueba-real-pasos-'));
+  const antes = new Date(Date.now() - 60000);
+  fs.utimesSync(vieja, antes, antes);
+  fs.mkdirSync(path.join(base, 'otra-cosa-que-no-cuenta'));
+  assert.equal(carpetaCopiasMasReciente(base), nueva);
+});
+
+test('restaurarPasoAnterior: paso desconocido → PasoDesconocidoError con la lista de válidos', () => {
+  assert.throws(() => restaurarPasoAnterior(temporal('copias-'), ['a', 'b'], 'z'), err => {
+    assert.ok(err instanceof PasoDesconocidoError);
+    assert.deepEqual(err.validos, ['a', 'b']);
+    return true;
+  });
+});
+
+test('restaurarPasoAnterior: pedir el primer paso no restaura nada (no hay uno anterior)', () => {
+  const r = restaurarPasoAnterior(temporal('copias-'), ['a', 'b'], 'a');
+  assert.deepEqual(r, { destino: null, pasosAnteriores: [], ctxRestaurado: {}, indiceDesde: 0 });
+});
+
+test('restaurarPasoAnterior: sin carpeta de copias → SinCopiasError', () => {
+  assert.throws(() => restaurarPasoAnterior(null, ['a', 'b'], 'b'), SinCopiasError);
+  assert.throws(() => restaurarPasoAnterior('/no/existe/de/verdad', ['a', 'b'], 'b'), SinCopiasError);
+});
+
+test('restaurarPasoAnterior: la carpeta del paso anterior no está en las copias → SinCopiasError', () => {
+  const copiasDir = temporal('copias-');
+  escribir(copiasDir, { '01-a/curso/marca.txt': 'A', '01-a/estado.json': JSON.stringify({ destino: '/tmp/x', pasos: [] }) });
+  // Pide "c" (índice 2): haría falta la copia "02-b", que no está.
+  assert.throws(() => restaurarPasoAnterior(copiasDir, ['a', 'b', 'c'], 'c'), SinCopiasError);
+});
+
+test('restaurarPasoAnterior: restaura en la misma ruta (reemplaza lo que hubiera) y trae los pasos de antes marcados', () => {
+  const destino = temporal('profesor-kit-prueba-');
+  fs.writeFileSync(path.join(destino, 'lo-que-dejo-el-fallo.txt'), 'basura');
+  const copiasDir = temporal('copias-');
+  escribir(copiasDir, {
+    '01-a/curso/marca.txt': 'A',
+    '01-a/estado.json': JSON.stringify({ destino, pasos: [{ paso: 'a', ok: true, duracionMs: 5, detalle: 'a ok' }], commit: 'abc1234' }),
+    '02-b/curso/marca.txt': 'B',
+    '02-b/estado.json': JSON.stringify({
+      destino, pasos: [
+        { paso: 'a', ok: true, duracionMs: 5, detalle: 'a ok' },
+        { paso: 'b', ok: true, duracionMs: 5, detalle: 'b ok' },
+      ], commit: 'abc1234', ficheroExamen: '/tmp/examen.md', referenciaCentro: true,
+    }),
+  });
+  const r = restaurarPasoAnterior(copiasDir, ['a', 'b', 'c'], 'c');
+  assert.equal(r.destino, destino);
+  assert.equal(r.indiceDesde, 2);
+  assert.equal(fs.existsSync(path.join(destino, 'lo-que-dejo-el-fallo.txt')), false, 'lo del fallo anterior se reemplaza');
+  assert.equal(fs.readFileSync(path.join(destino, 'marca.txt'), 'utf8'), 'B', 'restaura la copia del paso anterior a "c" (b), no la de "a"');
+  assert.deepEqual(r.pasosAnteriores.map(x => x.paso), ['a', 'b']);
+  assert.match(r.pasosAnteriores[0].detalle, /a ok · de la ejecución anterior \(commit abc1234\)/);
+  assert.deepEqual(r.ctxRestaurado, { ficheroExamen: '/tmp/examen.md', ficheroExamenSegundo: undefined, contestacion: undefined, correccion: undefined, referenciaCentro: true });
+});
+
+// --- La preparación en segundo plano se repara antes de juntar, si hace falta ------------------------------
+
+test('repararPreparacionSiHaceFalta: sin ninguna preparación en el destino, no toca nada', () => {
+  const destino = temporal('kit-sin-preparacion-');
+  let relanzado = false;
+  const r = repararPreparacionSiHaceFalta({ destino }, { id: '02-01' }, { relanzar: () => { relanzado = true; return { ok: true }; } });
+  assert.equal(r, null);
+  assert.equal(relanzado, false);
+});
+
+test('repararPreparacionSiHaceFalta: "terminada" no se toca (--juntar ya sabe seguir)', () => {
+  const destino = temporal('kit-preparacion-terminada-');
+  escribir(destino, { '.preparacion/02-01/estado.json': JSON.stringify({ resultado: 'terminada', pid: 123 }) });
+  let relanzado = false;
+  const r = repararPreparacionSiHaceFalta({ destino }, { id: '02-01' }, {
+    preparar: { pidVivo: () => true, descartarCopia: () => { throw new Error('no debería llamarse'); } },
+    relanzar: () => { relanzado = true; return { ok: true }; },
+  });
+  assert.equal(r, null);
+  assert.equal(relanzado, false);
+});
+
+test('repararPreparacionSiHaceFalta: "en curso" con el proceso muerto → se descarta y se relanza', () => {
+  const destino = temporal('kit-preparacion-interrumpida-');
+  escribir(destino, { '.preparacion/02-01/estado.json': JSON.stringify({ resultado: 'en-curso', pid: 999999 }) });
+  let descartada = false;
+  const r = repararPreparacionSiHaceFalta({ destino }, { ficheros: ['a.md'], id: '02-01' }, {
+    preparar: { pidVivo: () => false, descartarCopia: (d, id) => { descartada = true; assert.equal(d, destino); assert.equal(id, '02-01'); } },
+    relanzar: () => ({ ok: true, detalle: 'relanzada' }),
+  });
+  assert.equal(descartada, true);
+  assert.deepEqual(r, { motivo: 'el proceso que la preparaba en segundo plano ya no existía', relanzada: true, detalleRelanzar: 'relanzada' });
+});
+
+test('repararPreparacionSiHaceFalta: "en curso" con el proceso vivo de verdad → no se toca', () => {
+  const destino = temporal('kit-preparacion-viva-');
+  escribir(destino, { '.preparacion/02-01/estado.json': JSON.stringify({ resultado: 'en-curso', pid: process.pid }) });
+  const r = repararPreparacionSiHaceFalta({ destino }, { id: '02-01' }, { preparar: { pidVivo: () => true, descartarCopia: () => { throw new Error('no debería llamarse'); } } });
+  assert.equal(r, null);
+});
+
+test('repararPreparacionSiHaceFalta: estado.json ilegible (copia a medias) → se descarta y se relanza', () => {
+  const destino = temporal('kit-preparacion-a-medias-');
+  escribir(destino, { '.preparacion/02-01/estado.json': '{ esto no es json' });
+  const r = repararPreparacionSiHaceFalta({ destino }, { id: '02-01' }, {
+    preparar: { pidVivo: () => { throw new Error('no debería consultarse: no hay estado que leer'); }, descartarCopia: () => {} },
+    relanzar: () => ({ ok: false, detalle: 'no se pudo' }),
+  });
+  assert.equal(r.motivo, 'la copia de la preparación en segundo plano se hizo a medias');
+  assert.equal(r.relanzada, false);
+  assert.equal(r.detalleRelanzar, 'no se pudo');
+});
+
+test('pasoJuntarPreparacion: si la reparación no pudo relanzar, falla sin intentar --estado ni --juntar', () => {
+  const ctx = { sinLlm: false, preparacionReparada: { motivo: 'x', relanzada: false, detalleRelanzar: 'no se pudo' }, destino: '/no/hace/falta/de/verdad' };
+  const r = pasoJuntarPreparacion(ctx, { id: '02-01' });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /x: no se pudo relanzar \(no se pudo\)/);
+  assert.match(r.detalle, /no se puede juntar sin la preparación en marcha/);
+});
+
+test('markdownResumen: reanudada con --desde → la línea de Resultado no cuenta como completa para el PR', () => {
+  const md = markdownResumen({
+    fecha: '2026-10-01', version: '0.27.0', modelo: 'sonnet', sinLlm: false, desde: '/dudas',
+    pasos: [{ paso: 'a', ok: true, duracionMs: 1, detalle: '' }, { paso: 'b', ok: true, duracionMs: 1, detalle: '' }],
+    informe: { errores: [], avisos: [] },
+    conteos: { conceptos: 0, sesiones: 0, flashcards: 0, ejercicios: 0, examenes: 0, repasos: 0, todo: 0, faltaInfo: 0, dudaPendiente: 0 },
+    correccion: { bien: 6, total: 6 }, commit: 'abc1234',
+  });
+  assert.match(md, /Reanudada con `--desde "\/dudas"`/);
+  assert.match(md, /^Resultado: 2\/2 pasos bien \(desde "\/dudas"\) · corrección 6\/6 · commit abc1234$/m);
+});
+
+// --- cli(): las validaciones de --desde, antes de tocar nada (ni `claude`, ni un curso) --------------------
+
+function conConsoleErrorCapturado(fn) {
+  const original = console.error;
+  const mensajes = [];
+  console.error = (...args) => mensajes.push(args.join(' '));
+  try { return { codigo: fn(), mensajes }; } finally { console.error = original; }
+}
+
+test('cli: --desde con --sin-llm, error claro y código 2 (sin llegar a comprobar `claude`)', () => {
+  const { codigo, mensajes } = conConsoleErrorCapturado(() => cli(['--desde', '/dudas', '--sin-llm']));
+  assert.equal(codigo, 2);
+  assert.match(mensajes.join('\n'), /--desde no se puede combinar con --sin-llm/);
+});
+
+test('cli: --desde con un paso que no existe, la lista de pasos válidos y código 2', () => {
+  const { codigo, mensajes } = conConsoleErrorCapturado(() => cli(['--desde', 'esto-no-es-un-paso']));
+  assert.equal(codigo, 2);
+  assert.match(mensajes.join('\n'), /Paso desconocido: "esto-no-es-un-paso"/);
+  assert.match(mensajes.join('\n'), /- \/dudas/);
+});
+
+test('cli: --desde sin --copias y sin ninguna carpeta de copias que apuntar, error claro y código 2', () => {
+  const { codigo, mensajes } = conConsoleErrorCapturado(() => cli(['--desde', '/dudas', '--copias', '/no/existe/de/verdad']));
+  assert.equal(codigo, 2);
+  assert.match(mensajes.join('\n'), /No hay ninguna copia que restaurar en \/no\/existe\/de\/verdad/);
+});
+
+test('validarDesde: pedir el primer paso no necesita --copias (no hay uno anterior que restaurar)', () => {
+  const primerPaso = nombresDePasos(CLASES_EJEMPLO, false)[0];
+  assert.deepEqual(validarDesde(primerPaso, false, null), { ok: true, copiasDir: null });
+});
+
+test('validarDesde: sin --desde, nada que validar', () => {
+  assert.deepEqual(validarDesde(null, false, null), { ok: true, copiasDir: null });
+});
+
+// La ruta a sustituir sale de estado.json: si apuntara a otro sitio (una copia vieja, un estado.json tocado a mano),
+// --desde podría borrar cualquier carpeta. Solo sustituye carpetas de prueba del kit dentro del temporal.
+test('restaurarPasoAnterior: nunca borra una ruta que no sea una carpeta de prueba del temporal', () => {
+  const fuera = temporal('no-es-de-prueba-');
+  fs.writeFileSync(path.join(fuera, 'importante.txt'), 'no se toca');
+  const copiasDir = temporal('copias-');
+  escribir(copiasDir, {
+    '01-a/curso/marca.txt': 'A',
+    '01-a/estado.json': JSON.stringify({ destino: fuera, pasos: [{ paso: 'a', ok: true, duracionMs: 5, detalle: 'a ok' }] }),
+  });
+  assert.throws(() => restaurarPasoAnterior(copiasDir, ['a', 'b'], 'b'), /no es una carpeta de prueba/);
+  assert.equal(fs.readFileSync(path.join(fuera, 'importante.txt'), 'utf8'), 'no se toca');
 });

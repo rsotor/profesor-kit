@@ -223,3 +223,12 @@ test('Codex: turn.failed deja la frase sin medir, con el mensaje del error', () 
   assert.equal(d.sinMedir, true);
   assert.match(d.nota, /usage limit/);
 });
+
+// Prueba real de la 0.26.0: el profesor escribió `clases: 1.1` (sin corchetes), que también es válido.
+test('marcarEstudiadaASuManera: encuentra la clase con "clases: 1.1", "[1.1]" o "[\\"1.1\\"]"', () => {
+  for (const clases of ['1.1', '[1.1]', '["1.1"]', '[1.0, 1.1]']) {
+    const destino = temporal('kit-guia-');
+    escribir(destino, { 'estudio/sesiones/01-01-01-el-dinero.md': `---\ntipo: sesion\nclases: ${clases}\nestudiada: true\n---\n# El dinero\n` });
+    assert.equal(casosGuia.marcarEstudiadaASuManera(destino, { clase: '1.1' }).ok, true, clases);
+  }
+});

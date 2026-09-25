@@ -224,3 +224,12 @@ test('progreso-sin-prueba: una cita con | sin escapar descuadra la fila — no-s
   const r = avisos(raiz, 'no-se-vera-bien');
   assert.ok(r.some(a => a.fichero === 'progreso.md'));
 });
+
+// #51: un TODO copiado en un fichero que genera el kit (formulario.md) ya cuenta en su nota original.
+test('los TODO de los ficheros generados (formulario.md) no se cuentan otra vez', () => {
+  const { comprobar } = require('../comprobar');
+  const { cursoTemporal } = require('./ayuda');
+  const raiz = cursoTemporal({ 'estudio/formulario.md': '# Formulario\n\n**TODO:** copiado de un concepto\n' });
+  const avisos = comprobar(raiz).avisos.filter(a => a.regla === 'todo' && a.fichero === 'formulario.md');
+  assert.equal(avisos.length, 0);
+});

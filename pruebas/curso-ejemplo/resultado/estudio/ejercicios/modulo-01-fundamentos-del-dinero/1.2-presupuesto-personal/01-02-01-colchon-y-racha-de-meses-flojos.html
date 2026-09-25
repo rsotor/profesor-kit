@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Aguanta tu colchón una racha de meses flojos?</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 1.6rem; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; }
+  label { display: block; margin-top: 0.7rem; }
+  input[type=range] { width: 100%; }
+  .valor { font-weight: bold; }
+  .opciones label { display: inline-block; margin-right: 1.2rem; }
+  button { font: inherit; padding: 0.4rem 0.9rem; margin: 0.4rem 0.4rem 0 0; cursor: pointer; }
+  #explicacion { min-height: 3rem; }
+  .vacia { opacity: 0.7; font-style: italic; }
+  .ok { color: #1a7f37; font-weight: bold; }
+  .ko { color: #c62828; font-weight: bold; }
+  @media (prefers-color-scheme: dark) { .ok { color: #56d364; } .ko { color: #ff7b72; } }
+  small { opacity: 0.75; }
+</style>
+</head>
+<body>
+<h1>¿Aguanta tu colchón una racha de meses flojos?</h1>
+<p><small>Lo que se practica no es la cuenta: es <strong>qué pasa con el colchón cuando cambian los ingresos de la racha</strong>. Piensa la respuesta antes de comprobarla.</small></p>
+
+<section id="condiciones">
+  <h2>1 · Las condiciones</h2>
+  <label>Gastos habituales al mes: <span class="valor" id="v-gastos"></span>
+    <input type="range" id="gastos" min="800" max="2000" step="5" value="1195"></label>
+  <label>Colchón: <span class="valor" id="v-meses"></span> de gastos
+    <input type="range" id="meses" min="1" max="8" step="1" value="3"></label>
+  <label>Lo que facturas cada mes de la racha: <span class="valor" id="v-ingreso"></span>
+    <input type="range" id="ingreso" min="0" max="2000" step="50" value="600"></label>
+  <label>Duración de la racha: <span class="valor" id="v-racha"></span>
+    <input type="range" id="racha" min="1" max="12" step="1" value="5"></label>
+  <p>Tu colchón vale: <span class="valor" id="v-colchon"></span></p>
+  <button type="button" id="otro">Otro caso</button>
+</section>
+
+<section id="reto">
+  <h2>2 · El reto</h2>
+  <p>Con estas condiciones, ¿llega el colchón hasta el final de la racha?</p>
+  <div class="opciones">
+    <label><input type="radio" name="resp" value="aguanta"> Sí, aguanta</label>
+    <label><input type="radio" name="resp" value="no-aguanta"> No, se acaba antes</label>
+  </div>
+  <button type="button" id="comprobar">Comprobar</button>
+</section>
+
+<section id="explicacion-seccion">
+  <h2>3 · La explicación</h2>
+  <div id="explicacion" class="vacia">Elige una respuesta y pulsa Comprobar: aquí verás por qué.</div>
+</section>
+
+<p><small>Concepto que practica: colchón financiero (nota <strong>colchon-financiero</strong>, carpeta <strong>conceptos</strong>).</small></p>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var fmtEur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var fmtMes = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  var eur = function (n) { return fmtEur.format(n); };
+
+  // La misma lógica que usa el botón: decide si el colchón llega al final de la racha.
+  function calcular(caso) {
+    var gastos = Number(caso.gastos), meses = Number(caso.meses);
+    var ingreso = Number(caso.ingreso), racha = Number(caso.racha);
+    var colchon = gastos * meses;
+    var faltaAlMes = Math.max(0, gastos - ingreso);
+    var faltaTotal = faltaAlMes * racha;
+    return {
+      colchon: colchon,
+      faltaAlMes: faltaAlMes,
+      faltaTotal: faltaTotal,
+      aguanta: colchon >= faltaTotal,
+      duracion: faltaAlMes > 0 ? colchon / faltaAlMes : Infinity
+    };
+  }
+
+  window.verificar = function (caso) {
+    return calcular(caso).aguanta ? 'aguanta' : 'no-aguanta';
+  };
+
+  function leer() {
+    return { gastos: $('gastos').value, meses: $('meses').value, ingreso: $('ingreso').value, racha: $('racha').value };
+  }
+
+  function vaciarRespuesta() {
+    var radios = document.getElementsByName('resp');
+    for (var i = 0; i < radios.length; i++) radios[i].checked = false;
+    $('explicacion').className = 'vacia';
+    $('explicacion').textContent = 'Elige una respuesta y pulsa Comprobar: aquí verás por qué.';
+  }
+
+  function pintarCondiciones() {
+    var c = leer();
+    $('v-gastos').textContent = eur(Number(c.gastos));
+    $('v-meses').textContent = c.meses + (Number(c.meses) === 1 ? ' mes' : ' meses');
+    $('v-ingreso').textContent = eur(Number(c.ingreso));
+    $('v-racha').textContent = c.racha + (Number(c.racha) === 1 ? ' mes' : ' meses');
+    $('v-colchon').textContent = eur(calcular(c).colchon);
+  }
+
+  function alCambiar() {
+    pintarCondiciones();
+    vaciarRespuesta();
+  }
+
+  function comprobar() {
+    var elegida = null;
+    var radios = document.getElementsByName('resp');
+    for (var i = 0; i < radios.length; i++) if (radios[i].checked) elegida = radios[i].value;
+    var caja = $('explicacion');
+    if (!elegida) {
+      caja.className = 'vacia';
+      caja.textContent = 'Primero elige una respuesta: aquí verás por qué.';
+      return;
+    }
+    var c = leer();
+    var r = calcular(c);
+    var correcta = window.verificar(c);
+    var acierto = elegida === correcta;
+    var partes = [];
+    partes.push('<p class="' + (acierto ? 'ok' : 'ko') + '">' + (acierto ? 'Correcto.' : 'No.') +
+      ' Aquí ' + (r.aguanta ? 'el colchón aguanta.' : 'el colchón se acaba antes de que termine la racha.') + '</p>');
+    if (r.faltaAlMes === 0) {
+      partes.push('<p>Tus ingresos (' + eur(Number(c.ingreso)) + ') cubren los gastos (' + eur(Number(c.gastos)) +
+        '): cada mes no falta nada, así que el colchón ni se toca.</p>');
+    } else {
+      partes.push('<p>El colchón no paga los gastos enteros, solo <strong>lo que los ingresos no alcanzan</strong>:</p><ul>' +
+        '<li>Cada mes falta: ' + eur(Number(c.gastos)) + ' − ' + eur(Number(c.ingreso)) + ' = <strong>' + eur(r.faltaAlMes) + '</strong></li>' +
+        '<li>En ' + c.racha + ' meses: ' + eur(r.faltaAlMes) + ' × ' + c.racha + ' = <strong>' + eur(r.faltaTotal) + '</strong></li>' +
+        '<li>Tu colchón: ' + eur(Number(c.gastos)) + ' × ' + c.meses + ' = <strong>' + eur(r.colchon) + '</strong></li></ul>');
+      if (r.aguanta) {
+        partes.push('<p>Sobran <strong>' + eur(r.colchon - r.faltaTotal) + '</strong>. A ese ritmo el colchón duraría ' + fmtMes.format(r.duracion) + ' meses.</p>');
+      } else {
+        partes.push('<p>Faltan <strong>' + eur(r.faltaTotal - r.colchon) + '</strong>. A ese ritmo el colchón dura ' + fmtMes.format(r.duracion) + ' meses, y la racha es de ' + c.racha + '.</p>');
+      }
+    }
+    if (!acierto) {
+      partes.push(r.aguanta
+        ? '<p>Lo que engaña: contar cada mes de racha como si costara los gastos enteros. Con algo de ingreso, el colchón dura más meses de los que dice su nombre.</p>'
+        : '<p>Lo que engaña: pensar que «tengo colchón» basta. Una racha más larga que lo que dura el colchón lo agota, aunque haya algo de ingreso.</p>');
+    }
+    partes.push('<p><small>Prueba a mover una sola condición (los ingresos de la racha, o los meses de colchón) y busca dónde se invierte la respuesta.</small></p>');
+    caja.className = '';
+    caja.innerHTML = partes.join('');
+  }
+
+  function otroCaso() {
+    var g = 800 + 5 * Math.floor(Math.random() * 241);
+    var m = 1 + Math.floor(Math.random() * 8);
+    var i = 50 * Math.floor(Math.random() * 41);
+    var ra = 1 + Math.floor(Math.random() * 12);
+    $('gastos').value = g; $('meses').value = m; $('ingreso').value = i; $('racha').value = ra;
+    alCambiar();
+  }
+
+  ['gastos', 'meses', 'ingreso', 'racha'].forEach(function (id) { $(id).addEventListener('input', alCambiar); });
+  $('comprobar').addEventListener('click', comprobar);
+  $('otro').addEventListener('click', otroCaso);
+  pintarCondiciones();
+})();
+</script>
+</body>
+</html>

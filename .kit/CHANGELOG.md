@@ -13,6 +13,18 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.27.0
+- **Tu curso, desde cualquier sitio.** Si lo usas en tu ordenador y también en un asistente en la nube, al
+  empezar tu profesor mira si hay cambios hechos desde el otro sitio y los trae antes de seguir. Si los dos
+  sitios cambiaron la misma nota, te enseña las dos versiones y decidís juntos qué se queda, solo en lo que
+  choca: lo demás de los dos lados se conserva.
+- **Funciona sin la herramienta `gh`**, como en los asistentes en la nube: actualizar el kit y subir tu curso
+  (solo si es privado; si no se puede comprobar, no se sube).
+- **Tus pendientes se entienden solos.** Un "falta material" dentro de una tabla dice de qué clase es, y lo que
+  ya está en una nota no sale repetido.
+- **Más seguro:** tu profesor nunca guarda un curso con una mezcla a medias, y "deshaz lo último" no borra lo
+  que trajo de otro sitio.
+
 ## 0.26.0
 - **Tu progreso dice de dónde sale.** Cada casilla que no está en ⬜ lleva la pregunta que la decidió, por
   ejemplo "🟡 flojo · examen del módulo 1, p.1: confunde unidad de cuenta con medio de cambio". Así ves qué

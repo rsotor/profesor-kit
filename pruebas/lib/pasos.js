@@ -432,14 +432,16 @@ function falladasTopeTres(falladas) {
 
 // Las preguntas del examen nuevo que su clave marca como reutilizadas del examen anterior (`origen: "examen
 // anterior"`), con el bloque tal cual sale de su propio `.md` (para compararlo con el de las falladas).
-function preguntasReutilizadas(destino, ficheroExamen) {
+function preguntasDeLaClave(destino, ficheroExamen) {
   const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
   const clave = examenesLib.leerClave(destino, relExamen);
   const clavePreguntas = Array.isArray(clave.preguntas) ? clave.preguntas : [];
   const preguntasMd = examenesLib.preguntasDelMd(fs.readFileSync(ficheroExamen, 'utf8'));
-  return clavePreguntas
-    .map((c, i) => ({ numero: i + 1, enunciado: preguntasMd[i] || '', concepto: c.concepto || null, origen: c.origen || null, de: c.de || null }))
-    .filter(pr => pr.origen === 'examen anterior');
+  return clavePreguntas.map((c, i) => ({ numero: i + 1, enunciado: preguntasMd[i] || '', concepto: c.concepto || null, origen: c.origen || null, de: c.de || null }));
+}
+
+function preguntasReutilizadas(destino, ficheroExamen) {
+  return preguntasDeLaClave(destino, ficheroExamen).filter(pr => pr.origen === 'examen anterior');
 }
 
 // El examen nuevo, tal como lo deja la skill al pedir "otra vez el examen del módulo X": reutiliza, marcada
@@ -447,6 +449,8 @@ function preguntasReutilizadas(destino, ficheroExamen) {
 // número de preguntas de su tipo (`config/examenes.json`). `ficheroAnterior` es el examen ya corregido (su
 // histórico de intentos es de donde sale qué falló); `unidad` es el prefijo de la unidad, como en
 // `examen.js --falladas`.
+const sinPrefijos = rel => aPosix(String(rel)).trim().replace(/^\.?\/?(estudio\/)?(examenes\/)?/, '');
+
 function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
   const nuevo = examenMasReciente(destino, { excepto: ficheroAnterior });
   if (!nuevo) return { ok: false, detalle: 'solo está el mismo fichero que el primer examen: no se ha escrito uno nuevo' };
@@ -458,12 +462,19 @@ function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
   if (!falladas.length) return { ok: false, detalle: 'el examen anterior no dejó ninguna pregunta fallada: no se puede comprobar la reutilización', ficheroNuevo: nuevo };
 
   const esperadas = falladasTopeTres(falladas);
-  const reutilizadas = preguntasReutilizadas(destino, nuevo);
   const mismoBloque = (a, b) => normalizarTexto(sinNumeroDePregunta(a)) === normalizarTexto(sinNumeroDePregunta(b));
+  // Una fallada que era del examen del centro vuelve marcada `origen: "centro"` (cuenta para el tope de la mitad y
+  // para rotarlas): también es reutilizada si es la misma pregunta (prueba real de la 0.27.0). Su "de", si lo trae,
+  // tiene que ser el examen anterior.
+  const reutilizadas = preguntasDeLaClave(destino, nuevo).filter(pr => pr.origen === 'examen anterior'
+    || (pr.origen === 'centro' && esperadas.some(f => mismoBloque(f.enunciado, pr.enunciado))));
   const problemas = [];
 
   for (const r of reutilizadas) {
-    if (r.de !== relAnterior) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}"`);
+    // `de` lo lee una persona, no el código: basta con que identifique el examen anterior (mismo fichero), con o
+    // sin "estudio/" o "examenes/" delante y con o sin ", p.<n>" detrás (3 pruebas reales, 3 formas distintas).
+    const identifica = de => !!de && sinPrefijos(de.replace(/,\s*p\.\s*\d+\s*$/, '')) === sinPrefijos(relAnterior);
+    if ((r.origen === 'examen anterior' || r.de) && !identifica(r.de)) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}"`);
     if (!esperadas.some(f => mismoBloque(f.enunciado, r.enunciado))) {
       problemas.push(`la pregunta ${r.numero} está marcada como reutilizada pero su enunciado no coincide con ninguna fallada`);
     }

@@ -34,7 +34,8 @@ forma que enseñe algo —idealmente invirtiéndose.
 | Hay un umbral donde la respuesta se invierte | Es una lista sin mecanismo detrás |
 | Hay una intuición que falla (el atajo que engaña) | El resultado siempre va en la misma dirección y es obvio |
 
-Si no se mueve, **dilo y para.** Forzar un ejercicio para que el concepto "tenga uno" es peor
+Si no se mueve, **dilo y para** (en segundo plano, sin nadie a quien decírselo: una línea en la sesión con
+el porqué, como en `/sesion`). Forzar un ejercicio para que el concepto "tenga uno" es peor
 que no tenerlo: entrena a mirar la solución en vez de razonar.
 
 Si el alumno lo pide porque **está fallando algo** (`estudio/progreso.md` en 🟡 o 🔴), lee antes su

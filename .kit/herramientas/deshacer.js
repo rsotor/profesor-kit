@@ -5,10 +5,24 @@ const { comprobar } = require('./comprobar');
 const { anotarEnDiario, subirSiProcede } = require('./guardar');
 const { CARPETA_ALUMNO } = require('./lib/vault');
 
-// Commits que no son un guardado del alumno: los pone actualizar.js, no una skill con el alumno delante.
-// "Deshacer lo último" no es la herramienta para volver atrás una actualización del kit.
-const NO_ES_GUARDADO_DEL_ALUMNO = /^(kit: actualizado a |guardado antes de actualizar a )/;
+// Commits que no son un guardado del alumno: los pone actualizar.js o guardar.js --traer, no una skill con el
+// alumno delante. "Deshacer lo último" no es la herramienta para volver atrás una actualización del kit, ni
+// para deshacer lo que se acaba de traer de otro sitio (revisión de la 0.27, grave 2): eso movería el curso a
+// un estado que ni existió aquí ni existe ya en GitHub, y en los dos sitios a la vez si además se sube.
+const NO_ES_GUARDADO_DEL_ALUMNO = /^(kit: actualizado a |guardado antes de actualizar a |guardado antes de traer|traer: )/;
 const ES_DESHACER = /^deshacer: /;
+
+// Un avance rápido (`git merge --ff-only`, lo único que hace --traer cuando solo estaba detrás) no crea un
+// commit nuevo: HEAD se mueve sin más, con el mensaje del commit que sea que trajera (de otro sitio, no de
+// aquí, y sin ningún prefijo reconocible: puede ser "sesion(3): tema" tal cual). No hay mensaje que mirar
+// para reconocerlo: se ve en el reflog, que sí registra el movimiento. AncladO al formato exacto de git
+// (revisión de la 0.27, segunda ronda, baja 1): sin anclar, un guardado normal cuyo ASUNTO mencionase la
+// palabra "fast-forward" como texto (el reflog de un commit normal repite su mensaje: "commit: sesion(4):
+// qué es un fast-forward en redes") se leería como si fuera el propio mecanismo de git.
+function fueAvanceRapidoDeTraer(raiz) {
+  const r = g.intentarGit(raiz, ['reflog', '-1', '--format=%gs', 'HEAD']);
+  return r.ok && /^merge .*: Fast-forward$/.test(r.stdout.trim());
+}
 
 function ultimoCommit(raiz) {
   const [sha, ...resto] = g.git(raiz, ['log', '-1', '--format=%H%n%s']).split('\n');
@@ -43,8 +57,11 @@ function deshacer({ raiz, ver = false, hoy }) {
   if (!ver && !g.tieneIdentidad(raiz)) return { deshecho: false, motivo: 'sin-identidad' };
 
   const { sha, mensaje } = ultimoCommit(raiz);
-  // Deshacer un deshacer es rehacer: se permite, es un guardado del alumno como cualquier otro revert.
-  if (!ES_DESHACER.test(mensaje) && NO_ES_GUARDADO_DEL_ALUMNO.test(mensaje)) {
+  // El fast-forward se mira ANTES que el mensaje (revisión, baja 1): es una señal estructural (cómo se movió
+  // HEAD, en el reflog), no depende de texto que alguien pueda controlar o que coincida por casualidad. Deshacer
+  // un deshacer es rehacer: se permite (es un guardado del alumno como cualquier otro revert), pero solo si de
+  // verdad no fue un avance rápido de --traer.
+  if (fueAvanceRapidoDeTraer(raiz) || (!ES_DESHACER.test(mensaje) && NO_ES_GUARDADO_DEL_ALUMNO.test(mensaje))) {
     return { deshecho: false, motivo: 'no-es-guardado', mensaje };
   }
 
@@ -71,17 +88,29 @@ const EXPLICACION = {
   'sin-commits': 'Todavía no hay nada guardado que deshacer.',
   'cambios-sin-guardar': 'Hay cambios sin guardar: deshacer ahora los perdería o los mezclaría con lo que se '
     + 'deshace. Guárdalos primero (guardar.js) o descártalos, y decide con el alumno.',
-  'no-es-guardado': 'Lo último no es un guardado del alumno, es del kit: para volver atrás una actualización '
-    + 'hay que pedirlo aparte, "deshacer lo último" no es la herramienta.',
+  'no-es-guardado': 'Lo último no es un guardado del alumno aquí: es del kit (una actualización) o de --traer '
+    + '(algo que llegó de otro sitio). "Deshacer lo último" no es la herramienta para eso: pide ayuda aparte.',
+  // Revisión de la 0.27, segunda ronda (baja 2): un "guardado antes de traer/actualizar" no es puro kit o puro
+  // --traer — lleva DENTRO lo que el alumno tenía pendiente en ese momento, guardado junto a la marca. Deshacer
+  // ese commit se llevaría también lo suyo: el mensaje genérico de arriba no lo explicaba.
+  'no-es-guardado-mezclado': 'Lo último mezcla un guardado tuyo con algo del kit o de --traer: lo tuyo está ahí, '
+    + 'pero junto a lo traído (o justo antes de actualizar), en el mismo guardado. Deshacerlo se llevaría también '
+    + 'lo tuyo. Si algo salió mal, que te lo arregle el profesor con una nueva edición, no "deshaciendo lo último".',
   'sin-identidad': 'Git no sabe quién eres todavía: sin eso no se puede guardar el deshacer. Hay que configurar '
     + 'user.name y user.email (ver INSTALAR-AGENTE.md, paso de identidad). No ha cambiado nada.',
   'conflicto': 'No se ha podido deshacer: al revertir hay un conflicto con cambios posteriores. No ha cambiado nada.',
 };
 
+const MEZCLADO_CON_ALGO_DEL_KIT = /^(guardado antes de traer|guardado antes de actualizar a)/;
+
 function cli(args, raiz) {
   const ver = args.includes('--ver');
   const r = deshacer({ raiz, ver });
-  if (!r.deshecho && !r.ver) { console.log(EXPLICACION[r.motivo]); return r.motivo === 'sin-repo' || r.motivo === 'sin-commits' ? 0 : 1; }
+  if (!r.deshecho && !r.ver) {
+    const motivo = r.motivo === 'no-es-guardado' && MEZCLADO_CON_ALGO_DEL_KIT.test(r.mensaje || '') ? 'no-es-guardado-mezclado' : r.motivo;
+    console.log(EXPLICACION[motivo]);
+    return r.motivo === 'sin-repo' || r.motivo === 'sin-commits' ? 0 : 1;
+  }
   if (r.ver) {
     console.log(`Esto deshace: ${r.mensaje}`);
     console.log('Volverían a como estaban:');
