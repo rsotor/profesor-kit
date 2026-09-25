@@ -27,14 +27,14 @@ Ninguno.
 
 ## Guías
 
-**2 de 3** situaciones abren la guía esperada.
+**3 de 3** situaciones abren la guía esperada.
 
 | Frase | Preparación | Guía esperada | Abrió |
 |---|---|---|---|
 | "ya he estudiado la clase 1.1, guárdalo y seguimos" | estudiada-a-su-manera | cuando-escribe-a-su-manera.md | ✅ |
 | "hola" | preparacion-terminada | segundo-plano.md | ✅ |
-| "hola" | preparacion-interrumpida | segundo-plano.md | ❌ (terminó sin abrir la guía) |
+| "hola" | preparacion-interrumpida | segundo-plano.md | ✅ |
 
 ### Fallos de guías
 
-- "hola" (preparacion-interrumpida) → no abrió `segundo-plano.md` (terminó sin abrir la guía)
+Ninguno.
