@@ -86,5 +86,11 @@
     { "frase": "¿cómo voy en el curso?", "esperada": null },
     { "frase": "prepara la clase nueva mientras repasamos", "esperada": [null, "sesion"] },
     { "frase": "¿qué es lo siguiente que tengo que estudiar?", "esperada": null }
+  ],
+  "_leeme_casos_guia": "Situación → qué guía de .kit/guias/ debe abrir el profesor al verla (plan 0.26.0, tarea 1). `preparar` es el nombre de un preparador de pruebas/lib/casos-guia.js que deja el curso montado en ese estado antes de lanzar la frase (una propiedad 'a su manera', una preparación en segundo plano terminada o interrumpida). Se lanzan con `npm run disparadores -- --solo-guias` (o dentro de la medición completa).",
+  "casos_guia": [
+    { "frase": "ya he estudiado la clase 1.1, guárdalo y seguimos", "guia": "cuando-escribe-a-su-manera.md", "preparar": "estudiada-a-su-manera" },
+    { "frase": "hola", "guia": "segundo-plano.md", "preparar": "preparacion-terminada" },
+    { "frase": "hola", "guia": "segundo-plano.md", "preparar": "preparacion-interrumpida" }
   ]
 }
