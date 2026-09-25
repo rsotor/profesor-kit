@@ -115,19 +115,28 @@ function conceptosPorBloque(raiz) {
 
 const UMBRAL_TROPIEZO = 3;
 const fmt = n => n.toFixed(1).replace('.', ',');
-const nombreExamen = e => `examen ${e.unidades.join(', ') || path.posix.basename(e.rel, '.md')}`;
+// El final se ve como tal (no mezclado con los de módulo): "examen final (escalón N)".
+const nombreExamen = e => e.escalon !== null
+  ? `examen final (escalón ${e.escalon})`
+  : `examen ${e.tipoExamen && e.tipoExamen !== 'modulo' ? `${e.tipoExamen} ` : ''}${e.unidades.join(', ') || path.posix.basename(e.rel, '.md')}`;
 
 // Lo que dice que algo no funciona, calculado. El profesor las lee en estado.js --json (arranque, /examen, /dudas).
 // Un examen deja de contar si es la versión anterior de otro, o si hay otro posterior que cubre sus mismas unidades
-// (una versión nueva, o el examen del módulo tras el de una de sus unidades): lo que vale es el último.
+// (una versión nueva, o el examen del módulo tras el de una de sus unidades): lo que vale es el último. Un examen
+// final solo lo sustituye otro de su mismo escalón (decisión 6 de docs/planes/2026-09-25-examen-v1.md): no lo
+// sustituye uno de módulo ni el de otro escalón, ni al revés.
 const ultimoIntento = e => e.intentos[e.intentos.length - 1];
 function cubre(despues, antes) {
   return antes.unidades.length > 0 && antes.unidades.every(u => despues.unidades.some(m => u === m || u.startsWith(`${m}-`)));
 }
+function mismaFamilia(a, b) {
+  if (a.escalon !== null || b.escalon !== null) return a.escalon !== null && b.escalon !== null && a.escalon === b.escalon;
+  return true;
+}
 function sustituido(e, examenes) {
   const nombre = path.posix.basename(e.rel, '.md');
   if (examenes.some(x => x.anterior === nombre)) return 'versión anterior';
-  const posterior = examenes.find(x => x !== e && cubre(x, e)
+  const posterior = examenes.find(x => x !== e && mismaFamilia(x, e) && (e.escalon !== null || cubre(x, e))
     && (ultimoIntento(x).fecha > ultimoIntento(e).fecha || (ultimoIntento(x).fecha === ultimoIntento(e).fecha && x.rel > e.rel)));
   return posterior ? 'superado por un examen posterior' : null;
 }
@@ -139,13 +148,12 @@ function ultimoGuardado(raiz, rel) {
 }
 
 function senales(raiz) {
-  const aprobado = indice.leerAprobado(raiz);
   const examenes = examenesConIntentos(raiz);
   const lista = [];
   for (const e of examenes.filter(x => !sustituido(x, examenes))) {
     const ultimo = e.intentos[e.intentos.length - 1];
-    if (ultimo.nota < aprobado) {
-      lista.push({ tipo: 'examen-suspenso', examen: e.rel, detalle: `${nombreExamen(e)}: ${fmt(ultimo.nota)} en el intento ${ultimo.intento} (aprobado: ${fmt(aprobado)})` });
+    if (ultimo.nota < e.aprobado) {
+      lista.push({ tipo: 'examen-suspenso', examen: e.rel, detalle: `${nombreExamen(e)}: ${fmt(ultimo.nota)} en el intento ${ultimo.intento} (aprobado: ${fmt(e.aprobado)})` });
     }
   }
   for (const e of examenes.filter(x => x.intentos.length > 1)) {
@@ -192,7 +200,6 @@ const GRUPOS = [
 const HISTORIAL = ['Cambios en cómo te explico', [['profesor.md', 'Historial de cambios', null]]];
 
 function evolucion(raiz) {
-  const aprobado = indice.leerAprobado(raiz);
   const examenes = examenesConIntentos(raiz);
   const bloques = conceptosPorBloque(raiz);
   const dudas = leerDudas(raiz).slice(0, MAX_DUDAS);
@@ -203,9 +210,9 @@ function evolucion(raiz) {
     for (const e of examenes) {
       const ultimo = ultimoIntento(e);
       const motivo = sustituido(e, examenes);
-      const nombre = `Examen ${e.unidades.join(', ') || path.posix.basename(e.rel, '.md')}`;
+      const nombre = nombreExamen(e).replace(/^examen/, 'Examen');
       const intentos = e.intentos.map(i => `${fmt(i.nota)} (${i.fecha})`).join(' → ');
-      l.push(`| [[${e.rel.replace(/\.md$/, '')}\\|${nombre}]] | ${intentos} | ${motivo ? `↪ ${motivo}` : ultimo.nota >= aprobado ? '✅ aprobado' : '❌ suspenso'} |`);
+      l.push(`| [[${e.rel.replace(/\.md$/, '')}\\|${nombre}]] | ${intentos} | ${motivo ? `↪ ${motivo}` : ultimo.nota >= e.aprobado ? '✅ aprobado' : '❌ suspenso'} |`);
     }
     l.push('');
   }

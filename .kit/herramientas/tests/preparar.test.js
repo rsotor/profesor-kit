@@ -418,6 +418,65 @@ test('17. H04: si solo la preparación cambia el cuerpo de una sesión, su cambi
   assert.doesNotMatch(texto, /estudiada: true/, 'y el de la tutoría también');
 });
 
+// El fallo real de la 0.25.0 (3.ª prueba real): un examen del formato libre se corrige sin `guardar.js` (la
+// skill no lo pedía en ese camino) y deja `estudio/progreso.md` sin guardar en el curso principal. `--juntar`
+// reventaba con el error crudo de `git merge` ("local changes would be overwritten"). Ahora `--juntar` guarda
+// lo pendiente solo antes de mezclar, como `actualizar.js` guarda antes de actualizar.
+test('18. si el curso principal tiene algo sin guardar (una fila de progreso.md, como un examen corregido sin guardar.js), --juntar lo guarda solo antes de mezclar', () => {
+  escribirAdaptador('r1');
+  assert.equal(lanzar('r1').codigo, 0);
+  const rel = 'estudio/progreso.md';
+  const abs = path.join(curso, ...rel.split('/'));
+  const lineas = fs.readFileSync(abs, 'utf8').split('\n');
+  const ultima = lineas.map((l, i) => [l, i]).filter(([l]) => /^\|\s*\[\[/.test(l)).pop();
+  assert.ok(ultima, 'hay alguna fila de concepto');
+  lineas[ultima[1]] = ultima[0].replace('⬜', '✅');
+  fs.writeFileSync(abs, lineas.join('\n'));
+  assert.match(git(['status', '--porcelain']).salida, /progreso\.md/, 'queda algo sin guardar en el curso principal, sin pasar por guardar.js');
+
+  esperarTerminada('r1');
+  const j = herramienta('preparar', '--juntar', 'r1');
+  assert.equal(j.codigo, 0, j.salida);
+  assert.match(j.salida, /Juntada/);
+  assert.match(leer('config/diario.md'), /guardado antes de juntar la preparación r1/, 'el guardado previo queda anotado en el diario');
+  assert.ok(leer(rel).includes(lineas[ultima[1]]), 'lo que estaba sin guardar no se pierde');
+  assert.equal(git(['status', '--porcelain']).salida, '', 'working tree limpio tras juntar');
+});
+
+// Espejo del test de actualizar.js ("si no puede guardar antes de actualizar, no toca nada"): sin identidad,
+// `--juntar` tiene que devolver un motivo claro y dejar tanto el curso principal como la copia intactos.
+test('19. si no se puede guardar antes de juntar (git sin identidad), no se toca nada y lo pendiente sigue ahí', () => {
+  escribirAdaptador('s1');
+  assert.equal(lanzar('s1').codigo, 0);
+  const rel = 'estudio/progreso.md';
+  const abs = path.join(curso, ...rel.split('/'));
+  const lineas = fs.readFileSync(abs, 'utf8').split('\n');
+  const ultima = lineas.map((l, i) => [l, i]).filter(([l]) => /^\|\s*\[\[/.test(l)).pop();
+  assert.ok(ultima, 'hay alguna fila de concepto');
+  const contenidoPendiente = lineas.map((l, i) => (i === ultima[1] ? l.replace('⬜', '✅') : l)).join('\n');
+  fs.writeFileSync(abs, contenidoPendiente);
+  esperarTerminada('s1');
+
+  git(['config', '--unset', 'user.name']);
+  git(['config', '--unset', 'user.email']);
+  git(['config', 'user.useConfigOnly', 'true']);   // que git no se invente una identidad con el nombre de la máquina
+  const antes = git(['rev-parse', 'HEAD']).salida;
+
+  const j = herramienta('preparar', '--juntar', 's1');
+  assert.equal(j.codigo, 1);
+  assert.match(j.salida, /no se pudo guardar tu trabajo pendiente antes de juntar/);
+  assert.match(j.salida, /sin-identidad/);
+  assert.equal(git(['rev-parse', 'HEAD']).salida, antes, 'el curso principal no se ha movido');
+  assert.equal(leer(rel), contenidoPendiente, 'lo que estaba sin guardar sigue ahí, tal cual');
+  assert.equal(git(['rev-parse', '--verify', 'preparacion/s1']).codigo, 0, 'la preparación sigue disponible para reintentar');
+
+  // Restaura la identidad para las pruebas siguientes y deja el curso limpio otra vez.
+  git(['config', '--unset', 'user.useConfigOnly']);
+  git(['config', 'user.name', 'Prueba preparar.js']);
+  git(['config', 'user.email', 'preparar@example.com']);
+  assert.equal(herramienta('preparar', '--juntar', 's1').codigo, 0);
+});
+
 test('juntarPorFilas con la versión común: una fila cambiada solo en un lado gana ese lado; cambiada en los dos, choque', () => {
   const { juntarPorFilas } = require('../preparar');
   const clave = l => (/^([a-z0-9][a-z0-9-]*) *\|/.exec(l) || [])[1];

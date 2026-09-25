@@ -6,6 +6,7 @@ const v = require('./lib/vault');
 const { escanearSecretos } = require('./lib/secretos');
 const indice = require('./lib/indice');
 const generados = require('./lib/generados');
+const paginasWeb = require('./lib/paginas-web');
 
 const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidian', 'docs', 'node_modules', 'pruebas-local']);
 
@@ -224,34 +225,24 @@ function comprobarEjerciciosSueltos(raiz, declarados, informe) {
 
 // Las páginas web del alumno (ejercicios y repasos) tienen que funcionar con doble clic y sin red. El JS de cada
 // <script> se compila sin ejecutarse: un error de sintaxis deja la página muerta y en silencio. Lo hace esta
-// herramienta, y no el profesor con comandos a mano (prueba real del 2026-09-24: se le denegaban). Un <script> con
-// src, o de un tipo que no es JS (datos en JSON, un módulo), no se compila aquí.
-const SCRIPT = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
-const ES_JS = atributos => {
-  const tipo = /\btype\s*=\s*["']?([^"'\s>]+)/i.exec(atributos);
-  return !/\bsrc\s*=/i.test(atributos) && (!tipo || /^(text|application)\/(javascript|ecmascript)$/i.test(tipo[1]));
-};
-// Lo que carga algo de fuera: <script src>, <link href>, <img src>… a http(s):// o //. Un <a href> no carga nada.
-const CARGA_DE_FUERA = /<(?:script|link|img|iframe|audio|video|source)\b[^>]*?\b(?:src|href)\s*=\s*["']?((?:https?:)?\/\/[^"'\s>]+)/gi;
-
+// herramienta, y no el profesor con comandos a mano (prueba real del 2026-09-24: se le denegaban). Ejecutarlo de
+// verdad para barrer casos es cosa de verificar-ejercicio.js: aquí solo se comprueba que compila.
 function comprobarPaginasWeb(raiz, informe) {
   const base = v.baseAlumno(raiz);
   for (const carpeta of ['ejercicios', 'repasos']) {
     for (const abs of v.recorrer(path.join(base, carpeta), n => n.endsWith('.html'))) {
       const fichero = v.aPosix(path.relative(base, abs));
       const html = fs.readFileSync(abs, 'utf8');
-      for (const m of html.matchAll(SCRIPT)) {
-        if (!ES_JS(m[1])) continue;
+      for (const { codigo, lineaInicial } of paginasWeb.scriptsJs(html)) {
         try {
-          new vm.Script(m[2], { filename: fichero });
+          new vm.Script(codigo, { filename: fichero });
         } catch (error) {
-          const antes = html.slice(0, m.index + m[0].indexOf('>') + 1).split('\n').length - 1;
           const enScript = Number((new RegExp(`${fichero.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}:(\\d+)`).exec(error.stack) || [])[1]) || 1;
           informe.errores.push({ regla: 'ejercicio-con-errores', fichero,
-            detalle: `línea ${antes + enScript}: ${error.message} — con un error así la página no funciona, y no avisa` });
+            detalle: `línea ${lineaInicial + enScript}: ${error.message} — con un error así la página no funciona, y no avisa` });
         }
       }
-      const fuera = [...new Set([...html.matchAll(CARGA_DE_FUERA)].map(m => m[1]))];
+      const fuera = paginasWeb.cargasDeFuera(html);
       if (fuera.length) {
         informe.avisos.push({ regla: 'ejercicio-con-red', fichero,
           detalle: `carga de internet ${fuera.join(', ')}: tiene que funcionar sin red y con doble clic, con todo dentro del fichero` });
@@ -469,18 +460,25 @@ function comprobarRequiereVacio(raiz, informe) {
   }
 }
 
-// Una "pregunta" es lo que la skill /examen numera (`1. `, `2. `…) hasta su línea `✍️ **Tu respuesta:**`: es el
-// formato que la propia skill exige, así que es la única forma fiable de saber dónde empieza y acaba una
-// pregunta sin adivinar. Sin ese cierre no se cuenta como pregunta (heurística conservadora: mejor no avisar
-// que avisar de un fichero que no sigue el formato). Las soluciones van después del cierre, así que quedan
-// fuera solas, sin necesidad de tratarlas aparte.
+// Una "pregunta" es lo que la skill /examen numera (`1. `, `2. `…) hasta su cierre: la línea
+// `✍️ **Tu respuesta:**` en el formato libre de antes, o su primera opción con casilla (`- [ ] a) …`) en el
+// tipo test (examen v1). Son los dos formatos que exige la propia skill, así que es la única forma fiable de
+// saber dónde empieza y acaba una pregunta sin adivinar. Sin ninguno de los dos cierres no se cuenta como
+// pregunta (heurística conservadora: mejor no avisar que avisar de un fichero que no sigue ningún formato).
+// Las soluciones (y, en el test, el resto de opciones) van después del cierre, así que quedan fuera solas.
+const OPCION_CON_CASILLA = /^-\s*\[[ xX]\]\s*[a-zA-Z]\)/;
+
 function preguntasDeExamen(texto) {
   const sinFrontmatter = texto.replace(/^---\r?\n[\s\S]*?\r?\n---/, '');
   const lineas = indice.sinPie(v.sinCodigo(sinFrontmatter)).split(/\r?\n/);
   const preguntas = [];
   let actual = null;
   for (const linea of lineas) {
-    if (/✍️\s*\*\*Tu respuesta:\*\*/.test(linea)) { if (actual) preguntas.push(actual.join('\n')); actual = null; continue; }
+    if (/✍️\s*\*\*Tu respuesta:\*\*/.test(linea) || OPCION_CON_CASILLA.test(linea)) {
+      if (actual) preguntas.push(actual.join('\n'));
+      actual = null;
+      continue;
+    }
     if (/^(\d+\.\s|\*\*\d+\.\*\*)/.test(linea)) { actual = [linea]; continue; }
     if (actual) actual.push(linea);
   }
@@ -491,11 +489,16 @@ function preguntasDeExamen(texto) {
 // preguntas pegadas. No se intenta detectar la unión con "y" sin un segundo `?` — da demasiados falsos
 // positivos en texto de dominio ("¿cuánto mide el lado de un cuadrado de 20 m² de área?" es una sola
 // pregunta, con una "y" perfectamente normal en el dato) y aquí conviene más callar que avisar de más.
+// Una opción de respuesta ("- a) …" del formato libre, "- [ ] a) …" del tipo test): su texto no es del
+// enunciado, así que un "?" ahí no cuenta como una segunda pregunta.
+const ES_OPCION = l => /^-\s*(\[[ xX]\]\s*)?[a-zA-Z]\)/.test(l.trim());
+
 function comprobarPreguntaDoble(raiz, informe) {
   for (const abs of v.recorrer(path.join(v.baseAlumno(raiz), 'examenes'), n => n.endsWith('.md'))) {
     const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
     for (const pregunta of preguntasDeExamen(fs.readFileSync(abs, 'utf8'))) {
-      const signos = (pregunta.match(/\?/g) || []).length;
+      const enunciado = pregunta.split('\n').filter(l => !ES_OPCION(l)).join('\n');
+      const signos = (enunciado.match(/\?/g) || []).length;
       if (signos >= 2) {
         const resumen = pregunta.replace(/\s+/g, ' ').trim().slice(0, 70);
         informe.avisos.push({ regla: 'pregunta-doble', fichero: rel, detalle: `"${resumen}…" tiene ${signos} signos de interrogación — probablemente son dos preguntas pegadas: sepáralas` });

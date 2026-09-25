@@ -5,7 +5,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { MARCA_INICIO } = require('../../.kit/herramientas/lib/indice');
-const { sinCodigo } = require('../../.kit/herramientas/lib/vault');
+const { sinCodigo, aPosix } = require('../../.kit/herramientas/lib/vault');
+const examenesLib = require('../../.kit/herramientas/lib/examenes');
 
 // Inserta contenido en el cuerpo de la nota, antes del pie de navegación (`%% navegación %%` de
 // lib/indice.js) si ya lo tiene: si se añadiera detrás, quedaría fuera del cuerpo que lee /dudas y
@@ -148,6 +149,259 @@ function promptAlumnoSimulado(perfil, examen, n) {
   ].join('\n');
 }
 
+// --- El examen tipo test (examen v1): el alumno simulado marca casillas, no un LLM ------------------------
+//
+// Con el examen tipo test, la clave vive fuera de la bóveda (config/claves/…): un LLM haciendo de alumno no
+// puede verla, así que "contestar como lo haría este alumno" ya no aporta nada que se pueda medir — lo único
+// que importa es si el profesor corrige bien. Por eso aquí no se llama a ningún LLM: se marcan las casillas
+// con un patrón determinista (aciertos, fallos y blancos conocidos de antemano), leyendo la clave real que
+// acabó de escribir /examen, para poder calcular la nota exacta que examen.js --corregir tiene que sacar.
+
+const NUMERO_PREGUNTA = /^(\d+\.\s|\*\*\d+\.\*\*)/;
+const OPCION_CON_CASILLA = /^-\s*\[([ xX])\]\s*([a-zA-Z])\)/;
+
+// Las preguntas de un examen tipo test, con sus opciones y en qué línea está cada una: la misma forma de
+// leerlas que usa examen.js (lib interno, no exportado), para no desincronizarse de lo que el código real
+// entiende por "una pregunta".
+function casillasDeExamen(lineas) {
+  const lista = [];
+  for (let i = 0; i < lineas.length; i++) {
+    if (!NUMERO_PREGUNTA.test(lineas[i])) continue;
+    let j = i + 1;
+    const opciones = [];
+    while (j < lineas.length) {
+      const m = OPCION_CON_CASILLA.exec(lineas[j]);
+      if (m) { opciones.push({ linea: j, letra: m[2].toLowerCase() }); j++; continue; }
+      if (lineas[j].trim() === '') { j++; continue; }
+      if (opciones.length || NUMERO_PREGUNTA.test(lineas[j]) || /^#/.test(lineas[j]) || lineas[j].startsWith('>')) break;
+      j++;
+    }
+    if (opciones.length) lista.push({ opciones });
+  }
+  return lista;
+}
+
+// Un patrón fijo, sin aleatoriedad: 1 de cada 5 preguntas en blanco, 1 de cada 5 fallada (a propósito, con
+// una opción que no es la correcta) y el resto acertada. Con `n` preguntas cualquiera, sale siempre el mismo
+// reparto para el mismo `n`: es lo que hace que la nota esperada se pueda calcular antes de corregir.
+function patronDeRespuestas(n) {
+  return Array.from({ length: n }, (_, i) => (i % 5 === 4 ? 'blanco' : i % 5 === 0 ? 'fallo' : 'acierto'));
+}
+
+const marcar = linea => linea.replace(/^(\s*-\s*)\[[ xX]\]/, '$1[x]');
+
+// La nota que tiene que dar examen.js --corregir con este patrón y esta clave (misma fórmula que
+// examen.js#notaTest): así se puede comparar exacta con lo que de verdad escriba la corrección.
+function notaEsperada({ aciertos, fallos, total, restaFallo }) {
+  return Math.max(0, Math.floor(((aciertos - restaFallo * fallos) * 100) / total + 1e-9) / 10);
+}
+
+// Marca las casillas del examen recién escrito con el patrón de arriba, usando la clave de verdad
+// (config/claves/…, fuera de la bóveda) para saber qué opción es la correcta y cuál no. Devuelve cuántas
+// preguntas de cada tipo hubo y la nota que examen.js --corregir tiene que sacar.
+function contestarExamenTest(destino, ficheroExamen) {
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  let clave;
+  try { clave = examenesLib.leerClave(destino, relExamen); } catch (error) { return { ok: false, detalle: `no se pudo leer la clave: ${error.message}` }; }
+  const clavePreguntas = Array.isArray(clave.preguntas) ? clave.preguntas : [];
+  const texto = fs.readFileSync(ficheroExamen, 'utf8');
+  const eol = texto.includes('\r\n') ? '\r\n' : '\n';
+  const lineas = texto.replace(/\r\n/g, '\n').split('\n');
+  const preguntas = casillasDeExamen(lineas);
+  if (!preguntas.length) return { ok: false, detalle: 'no se han encontrado preguntas con casillas ("- [ ] a) …")' };
+  if (preguntas.length !== clavePreguntas.length) {
+    return { ok: false, detalle: `el examen tiene ${preguntas.length} preguntas y la clave trae ${clavePreguntas.length}` };
+  }
+  const patron = patronDeRespuestas(preguntas.length);
+  let aciertos = 0, fallos = 0, blancos = 0;
+  preguntas.forEach((pregunta, i) => {
+    if (patron[i] === 'blanco') { blancos++; return; }
+    const correctas = (clavePreguntas[i].correctas || []).map(l => String(l).toLowerCase());
+    if (patron[i] === 'acierto') {
+      aciertos++;
+      for (const o of pregunta.opciones) if (correctas.includes(o.letra)) lineas[o.linea] = marcar(lineas[o.linea]);
+    } else {
+      fallos++;
+      const mala = pregunta.opciones.find(o => !correctas.includes(o.letra)) || pregunta.opciones[0];
+      lineas[mala.linea] = marcar(lineas[mala.linea]);
+    }
+  });
+  fs.writeFileSync(ficheroExamen, lineas.join(eol));
+  const restaFallo = Number(clave.resta_fallo) || 0;
+  const total = preguntas.length;
+  return { ok: true, total, aciertos, fallos, blancos, notaEsperada: notaEsperada({ aciertos, fallos, total, restaFallo }) };
+}
+
+// Lo que tiene que quedar verdad tras `/examen (contestar)` y la corrección: la nota exacta que se esperaba,
+// el histórico de intentos escrito, las casillas del cuerpo desmarcadas otra vez (para poder repetirlo) y la
+// clave de verdad fuera de `estudio/` (nunca dentro de la bóveda que ve el alumno).
+function verificarCorreccionTest(destino, ficheroExamen, contestacion) {
+  if (!contestacion || !contestacion.ok) return { ok: false, detalle: 'no hay respuestas de referencia: se omite la comprobación' };
+  const texto = fs.readFileSync(ficheroExamen, 'utf8');
+  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(texto);
+  const m = fm && /^nota:\s*([\d.,]+)\s*$/m.exec(fm[1]);
+  const nota = m ? Number(m[1].replace(',', '.')) : null;
+  const notaExacta = nota !== null && Math.abs(nota - contestacion.notaEsperada) < 1e-9;
+  const historico = /## Histórico de intentos/.test(texto);
+  const cuerpo = texto.split('## Histórico de intentos')[0];
+  const desmarcadas = !/\[[xX]\]/.test(cuerpo);
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  const rutaClave = examenesLib.rutaClave(destino, relExamen);
+  const claveFueraDeEstudio = fs.existsSync(rutaClave) && !rutaClave.startsWith(path.join(destino, 'estudio') + path.sep);
+  const ok = notaExacta && historico && desmarcadas && claveFueraDeEstudio;
+  return {
+    ok,
+    detalle: `nota: ${nota} (esperada ${contestacion.notaEsperada}${notaExacta ? ', exacta' : ', NO coincide'}) · `
+      + `histórico: ${historico ? 'sí' : 'no'} · casillas desmarcadas: ${desmarcadas ? 'sí' : 'no'} · clave fuera de estudio/: ${claveFueraDeEstudio ? 'sí' : 'no'}`,
+  };
+}
+
+// --- Examen de referencia del centro (decisión del mantenedor, 2026-09-24) -----------------------------
+
+// Lo que config/examenes.json tiene que respetar tras leer un examen de referencia del centro: lo que el
+// texto declara manda (nunca al revés) y nada de lo que no declara se inventa — ni en el tipo que toca
+// (aquí, `modulo`, según lo que pide el fixture) ni en los demás tipos, que no deberían tocarse.
+const CLAVES_TIPO_VALIDAS = new Set(['preguntas', 'aprobado', 'escalones']);
+
+function referenciaCoherente(destino, textoReferencia) {
+  const f = path.join(destino, 'config', 'examenes.json');
+  let cfg;
+  try { cfg = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (error) {
+    return { ok: false, detalle: `config/examenes.json no es JSON válido: ${error.message}` };
+  }
+  const opciones = Number((/(\d+)\s+opciones por pregunta/.exec(textoReferencia) || [])[1]) || null;
+  const sinResta = /no resta puntos por fallar/.test(textoReferencia);
+  const aprobado = Number((/aprueba con (\d+)\s+aciertos de \d+/.exec(textoReferencia) || [])[1]) || null;
+  const modulo = ((cfg.tipos || {}).modulo) || {};
+  const problemas = [];
+  if (opciones && cfg.opciones !== opciones) problemas.push(`opciones: ${cfg.opciones} (el test declara ${opciones})`);
+  if (sinResta && cfg.resta_fallo !== 0) problemas.push(`resta_fallo: ${cfg.resta_fallo} (el test no resta)`);
+  if (aprobado && modulo.aprobado !== aprobado) problemas.push(`tipos.modulo.aprobado: ${modulo.aprobado} (el test declara ${aprobado})`);
+  for (const [nombre, tipo] of Object.entries(cfg.tipos || {})) {
+    const extra = Object.keys(tipo || {}).filter(k => !CLAVES_TIPO_VALIDAS.has(k));
+    if (extra.length) problemas.push(`tipos.${nombre}: claves inventadas (${extra.join(', ')})`);
+  }
+  return problemas.length
+    ? { ok: false, detalle: problemas.join(' · ') }
+    : { ok: true, detalle: `config/examenes.json coherente con la referencia (opciones ${cfg.opciones}, resta_fallo ${cfg.resta_fallo}, modulo.aprobado ${modulo.aprobado})` };
+}
+
+// El examen que se escriba a partir de ahí tiene que respetar, pregunta a pregunta, el número de opciones
+// que declara su propia clave — lo que "Examen de referencia del centro" tenía que fijar en
+// config/examenes.json antes de escribirlo.
+function formatoDeOpciones(destino, ficheroExamen) {
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  let clave;
+  try { clave = examenesLib.leerClave(destino, relExamen); } catch (error) {
+    return { ok: false, detalle: `no se pudo leer la clave: ${error.message}` };
+  }
+  const lineas = fs.readFileSync(ficheroExamen, 'utf8').replace(/\r\n/g, '\n').split('\n');
+  const preguntas = casillasDeExamen(lineas);
+  const esperado = Number(clave.opciones) || 0;
+  const malas = preguntas.filter(pr => pr.opciones.length !== esperado);
+  return malas.length
+    ? { ok: false, detalle: `${malas.length} de ${preguntas.length} pregunta(s) no tienen las ${esperado} opciones de la clave` }
+    : { ok: true, detalle: `las ${preguntas.length} preguntas tienen ${esperado} opciones, como la clave` };
+}
+
+// Normaliza un enunciado para comparar "literal" sin que el markdown (negritas, marcadores de fuente) ni los
+// espacios de más lo desincronicen: sin eso, "**1.** Un depósito…" y "1. Un depósito…" nunca coincidirían.
+function normalizarTexto(s) {
+  return String(s)
+    .replace(/\*\([^)]*\)\*/g, '')   // *(elige una)*, *(varias)*, *(del centro)*…
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+// Las preguntas del test de referencia del centro (el fixture de pruebas/curso-ejemplo/estudio/inbox/):
+// numeradas "N. …", con sus opciones "a) …" y la clave de soluciones al final ("## Soluciones", "1-b · 2-b…").
+function preguntasReferencia(texto) {
+  const lineas = texto.replace(/\r\n/g, '\n').split('\n');
+  const iSoluciones = lineas.findIndex(l => /^## Soluciones/.test(l));
+  const correctas = {};
+  if (iSoluciones >= 0) {
+    for (const m of lineas.slice(iSoluciones + 1).join(' ').matchAll(/(\d+)-([a-z])/g)) correctas[Number(m[1])] = m[2];
+  }
+  const cuerpo = iSoluciones >= 0 ? lineas.slice(0, iSoluciones) : lineas;
+  const preguntas = [];
+  let actual = null;
+  for (const l of cuerpo) {
+    const mPregunta = /^(\d+)\.\s+(.*)$/.exec(l);
+    const mOpcion = /^\s*[a-z]\)\s+.*$/.exec(l);
+    if (mPregunta) {
+      if (actual) preguntas.push(actual);
+      actual = { numero: Number(mPregunta[1]), lineas: [mPregunta[2]] };
+    } else if (mOpcion) {
+      continue;   // las opciones no forman parte del enunciado que hay que igualar
+    } else if (actual && l.trim()) {
+      actual.lineas.push(l.trim());
+    }
+  }
+  if (actual) preguntas.push(actual);
+  return preguntas.map(p => ({ numero: p.numero, enunciado: p.lineas.join(' ').trim(), correcta: correctas[p.numero] || null }));
+}
+
+// Cada pregunta del examen, con su enunciado en crudo (desde el número hasta la primera opción con casilla) y
+// el bloque entero (para poder buscar en él un aviso visible de "del centro").
+function bloquesDeExamen(lineas) {
+  const lista = [];
+  for (let i = 0; i < lineas.length; i++) {
+    if (!NUMERO_PREGUNTA.test(lineas[i])) continue;
+    const partes = [lineas[i].replace(NUMERO_PREGUNTA, '').trim()];
+    let j = i + 1;
+    while (j < lineas.length && !OPCION_CON_CASILLA.test(lineas[j])) {
+      if (NUMERO_PREGUNTA.test(lineas[j]) || /^#/.test(lineas[j]) || lineas[j].startsWith('>')) break;
+      if (lineas[j].trim()) partes.push(lineas[j].trim());
+      j++;
+    }
+    let k = j;
+    while (k < lineas.length && (OPCION_CON_CASILLA.test(lineas[k]) || lineas[k].trim() === '')) k++;
+    lista.push({ numero: lista.length + 1, enunciadoCrudo: partes.join(' '), bloque: lineas.slice(i, k).join(' ') });
+  }
+  return lista;
+}
+
+// El examen tiene que traer, literales y marcadas, algunas de las preguntas del test de referencia del
+// centro (decisión del mantenedor, 2026-09-24): al menos una, como mucho la mitad, marcadas como del centro
+// (en el enunciado o con "origen": "centro" en la clave) y con la respuesta correcta de la clave coincidiendo
+// con la del test del centro, cuando este la trae.
+function preguntasLiteralesDelCentro(destino, ficheroExamen, textoReferencia) {
+  const referencia = preguntasReferencia(textoReferencia);
+  if (!referencia.length) return { ok: false, detalle: 'no se han podido leer preguntas del test de referencia' };
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  let clave;
+  try { clave = examenesLib.leerClave(destino, relExamen); } catch (error) {
+    return { ok: false, detalle: `no se pudo leer la clave: ${error.message}` };
+  }
+  const clavePreguntas = Array.isArray(clave.preguntas) ? clave.preguntas : [];
+  const lineas = fs.readFileSync(ficheroExamen, 'utf8').replace(/\r\n/g, '\n').split('\n');
+  const bloques = bloquesDeExamen(lineas);
+  if (!bloques.length) return { ok: false, detalle: 'no se han encontrado preguntas en el examen' };
+
+  const literales = [];
+  bloques.forEach((bloque, i) => {
+    const ref = referencia.find(r => normalizarTexto(r.enunciado) === normalizarTexto(bloque.enunciadoCrudo));
+    if (!ref) return;
+    const claveP = clavePreguntas[i] || {};
+    const marcada = /del centro/i.test(bloque.bloque) || claveP.origen === 'centro';
+    const correctas = (claveP.correctas || []).map(l => String(l).toLowerCase());
+    const coincideRespuesta = ref.correcta ? correctas.includes(ref.correcta) : null;
+    literales.push({ numero: bloque.numero, marcada, coincideRespuesta });
+  });
+
+  if (!literales.length) return { ok: false, detalle: 'ninguna pregunta del examen coincide, literal, con las del test de referencia' };
+  const mitad = Math.floor(bloques.length / 2);
+  if (literales.length > mitad) return { ok: false, detalle: `${literales.length} de ${bloques.length} preguntas son del centro (más de la mitad, ${mitad})` };
+  const sinMarcar = literales.filter(l => !l.marcada);
+  if (sinMarcar.length) return { ok: false, detalle: `${sinMarcar.length} pregunta(s) literal(es) del centro sin marcar (ni en el enunciado ni con "origen": "centro" en la clave)` };
+  const respuestaMal = literales.filter(l => l.coincideRespuesta === false);
+  if (respuestaMal.length) return { ok: false, detalle: `la respuesta de la clave no coincide con la del test del centro en la(s) pregunta(s) ${respuestaMal.map(l => l.numero).join(', ')}` };
+
+  return { ok: true, detalle: `${literales.length} de ${bloques.length} preguntas son literales del centro (máximo ${mitad}), marcadas y con su respuesta` };
+}
+
 // --- La corrección, medida (issue #39, H08) ---------------------------------------------------------------
 
 // El veredicto de una celda "Resultado" de la tabla de un intento, en los tres de "Cuando preguntas para medir"
@@ -236,4 +490,6 @@ module.exports = {
   conceptoConFormula, examenMasReciente, repasosGenerados,
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
+  casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
+  referenciaCoherente, formatoDeOpciones, preguntasReferencia, preguntasLiteralesDelCentro,
 };

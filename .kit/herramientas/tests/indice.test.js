@@ -119,12 +119,53 @@ test('leerAprobado: 5 por defecto, o el aprobado: de config/curso.md', () => {
   assert.equal(ix.leerAprobado(cursoTemporal({ 'config/curso.md': '---\nestado: configurado\naprobado: 6\n---\n# C\n' })), 6);
 });
 
+test('notaDeUnidad: un examen final o de trimestre no cuenta como examen de módulo', () => {
+  const raiz = cursoConIndice({
+    'estudio/examenes/01-02-final.md': examen('01-02', '2026-10-01', '9', 'tipo_examen: final\nescalon: 1\n'),
+    'estudio/examenes/01-02-trimestre.md': examen('01-02', '2026-10-02', '8', 'tipo_examen: trimestre\n'),
+  });
+  const ex = ix.leerExamenes(raiz);
+  assert.equal(ix.notaDeUnidad('01-02', ex), null);
+});
+
+test('leerExamenes: aprobado por examen (su propio aprobado:, o el de config/curso.md por defecto)', () => {
+  const raiz = cursoConIndice({
+    'config/curso.md': '---\naprobado: 6\n---\n# C\n',
+    'estudio/examenes/01-02-examen.md': examen('01-02', '2026-10-01', '7'),
+    'estudio/examenes/01-02-final.md': examen('01-02', '2026-10-01', '9', 'tipo_examen: final\nescalon: 1\naprobado: 7\n'),
+  });
+  const ex = ix.leerExamenes(raiz);
+  assert.equal(ex.find(e => e.rel.endsWith('01-02-examen.md')).aprobado, 6);
+  assert.equal(ex.find(e => e.rel.endsWith('01-02-final.md')).aprobado, 7);
+});
+
+test('lineaExamenFinal: sin exámenes finales, nada; con uno suspenso, el escalón sigue pendiente', () => {
+  const raiz = cursoTemporal();
+  assert.equal(ix.lineaExamenFinal(raiz, []), null);
+  const finales = [{ rel: 'examenes/final-1.md', escalon: 1, nota: 5, aprobado: 7, fecha: '2026-11-01' }];
+  assert.match(ix.lineaExamenFinal(raiz, finales), /🎯 Examen final: escalón 1 de 4 \(aprobado: 70%\)/);
+});
+
+test('lineaExamenFinal: el último escalón aprobado, la fecha en que se superó', () => {
+  const raiz = cursoTemporal();
+  const finales = [1, 2, 3, 4].map(n => ({ rel: `examenes/final-${n}.md`, escalon: n, nota: 10, aprobado: 7, fecha: `2026-11-0${n}` }));
+  assert.equal(ix.lineaExamenFinal(raiz, finales), '🎯 Examen final superado el 2026-11-04');
+});
+
+test('inicio: examen final pendiente sale como una línea, arriba', () => {
+  const raiz = cursoConIndice({
+    'estudio/examenes/final-1.md': examen('01', '2026-10-05', '6', 'tipo_examen: final\nescalon: 1\naprobado: 7\n'),
+  });
+  const md = ix.markdownInicio(raiz);
+  assert.match(md, /🎯 Examen final: escalón 1 de 4 \(aprobado: 70%\)/);
+});
+
 test('inicio: sigue por aquí, contadores, temario entero y tabla con alias escapado', () => {
   const md = ix.markdownInicio(cursoConIndice(), { pendientes: 3 });
   assert.match(md, /^# Inversión\n/);
   assert.match(md, /👉 Sigue por aquí: \[\[01-02-04-van\|1\.2\.4 VAN y TIR\]\]/);
   assert.match(md, /Estudiadas 1 de 3 · Pendientes abiertos: 3 → \[\[pendientes\]\]/);   // 3 = 2 + s01-intro de la base
-  assert.match(md, /^## Módulo 1 · Conceptos · 1\/2 estudiadas · sin examen de módulo$/m);
+  assert.match(md, /^## Módulo 1 · Conceptos · 1\/2 estudiadas · 2\/3 conceptos dominados · sin examen de módulo$/m);
   assert.match(md, /^### 1\.2 Medidores · 1\/2 estudiadas$/m);
   assert.match(md, /^\| \[\[01-02-01-interes\\\|1\.2\.1 Interés\]\] \| ✅ \| ✅ superada \|$/m);
   assert.match(md, /^\| \[\[01-02-04-van\\\|1\.2\.4 VAN y TIR\]\] \| ⬜ \| 📝 faltan 1 \|$/m);
@@ -144,9 +185,9 @@ test('inicio: 🔁 para repasar como lista, una sesión por línea, y nota suspe
 
 test('inicio: módulo entero estudiado y sin examen → lo propone; con examen de módulo → su nota', () => {
   const todo = { 'estudio/sesiones/modulo-01/1.2-medidores/01-02-04-van.md': sesion({ fm: 'clases: [1.2.4]\nestudiada: true\n', h1: 'VAN', conceptos: '- [[b]]' }) };
-  assert.match(ix.markdownInicio(cursoConIndice(todo)), /^## Módulo 1 · Conceptos · 2\/2 estudiadas · listo para el examen del módulo: pídeselo a tu profesor$/m);
+  assert.match(ix.markdownInicio(cursoConIndice(todo)), /^## Módulo 1 · Conceptos · 2\/2 estudiadas · 2\/2 conceptos dominados · listo para el examen del módulo: pídeselo a tu profesor$/m);
   const conExamen = cursoConIndice({ ...todo, 'estudio/examenes/01-examen.md': examen('01', '2026-11-21', '7,5') });
-  assert.match(ix.markdownInicio(conExamen), /^## Módulo 1 · Conceptos · 2\/2 estudiadas · 📝 7,5 \(2026-11-21\)$/m);
+  assert.match(ix.markdownInicio(conExamen), /^## Módulo 1 · Conceptos · 2\/2 estudiadas · 2\/2 conceptos dominados · 📝 7,5 \(2026-11-21\)$/m);
 });
 
 test('inicio sin estructura: una sola tabla con todas las sesiones', () => {
@@ -227,10 +268,58 @@ test('inicio: módulo sin sesiones en su árbol ocupa una línea, sin subunidade
   const md = ix.markdownInicio(raiz);
 
   // Módulo 1 con sesiones: debe mostrar su cabecera y la de su hijo
-  assert.match(md, /^## Módulo 1 · Conceptos · 1\/1 estudiadas · listo para el examen del módulo/m);
+  assert.match(md, /^## Módulo 1 · Conceptos · 1\/1 estudiadas · 1\/1 conceptos dominados · listo para el examen del módulo/m);
   assert.match(md, /^### 1\.2 Medidores · 1\/1 estudiadas$/m);
 
   // Módulo 2 sin sesiones: debe mostrar solo su cabecera (una línea con "aún sin sesiones"), NO la de su hijo
   assert.match(md, /^## Módulo 2 · Finanzas · aún sin sesiones$/m);
   assert.doesNotMatch(md, /^### 2\.1 Gestión/m, 'El hijo vacío de módulo vacío no debe aparecer');
+});
+
+// E3 · Progreso visible (0.25.0): lo que se ve es lo que entiende (conceptos dominados, módulos superados), no
+// cuánto ha hecho. Sin rachas ni insignias.
+test('inicio: conceptos dominados por módulo, contados una vez aunque salgan en dos sesiones', () => {
+  const raiz = cursoConIndice({
+    'estudio/sesiones/modulo-01/1.2-medidores/01-02-05-mas.md': sesion({ fm: 'clases: [1.2.5]\n', h1: 'Más', conceptos: '- [[a]]\n- [[d]]' }),
+    'estudio/progreso.md': '| C | T | A |\n|---|---|---|\n| [[a]] | ✅ | ⬜ |\n| [[b]] | ✅ | 🟡 |\n| [[c]] | ⬜ | ⬜ |\n| [[d]] | ✅ | ✅ |\n',
+  });
+  // a y d dominados; b tiene la aplicación floja (no dominado); c sin evaluar → 2 de 4
+  assert.match(ix.markdownInicio(raiz), /^## Módulo 1 · Conceptos · 1\/3 estudiadas · 2\/4 conceptos dominados · sin examen de módulo$/m);
+});
+
+test('inicio: módulo aprobado → línea de módulo superado arriba; suspenso → nada', () => {
+  const aprobado = cursoConIndice({ 'estudio/examenes/01-examen.md': examen('01', '2026-10-02', '7,5') });
+  assert.match(ix.markdownInicio(aprobado), /^🏁 Módulo 1 · Conceptos superado el 2026-10-02 con un 7,5$/m);
+  const suspenso = cursoConIndice({ 'estudio/examenes/01-examen.md': examen('01', '2026-10-02', '4') });
+  assert.doesNotMatch(ix.markdownInicio(suspenso), /🏁/);
+  const subunidad = cursoConIndice({ 'estudio/examenes/01-02-examen.md': examen('01-02', '2026-10-02', '9') });
+  assert.doesNotMatch(ix.markdownInicio(subunidad), /🏁/);   // solo los módulos, no cada subunidad
+});
+
+test('inicio: progreso_en_inicio: no en config/profesor.md lo quita', () => {
+  const raiz = cursoConIndice({
+    'config/profesor.md': '---\nprogreso_en_inicio: no\n---\n# El profesor\n',
+    'estudio/examenes/01-examen.md': examen('01', '2026-10-02', '7,5'),
+  });
+  const md = ix.markdownInicio(raiz);
+  assert.doesNotMatch(md, /conceptos dominados|🏁/);
+  assert.match(md, /^## Módulo 1 · Conceptos · 1\/2 estudiadas · 📝 7,5 \(2026-10-02\)$/m);
+});
+
+test('enlace: si la etiqueta de la clase ya lleva el título, no lo repite', () => {
+  const s = { id: '01-01-01-dinero', clases: ['Clase 1.1 · El dinero y sus funciones'], titulo: 'El dinero y sus funciones' };
+  assert.equal(ix.enlace(s), '[[01-01-01-dinero|Clase 1.1 · El dinero y sus funciones]]');
+  assert.equal(ix.enlace({ ...s, clases: ['1.1'] }), '[[01-01-01-dinero|1.1 El dinero y sus funciones]]');
+});
+
+// E1 · Repaso espaciado: en inicio, lo que toca en dos tramos de fechas (inicio solo cambia al guardar).
+test('inicio: flashcards para repasar por tramos, con enlace al fichero y el nombre de su sesión', () => {
+  const raiz = cursoConIndice({ 'config/repaso.json': JSON.stringify({ version: 1, tarjetas: {
+    a: { caja: 1, proxima: '2026-09-24', fichero: 'flashcards/modulo-01/01-02-01-interes.md' },
+    b: { caja: 1, proxima: '2026-09-25', fichero: 'flashcards/modulo-01/01-02-01-interes.md' },
+    c: { caja: 2, proxima: '2026-09-30', fichero: 'flashcards/modulo-01/01-02-04-van.md' },
+  } }) });
+  const md = ix.markdownInicio(raiz, { hoy: '2026-09-24' });
+  assert.match(md, /👉 Sigue por aquí[^\n]*\n\n🗂️ Flashcards para repasar:\n- Hasta el 26\/9 · 2 tarjetas: \[\[flashcards\/modulo-01\/01-02-01-interes\|1\.2\.1 Interés\]\] \(2\)\n- Del 27\/9 al 3\/10 · 1 tarjeta: \[\[flashcards\/modulo-01\/01-02-04-van\|1\.2\.4 VAN y TIR\]\] \(1\)\n/);
+  assert.doesNotMatch(ix.markdownInicio(cursoConIndice(), { hoy: '2026-09-24' }), /Flashcards para repasar/);
 });

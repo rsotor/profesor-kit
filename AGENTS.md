@@ -40,7 +40,7 @@ README.md                                                            ← DATOS: 
   `estudio/auditoria-del-material.md` (las auditorías de todas las sesiones: míralo antes de auditar una clase, y si un
   error ya salió, dilo —"la misma hoja que en la 1.2"—) · `estudio/mi-perfil.md` (lo que el alumno ve de sí mismo, sacado
   de `config/alumno.md` y `config/profesor.md`, y su evolución: si dice que algo no es verdad, corrígelo en
-  `config/alumno.md` con la prueba `corrección del alumno, <fecha>`).
+  `config/alumno.md` con la prueba `corrección del alumno, <fecha>`) · las casillas ✅/❌ de las flashcards (repaso).
 - **Si el alumno ha movido el curso a otra carpeta** y su atajo ha dejado de abrirlo:
   `node .kit/herramientas/crear-atajo.js --nombre <su palabra> --actualizar`.
 - **Si falta algo** (`comprobar.js` da `pieza-ausente`: alguien borró o movió una carpeta o un fichero),
@@ -210,7 +210,7 @@ sin que lo pida. Si no imprime nada, no digas nada. (Solo consulta una vez al d�
 
 4. **Calentamiento, en los casos 1 y 3, y en el 2 si el alumno se queda:** dos preguntas de lo que ya vio y
    necesita la sesión siguiente (salen de `requiere:` de sus conceptos y de `estudio/progreso.md` — lo flojo o sin
-   evaluar primero; reglas de "Cuando preguntas para medir"). Se puede saltar ("ahora no"); las respuestas
+   evaluar primero, y las flashcards que ya tocan: marca su casilla ✅/❌; reglas de "Cuando preguntas para medir"). Se puede saltar ("ahora no"); las respuestas
    cuentan como prueba y mueven `estudio/progreso.md`. **Si lo salta tres veces seguidas**, deja de ofrecerlo y
    apúntalo en `config/alumno.md` (sección "## Calentamiento"; créala si no existe).
    Si en cualquier momento pide "hazme unas preguntas" o "¿repasamos?", es esto mismo, en el chat: no es `/examen`
@@ -251,6 +251,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Antes de algo de varios pasos (la línea "en curso" del diario) | `node .kit/herramientas/guardar.js --empezar "<qué>"` |
 | Para que el alumno acepte los permisos una vez (con su sí) | `node .kit/herramientas/permisos.js --ver` · `--aplicar` · `--quitar` |
 | Para leer un Word, PowerPoint o Excel del material | `node .kit/herramientas/leer.js <fichero>` (`--parte N` si es largo) |
+| Para barrer casos de un ejercicio HTML interactivo (que dé la respuesta correcta) | `node .kit/herramientas/verificar-ejercicio.js <ejercicio.html> --casos <casos.json>` (`--barrer N` con sus rangos) |
 | Para registrar la corrección de un examen (histórico, huecos, `estudiada`) | `node .kit/herramientas/examen.js --registrar <examen> --correccion <json>` |
 | Para apuntar una duda en el registro de `config/alumno.md` | `node .kit/herramientas/dudas.js <concepto> --prueba "<fichero>"` |
 | Para deshacer el último guardado | `node .kit/herramientas/deshacer.js` (antes, `--ver` para enseñar qué cambiaría) |
@@ -311,7 +312,8 @@ lo mismo a mano dos veces · un paso de la instalación no encaja con este siste
 mejora que valdría para **cualquier** alumno. No escales lo que es de este curso (errores del material, del
 temario, del centro) ni de este alumno.
 
-Cómo se abre la issue (con `issue.js` y el sí del alumno): `.kit/guias/feedback-al-kit.md`.
+Cómo se abre la issue (con `issue.js` y el sí del alumno): `.kit/guias/feedback-al-kit.md`. Si te corrige qué skill
+tocaba, o usas una con una frase que no se parece a sus ejemplos: `.kit/guias/cuando-pide-a-su-manera.md`.
 
 ## Si el alumno cambia de asistente
 

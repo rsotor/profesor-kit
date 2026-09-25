@@ -39,12 +39,16 @@ Hazlas ahora, con él, antes de seguir con lo que estuvierais haciendo:
 1. **Completa `config/estructura.json`** con **todas** las unidades del temario de `config/curso.md`
    (tengan material o no) y su `titulo` (con tildes) — como hace `/configurar`.
 2. **Pon `orden:`** en las sesiones que `node .kit/herramientas/comprobar.js` señale con `orden-ambiguo`.
-3. **Adapta los exámenes antiguos** al formato nuevo: `unidad:` (el prefijo de la unidad), `nota:` como
-   número sobre 10 (nunca `2/10`), `fecha:`, `intentos:`, y un `✍️ **Tu respuesta:**` vacío bajo cada
-   pregunta (ver `.kit/skills/examen/SKILL.md`, sección Formato).
-4. **Reescribe `estudio/como-usar-tu-profesor.md`** desde `.kit/plantillas/guia-de-uso.md`, con los
+3. **Adapta los exámenes antiguos** al formato de frontmatter: `unidad:` (el prefijo de la unidad),
+   `nota:` como número sobre 10 (nunca `2/10`), `fecha:`, `intentos:`, y un `✍️ **Tu respuesta:**` vacío bajo
+   cada pregunta (ver `.kit/skills/examen/SKILL.md`, sección "Exámenes de antes de esta versión"). Los
+   exámenes nuevos ya nacen en tipo test: no hay que tocar nada.
+4. **`config/examenes.json`** lo crea solo la migración (con el `aprobado:` que tuviera `config/curso.md`,
+   si tenía): compruébalo con el alumno en una frase y, si quiere otro reparto de preguntas o de aprobado por
+   tipo, cámbialo con su sí.
+5. **Reescribe `estudio/como-usar-tu-profesor.md`** desde `.kit/plantillas/guia-de-uso.md`, con los
    mismos huecos que usó `/configurar` (nombre del curso, atajo, marcador de dudas…).
-5. Dile al alumno, en una frase: "abre **inicio** en Obsidian y fija su pestaña".
+6. Dile al alumno, en una frase: "abre **inicio** en Obsidian y fija su pestaña".
 
 Termina con `node .kit/herramientas/comprobar.js` y guarda con
 `node .kit/herramientas/guardar.js "config: índice del curso"`.

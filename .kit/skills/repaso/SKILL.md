@@ -1,6 +1,6 @@
 ---
 name: repaso
-description: Use when the student wants a visual review page of a block or a concept, as a local web page instead of markdown. Triggers on "/repaso", "hazme un repaso visual", "hazme una página de repaso", "quiero verlo en una página web". Not for a quick oral review in the chat ("¿repasamos?", "hazme unas preguntas"): that is the warm-up in conversation, no skill.
+description: Use when the student wants a visual review page of a block or a concept, as a local web page instead of markdown. Triggers on "/repaso", "hazme un repaso visual", "hazme una página de repaso", "quiero verlo en una página web". Not for a quick oral review in the chat ("¿repasamos?", "hazme unas preguntas"), which is the warm-up in conversation, no skill.
 ---
 
 # Repaso visual

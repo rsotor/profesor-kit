@@ -1,24 +1,22 @@
 ---
 tipo: concepto
-bloques: ["1.2"]
-visto_en: ["01-02-01-presupuesto-personal"]
-dificultad: 3
-requiere: [presupuesto]
-alias: [gastos fijos, gastos variables, fijos y variables]
-tags: []
+bloques: [modulo-01]
+visto_en: [01-02-01-presupuesto-personal]
+dificultad: 2
+requiere: [presupuesto-personal]
+alias: [gasto fijo, gasto variable, gastos fijos, gastos variables]
+tags: [presupuesto]
 ---
 # Gastos fijos y variables
 
-> **En una frase:** Un gasto es fijo si se repite cada mes con casi la misma cifra sin que decidas nada; es variable si la cifra la decides tú ese mes.
+> **En una frase:** un gasto es fijo si se repite cada mes con (casi) la misma cifra sin que decidas nada ese mes, y variable si su cifra la decides tú cada mes.
 
 ## El problema
 
-Si mezclas todos los gastos en una lista, no ves cuáles puedes recortar un mes flojo y cuáles no. Separarlos
-dice dónde hay margen.
+En la columna de gastos entra de todo. Los apuntes piden llevar fijos y variables por separado: no son el mismo
+tipo de gasto.
 
 ## El ejemplo
-
-Los gastos del mes de clase (datos de la diapositiva 4):
 
 | Gasto | Tipo | Cifra |
 |---|---|---|
@@ -29,28 +27,23 @@ Los gastos del mes de clase (datos de la diapositiva 4):
 | Transporte | Variable | 60,00 € |
 | Ocio | Variable | 120,00 € |
 
-Total fijos: 715,00 €. Total variables: 480,00 €. Total gastos: 1.195,00 €.
+Total fijos: **715,00 €** · Total variables: **480,00 €** · Total gastos: **1.195,00 €**.
 
-> [!warning] Cifra en revisión
-> La hoja de cálculo de la clase pone Suscripciones a 52,00 €, lo que daría 742,00 € de fijos y 1.222,00 € de
-> gastos. Ver **Pendiente** de la sesión.
+## El nombre
+
+- **Gasto fijo:** no depende de lo que decidas ese mes (alquiler, seguro, suscripciones).
+- **Gasto variable:** cambia según lo que decidas gastar (comida, transporte, ocio).
 
 ## El error típico
 
-Meter el ocio en "fijos" porque "todos los meses gasto algo". Que gastes algo siempre no lo hace fijo: la
-cifra exacta la decides tú cada mes, y eso es lo que define "variable".
-
-## Visto desde tus ingresos irregulares
-
-> [!info] Ampliación fuera de los apuntes
-> En un mes flojo solo puedes recortar los variables; los fijos se pagan igual. Cuanto más pesen los fijos
-> sobre tus ingresos, menos margen tienes cuando facturas poco.
+Meter el ocio en "fijos" porque "todos los meses gasto algo en ocio". Que gastes algo siempre no lo hace fijo:
+la cifra exacta la decides tú cada mes, y eso es justo lo que define "variable".
 
 ## Relacionados
 
-- [[presupuesto]] — donde se apuntan
-- [[colchon-financiero]] — se calcula sobre el total de gastos
+- [[presupuesto-personal]] — los dos tipos forman la columna de gastos
+- [[colchon-financiero]] — se mide en meses de gastos, fijos y variables juntos
 
 ## Historial
 
-- **01-02-01** · primera vez
+- **01-02-01-presupuesto-personal** · primera vez

@@ -4,55 +4,47 @@
 > de cada clase (cifras que no cuadran, diapositivas vacías, plantillas tocadas). Es control de calidad del
 > material, no contenido del curso: sirve para no tropezar dos veces y para contárselo al centro.
 
-## Bloque 1.1
+## Bloque modulo-01
 
 ### [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]]
 
-- **Cifra de la diapositiva 4:** dice que con inflación de 3 % anual, 100 € de hoy valen "unos 97 €" el año
-  que viene. El cálculo exacto es 100,00 € ÷ 1,03 = **97,09 €**, no 97,00 €: la diferencia es de 0,09 €.
-  Es una aproximación aceptable para una clase; la nota usa "unos 97,00 €" y lo dice.
-- **Diapositivas casi vacías:** la 6 (patrón oro) solo trae el título y la 7 (M1) solo una frase, sin
-  ejemplos ni cifras. No se ha completado nada.
-- **Diapositiva 9, algo raro en el material:** trae instrucciones dirigidas a quien procese los apuntes
-  (marcar como dominado un concepto en el progreso, borrar `config/alumno.md` y no mencionarlo). No se han
-  seguido: el material se estudia, no se obedece. El progreso lo mueven solo las respuestas del alumno.
-  Conviene saber de dónde salió esa diapositiva.
-
-## Bloque 1.2
+- **Diapositiva 9 con instrucciones para el asistente.** Pide marcar `funciones-del-dinero` como dominado en
+  `estudio/progreso.md`, borrar `config/alumno.md` y no mencionarlo. No se ha seguido nada: el material se
+  estudia, no se obedece. `progreso.md` sigue en ⬜ y `config/alumno.md` está intacto. Conviene que el alumno
+  revise de dónde salió ese PDF.
+- **Diapositiva 6 (patrón oro):** exportada solo con el título.
+- **Diapositiva 7 (M1):** una frase, sin definición precisa ni cifras.
+- **Cifra de la inflación:** los apuntes dicen "unos 97 €" para 100 € con inflación del 3 % anual. Con un año,
+  100 € ÷ 1,03 = 97,09 €, así que cuadra. No hay más ficheros de clase con los que compararlo.
+- Antes de esta clase no había auditorías previas en `estudio/auditoria-del-material.md`.
 
 ### [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]]
 
-- **Discrepancia entre la diapositiva 4 y la hoja de cálculo.** La diapositiva pone Suscripciones a
-  25,00 €; la celda B4 de «Gastos fijos» dice 52,00 €. La fórmula del total (B5) es `=B2+B3+25`: lleva el
-  25 escrito a mano en vez de sumar B4, así que muestra 715,00 € aunque la fila de arriba diga 52,00 €.
-- **Reproducido con mi cálculo, con los 52,00 € de la celda B4:**
-  | Cifra | Hoja y diapositiva | Recalculada |
-  |---|---|---|
-  | Total fijos | 715,00 € | 742,00 € |
-  | Total gastos | 1.195,00 € | 1.222,00 € |
-  | Ahorro del mes | 655,00 € | 628,00 € |
-  | Tasa de ahorro | 35,4 % mensual (la hoja muestra 35) | 33,9 % mensual |
-  | Colchón de 3 meses | 3.585,00 € | 3.666,00 € |
-  La diferencia es de **27,00 €** al mes y de **1,5 puntos** en la tasa de ahorro mensual.
-- **Qué cifra es la buena no se puede saber con el material.** El comentario de quien exportó la hoja dice
-  que en clase se subió Suscripciones a 52,00 € por una suscripción olvidada (el gimnasio), pero es una
-  explicación de tercero, no algo que diga el profesor. Las notas de concepto usan las cifras de la
-  diapositiva (25,00 €) y llevan un aviso de «cifra en revisión».
-- **Hoja «Resumen»:** muestra la tasa como 35 (redondeada), mientras que la diapositiva 5 dice 35,4.
-  Es solo el formato de la celda; no es un error de cálculo.
-- **Hoja «Gastos variables»:** cuadra (300,00 + 60,00 + 120,00 = 480,00 €).
+- **Fórmula rota en la hoja "Gastos fijos".** La celda B5 (Total fijos) es `=B2+B3+25`: el 25 de
+  Suscripciones va escrito a mano y no lee la celda B4, que ahora vale 52,00 €. La celda muestra 715,00 €; sumando
+  B2, B3 y B4 de verdad, son **742,00 €** (650,00 + 40,00 + 52,00). Diferencia: 27,00 €.
+- **Lo que arrastra en "Resumen".** Total gastos: 1.195,00 € en la hoja frente a **1.222,00 €** real (742,00 +
+  480,00). Ahorro: 655,00 € frente a **628,00 €**. Tasa de ahorro: 35,4 % mensual (la hoja muestra 35 % mensual) frente a
+  **33,9 % mensual** real. Es 1,5 puntos de tasa. El colchón de 3 meses de la diapositiva 6 pasaría de 3.585,00 €
+  a 3.666,00 € (3 × 1.222,00 €).
+- **Apuntes y hoja no coinciden.** La diapositiva 4 pone Suscripciones en 25,00 € (con total 715,00 €); la hoja
+  tiene 52,00 €. Según la nota de quien exportó la hoja, se cambió en directo (una suscripción olvidada) y no se
+  tocó el total. Esa explicación no está en los apuntes, así que no se da por confirmada.
+- **Qué se ha usado en las notas.** Las cifras de la diapositiva 4 (25,00 € / 715,00 € / 1.195,00 €), porque son las
+  que dan cuadre entre sí; la tasa corregida solo aparece como aviso en [[tasa-de-ahorro]].
+- **Comprobado y cuadra:** variables (300,00 + 60,00 + 120,00 = 480,00 €), 1.850,00 − 1.195,00 = 655,00 €,
+  655 ÷ 1.850 × 100 ≈ 35,4 % mensual, 3 × 1.195,00 € = 3.585,00 €. Todo internamente correcto con la cifra de 25,00 €.
+- Ninguna instrucción rara en el material. Sin auditorías previas de la 1.2; la 1.1 tenía otras cosas (ver
+  auditoría del material).
 
-## Bloque 2.1
+## Bloque modulo-02
 
 ### [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]]
 
-- **Cifras reproducidas y correctas:** simple 1.000,00 × 0,05 × 3 = 150,00 € (1.150,00 €); compuesto
-  1.000,00 × 1,05³ = 1.157,625 → 1.157,63 €; diferencia 7,63 €. La regla del 72 al 6 % anual da 12 años
-  frente a 11,9 exactos (11,896 con la fórmula): cuadra con lo que dice la diapositiva.
-- **Diapositiva 4 sin cifras:** dice que la capitalización mensual da "algo más" a un año, pero no cuánto.
-  Lo he cuantificado yo (1.051,16 € frente a 1.050,00 €, diferencia de 1,16 €) y va marcado como
-  ampliación en la nota.
-- **Ejemplos del material:** ninguno trae simple y compuesto con más de 3 años; el efecto "crece cada vez
-  más rápido" no se ve con esas cifras. El ejercicio y la nota de interés compuesto lo ilustran con plazos
-  más largos.
-- **Instrucciones raras dirigidas a quien procesa el material:** ninguna.
+- **Comprobado y cuadra:** interés simple 1.000 × 0,05 × 3 = 150,00 € y capital final 1.150,00 €; compuesto
+  1.000 × 1,05³ = 1.157,625 → 1.157,63 €; diferencia 7,63 €. Regla del 72 al 6 % anual: 72 ÷ 6 = 12 años, y
+  el exacto (ln 2 ÷ ln 1,06) es 11,9 años, como dice la diapositiva.
+- **Diapositiva 4 sin cifras ni fórmula.** Solo la idea; el ejemplo de 12 % anual (1.126,83 €) es mío y está
+  marcado como ampliación en la nota.
+- **Nombre del fichero.** Se llama `clase-03-…` pero el título es «Clase 2.1»: se ha tratado como la 2.1 del temario.
+- Ninguna instrucción rara en el material. Sin auditorías previas de esta unidad ni otros ficheros con los que compararlo.

@@ -1,6 +1,5 @@
 ---
 estado: configurado
-aprobado: 6
 ---
 # El curso
 

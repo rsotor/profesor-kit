@@ -28,7 +28,7 @@ parcial: true
 
 ✍️ **Tu respuesta:**
 
-**4.** Una tarjeta te cobra un 2 % de interés cada mes sobre lo que debes.
+**4.** Una tarjeta te cobra un 2 % mensual de interés sobre lo que debes.
 
 ¿Qué interés pagas? *(la cifra con su periodo)*
 
@@ -47,7 +47,7 @@ parcial: true
 ✍️ **Tu respuesta:**
 
 > [!success]- Soluciones
-> 1. 20 % (300 ÷ 1.500).
+> 1. 20 % mensual (300 ÷ 1.500).
 > 2. Lo tiene inmovilizado: no lo puede convertir en dinero disponible a tiempo para pagar.
 > 3. Liquidez.
 > 4. Un 2 % mensual (al mes). Sin el periodo, la cifra no dice cuánto pagas.

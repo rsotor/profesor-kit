@@ -19,7 +19,9 @@ te cuesta, cómo vas en los exámenes), con la prueba de cada cosa. Si algo no e
 2. Lee la sesión. Sus conceptos están enlazados: haz clic en cada uno. Para volver, la flecha **←** de arriba a
    la izquierda.
 3. En el apartado **Material** de la sesión están sus **flashcards** (tápate la respuesta y contesta de cabeza)
-   y su **ejercicio**, si lo tiene (los interactivos se abren en tu navegador).
+   y su **ejercicio**, si lo tiene (los interactivos se abren en tu navegador). Cuando hayas estudiado la sesión,
+   cada tarjeta lleva debajo ✅ *la sabía* y ❌ *no la sabía*: marca una. Las que sabes vuelven cada vez más tarde;
+   las que no, al día siguiente. En **inicio** verás cuáles te tocan.
 4. Cuando la hayas estudiado, **marca la casilla "estudiada"**: está arriba del todo de la nota, en el recuadro
    de propiedades. Un clic y queda marcada.
 5. Al final de la sesión tienes **← anterior · 🏠 Inicio · siguiente →**. Pulsa **siguiente** y sigues el
@@ -97,16 +99,20 @@ No hace falta acertar con las palabras. Si no te entiende, te pregunta.
 ## 7. Hacer un examen
 
 1. Tu profesor te dice qué nota es el examen: está en la carpeta **examenes**.
-2. **Contesta en la propia nota.** Debajo de cada pregunta hay una línea ✍️ **Tu respuesta:**; escribe detrás
-   (en esa línea o en las siguientes). Si no sabes algo, pon "no lo sé": le sirve más que acertar por suerte.
-3. **No abras las soluciones** del final hasta que te corrija.
-4. Cuando acabes, dile a tu profesor **"he terminado el examen"**. Él lee tus respuestas de la nota (también
-   puedes contestarle en el chat, si lo prefieres).
-5. Te corrige y guarda tus respuestas y tu nota al final del examen, en **Histórico de intentos**. Luego deja el
-   examen **limpio**: las mismas preguntas, sin tus respuestas. Puedes repetirlo cuando quieras y comparar con
-   la vez anterior.
+2. **Contesta marcando casillas.** Cada pregunta trae sus opciones con una casilla delante (`- [ ] a) …`):
+   marca la que creas correcta con un clic. Si la pregunta dice *(varias)*, puedes marcar más de una; si no
+   sabes nada, déjala sin marcar.
+3. Las soluciones no están en la nota: nadie puede verlas antes de corregir, ni tú ni tu profesor.
+4. Cuando acabes, dile a tu profesor **"he terminado el examen"**. Corrige el código, no él: la nota es exacta
+   y siempre la misma para las mismas casillas.
+5. Te corrige y guarda tus respuestas, la explicación de cada una y tu nota al final del examen, en
+   **Histórico de intentos**. Luego deja las casillas **desmarcadas otra vez**. Puedes repetirlo cuando
+   quieras y comparar con la vez anterior.
 6. Si ya lo has hecho varias veces y quieres uno nuevo, pídele **"hazme otra versión del examen del módulo 1"**:
    las mismas preguntas con otras cifras. El de antes se queda para repasar.
+7. **El examen final es aparte** y no pone nota a ningún módulo: se hace por escalones, cada uno más exigente
+   que el anterior. Si suspendes uno, lo repites (otra versión) hasta aprobarlo; solo entonces pasas al
+   siguiente. Pídelo con **"vamos a prepararnos"** o **"quiero hacer el examen final"**.
 
 ## 8. Dónde dejas el material de clase
 

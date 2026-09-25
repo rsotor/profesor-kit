@@ -363,3 +363,40 @@ test('migración 005: el adaptador propio del curso gana el id de su asistente; 
   assert.equal(leer(roto, 'config/adaptador-llm.json'), '{ roto', 'uno roto no se arregla a ciegas: lo dice diagnostico.js');
   m.migrar(cursoTemporal());   // sin adaptador propio: nada
 });
+
+test('migración 006: las flashcards de las sesiones estudiadas entran en el repaso; las demás no se tocan; idempotente', () => {
+  const m = require('../migraciones/006-repaso-espaciado');
+  const tarjetas = sesion => `---\ntipo: flashcards\nsesion: ${sesion}\n---\n# F\n\n**¿Una?**\n> [!success]- Respuesta\n> Sí.\n`;
+  const raiz = cursoTemporal({
+    'estudio/sesiones/01-a.md': '---\ntipo: sesion\nestudiada: true\n---\n# A\n',
+    'estudio/sesiones/02-b.md': '---\ntipo: sesion\nestudiada: false\n---\n# B\n',
+    'estudio/flashcards/01-a.md': tarjetas('01-a'),
+    'estudio/flashcards/02-b.md': tarjetas('02-b'),
+  });
+  m.migrar(raiz);
+  const despues = leer(raiz, 'estudio/flashcards/01-a.md');
+  assert.match(despues, /- \[ \] ✅ la sabía\n- \[ \] ❌ no la sabía\n\*Caja 1 de 5 · te toca el /);
+  assert.ok(despues.startsWith(tarjetas('01-a').trimEnd()), 'solo añade: no quita nada de lo que había');
+  assert.equal(leer(raiz, 'estudio/flashcards/02-b.md'), tarjetas('02-b'));
+  assert.equal(Object.keys(JSON.parse(leer(raiz, 'config/repaso.json')).tarjetas).length, 1);
+  m.migrar(raiz);
+  assert.equal(leer(raiz, 'estudio/flashcards/01-a.md'), despues);
+});
+
+test('migración 007: config/examenes.json con los valores por defecto; el aprobado de módulo hereda el de curso.md; idempotente y no lo toca', () => {
+  const m = require('../migraciones/007-examenes-json');
+  const raiz = cursoTemporal({ 'config/curso.md': '---\naprobado: 7\n---\n# Curso\n' });
+  m.migrar(raiz);
+  const cfg = JSON.parse(leer(raiz, 'config/examenes.json'));
+  assert.equal(cfg.tipos.modulo.aprobado, 7);
+  assert.equal(cfg.tipos.final.escalones.length, 4);
+  assert.equal(leer(raiz, 'config/curso.md'), '---\naprobado: 7\n---\n# Curso\n', 'curso.md no se toca');
+
+  const sinAprobado = cursoTemporal();
+  m.migrar(sinAprobado);
+  assert.equal(JSON.parse(leer(sinAprobado, 'config/examenes.json')).tipos.modulo.aprobado, 5);
+
+  fs.writeFileSync(path.join(raiz, 'config', 'examenes.json'), JSON.stringify({ opciones: 9 }));
+  m.migrar(raiz);
+  assert.equal(JSON.parse(leer(raiz, 'config/examenes.json')).opciones, 9, 'ya existía: no se toca');
+});

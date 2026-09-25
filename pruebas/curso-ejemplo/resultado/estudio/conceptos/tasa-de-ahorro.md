@@ -1,62 +1,59 @@
 ---
 tipo: concepto
-bloques: ["1.2"]
-visto_en: ["01-02-01-presupuesto-personal"]
+bloques: [modulo-01]
+visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
-requiere: [presupuesto]
-alias: [tasa de ahorro mensual]
-tags: []
-ejercicio: 01-02-01-presupuesto-mes-flojo
+requiere: [presupuesto-personal]
+alias: [porcentaje de ahorro]
+tags: [presupuesto]
 ---
 # Tasa de ahorro
 
-> **En una frase:** La parte de lo que ganas que te queda; sirve para comparar a personas con ingresos distintos.
+> **En una frase:** qué parte de lo que ingresas te queda al final del mes, en porcentaje, para poder comparar entre personas con ingresos distintos.
 
 ## El problema
 
-Ahorrar 655,00 € no dice nada por sí solo: es mucho con 1.850,00 € de ingresos y poco con 6.000,00 €. La
-cifra absoluta no se puede comparar entre dos personas.
+La cifra de ahorro en euros no se puede comparar entre dos personas con sueldos distintos: 300,00 € son mucho
+o poco según lo que entra.
 
 ## El ejemplo
 
-Ana ingresa 1.850,00 € y ahorra 655,00 €. Luis ingresa 3.000,00 € y ahorra 900,00 €.
+Ingresos del mes 1.850,00 € y ahorro del mes 655,00 €:
 
-Luis ahorra más euros, pero Ana ahorra una parte mayor de lo que gana: 35,4 % mensual frente a
-30,0 % mensual. La de Ana: 655 ÷ 1.850 × 100 ≈ 35,4.
+655 ÷ 1.850 × 100 ≈ **35,4 % mensual**.
 
-> [!warning] Cifra en revisión
-> Con la hoja de cálculo de la clase (gastos de 1.222,00 €) la tasa sería 33,9 % mensual, no 35,4 % mensual.
-> La hoja muestra "35" porque su fórmula de fijos está mal. Ver **Pendiente** de la sesión.
+> [!info] Ampliación fuera de los apuntes
+> Dos personas ahorran 300,00 € en un mes. Una ingresa 2.000,00 € (**15 % mensual**) y la otra 3.000,00 €
+> (**10 % mensual**). Ahorran lo mismo en euros, pero la primera se queda con más parte de lo que gana.
+
+## El nombre
+
+**Tasa de ahorro.** El periodo es el mes: es la parte de los ingresos *del mes* que se queda como ahorro.
 
 ## La fórmula
 
 $$ \text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100 $$
 
-Sale en tanto por ciento **mensual** (referido a un mes): dice qué parte de los ingresos de ese mes se ahorra.
+El ahorro entre lo que ingresas, pasado a porcentaje.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Comparar tasas de meses con ingresos muy distintos. Un mes flojo con los mismos gastos da una tasa mucho
-> más baja aunque no hayas gastado nada más.
+> Comparar el ahorro en euros entre personas con ingresos distintos: es justo lo que la tasa evita.
 
-## Practícalo
+> [!info] Ampliación fuera de los apuntes
+> La hoja de cálculo de la clase trae "Suscripciones" en 52,00 € pero un total de fijos que sigue contando 25,00 €.
+> Con el total corregido, la tasa del ejemplo sería 33,9 % mensual y no 35,4 % mensual. Ver la auditoría de la sesión.
 
-→ **[Un mes flojo](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-mes-flojo.html)**
-
-Desde este concepto: mira cómo cae la tasa cuando bajan los ingresos con gastos iguales. Lo que debería
-sorprender es que cae mucho más deprisa que los ingresos.
-
-## Visto desde tus ingresos irregulares
-
-Tu tasa cambia cada mes aunque gastes lo mismo. Con 1.300,00 € de ingresos y 1.195,00 € de gastos, la tasa
-es 8,1 % mensual; con 2.400,00 €, es 50,2 % mensual. Mira la tasa con el ingreso medio, no la de un mes suelto.
+> [!tip] Visto desde tus ingresos irregulares
+> Con ingresos que cambian, la tasa también cambia de un mes a otro. Calcúlala con el ingreso medio y mira si en
+> los meses flojos se queda en cero o en negativo.
 
 ## Relacionados
 
-- [[presupuesto]] — de donde sale el ahorro del mes
-- [[ingreso-medio]] — la cifra de ingresos con la que conviene calcularla
+- [[presupuesto-personal]] — de donde sale el ahorro del mes
+- [[colchon-financiero]] — lo primero que se hace con ese ahorro
 
 ## Historial
 
-- **01-02-01** · primera vez
+- **01-02-01-presupuesto-personal** · primera vez

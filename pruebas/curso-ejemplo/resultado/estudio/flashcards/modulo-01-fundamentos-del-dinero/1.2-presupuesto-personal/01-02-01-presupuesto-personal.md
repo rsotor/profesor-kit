@@ -7,21 +7,37 @@ sesion: 01-02-01-presupuesto-personal
 > El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
 > y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Todos los meses gastas algo en ocio, más o menos parecido. ¿Es un gasto fijo? *(sí o no, y por qué en una frase)***
+**Todos los meses gastas algo en ocio. ¿Es un gasto fijo o variable? (uno, con el porqué en una frase)**
 > [!success]- Respuesta
-> No, es variable: la cifra exacta la decides tú cada mes. Que gastes algo siempre no lo hace fijo.
+> Variable: que gastes algo siempre no lo hace fijo; la cifra exacta la decides tú cada mes. [[gastos-fijos-y-variables]]
 
-**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué cifra de ingresos conviene presupuestar? *(en una frase)***
-> [!success]- Respuesta
-> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 25/9*
 
-**Ana ahorra 400,00 € y Luis también. ¿Ahorran igual de bien? *(en una frase)***
+**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso presupuestas: el del mejor mes o otro? (el criterio, en una frase)**
 > [!success]- Respuesta
-> No se sabe: falta cuánto ingresa cada uno. La tasa de ahorro (ahorro ÷ ingresos × 100) es la que permite comparar.
+> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes. [[presupuesto-personal]]
 
-**Tus gastos son 1.000,00 € al mes. ¿Cuánto es un colchón de 5 meses? *(una cifra)***
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 25/9*
+
+**Un mes ingresas 2.000,00 € y ahorras 500,00 €. ¿Cuál es tu tasa de ahorro? (una cifra, con su periodo)**
 > [!success]- Respuesta
-> 5 × 1.000,00 € = 5.000,00 €.
+> 25 % mensual: 500 ÷ 2.000 × 100. [[tasa-de-ahorro]]
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 25/9*
+
+**Dos personas tienen los mismos gastos: una cobra nómina fija y la otra factura por su cuenta. ¿Cuál debería apuntar a más meses de colchón? (una, con el porqué en una frase)**
+> [!success]- Respuesta
+> La que factura por su cuenta: sus ingresos son irregulares, así que necesita más meses cubiertos (5-6 en vez de 3). [[colchon-financiero]]
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 25/9*
 
 ---
-Conceptos que cubren: [[gastos-fijos-y-variables]] · [[ingreso-medio]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

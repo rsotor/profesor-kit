@@ -135,8 +135,8 @@ const ESPERADO = {
 };
 const PROPIEDADES = {
   estudiada: 'si-no', parcial: 'si-no',
-  nota: 'nota', dificultad: 'dificultad', orden: 'numero', intentos: 'entero', version: 'entero',
-  fecha: 'fecha', trabajada: 'fecha',
+  nota: 'nota', aprobado: 'nota', dificultad: 'dificultad', orden: 'numero', intentos: 'entero',
+  version: 'entero', escalon: 'entero', fecha: 'fecha', trabajada: 'fecha',
 };
 
 // Devuelve [{ linea, texto, motivo }]; `linea` es la del fichero (la 1 es el primer `---`).

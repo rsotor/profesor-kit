@@ -4,26 +4,23 @@
 > Cada línea dice qué falta y en qué nota. Para resolver una duda, dile "tengo dudas"; para lo que falta
 > del material, búscalo en la plataforma del curso o cuéntale lo que recuerdes de clase.
 
-## Bloque 1.1 (5)
+## Bloque modulo-01 (8)
 
-- [ ] **Pendiente del profesor** · [[conceptos/masa-monetaria]] — los apuntes solo dan la definición del M1, sin ejemplo ni cifras. ¿Trae la clase un ejemplo
-- [ ] **Pendiente del profesor** · [[conceptos/masa-monetaria]] — los apuntes no traen un error típico de este concepto; falta saber qué se confunde con el M1.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — [[masa-monetaria]] no tiene ejemplo ni error típico: los apuntes solo dan la definición.
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — la diapositiva 6 (**El patrón oro**) solo trae el título. Falta su contenido; solo lo
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — preguntar al alumno a qué se refería con "esto" (¿el patrón oro, la masa monetaria, toda la
+- [ ] **Pendiente del profesor** · [[conceptos/colchon-financiero]] — si algo concreto sigue sin quedar claro (la fórmula, la ampliación o el error típico), dime cuál y lo
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — ¿Qué explicó el profesor sobre el patrón oro en clase? La diapositiva solo traía el título.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — ¿Qué dijo la clase del M1 más allá de que "mide la cantidad de dinero en manos del público"?
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — contenido de la diapositiva 6 (patrón oro): el material no lo entregó. Lo resuelve el alumno o el centro.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — definición y ejemplo de M1 (diapositiva 7): el material solo da una frase.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — los apuntes no explican más allá de esto cómo enlaza cada función del dinero con el presupuesto; si
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — cuánto vale realmente "Suscripciones": 25,00 € (diapositiva 4) o 52,00 € (hoja). La nota del
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — cuando se sepa la cifra, actualizar el ejemplo (totales, ahorro, tasa y colchón) en [[gastos-fijos-y-variables]],
 
-## Bloque 1.2 (3)
+## Bloque modulo-02 (3)
 
-- [ ] **Pendiente del profesor** · [[conceptos/colchon-financiero]] — preguntar al alumno qué parte concreta de la nota no se entiende (la fórmula, el ejemplo de
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — cuánto cuestan de verdad las Suscripciones: 25,00 € (diapositiva 4) o 52,00 € (hoja de
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — confirmar con el alumno si su propio gasto en suscripciones está bien apuntado.
-
-## Bloque 2.1 (3)
-
-- [ ] **Pendiente del profesor** · [[conceptos/interes-compuesto]] — el curso aún no lo ha explicado.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — el material no dice a qué tipo se puede colocar hoy un colchón financiero; la lente personal
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — confirmar con el alumno si quiere tratar en otra clase el interés compuesto con aportaciones
+- [ ] **Pendiente del profesor** · [[conceptos/capitalizacion]] — ¿la clase dio la fórmula con  capitalizaciones al año, o solo la idea? Si la dio, añadirla aquí.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — ¿la clase dio la fórmula de la capitalización con  periodos al año, o solo la idea? Completar
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — confirmar el nombre de la clase en el temario: el fichero se llama  y el título dice 2.1.
 
 ## Sin bloque (1)
 
-- [ ] **Pendiente del profesor** · [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-24]] — este examen no pregunta por [[masa-monetaria]] (M1): los apuntes solo dan su definición, sin ejemplo ni
+- [ ] **Pendiente del profesor** · [[formulario]] — ¿la clase dio la fórmula con  capitalizaciones al año, o solo la idea? Si la dio, añadirla aquí.

@@ -10,7 +10,8 @@
     "comprobar": "node .kit/herramientas/comprobar.js",
     "lint": "eslint .",
     "prueba-real": "node pruebas/prueba-real.js",
-    "prueba-actualizar": "node pruebas/prueba-actualizar.js"
+    "prueba-actualizar": "node pruebas/prueba-actualizar.js",
+    "disparadores": "node pruebas/disparadores.js"
   },
   "devDependencies": {
     "eslint": "^10.11.0"

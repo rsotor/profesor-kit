@@ -108,8 +108,11 @@ explicaciones y el otro se adapta a cada respuesta.
    alumno a partir del temario —por bloques— y escribe la que acepte. Si de verdad no hay nada que agrupar,
    no escribas el fichero: todo se queda plano. Con la estructura escrita, `node .kit/herramientas/organizar.js`
    coloca lo que ya hubiera.
-6. **El aprobado.** Pregunta sobre cuánto se aprueba (normalmente 5 sobre 10) y escríbelo en el frontmatter de
-   `config/curso.md` como `aprobado: 5`. Es lo que separa "📝 7,5" de "📝 4,0 suspenso" en `estudio/inicio.md`.
+6. **El aprobado.** Pregunta sobre cuánto se aprueba (normalmente 5 sobre 10) y escríbelo en
+   `config/examenes.json` (lo lee `.kit/skills/examen/SKILL.md`), en `tipos.modulo.aprobado`. Si el alumno
+   trae un examen de ejemplo del centro en `estudio/inbox/`, sigue "Examen de referencia del centro" de
+   `.kit/skills/examen/SKILL.md` (vale también, más adelante, para el examen final o la certificación). Es
+   lo que separa "📝 7,5" de "📝 4,0 suspenso" en `estudio/inicio.md`.
 7. Cambia `estado: sin-configurar` por `estado: configurado`. Marca `configuracion.curso: true`.
 
 ## Bloque B — Cómo aprende → `config/profesor.md`

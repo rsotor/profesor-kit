@@ -72,7 +72,7 @@ test('las propiedades de frontmatter que citan las skills y AGENTS.md las lee al
 
   // Propiedades que un alumno o el LLM leen directamente en la nota (histórico de intentos, versión
   // anterior, dependencias de un concepto): no las calcula ninguna herramienta, y está bien que así sea.
-  const SOLO_SE_LEEN_EN_LA_NOTA = new Set(['anterior', 'intentos', 'requiere', 'version']);
+  const SOLO_SE_LEEN_EN_LA_NOTA = new Set(['anterior', 'intentos', 'requiere', 'version', 'referencia']);
 
   const propiedades = new Set();
   for (const doc of DOCS) {
@@ -98,4 +98,26 @@ test('las ofertas "Si ya tenías tu curso" del CHANGELOG usan la etiqueta que bu
   const changelog = fs.readFileSync(path.join(RAIZ, '.kit', 'CHANGELOG.md'), 'utf8');
   const malas = changelog.split(/\r?\n/).filter(l => /si ya ten[ií]as tu curso/i.test(l) && !l.startsWith(`- ${ETIQUETA} `));
   assert.deepEqual(malas, []);
+});
+
+// Agent Skills (https://agentskills.io/specification): el frontmatter lo lee cada asistente con su parser de YAML.
+// Claude Code tolera un `: ` sin comillas dentro de la descripción; un lector estricto no carga la skill.
+test('el frontmatter de cada skill cumple Agent Skills y es YAML válido para cualquier lector', () => {
+  const fallos = [];
+  for (const s of fs.readdirSync(path.join(RAIZ, '.kit', 'skills'))) {
+    const texto = fs.readFileSync(path.join(RAIZ, '.kit', 'skills', s, 'SKILL.md'), 'utf8').replace(/\r\n/g, '\n');   // CRLF en Windows
+    const fm = /^---\n([\s\S]*?)\n---\n/.exec(texto);
+    if (!fm) { fallos.push(`${s}: sin frontmatter`); continue; }
+    const campos = Object.fromEntries(fm[1].split('\n').map(l => /^([a-z-]+):\s?(.*)$/.exec(l)).filter(Boolean).map(m => [m[1], m[2]]));
+    if (campos.name !== s) fallos.push(`${s}: name "${campos.name}" no es el nombre de la carpeta`);
+    if (!/^[a-z0-9-]{1,64}$/.test(campos.name || '')) fallos.push(`${s}: name fuera del formato`);
+    let desc = campos.description || '';
+    const entreComillas = /^"(.*)"$/.exec(desc);
+    if (entreComillas) desc = JSON.parse(desc);
+    else if (/: | #|^[\s"'&*!|>%@`[{]/.test(desc)) fallos.push(`${s}: descripción sin comillas con caracteres que rompen el YAML`);
+    if (!desc || desc.length > 1024) fallos.push(`${s}: descripción vacía o de más de 1024 caracteres`);
+    if (/[<>]/.test(desc)) fallos.push(`${s}: descripción con < o >`);
+    if (entreComillas && /(?<!\\)"/.test(entreComillas[1])) fallos.push(`${s}: comilla sin escapar en la descripción`);
+  }
+  assert.deepEqual(fallos, []);
 });

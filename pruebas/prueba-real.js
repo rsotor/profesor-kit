@@ -15,7 +15,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { borrar, montarCurso, comprobarJson, carpetaTemporal } = require('./lib/montaje');
+const { borrar, montarCurso, comprobarJson } = require('./lib/montaje');
 const p = require('./lib/pasos');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
@@ -202,69 +202,84 @@ function pasoEjercicio(ctx) {
   return { ok: r.ok, detalle: r.ok ? `ejercicio pedido sobre "${slug}" (código ${r.codigo})` : `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
 }
 
-function pasoExamenGenerar(ctx, examenModulo) {
+// El fichero del test de autoevaluación del centro que ya trae pruebas/curso-ejemplo/estudio/inbox/
+// (montarCurso lo copia entero desde el principio: no hace falta dejarlo caer a mitad de prueba).
+const REFERENCIA_CENTRO = 'test-autoevaluacion-modulo-1.md';
+
+// Un paso antes de generar el examen: el alumno deja en el inbox el test de autoevaluación del centro
+// para que los exámenes del profesor se parezcan (decisión del mantenedor, 2026-09-24: "Examen de
+// referencia del centro" en la skill /examen). La comprobación es en disco, sin LLM: config/examenes.json
+// sigue siendo JSON válido y coherente con lo que ese test declara (número de opciones, si resta y el
+// aprobado), sin valores inventados que el test no dé.
+function pasoExamenReferencia(ctx) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const origen = path.join(ctx.datosCurso, 'estudio', 'inbox', REFERENCIA_CENTRO);
   const r = invocarClaude({
-    prompt: `Hazme el examen del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /examen. ${PROMPT_COMUN}`,
+    prompt: `Te dejo en estudio/inbox/${REFERENCIA_CENTRO} el test de autoevaluación del módulo 1 del centro. `
+      + 'Quiero que mis próximos exámenes se parezcan a este en formato: sigue "Examen de referencia del '
+      + `centro" de la skill /examen y ajusta config/examenes.json a lo que declara, sin inventar nada que no diga. ${PROMPT_COMUN}`,
     modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
   });
+  if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const v = p.referenciaCoherente(ctx.destino, fs.readFileSync(origen, 'utf8'));
+  if (v.ok) ctx.referenciaCentro = true;
+  return { ok: v.ok, detalle: v.detalle, salidaLlm: v.ok ? undefined : r.salida };
+}
+
+function pasoExamenGenerar(ctx, examenModulo) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const prompt = ctx.referenciaCentro
+    ? `Hazme el examen del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /examen. Ya sabes qué `
+      + 'test de referencia del centro te dejé: reutiliza algunas de sus preguntas, literales y marcadas '
+      + `como del centro, tal como pide la sección "Examen de referencia del centro". ${PROMPT_COMUN}`
+    : `Hazme el examen del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /examen. ${PROMPT_COMUN}`;
+  const r = invocarClaude({ prompt, modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs });
   if (!r.ok) return { ok: false, detalle: `claude falló (código ${r.codigo})`, salidaLlm: r.salida };
   const fichero = p.examenMasReciente(ctx.destino);
   if (!fichero) return { ok: false, detalle: 'claude terminó pero no hay ningún examen en estudio/examenes/', salidaLlm: r.salida };
   ctx.ficheroExamen = fichero;
-  return { ok: true, detalle: `examen escrito: ${path.relative(ctx.destino, fichero)}`, salidaLlm: r.salida };
+  // El examen tiene que respetar el formato fijado en config/examenes.json (nº de opciones por pregunta,
+  // según su propia clave): lo que el paso de la referencia del centro tenía que dejar listo antes.
+  const formato = p.formatoDeOpciones(ctx.destino, fichero);
+  let ok = formato.ok;
+  let detalle = `examen escrito: ${path.relative(ctx.destino, fichero)} · ${formato.detalle}`;
+  // Con una referencia del centro de por medio, el examen tiene que traer alguna de sus preguntas, literal
+  // y marcada, sin pasar de la mitad, con la respuesta de la clave coincidiendo con la del centro.
+  if (ctx.referenciaCentro) {
+    const referencia = fs.readFileSync(path.join(ctx.datosCurso, 'estudio', 'inbox', REFERENCIA_CENTRO), 'utf8');
+    const literales = p.preguntasLiteralesDelCentro(ctx.destino, fichero, referencia);
+    ok = ok && literales.ok;
+    detalle += ` · ${literales.detalle}`;
+  }
+  return { ok, detalle, salidaLlm: r.salida };
 }
 
-// El alumno simulado (plan 0.22, 5b.4): otra llamada sin conversación, desde una carpeta vacía (no puede abrir el
-// examen con las soluciones), que recibe el examen limpio y el perfil y devuelve sus respuestas en JSON.
+// examen v1 (tipo test): la clave vive fuera de la bóveda, así que un alumno simulado con LLM no puede verla
+// — no hay nada que "contestar como lo haría este alumno" que se pueda medir. Se marcan las casillas con un
+// patrón determinista (pruebas/lib/pasos.js#contestarExamenTest), leyendo la clave real, para poder calcular
+// de antemano la nota exacta que `examen.js --corregir` tiene que sacar y comprobarla luego sin margen.
 function pasoExamenContestar(ctx) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: no hay nada que contestar' };
-  const examen = p.examenSinSoluciones(fs.readFileSync(ctx.ficheroExamen, 'utf8'));
-  const n = p.contarHuecos(examen);
-  const perfil = fs.readFileSync(path.join(ctx.datosCurso, 'alumno', 'perfil.md'), 'utf8');
-  const vacia = carpetaTemporal();
-  try {
-    const r = invocarClaude({ prompt: p.promptAlumnoSimulado(perfil, examen, n), modelo: ctx.modelo, cwd: vacia, limiteMs: ctx.limiteMs });
-    if (!r.ok) return { ok: false, detalle: `claude falló haciendo de alumno (código ${r.codigo})`, salidaLlm: r.salida };
-    const respuestas = p.leerRespuestas(r.salida);
-    if (!respuestas) return { ok: false, detalle: 'el alumno simulado no devolvió el JSON de respuestas', salidaLlm: r.salida };
-    const puesto = p.ponerRespuestas(ctx.ficheroExamen, respuestas);
-    if (!puesto.ok) return { ok: false, detalle: `el alumno simulado dio ${puesto.respuestas} respuestas para ${puesto.huecos} preguntas`, salidaLlm: r.salida };
-    return { ok: true, detalle: `${puesto.huecos} preguntas contestadas por el alumno simulado, ${puesto.enBlanco} en blanco` };
-  } finally {
-    borrar(vacia);
-  }
+  const r = p.contestarExamenTest(ctx.destino, ctx.ficheroExamen);
+  if (!r.ok) return r;
+  ctx.contestacion = r;
+  return { ok: true, detalle: `${r.total} preguntas marcadas con un patrón conocido (nota esperada: ${String(r.notaEsperada).replace('.', ',')}): ${r.aciertos} aciertos, ${r.fallos} fallos, ${r.blancos} en blanco` };
 }
-
-// Fuera de aquí, el alumno simulado o la corrección no se portaron como se esperaba.
-const NOTA_MIN = 3;
-const NOTA_MAX = 8;
 
 function pasoExamenCorregir(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   if (!ctx.ficheroExamen) return { ok: false, detalle: 'no hay examen generado: se omite la corrección' };
   const progresoAntes = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const r = invocarClaude({
-    prompt: `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (lee mis respuestas de la propia nota). ${PROMPT_COMUN}`,
+    prompt: `He terminado el examen del ${examenModulo.titulo.toLowerCase()}. Corrígelo siguiendo la skill /examen (usa node .kit/herramientas/examen.js --corregir). ${PROMPT_COMUN}`,
     modelo: ctx.modelo, cwd: ctx.destino, limiteMs: ctx.limiteMs,
   });
   if (!r.ok) return { ok: false, detalle: `claude falló al corregir (código ${r.codigo})`, salidaLlm: r.salida };
-  const texto = fs.readFileSync(ctx.ficheroExamen, 'utf8');
-  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(texto);
-  const nota = fm && /^nota:\s*([\d.,]+)\s*$/m.exec(fm[1]);
-  const historico = /## Histórico de intentos/.test(texto);
+  const v = p.verificarCorreccionTest(ctx.destino, ctx.ficheroExamen, ctx.contestacion);
   const progresoDespues = fs.readFileSync(path.join(ctx.destino, 'estudio', 'progreso.md'), 'utf8');
   const progresoMovido = progresoAntes !== progresoDespues;
-  const valor = nota ? Number(nota[1].replace(',', '.')) : null;
-  const enMargen = valor !== null && valor >= NOTA_MIN && valor <= NOTA_MAX;
-  const ok = !!nota && historico && progresoMovido && enMargen;
-  return {
-    ok,
-    detalle: `nota: ${nota ? nota[1] : 'no encontrada'} (margen esperado ${NOTA_MIN}-${NOTA_MAX}: ${enMargen ? 'sí' : 'no'}) · `
-      + `histórico de intentos: ${historico ? 'sí' : 'no'} · progreso.md movido: ${progresoMovido ? 'sí' : 'no'}`,
-    salidaLlm: r.salida,
-  };
+  return { ok: v.ok && progresoMovido, detalle: `${v.detalle} · progreso.md movido: ${progresoMovido ? 'sí' : 'no'}`, salidaLlm: r.salida };
 }
 
 // La corrección, medida (issue #39, H08): un test fijo con las respuestas ya escritas y, para cada una, el veredicto
@@ -444,6 +459,7 @@ function ejecutar({ sinLlm, modelo: modeloArg, limiteMs, trabajo = RAIZ_KIT, dat
     if (claseEnSegundoPlano) ejecutarPaso(pasos, `preparar.js --lanzar ${claseEnSegundoPlano.id}`, () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano));
     ejecutarPaso(pasos, '/dudas', () => pasoDudas(ctx));
     ejecutarPaso(pasos, '/ejercicio', () => pasoEjercicio(ctx));
+    ejecutarPaso(pasos, '/examen (referencia del centro)', () => pasoExamenReferencia(ctx));
     ejecutarPaso(pasos, '/examen (generar)', () => pasoExamenGenerar(ctx, clases.examen_modulo));
     ejecutarPaso(pasos, '/examen (contestar)', () => pasoExamenContestar(ctx));
     ejecutarPaso(pasos, '/examen (corregir)', () => pasoExamenCorregir(ctx, clases.examen_modulo));

@@ -1,47 +1,56 @@
 ---
 tipo: concepto
-bloques: ["1.1"]
-visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
+bloques: [modulo-01]
+visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
 alias: [subida general de precios]
-tags: []
+tags: [fundamentos]
+ejercicio: 01-01-01-inflacion-poder-de-compra
 ---
 # Inflación
 
-> **En una frase:** La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-El dinero guardado debería conservar su valor (depósito de valor). Si los precios suben, no lo conserva:
-la cifra es la misma, pero compra menos.
+Si guardas dinero para usarlo más adelante (el *depósito de valor* de [[funciones-del-dinero]]), necesitas que
+mañana compre lo mismo que hoy. La inflación hace que no ocurra.
 
 ## El ejemplo
 
-Con una inflación de 3 % anual, una cesta de la compra que hoy cuesta 100,00 € costará 103,00 € dentro de
-un año. Al revés: tus 100,00 € de hoy, dentro de un año, comprarán lo que hoy compran unos 97,00 €.
+Los precios suben un 3 % anual. Hoy, 100 € compran una cesta de la compra. Dentro de un año esa cesta cuesta
+más, y esos mismos 100 € equivalen, en compra real, a unos 97 €.
+
+> [!info] Ampliación fuera de los apuntes
+> Los apuntes dicen "unos 97 €". El cálculo exacto para un año es dividir entre 1,03: 100 € ÷ 1,03 ≈ **97,09 €**.
+
+## El nombre
+
+**Inflación:** nivel general de precios de casi todo a la vez. Con una inflación del 3 % anual, el dinero parado
+pierde poder de compra cada año.
 
 ## El error típico
 
-Confundir dos cosas:
+Confundir "sube el precio de una cosa" con inflación. Un producto puede encarecerse por moda o por escasez
+propia; eso no es inflación. Inflación es que sube el nivel general, de casi todo a la vez.
 
-| Situación | ¿Es inflación? |
-|---|---|
-| Sube el precio de una cosa concreta (por moda o por escasez de esa cosa) | No |
-| Sube el nivel general de precios, de casi todo a la vez | Sí |
+## Practícalo
 
-## Visto desde tus ingresos irregulares
+→ **[Inflación y poder de compra](../ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion-poder-de-compra.html)**
 
-> [!info] Ampliación fuera de los apuntes
-> Un colchón para los meses flojos, guardado en efectivo, es justo el dinero que la inflación va
-> recortando: la cifra no baja, pero cada año cubre un poco menos de gasto. Cuánto colchón necesitas se
-> verá en el presupuesto (1.2); aquí solo el aviso de que guardarlo quieto no es gratis.
+Mueve la inflación anual y la subida de tus ingresos. Lo que debería sorprender: subir tus ingresos no basta
+para ganar poder de compra; hay que subir más que la inflación.
+
+> [!tip] Visto desde tus ingresos irregulares
+> Si facturas más unos meses que otros, el dinero que guardas para los meses flojos es justo el que sufre la
+> inflación: cuanto más tiempo lo tienes parado, menos compra cuando lo necesitas.
 
 ## Relacionados
 
 - [[funciones-del-dinero]] — la inflación es el fallo del depósito de valor
-- [[liquidez]] — el otro lado de guardar dinero: qué tan rápido se puede usar
+- [[liquidez]] — guardar dinero líquido es cómodo, pero es el que más la sufre
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

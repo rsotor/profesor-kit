@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple frente a compuesto</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8886; border-radius: .5rem; padding: 1rem; margin: 1rem 0; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .75rem 0 .25rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem 1rem; margin: .25rem .25rem 0 0; cursor: pointer; }
+  #explicacion { min-height: 3rem; }
+  .ok { color: #1a7f37; } .ko { color: #c62828; }
+</style>
+</head>
+<body>
+<h1>Simple frente a compuesto</h1>
+<p>Conceptos: <a href="../../../conceptos/interes-simple.md">interes-simple</a> e <a href="../../../conceptos/interes-compuesto.md">interes-compuesto</a>. Mueve las condiciones y decide antes de ver nada.</p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <p>Dos cuentas con el mismo capital y el mismo tipo: una paga interés simple y la otra, compuesto (capitalización anual).</p>
+  <label for="capital">Capital: <b><span id="v-capital"></span></b></label>
+  <input type="range" id="capital" min="500" max="5000" step="100" value="1000">
+  <label for="tipo">Tipo de interés: <b><span id="v-tipo"></span></b></label>
+  <input type="range" id="tipo" min="0" max="10" step="0.5" value="5">
+  <label for="anios">Tiempo: <b><span id="v-anios"></span></b></label>
+  <input type="range" id="anios" min="1" max="30" step="1" value="3">
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p>Al final de ese tiempo, ¿qué cuenta tendrá más dinero? (elige una)</p>
+  <button data-r="simple">La de interés simple</button>
+  <button data-r="compuesto">La de interés compuesto</button>
+  <button data-r="igual">Las dos igual</button>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+function fmtEuro(n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+function fmtPct(n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' % anual'; }
+function fmtAnios(n) { return n + (n === 1 ? ' año' : ' años'); }
+
+function finalSimple(c) { return c.capital + c.capital * (c.tipo / 100) * c.anios; }
+function finalCompuesto(c) { return c.capital * Math.pow(1 + c.tipo / 100, c.anios); }
+
+window.verificar = function (caso) {
+  var s = Math.round(finalSimple(caso) * 100);
+  var k = Math.round(finalCompuesto(caso) * 100);
+  if (k > s) return 'compuesto';
+  if (k < s) return 'simple';
+  return 'igual';
+};
+
+function leer() {
+  return {
+    capital: Number(document.getElementById('capital').value),
+    tipo: Number(document.getElementById('tipo').value),
+    anios: Number(document.getElementById('anios').value)
+  };
+}
+
+function pintar() {
+  var c = leer();
+  document.getElementById('v-capital').textContent = fmtEuro(c.capital);
+  document.getElementById('v-tipo').textContent = fmtPct(c.tipo);
+  document.getElementById('v-anios').textContent = fmtAnios(c.anios);
+  document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+}
+
+['capital', 'tipo', 'anios'].forEach(function (id) {
+  document.getElementById(id).addEventListener('input', pintar);
+});
+
+document.querySelectorAll('button[data-r]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var c = leer();
+    var correcta = window.verificar(c);
+    var etiqueta = { simple: 'la de interés simple', compuesto: 'la de interés compuesto', igual: 'las dos igual' };
+    var acierto = b.getAttribute('data-r') === correcta;
+    var causa;
+    if (correcta === 'compuesto') causa = 'Desde el segundo año, el compuesto cobra intereses también sobre los intereses ya ganados; el simple, solo sobre el capital inicial.';
+    else if (correcta === 'igual' && c.anios === 1) causa = 'Con 1 año solo hay un periodo: todavía no hay intereses anteriores que generen nada, así que simple y compuesto coinciden.';
+    else if (correcta === 'igual' && c.tipo === 0) causa = 'Con un tipo del 0 % anual no hay intereses que reinvertir: las dos se quedan en el capital.';
+    else causa = 'La diferencia es tan pequeña que, redondeada al céntimo, sale igual.';
+    document.getElementById('explicacion').innerHTML =
+      '<p class="' + (acierto ? 'ok' : 'ko') + '"><b>' + (acierto ? 'Correcto.' : 'No.') +
+      '</b> Lo correcto era: ' + etiqueta[correcta] + '.</p>' +
+      '<p>' + causa + '</p>' +
+      '<p>Simple: ' + fmtEuro(finalSimple(c)) + ' · Compuesto: ' + fmtEuro(finalCompuesto(c)) +
+      ' (diferencia: ' + fmtEuro(finalCompuesto(c) - finalSimple(c)) + ').</p>' +
+      '<p>El punto donde se separan: a partir del segundo año, con un tipo mayor que 0 % anual.</p>';
+  });
+});
+
+pintar();
+</script>
+</body>
+</html>

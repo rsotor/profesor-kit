@@ -1,47 +1,52 @@
 ---
 tipo: concepto
-bloques: ["1.1"]
-visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
+bloques: [modulo-01]
+visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 1
 requiere: [funciones-del-dinero]
 alias: [líquido]
-tags: []
+tags: [fundamentos]
 ---
 # Liquidez
 
-> **En una frase:** Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
 Tener valor no basta: hay que poder usarlo cuando hace falta. Algo que vale mucho pero tarda meses en
-venderse no sirve para pagar una factura de mañana.
+convertirse en dinero no sirve para una urgencia.
 
 ## El ejemplo
 
-| Lo que tienes | Cuánto tardas en gastarlo | Liquidez |
+| Lo que tienes | Cuánto tarda en ser dinero | Liquidez |
 |---|---|---|
-| 50,00 € en la cartera | Al instante | Total |
+| Euros en la cartera | Al instante | Total |
 | Un piso | Meses, si quieres venderlo bien | Muy poca |
 
-Si tuvieras que vender el piso en una semana, tendrías que bajar el precio: perderías valor por las prisas.
+Si tienes prisa por vender el piso, lo normal es aceptar menos de lo que vale: pierdes valor por las prisas.
+
+## El nombre
+
+**Liquidez.** Un activo es *líquido* si se convierte en dinero rápido y sin perder valor.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundir "vale mucho" con "es líquido". Un piso vale mucho y es poco líquido; 50,00 € valen poco y son
-> totalmente líquidos. Son dos preguntas distintas.
-
-## Visto desde tus ingresos irregulares
-
-> [!info] Ampliación fuera de los apuntes
-> Un mes flojo te exige dinero disponible ya, no dentro de unos meses. Por eso el colchón para esos meses
-> tiene que ser líquido; en el módulo 2 se compara con lo que rinde cada opción.
+> Creer que "líquido" significa "valioso". Un piso puede valer mucho más que lo que llevas en la cartera y ser
+> mucho menos líquido.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero es lo más líquido que existe
-- [[inflacion]] — el otro riesgo de guardar dinero
+- [[funciones-del-dinero]] — el dinero es lo más líquido que hay
+- [[inflacion]] — lo muy líquido es cómodo, pero parado pierde poder de compra
+
+> [!note] Para más adelante
+> En el módulo 2 se compara ahorrar (muy líquido) con invertir (a veces, menos líquido).
+
+> [!tip] Visto desde tus ingresos irregulares
+> En un mes flojo necesitas dinero ya, no dentro de unos meses: lo que guardes para cubrir esos meses tiene que
+> ser líquido.
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

@@ -13,6 +13,32 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.25.0
+- **Tu progreso se ve en inicio:** por módulo, cuántas sesiones has estudiado y cuántos conceptos dominas (no
+  cuántos has visto: los que de verdad has entendido). Y cuando apruebas un módulo, queda una línea con la fecha
+  y la nota. Sin rachas ni insignias — lo puedes desactivar en `config/profesor.md`.
+- **Repaso espaciado de tus flashcards.** Cada tarjeta va pasando de caja según si la sabías o no (el método
+  Leitner, cinco cajas: cuanto mejor la sabes, más tarda en volver a tocarte). Inicio te enseña qué tarjetas
+  tocan en cada tramo de fechas, no solo "hoy", así que sigue siendo verdad aunque pases unos días sin abrir el
+  curso. El calentamiento de tu profesor también saca sus preguntas de ahí.
+- **`/examen` reescrito, tipo test.** Los exámenes nuevos se contestan con casillas en Obsidian y los corrige el
+  código, no el modelo: la nota es siempre exacta y reproducible. Si traes un examen de ejemplo del centro en
+  cualquier momento del curso (no solo al configurar), tu profesor ajusta el examen a su formato — opciones,
+  tiempo, aprobado — y reutiliza también sus preguntas, marcadas como tal. Y cuando repites un examen, tu
+  profesor prioriza las preguntas que fallaste la vez anterior: es lo que más te conviene repasar.
+- **Examen final en escalones.** Cuatro exámenes cada vez más largos y exigentes (aprobado al 70, 80, 90 y
+  100 %): repites un escalón con una versión nueva hasta aprobarlo y pasas al siguiente. Va aparte de los
+  exámenes de módulo (puedes ir directo a él) y en inicio ves en qué escalón estás.
+- **Si tu profesor no te entiende a la primera,** apunta cómo lo dijiste y, con tu sí, lo propone al kit: así
+  aprende a entender a todos los alumnos.
+- **El aprobado de cada examen se configura aparte** (`config/examenes.json`), no en `config/curso.md`. No
+  tienes que hacer nada: tu profesor lo mueve solo al actualizar.
+- **Tus ejercicios se prueban de verdad antes de dártelos**, no solo se comprueba que no tengan errores: tu
+  profesor ejecuta la lógica con varios casos (incluidos los límites) para pillar fallos que antes solo se
+  veían usándolo tú.
+- **Si ya tenías tu curso:** al actualizar, tu profesor crea `config/examenes.json` con el aprobado que ya
+  tenías, sin cambiarte la nota a mitad de curso, y prepara las cajas del repaso espaciado para tus flashcards.
+
 ## 0.24.0
 - **Actualizar es más seguro, sobre todo si llevas tiempo sin hacerlo.** Tu profesor ya no salta de golpe a la
   última versión: pasa por todas, una a una, y cada paso se ha probado antes de publicarse. Si uno fallara, tu
