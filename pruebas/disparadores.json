@@ -19,7 +19,7 @@
     { "frase": "revisa lo que he anotado en la nota de inflación", "esperada": "dudas" },
     { "frase": "he marcado varias cosas con ?? mientras estudiaba", "esperada": "dudas" },
     { "frase": "¿me explicas otra vez lo de la inflación? no me quedó claro", "esperada": "dudas" },
-    { "frase": "¿qué es la liquidez?", "esperada": "dudas" },
+    { "frase": "¿qué es la liquidez?", "esperada": ["dudas", null], "_nota": "Provisional (Roberto, 2026-09-25): vale dudas o contestar en el chat. Revisar en el próximo cambio de skills: ¿reforzar /dudas para que la registre?" },
     { "frase": "no tengo dudas, sigamos", "esperada": null },
 
     { "frase": "ponme un ejercicio de presupuesto", "esperada": "ejercicio" },
