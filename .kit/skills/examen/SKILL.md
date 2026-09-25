@@ -65,7 +65,8 @@ Todas de opción múltiple, con las opciones de `config/examenes.json` (`opcione
    `{ "falladas": […], "centroUsadas": […] }`. Reutiliza `falladas` tal cual: cada entrada trae `enunciado`
    (con sus opciones, del propio `.md`), `correctas`, `explicacion`, `concepto` y `examen` (de dónde sale).
    En la clave del examen nuevo, marca cada una con `origen: "examen anterior"` y `de: "<examen>"` (apartado
-   4), para poder trazarla. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
+   4), para poder trazarla; si la fallada trae `origen: "centro"`, se queda `"centro"` (cuenta para el tope de la
+   mitad) y lleva también su `de`. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
 2. **Las del examen de referencia del centro que todavía no han salido**, si el alumno trajo uno: `falladas`
    ya trae marcadas `origen: "centro"` si las falló; `centroUsadas` (del mismo JSON) trae **todas** las que ya
    salieron, las haya fallado o no — prioriza las que no estén en ninguna de las dos. Ver "Examen de

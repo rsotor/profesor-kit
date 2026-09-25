@@ -769,3 +769,23 @@ test('verificarReutilizacionFalladas: aunque los dos exámenes tengan la misma h
   assert.doesNotMatch(r.detalle, /mismo fichero/);
   assert.equal(r.ok, true, r.detalle);
 });
+
+// Prueba real de la 0.27.0: una fallada que era del examen del centro vuelve marcada `origen: "centro"` (cuenta para
+// el tope de la mitad y para rotarlas), no "examen anterior". También vale, si es la misma pregunta.
+test('verificarReutilizacionFalladas: una fallada del centro puede volver marcada "centro" (con o sin "de")', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz, { ajustesClave: { 1: { origen: 'centro', de: undefined }, 2: { origen: 'centro' } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, true, r.detalle);
+});
+
+test('verificarReutilizacionFalladas: marcada "centro" pero con "de" de otro examen, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz, { ajustesClave: { 1: { origen: 'centro', de: 'examenes/otro.md' } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+});
