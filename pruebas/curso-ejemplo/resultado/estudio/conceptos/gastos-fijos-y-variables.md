@@ -1,20 +1,19 @@
 ---
 tipo: concepto
-bloques: [1.2 Presupuesto personal]
+bloques: [modulo-01]
 visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
 requiere: [presupuesto-personal]
-alias: [gastos fijos, gastos variables]
-tags: [presupuesto, gastos]
+alias: [gastos-fijos, gastos-variables]
+tags: [presupuesto]
 ---
 # Gastos fijos y variables
 
-> **En una frase:** un gasto es fijo si se repite cada mes con (casi) la misma cifra sin que decidas nada; es variable si la cifra la decides tú cada mes.
+> **En una frase:** Los gastos fijos se repiten cada mes con casi la misma cifra y no dependen de ti; los variables cambian según lo que decidas gastar.
 
 ## El problema
 
-Si mezclas todos los gastos en una sola bolsa, no sabes cuáles puedes recortar un mes flojo. Separarlos
-enseña dónde hay margen y dónde no.
+Todos los gastos van en el mismo saco, pero no se pueden recortar igual: unos los decides tú cada mes y otros vienen dados. Separarlos dice dónde tienes margen.
 
 ## El ejemplo
 
@@ -27,25 +26,25 @@ enseña dónde hay margen y dónde no.
 | Transporte | Variable | 60,00 € |
 | Ocio | Variable | 120,00 € |
 
-Fijos: 650,00 € + 40,00 € + 25,00 € = **715,00 €**. Variables: 300,00 € + 60,00 € + 120,00 € = **480,00 €**.
-Total de gastos: **1.195,00 €**.
+Total fijos: **715,00 €** · total variables: **480,00 €** · total gastos: **1.195,00 €**.
+
+## El nombre
+
+**Gasto fijo** frente a **gasto variable**. La pregunta que los separa: ¿la cifra exacta de este mes la decido yo?
 
 ## El error típico
 
-Meter el ocio en "fijos" porque "todos los meses gasto algo en ocio". Que gastes algo siempre no lo hace
-fijo: la cifra exacta la decides tú cada mes, y eso es justo lo que define "variable".
+Meter el ocio en "fijos" porque "todos los meses gasto algo en ocio". Que gastes algo siempre no lo hace fijo: la cifra la decides tú cada mes, y eso es justo lo que define "variable".
 
 ## Visto desde tus ingresos irregulares
 
-> [!tip] Lectura del profesor, no del curso
-> En un mes flojo, los fijos no se pueden tocar sin más (el alquiler es el que es); el margen está en los
-> variables. Los 715,00 € de fijos son, además, lo mínimo que tienes que facturar cada mes para no tirar de ahorros.
+En un mes flojo los fijos se pagan igual; lo único que puedes apretar son los variables. Por eso la suma de fijos es la cifra mínima que tienes que poder cubrir todos los meses.
 
 ## Relacionados
 
-- [[presupuesto-personal]] — estas son las dos columnas de gastos.
-- [[colchon-financiero]] — el colchón se mide en meses de gastos, y los fijos son su base.
+- [[presupuesto-personal]] — los dos grupos suman los gastos del mes
+- [[colchon-financiero]] — se calcula con los gastos totales
 
 ## Historial
 
-- **01-02-01-presupuesto-personal** · primera vez
+- **01-02-01** · primera vez

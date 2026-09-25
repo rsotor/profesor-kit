@@ -4,40 +4,39 @@ sesion: 01-02-01-presupuesto-personal
 ---
 # Flashcards · 01-02-01-presupuesto-personal
 
-> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
-> y lo que huela a examen. Se responde mentalmente antes de desplegar.
+> Se responde mentalmente antes de desplegar.
 
-**Todos los meses gastas algo en ocio, entre 80,00 € y 150,00 €. ¿Es un gasto fijo? (sí o no, y por qué en una frase)**
+**Todos los meses gastas algo en ocio, así que lo apuntas como gasto fijo. ¿Está bien clasificado? ¿Por qué?**
 > [!success]- Respuesta
-> No, es variable. Que gastes algo siempre no lo hace fijo: la cifra la decides tú cada mes.
+> No, es variable. Que gastes algo siempre no lo hace fijo: la cifra exacta la decides tú cada mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 25/9*
 
-**Un mes facturas 2.400,00 € y otro 1.300,00 €. ¿Con qué cifra de ingresos haces el presupuesto y por qué? (una frase)**
+**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso presupuestas y por qué no con el del mejor mes?**
 > [!success]- Respuesta
-> Con la media de los últimos 6-12 meses, no con el mejor mes: así no cuentas con dinero que no siempre entra.
+> Con el ingreso medio de los últimos 6-12 meses. Con el del mejor mes gastarías de más en los meses flojos.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 25/9*
 
-**Ingresas 1.850,00 € y ahorras 655,00 €. ¿Cuál es la tasa de ahorro? (una cifra, por cada 100 € ingresados)**
+**Dos personas ahorran 400,00 € al mes: una ingresa 1.000,00 € y la otra 3.000,00 €. ¿Cuál ahorra más en proporción?**
 > [!success]- Respuesta
-> Unos 35,4 de cada 100 € ingresados: 655 ÷ 1.850 × 100. Se divide entre los ingresos, no entre los gastos.
+> La primera: 40 % mensual frente al 13,3 % mensual. Para eso sirve la tasa de ahorro: la cifra absoluta no se compara.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 25/9*
 
-**Tus gastos son 1.195,00 € al mes y eres freelance. ¿Qué colchón financiero te conviene y por qué? (una cifra y una frase)**
+**¿Por qué un freelance apunta a 5-6 meses de colchón y no a 3?**
 > [!success]- Respuesta
-> Entre 5.975,00 € y 7.170,00 € (5-6 meses de gastos). Con ingresos irregulares hace falta más margen que con nómina, donde bastan unos 3 meses (3.585,00 €).
+> Porque sus ingresos son irregulares: un mes flojo puede encadenarse con otro y 3 meses se acaban antes de que remonte la facturación.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 25/9*
 
 ---
-Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[gastos-fijos-y-variables]] · [[presupuesto-personal]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

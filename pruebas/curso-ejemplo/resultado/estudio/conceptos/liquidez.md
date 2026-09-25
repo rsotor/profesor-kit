@@ -1,50 +1,45 @@
 ---
 tipo: concepto
-bloques: [1.1 El dinero y sus funciones]
-visto_en: [01-01-01-el-dinero-y-sus-funciones]
+bloques: [modulo-01]
+visto_en: [01-01-01-el-dinero-y-sus-funciones, 01-02-01-presupuesto-personal]
 dificultad: 2
 requiere: [funciones-del-dinero]
-alias: []
-tags: [dinero, ahorro]
+alias: [liquido]
+tags: [dinero]
 ---
 # Liquidez
 
-> **En una frase:** la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor no basta: hay que poder usarlo cuando hace falta. Si necesitas dinero mañana y lo tienes metido
-en algo que tarda meses en venderse, o lo vendes con prisa y a mal precio, o no llegas.
+Tener valor no basta: si lo necesitas hoy y no puedes convertirlo en dinero hoy, no te sirve. Hay que saber cuánto cuesta y cuánto tarda hacerlo.
 
 ## El ejemplo
 
-- El dinero de la cartera es totalmente líquido: se gasta al instante.
-- Un piso es muy poco líquido: venderlo bien lleva meses.
+- El dinero de la cartera se gasta al instante: es totalmente líquido.
+- Un piso es muy poco líquido: venderlo bien lleva meses. Si lo vendes en una semana por las prisas, seguramente lo vendas más barato.
 
-| | Cartera | Piso |
-|---|---|---|
-| Tiempo en convertirlo en dinero | Ninguno | Meses |
-| Riesgo de perder valor por las prisas | Ninguno | Alto |
+## El nombre
+
+**Liquidez.** Es un grado, no un sí o un no: hay cosas más y menos líquidas. Volverá en el módulo 2, al comparar ahorrar (muy líquido) con invertir (a veces, menos líquido).
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundir liquidez con valor. Un piso puede valer mucho más que lo que llevas en la cartera y aun así ser mucho menos líquido: cuánto vale y lo fácil que es usarlo ya son dos cosas distintas.
-
-El curso no trae un error típico para este concepto; este es una propuesta del profesor.
+> Confundir "líquido" con "valioso". Un piso vale mucho y es poco líquido; un billete de 5,00 € vale poco y es totalmente líquido. La liquidez habla de la **rapidez** de convertirlo en dinero, no de cuánto vale.
 
 ## Visto desde tus ingresos irregulares
 
-> [!tip] Lectura del profesor, no del curso
-> El dinero que reservas para los meses en que factures poco tiene que estar en algo líquido, porque lo vas
-> a necesitar en una fecha que no controlas. Lo verás con más detalle cuando el curso compare ahorrar
-> (muy líquido) con invertir (a veces, menos líquido), en el módulo 2.
+En un mes flojo tienes que pagar igual el alquiler. Lo que te cubre ese mes tiene que estar en algo muy líquido. Un dinero que tarda meses en llegar a tu cuenta no te resuelve el mes flojo, aunque valga mucho.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — algo es líquido cuando puede hacer de medio de cambio ya.
-- [[inflacion]] — el dinero más líquido es también el que la inflación va restando mientras espera.
+- [[funciones-del-dinero]] — lo líquido es lo que funciona como medio de cambio ya
+- [[inflacion]] — el otro rasgo de guardar dinero
+- [[colchon-financiero]] — el dinero del colchón tiene que ser muy líquido
 
 ## Historial
 
-- **01-01-01-el-dinero-y-sus-funciones** · primera vez
+- **01-01-01** · primera vez
+- **01-02-01** · ampliado: el colchón financiero es dinero líquido guardado aparte

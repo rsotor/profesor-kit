@@ -3,76 +3,71 @@
 > Lo genera tu profesor cada vez que guarda: **no lo edites**. Lo que hay que saberse de cada concepto, por
 > bloque: su fórmula si la tiene, y si no, su definición en una frase.
 
-## Bloque 1.1 El dinero y sus funciones
-
-### [[inflacion|Inflación]]
-
-$$P = \frac{D}{1 + i}$$
-
-- $D$: el dinero que guardas (100,00 €).
-- $i$: la inflación de ese año, en tanto por uno (0,03 si es 3 % anual).
-- $P$: lo que ese dinero compra, medido en euros de hoy.
-
-> [!info] Ampliación fuera de los apuntes
-> La diapositiva dice "unos 97 €". Con la fórmula sale 97,09 €: 97,00 € es una aproximación válida para tasas pequeñas.
-
-### Definiciones
-
-- [[funciones-del-dinero|Funciones del dinero]]: el dinero hace tres trabajos a la vez: sirve para pagar (medio de cambio), para poner precio a todo (unidad de cuenta) y para guardar valor hasta mañana (depósito de valor).
-- [[liquidez|Liquidez]]: la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
-
-## Bloque 1.2 Presupuesto personal
+## Bloque modulo-01
 
 ### [[colchon-financiero|Colchón financiero]]
 
-$$\text{colchón} = \text{meses que quieres cubrir} \times \text{gastos mensuales}$$
+$$ \text{colchón} = \text{gastos mensuales} \times \text{meses que se quieren cubrir} $$
 
-Para alguien con nómina fija, la clase apunta a unos 3 meses. Para un freelance, a 5-6 meses.
+Con nómina fija se suele apuntar a 3 meses.
 
 ### [[presupuesto-personal|Presupuesto personal]]
 
-$$\text{ahorro del mes} = \text{ingresos del mes} - \text{gastos del mes}$$
+$$ \text{ahorro del mes} = \text{ingresos del mes} - \text{gastos del mes} $$
 
-Si sale negativo, has gastado más de lo que entró: ese mes se ha tirado de lo ahorrado.
+$$ \text{ingreso medio} = \frac{\text{suma de los ingresos de los últimos } n \text{ meses}}{n} \qquad (n = 6 \text{ a } 12) $$
+
+Los gastos se llevan en dos grupos, ver [[gastos-fijos-y-variables]].
 
 ### [[tasa-de-ahorro|Tasa de ahorro]]
 
-$$\text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100$$
+$$ \text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100 $$
 
-- El ahorro del mes es el de [[presupuesto-personal]].
-- El resultado se lee "por cada 100 € ingresados". 655 ÷ 1.850 × 100 ≈ 35,4.
+Es una tasa **mensual**: siempre dice de qué periodo habla, como cualquier tasa. No es un interés: mide cuánto de lo que ganas te queda, no cuánto crece.
 
 ### Definiciones
 
-- [[gastos-fijos-y-variables|Gastos fijos y variables]]: un gasto es fijo si se repite cada mes con (casi) la misma cifra sin que decidas nada; es variable si la cifra la decides tú cada mes.
+- [[doble-coincidencia-de-deseos|Doble coincidencia de deseos]]: El problema del trueque: para intercambiar sin dinero, cada uno tiene que querer justo lo que ofrece el otro, y en el mismo momento.
+- [[funciones-del-dinero|Funciones del dinero]]: El dinero sirve para tres cosas a la vez: pagar (medio de cambio), poner precio a todo (unidad de cuenta) y guardar valor para más adelante (depósito de valor).
+- [[gastos-fijos-y-variables|Gastos fijos y variables]]: Los gastos fijos se repiten cada mes con casi la misma cifra y no dependen de ti; los variables cambian según lo que decidas gastar.
+- [[inflacion|Inflación]]: La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+- [[liquidez|Liquidez]]: Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
-## Bloque 2.1 Interés simple y compuesto
+## Bloque modulo-02
+
+### [[capitalizacion|Capitalización]]
+
+> [!info] Ampliación fuera de los apuntes
+> Los apuntes no dan fórmula para este caso, solo la idea: se aplica una parte del tipo anual en cada periodo.
+
+$$ C_f = C \cdot \left(1 + \frac{i}{m}\right)^{m \cdot t} $$
+
+`m` es cuántas veces al año se capitaliza (12 si es mensual) y `t` los años.
 
 ### [[interes-compuesto|Interés compuesto]]
 
-$$C_f = C \cdot (1 + i)^n$$
+$$ C_f = C \cdot (1 + i)^n $$
 
-- $C$: el capital inicial (1.000,00 €).
-- $i$: el tipo de interés por periodo, en tanto por uno (5 % anual es 0,05).
-- $n$: el número de periodos de capitalización (si $i$ es anual, $n$ en años).
-- $C_f$: el capital final: 1.000 × 1,05³ = 1.000 × 1,157625 = **1.157,63 €**.
+- `C`: capital inicial. `i`: tipo en tanto por uno.
+- `n`: número de periodos de capitalización (si `i` es anual, `n` en años).
+
+Comprobación: 1.000,00 × 1,05³ = 1.000,00 × 1,157625 = **1.157,63 €**.
 
 ### [[interes-simple|Interés simple]]
 
-$$I = C \cdot i \cdot t \qquad C_f = C + I$$
+$$ I = C \cdot i \cdot t \qquad C_f = C + I $$
 
-- $C$: el capital inicial (1.000,00 €).
-- $i$: el tipo de interés en tanto por uno (5 % anual es 0,05).
-- $t$: el tiempo, **en el mismo periodo que $i$** (si $i$ es anual, $t$ en años).
-- $I$: los intereses. $C_f$: el capital final.
+- `C`: capital inicial.
+- `i`: tipo de interés en tanto por uno (5 % anual = 0,05).
+- `t`: el tiempo, **en el mismo periodo que `i`** (si `i` es anual, `t` va en años).
+- `I`: los intereses. `C_f`: el capital final.
 
 ### [[regla-del-72|Regla del 72]]
 
-$$\text{años para doblar} \approx \frac{72}{\text{tipo de interés anual (el número, sin el símbolo)}}$$
+$$ \text{años para doblar} \approx \frac{72}{\text{tipo de interés anual, en número}} $$
 
-Se usa el número del tipo anual tal cual: para un 6 % anual, se divide entre 6 (no entre 0,06).
+"En número" es sin el símbolo de tanto por ciento: para un 6 % anual, se divide entre 6.
 
 ### Definiciones
 
-- [[capital-y-tipo-de-interes|Capital y tipo de interés]]: el capital es el dinero del que partes (el que prestas, depositas o inviertes) y el tipo de interés es el precio de tenerlo prestado durante un tiempo, expresado en tanto por ciento y con su periodo.
-- [[capitalizacion|Capitalización]]: la capitalización es cada cuánto se suman los intereses al capital (cada año, trimestre o mes); cuanto más frecuente, más rápido crece el dinero.
+- [[tipo-de-interes|Capital y tipo de interés]]: El capital es el dinero del que se parte (el que prestas, depositas o inviertes), y el tipo de interés es el precio de tener ese dinero prestado durante un tiempo, en tanto por ciento y siempre con su periodo.

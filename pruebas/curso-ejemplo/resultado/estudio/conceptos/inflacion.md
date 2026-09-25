@@ -1,54 +1,39 @@
 ---
 tipo: concepto
-bloques: [1.1 El dinero y sus funciones]
+bloques: [modulo-01]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
 alias: []
-tags: [dinero, precios]
+tags: [dinero]
 ---
 # Inflación
 
-> **En una frase:** la inflación es la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-El dinero es un depósito de valor porque mantiene (más o menos) su valor con el tiempo. Cuando los precios suben
-en general, ese "más o menos" se rompe: lo que guardaste compra cada vez menos.
+El dinero guardado tiene que valer más o menos lo mismo mañana (es su función de depósito de valor, ver [[funciones-del-dinero]]). Si los precios suben, ese dinero compra menos y el depósito falla poco a poco.
 
 ## El ejemplo
 
-Los precios suben una media de 3 % anual. Hoy con 100,00 € llenas un carrito de la compra; dentro de un año
-ese mismo carrito cuesta 103,00 €. Tus 100,00 € guardados compran, en términos reales, como unos 97,00 € de hoy.
+Con una inflación del 3 % anual, 100,00 € de hoy valen, en poder de compra, unos 97,00 € del año que viene.
 
-## La fórmula
+El billete sigue diciendo 100,00 €. Lo que ha bajado es lo que puedes comprar con él.
 
-$$P = \frac{D}{1 + i}$$
+## El nombre
 
-- $D$: el dinero que guardas (100,00 €).
-- $i$: la inflación de ese año, en tanto por uno (0,03 si es 3 % anual).
-- $P$: lo que ese dinero compra, medido en euros de hoy.
-
-> [!info] Ampliación fuera de los apuntes
-> La diapositiva dice "unos 97 €". Con la fórmula sale 97,09 €: 97,00 € es una aproximación válida para tasas pequeñas.
+**Inflación.** Se mide como una tasa que siempre lleva su periodo (por ejemplo, 3 % anual): un porcentaje sin periodo no dice nada.
 
 ## El error típico
 
-Confundir "sube el precio de una cosa" con "inflación". Un precio puede subir por moda o por escasez de esa cosa
-en concreto (el aguacate tras una mala cosecha). Inflación es que sube el nivel general de precios, de casi
-todo a la vez.
-
-## Visto desde tus ingresos irregulares
-
-> [!tip] Lectura del profesor, no del curso
-> Si guardas dinero para los meses flojos, la inflación se lo come poco a poco mientras espera. Cuanto más
-> tiempo lo tengas parado, más compra de menos. Cuánto se pierde y cómo evitarlo se ve en el módulo 2.
+Confundir "sube el precio de una cosa" con "inflación". Un precio concreto puede subir por moda o por escasez de esa cosa. Hay inflación cuando sube el nivel general de precios, de casi todo a la vez.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la inflación es lo que hace fallar al depósito de valor.
-- [[liquidez]] — guardar dinero líquido es cómodo, pero la inflación le afecta igual.
+- [[funciones-del-dinero]] — la inflación ataca el depósito de valor
+- [[liquidez]] — el otro rasgo de tener el dinero a mano
 
 ## Historial
 
-- **01-01-01-el-dinero-y-sus-funciones** · primera vez
+- **01-01-01** · primera vez
