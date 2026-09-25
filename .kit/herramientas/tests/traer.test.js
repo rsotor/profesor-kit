@@ -243,7 +243,8 @@ test('una excepción entre el merge y el commit aborta y no deja MERGE_HEAD colg
     const r = traer(raiz);
     assert.equal(r.traido, false);
     assert.equal(r.motivo, 'error');
-    assert.match(r.detalle, /EACCES|permission|permiso/i);
+    // En Windows, escribir en un fichero de solo lectura da EPERM ("operation not permitted"), no EACCES.
+    assert.match(r.detalle, /EACCES|EPERM|permission|permitted|permiso/i);
     assert.equal(git(raiz, 'rev-parse', 'HEAD'), antes, 'no se ha comiteado nada (el previo ya no tenía nada pendiente)');
     const rutaMerge = git(raiz, 'rev-parse', '--git-path', 'MERGE_HEAD');
     assert.equal(fs.existsSync(path.join(raiz, rutaMerge)), false, 'sin MERGE_HEAD colgado');
