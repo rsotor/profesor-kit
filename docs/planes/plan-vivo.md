@@ -13,12 +13,10 @@ Para abrir una sesión:
 
 - **forma-de-trabajar** (plan en `~/Documents/workspace/initiatives/forma-de-trabajar/plan-phase-1.md`,
   sección "profesor-kit"). Rama `forma-de-trabajar`. Hecho: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
-  **No se sube versión** hasta que Roberto lo diga: hay más cosas pendientes que irán en la misma release
-  (no habrá versión nueva hasta tener base-kit en el kit).
-- **#54 arreglada en la rama** (migración 009: la columna `Última prueba` pasa a la cita de sus casillas y se
-  quita; `version_datos` 9; y el mensaje de título de `issue.js`). **Al publicar:** línea en `.kit/CHANGELOG.md`
-  (cambia la forma de `progreso.md`) y cerrar la #54 con el enlace a la release. Pendiente de la #54, menor:
-  `issue.js --enviar` sigue necesitando `gh`.
+- **0.27.1 en publicación** (Roberto, 2026-09-28: la #54 no espera a base-kit): el arreglo de la #54 (migración
+  009: la columna `Última prueba` pasa a la cita de sus casillas y se quita; `version_datos` 9; el mensaje de
+  título de `issue.js`) más K1, G5 y K2. Al salir la release: cerrar la #54 con el enlace. Pendiente de la #54,
+  menor: `issue.js --enviar` sigue necesitando `gh`.
 
 ## Issues abiertas por decidir
 
