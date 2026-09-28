@@ -46,7 +46,7 @@ se dice qué se hizo con cada uno y dónde mirarlo. "Bloque" es el de §8.3.
 | §7 Bus factor 1 | — | ✅ mitigado | No se arregla del todo; `docs/arquitectura.md` (§6.3) permite que otra persona o un LLM entienda el kit sin haberlo visto |
 | §8.1 P1 Lint pedagógico | 2 | ✅ 0.21.0 | Seis avisos en `comprobar.js` (nunca bloquean): `nota-larga` (60 líneas de contenido por defecto, o el número de `longitud_nota`), `concepto-sin-ejemplo`, `sesion-incompleta` (por sección), `flashcards-fuera-de-rango` (`flashcards_por_sesion`), `requiere-vacio` (dificultad 3), `pregunta-doble` (heurística prudente: solo dos `?` en una pregunta numerada con su `✍️`). `AGENTS.md`: se arreglan antes de guardar salvo motivo, que se le dice al alumno. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Tests en `tests/revisor-pedagogico.test.js` |
 | §8.1 P2 Más ficheros vivos generados | 2 | ✅ 0.21.0 | `guardar.js` genera ahora `estudio/formulario.md` (fórmulas por bloque) y `estudio/ejercicios/_index.md` (qué practica cada ejercicio, desde `ejercicio:` y `## Practícalo`); `mapa-del-curso.md` se queda solo para la cobertura del material, como ya decía la skill. Migración `004-…` conserva con otro nombre lo que un curso ya tuviera escrito a mano y no coincida con lo generado. Ver `lib/generados.js`, `tests/generados.test.js` Las notas `-anterior` se quedan como están, sin paso de revisión: decisión de Roberto (hay pocos cursos afectados) |
-| §8.1 P4 + §8.2 E4 Evolución con datos y mi perfil | 3 | ✅ 0.23.0 | `lib/perfil.js`, `estudio/mi-perfil.md` (generado por `guardar.js`), señales en `estado.js` (`examen-suspenso`, `nota-baja`, `concepto-rojo`, `tercer-tropiezo`); tests en `tests/perfil.test.js`. Especificación: `docs/planes/2026-09-23-mi-perfil-y-evolucion.md` |
+| §8.1 P4 + §8.2 E4 Evolución con datos y mi perfil | 3 | ✅ 0.23.0 | `lib/perfil.js`, `estudio/mi-perfil.md` (generado por `guardar.js`), señales en `estado.js` (`examen-suspenso`, `nota-baja`, `concepto-rojo`, `tercer-tropiezo`); tests en `tests/perfil.test.js`. Especificación: `docs/planes/_archivo/2026-09-23-mi-perfil-y-evolucion.md` |
 | Plan 0.22 5b.4 Alumno simulado | — | ✅ 0.23.0 | `pruebas/lib/pasos.js`, paso `/examen (contestar)` |
 | §8.1 P7 Examen oficial | — | ⏳ decidido, sin empezar | Roberto: más abierto que "examen oficial". Habrá cursos con examen del centro claro, otros internos o de temario y otros libres sin certificación. El profesor pide al alumno un ejemplo o las preguntas que tenga y construye con eso el simulacro del final. Pasa a "examen final a medida" |
 | §8.1 P8 Material que no es PDF | — | ⏳ decidido, sin empezar | Roberto recibe PDF, PPTX, fotos o capturas, Excel, audio o vídeo y documentos de texto (Word/Docs). Deja de ser TBD: hay que cubrirlos |
@@ -407,7 +407,7 @@ mejor al profesor; después las que hacen mejor al alumno. Al final, el orden qu
 
 ### 8.1 Para el profesor: calidad del material, facilidad al enseñar, evolución con el curso
 
-> Estado: **P1 y P2 hechos** en 0.21.0 · **P3 hecho** en 0.22.0 · **P4 hecho** en 0.23.0 · P5 a P8 en el plan de acción (`docs/planes/2026-09-24-plan-de-accion.md`).
+> Estado: **P1 y P2 hechos** en 0.21.0 · **P3 hecho** en 0.22.0 · **P4 hecho** en 0.23.0 · P5 a P8 en el plan de acción (`docs/planes/_archivo/2026-09-24-plan-de-accion.md`).
 
 > ✅ **P1 hecho en 0.21.0.** Seis avisos en `comprobar.js`: `nota-larga`, `concepto-sin-ejemplo`, `sesion-incompleta`, `flashcards-fuera-de-rango`, `requiere-vacio` y `pregunta-doble`. No se hizo `formula-sin-formulario`: el formulario ya se genera solo. Detalle en [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
@@ -443,7 +443,7 @@ cobertura del material (lo único que `inicio.md` no cubre). Menos pasos en `/se
 > hacía falta un campo más que mantener a mano en el propio ejercicio. `mapa-del-curso.md` se queda (no se
 > retira), reducido a la cobertura del material. Ver [§0 Seguimiento](#0-seguimiento-se-actualiza-en-cada-bloque).
 
-> ✅ **P3 hecho en 0.22.0**, ampliado con Roberto: el arranque de sesión distingue tutoría y preparación (tres casos que el alumno confirma), calentamiento de dos preguntas y preparación de clases en segundo plano (`estado.js`, `preparar.js`). Plan en `docs/planes/2026-09-23-tutoria-y-preparacion.md`.
+> ✅ **P3 hecho en 0.22.0**, ampliado con Roberto: el arranque de sesión distingue tutoría y preparación (tres casos que el alumno confirma), calentamiento de dos preguntas y preparación de clases en segundo plano (`estado.js`, `preparar.js`). Plan en `docs/planes/_archivo/2026-09-23-tutoria-y-preparacion.md`.
 
 **P3 · ✅ Calentamiento antes de cada clase nueva (S).** Al empezar `/sesion`, antes de leer el material: mirar
 `requiere:` de lo que probablemente venga y `progreso.md`, y si hay prerrequisitos en 🟡/🔴 o sin evaluar,
@@ -482,7 +482,7 @@ traiga el material de los cursos reales.
 
 ### 8.2 Para el alumno: aprender mejor, entender mejor, seguir motivado
 
-> Estado: **E4 hecho** en 0.23.0 · el resto, en el plan de acción (`docs/planes/2026-09-24-plan-de-accion.md`).
+> Estado: **E4 hecho** en 0.23.0 · el resto, en el plan de acción (`docs/planes/_archivo/2026-09-24-plan-de-accion.md`).
 
 **E1 · Repaso espaciado (M).** Las flashcards existen y se leen una vez. Lo que fija el conocimiento es
 volver a ellas a intervalos crecientes. Dos formas:

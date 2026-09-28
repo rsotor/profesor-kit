@@ -22,7 +22,8 @@ Cómo se cambia y se publica: `CONTRIBUTING.md`. Además:
 
 ## Planes
 
-Todo plan en `docs/planes/` lleva dos apartados:
+Lo pendiente vive en un solo sitio: `docs/planes/plan-vivo.md`, al día mientras se trabaja. Lo viejo, en
+`docs/planes/_archivo/`. Todo plan nuevo lleva dos apartados:
 
 - **Fuera:** lo que este plan no hace.
 - **Cómo sabremos:** cómo se comprueba que ha salido bien.

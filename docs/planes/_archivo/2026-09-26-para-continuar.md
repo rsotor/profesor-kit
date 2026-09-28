@@ -5,7 +5,7 @@ Cierre del 2026-09-25: publicada la **v0.26.0** (#49, #52) y preparada la **0.27
 ## Texto para abrir la sesión
 
 > Seguimos con el profesor-kit (repo en ~/Documents/courses/profesor-kit, cuenta rsotor). Lee
-> `docs/planes/2026-09-26-para-continuar.md` y dime por dónde seguimos.
+> `docs/planes/_archivo/2026-09-26-para-continuar.md` y dime por dónde seguimos.
 
 ## Pendiente, en orden
 

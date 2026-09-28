@@ -6,7 +6,7 @@ Estado al cerrar la sesión del 2026-09-23. Rama `mi-perfil-y-evolucion` (**solo
 ## Texto para abrir la sesión nueva
 
 > Seguimos con el profesor-kit (repo en ~/Documents/courses/profesor-kit, cuenta de GitHub rsotor, rama
-> `mi-perfil-y-evolucion`). Lee `docs/planes/2026-09-24-para-continuar.md` y sigue desde "Siguiente paso".
+> `mi-perfil-y-evolucion`). Lee `docs/planes/_archivo/2026-09-24-para-continuar.md` y sigue desde "Siguiente paso".
 
 > **Sustituido por [`2026-09-25-para-continuar.md`](2026-09-25-para-continuar.md).** Antes: todo lo pendiente está ordenado en
 > [`2026-09-24-plan-de-accion.md`](2026-09-24-plan-de-accion.md), que pasa a ser la fuente única. Este resumen
@@ -64,8 +64,8 @@ Relacionado: menos comandos improvisados (`AGENTS.md` y P8, lectura de PPTX y Ex
 
 ## Después: P4 + E4 y alumno simulado
 
-- Especificación aprobada: `docs/planes/2026-09-23-mi-perfil-y-evolucion.md`.
-- Plan de implementación **sin revisar**: `docs/planes/2026-09-23-mi-perfil-y-evolucion-plan.md` (8 tareas).
+- Especificación aprobada: `docs/planes/_archivo/2026-09-23-mi-perfil-y-evolucion.md`.
+- Plan de implementación **sin revisar**: `docs/planes/_archivo/2026-09-23-mi-perfil-y-evolucion-plan.md` (8 tareas).
 - Pendiente de Roberto:
   1. Revisar las seis desviaciones de la cabecera del plan.
   2. Elegir cómo se ejecuta. Recomendación: **Native** (todo en la sesión, revisor al final).
