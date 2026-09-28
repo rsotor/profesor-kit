@@ -6,6 +6,11 @@ dice al profesor de cada alumno, no a ti. Se cambia como cualquier otro fichero 
 Este fichero no llega a los cursos: no está en `ficheros` de `.kit/motor.json` y `preparar-curso.js` lo borra
 (`SOLO_DEL_KIT`).
 
+Un curso de prueba en `pruebas-local/` hereda estas reglas (y las de `.claude/rules/` sin seguir, como las de
+base-kit) de la carpeta de arriba. Para que se porte como el de un alumno, su `.claude/settings.local.json` lleva
+`"claudeMdExcludes": ["<ruta absoluta del kit>/.claude/rules/**"]`. `prueba-real` no lo necesita: monta en
+una carpeta temporal.
+
 ## Publicar
 
 Cómo se cambia y se publica: `CONTRIBUTING.md`. Además:
