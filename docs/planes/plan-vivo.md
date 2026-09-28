@@ -18,6 +18,27 @@ Para abrir una sesión:
   título de `issue.js`) más K1, G5 y K2. Al salir la release: cerrar la #54 con el enlace. Pendiente de la #54,
   menor: `issue.js --enviar` sigue necesitando `gh`.
 
+## Siguiente: que no se repita la #54
+
+Por qué no la cazó ninguna prueba: la columna `Última prueba` nunca estuvo en el kit (ni skills, ni plantillas,
+ni `AGENTS.md`); la inventó el profesor de un curso real. La prueba real y `prueba-actualizar` parten siempre de
+cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los datos con el uso. Por orden de valor:
+
+1. **El curso real de Roberto como prueba antes de cada release:** en una copia, todas las migraciones +
+   `comprobar.js`; sin errores ni avisos nuevos. La copia vive en `pruebas-local/` (ignorado por git), **nunca
+   en el repo, que es público**. Paso obligatorio en `.claude/rules/desarrollo.md`, como la prueba real.
+   Falta: dónde está el curso real y cómo se trae a este Mac.
+   - **Fuera:** subir datos de un alumno al repo; anonimizar.
+   - **Cómo sabremos:** con la copia del curso de antes de la 0.27.1, la comprobación falla con la 0.27.0 y pasa
+     con la 0.27.1.
+2. **`actualizar.js` avisa si los avisos se disparan** tras actualizar (la #54: de 40 a 147); hoy solo compara
+   errores.
+   - **Fuera:** bloquear la actualización por avisos.
+   - **Cómo sabremos:** test con un curso que pasa de N a muchos más avisos → el resumen lo dice.
+3. **El formato de `progreso.md` fijado en una plantilla**, para que el profesor no se invente columnas.
+   - **Fuera:** TODO: decidir con Roberto.
+   - **Cómo sabremos:** TODO: decidir con Roberto.
+
 ## Issues abiertas por decidir
 
 - **#55** `/examen` por ángulos, no la definición literal. Recomendado para el alcance de la 0.28.0.
