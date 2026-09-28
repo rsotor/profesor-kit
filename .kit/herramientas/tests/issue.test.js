@@ -62,6 +62,17 @@ test('cli: vista previa sin enviar; con --enviar crea y devuelve la url; sin gh 
   assert.equal(cli([], raiz), 2);
 });
 
+test('cli (#54): un título mal formado dice cómo va el título, no "el texto lleva…"', t => {
+  const lineas = [];
+  t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
+  const raiz = cursoTemporal(MOTOR);
+  const cuerpo = path.join(raiz, 'cuerpo.md');
+  fs.writeFileSync(cuerpo, CUERPO);
+  assert.equal(cli(['--titulo', 'sin corchetes', '--cuerpo', cuerpo], raiz, { ejecutar: gh() }), 1);
+  assert.match(lineas.join('\n'), /^No se envía: el título va como "\[skill o herramienta\] qué pasa"/);
+  assert.doesNotMatch(lineas.join('\n'), /el texto lleva/);
+});
+
 // issue #39, H07: un solo detector de secretos; issue.js no puede dejar pasar lo que guardar.js bloquea.
 test('revisar: detecta los mismos secretos que el escaneo al guardar (token fino de GitHub incluido)', () => {
   assert.deepEqual(revisar(`token: github_pat_${'A1'.repeat(30)}`), ['algo que parece un secreto']);

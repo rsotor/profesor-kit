@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { actualizar } = require('../actualizar');
+const { comprobar } = require('../comprobar');
 const { cursoTemporal, escribir, iniciarGit, git, temporal } = require('./ayuda');
 
 const KIT_REAL = path.resolve(__dirname, '..', '..');   // la carpeta .kit de este repo
@@ -462,4 +463,49 @@ test('migración 008: las casillas de progreso.md sin cita se marcan "antes de l
   const sinProgreso = cursoTemporal();
   fs.rmSync(path.join(sinProgreso, 'estudio', 'progreso.md'));
   assert.doesNotThrow(() => m.migrar(sinProgreso));
+});
+
+// Issue #54: un curso de antes de la 0.26 con la cuarta columna `Última prueba`, tal como lo deja la 008.
+const PROGRESO_4_COLUMNAS = '# Progreso\n\n| Concepto | Teoría | Aplicación | Última prueba |\n|---|---|---|---|\n'
+  + '| [[alfa]] | ✅ sólido · antes de la 0.26, sin prueba | 🟡 flojo · antes de la 0.26, sin prueba | examen 22-09: P7 ✗ |\n'
+  + '| [[beta]] | ✅ sólido · examen 1, p.2: bien | 🔴 mal · antes de la 0.26, sin prueba | repaso 23-09: P10 4/4 ✓ |\n'
+  + '| [[gamma\\|Gamma]] | ⬜ sin evaluar | ⬜ sin evaluar | ejercicio 3: lo vio |\n'
+  + '| [[delta]] | 🟡 flojo · antes de la 0.26, sin prueba | ⬜ sin evaluar | — |\n'
+  + '\nNotas del alumno.\n';
+
+test('migración 009 (#54): la prueba de "Última prueba" pasa a sus casillas, la columna se quita y lo que no cabe queda debajo', () => {
+  const m = require('../migraciones/009-progreso-sin-ultima-prueba');
+  const raiz = cursoTemporal({ 'estudio/progreso.md': PROGRESO_4_COLUMNAS });
+  m.migrar(raiz);
+  const despues = leer(raiz, 'estudio/progreso.md');
+  assert.match(despues, /^\| Concepto \| Teoría \| Aplicación \|$/m);
+  assert.match(despues, /^\|---\|---\|---\|$/m);
+  assert.match(despues, /\| \[\[alfa\]\] \| ✅ sólido · examen 22-09: P7 ✗ \| 🟡 flojo · examen 22-09: P7 ✗ \|/);
+  assert.match(despues, /\| \[\[beta\]\] \| ✅ sólido · examen 1, p\.2: bien \| 🔴 mal · repaso 23-09: P10 4\/4 ✓ \|/, 'la cita que ya tenía no se pisa');
+  assert.match(despues, /\| \[\[gamma\\\|Gamma\]\] \| ⬜ sin evaluar \| ⬜ sin evaluar \|/);
+  assert.match(despues, /\| \[\[delta\]\] \| 🟡 flojo · antes de la 0\.26, sin prueba \| ⬜ sin evaluar \|/, 'sin prueba de verdad, se queda la marca');
+  assert.match(despues, /## Última prueba, de antes de la 0\.26\n\n.*\n\n- \[\[gamma\|Gamma\]\]: ejercicio 3: lo vio\n$/, 'lo que no cabía no se pierde');
+  assert.match(despues, /Notas del alumno\./);
+  assert.doesNotMatch(despues, /\| Última prueba \|/);
+
+  m.migrar(raiz);
+  assert.equal(leer(raiz, 'estudio/progreso.md'), despues, 'idempotente');
+
+  const avisos = comprobar(raiz).avisos.filter(a => a.fichero === 'progreso.md');
+  assert.deepEqual(avisos, [], 'ni no-se-vera-bien falsos ni casillas sin prueba');
+});
+
+test('migración 009 (#54): desde antes de la 0.26, la 008 y la 009 seguidas dejan la prueba de verdad; y respeta CRLF', () => {
+  const crudo = PROGRESO_4_COLUMNAS.replace(/ · antes de la 0\.26, sin prueba/g, '').replace(/\n/g, '\r\n');
+  const raiz = cursoTemporal({ 'estudio/progreso.md': crudo });
+  require('../migraciones/008-progreso-con-prueba').migrar(raiz);
+  require('../migraciones/009-progreso-sin-ultima-prueba').migrar(raiz);
+  const despues = leer(raiz, 'estudio/progreso.md');
+  assert.ok(!/[^\r]\n/.test(despues), 'CRLF se conserva');
+  assert.match(despues, /\| \[\[alfa\]\] \| ✅ sólido · examen 22-09: P7 ✗ \| 🟡 flojo · examen 22-09: P7 ✗ \|/);
+
+  const tresColumnas = cursoTemporal({ 'estudio/progreso.md': '| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[a]] | ✅ sólido · examen 1, p.1: bien | ⬜ sin evaluar |\n' });
+  const antes = leer(tresColumnas, 'estudio/progreso.md');
+  require('../migraciones/009-progreso-sin-ultima-prueba').migrar(tresColumnas);
+  assert.equal(leer(tresColumnas, 'estudio/progreso.md'), antes, 'un progreso.md ya de 3 columnas no se toca');
 });
