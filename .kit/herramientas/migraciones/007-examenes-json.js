@@ -9,7 +9,7 @@ function cargarFresco(rel) {
   return require(path.join(path.dirname(__dirname), ...rel.split('/')));
 }
 
-// Formato v7 (examen tipo test, docs/planes/2026-09-25-examen-v1.md): la configuración del examen —opciones,
+// Formato v7 (examen tipo test, docs/planes/_archivo/2026-09-25-examen-v1.md): la configuración del examen —opciones,
 // resta_fallo, y las preguntas y el aprobado de cada tipo— pasa a config/examenes.json. Un curso ya empezado
 // tenía su aprobado en config/curso.md: se copia al de módulo, para no cambiarle la nota a nadie a mitad de
 // curso; curso.md no se toca (puede seguir teniendo esa clave, cursos.js la sigue leyendo como último respaldo).

@@ -11,7 +11,7 @@ hace con cada hallazgo.
 | `docs/auditoria/2026-09-23-auditoria-del-kit.md` | Nuestra auditoría (0.19.0). Casi todo resuelto; quedan P4 a P8 y E1 a E9 |
 | Issue #39 | Auditoría de Codex en Windows sobre la 0.22.1: hallazgos H01 a H12 |
 | Issues #36 y #38 | Claudian con Codex · falsos avisos de `concepto-sin-ejemplo` |
-| `docs/planes/2026-09-24-para-continuar.md` | Decisiones de la última sesión: mi perfil, P7, P8, permisos desde Obsidian |
+| `docs/planes/_archivo/2026-09-24-para-continuar.md` | Decisiones de la última sesión: mi perfil, P7, P8, permisos desde Obsidian |
 
 ---
 
@@ -135,7 +135,7 @@ pueden dar por buena una clase que no se ha preparado o perder una corrección s
 ## 5. Qué entra en la 0.23.0 (2026-09-24)
 
 Revisado con Roberto: las 6 desviaciones del plan de mi perfil, aceptadas; más lo que se añadió en la revisión.
-Detalle de cada tarea en `docs/planes/2026-09-23-mi-perfil-y-evolucion-plan.md`.
+Detalle de cada tarea en `docs/planes/_archivo/2026-09-23-mi-perfil-y-evolucion-plan.md`.
 
 | Tarea | Qué | Estado |
 |---|---|---|

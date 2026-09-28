@@ -46,3 +46,8 @@ test('git ignora la disposición de ventanas de Obsidian también dentro de estu
   assert.ok(ignorado('estudio/.obsidian/workspaces.json'));
   assert.ok(!ignorado('estudio/.obsidian/app.json'), 'los ajustes de la bóveda sí se guardan');
 });
+
+test('las reglas de desarrollo del kit (.claude/rules) no viajan a los cursos con /actualizar', () => {
+  const { ficheros } = JSON.parse(fs.readFileSync(path.join(RAIZ, '.kit', 'motor.json'), 'utf8'));
+  for (const f of ficheros) assert.ok(!('.claude/rules/'.startsWith(f + '/') || f.startsWith('.claude/rules')), f);
+});

@@ -24,7 +24,10 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 ## Lo que te cuesta
 
-*Todavía nada: se irá llenando con tus exámenes y tus dudas.*
+### Errores que se repiten
+
+- **gastos-fijos-y-variables**: en el examen del módulo 1 falla las dos preguntas del concepto. En la p.6 marca "fijo" porque gasta algo en ocio todos los meses (que se repita no lo hace fijo: lo que cuenta es quién decide la cifra) y la p.5 (alquiler) la deja en blanco. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-28.md, p.5 y p.6*
+  Se repite en el test de corrección: clasifica el alquiler de 700 € (cifra fijada por contrato, con una subida anual por IPC) como variable, cuando es fijo. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-28-correccion.md, p.5*
 
 ## Lo que te entró a la primera
 
@@ -36,7 +39,7 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 | Examen | Intentos | Último |
 |---|---|---|
-| [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-25\|Examen 01]] | 6,0 (2026-09-25) | ✅ aprobado |
+| [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-28\|Examen 01]] | 6,0 (2026-09-28) | ✅ aprobado |
 
 ### Conceptos, por bloque
 
@@ -44,12 +47,12 @@ Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces 
 
 | Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |
 |---|---|---|
-| modulo-01 | 5 · 3 · 0 · 0 | 0 · 0 · 0 · 8 |
-| modulo-02 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
+| Módulo 1 · Fundamentos del dinero | 4 · 2 · 1 · 0 | 0 · 0 · 0 · 7 |
+| Módulo 2 · Ahorro e interés | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
 
 ### Donde más dudas
 
-- colchon-financiero: 1 duda (última: 2026-09-25 · conceptos/colchon-financiero.md)
+- colchon-financiero: 1 duda (última: 2026-09-28 · conceptos/colchon-financiero.md, 2026-09-28)
 
 ## Cambios en cómo te explico
 

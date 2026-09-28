@@ -4,39 +4,40 @@ sesion: 01-02-01-presupuesto-personal
 ---
 # Flashcards · 01-02-01-presupuesto-personal
 
-> Se responde mentalmente antes de desplegar.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Todos los meses gastas algo en ocio, así que lo apuntas como gasto fijo. ¿Está bien clasificado? ¿Por qué?**
+**Todos los meses gastas algo en ocio. ¿Es un gasto fijo? (explica el porqué en una frase)**
 > [!success]- Respuesta
-> No, es variable. Que gastes algo siempre no lo hace fijo: la cifra exacta la decides tú cada mes.
+> No, es variable: que gastes algo siempre no lo hace fijo; la cifra exacta la decides tú cada mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 25/9*
+*Caja 1 de 5 · te toca el 28/9*
 
-**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso presupuestas y por qué no con el del mejor mes?**
+**Como freelance, ¿con qué ingreso montas el presupuesto? (en una frase)**
 > [!success]- Respuesta
-> Con el ingreso medio de los últimos 6-12 meses. Con el del mejor mes gastarías de más en los meses flojos.
+> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 25/9*
+*Caja 1 de 5 · te toca el 28/9*
 
-**Dos personas ahorran 400,00 € al mes: una ingresa 1.000,00 € y la otra 3.000,00 €. ¿Cuál ahorra más en proporción?**
+**¿Qué te dice la tasa de ahorro que no te dice la cifra de ahorro en euros? (en una frase)**
 > [!success]- Respuesta
-> La primera: 40 % mensual frente al 13,3 % mensual. Para eso sirve la tasa de ahorro: la cifra absoluta no se compara.
+> Qué parte de lo que ganas te queda, así que se puede comparar entre personas (o meses) con ingresos distintos.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 25/9*
+*Caja 1 de 5 · te toca el 28/9*
 
-**¿Por qué un freelance apunta a 5-6 meses de colchón y no a 3?**
+**¿Por qué un freelance apunta a más meses de colchón que alguien con nómina fija? (en una frase)**
 > [!success]- Respuesta
-> Porque sus ingresos son irregulares: un mes flojo puede encadenarse con otro y 3 meses se acaban antes de que remonte la facturación.
+> Porque sus ingresos son irregulares: un mes flojo hay que pagar los gastos igual. Suele apuntar a 5-6 meses en vez de 3.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 25/9*
+*Caja 1 de 5 · te toca el 28/9*
 
 ---
-Conceptos que cubren: [[gastos-fijos-y-variables]] · [[presupuesto-personal]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

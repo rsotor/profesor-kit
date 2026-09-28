@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const v = require('./vault');
 
-// La configuración del examen tipo test (docs/planes/2026-09-25-examen-v1.md): opciones por pregunta, cuánto
+// La configuración del examen tipo test (docs/planes/_archivo/2026-09-25-examen-v1.md): opciones por pregunta, cuánto
 // resta un fallo y, por tipo de examen, cuántas preguntas y con qué nota se aprueba. Vive en config/examenes.json,
 // con valores por defecto cuando falta el fichero o una clave (un JSON roto no revienta nada: como si no
 // existiera). Cada examen copia en su clave (config/claves/…) la configuración con la que nació: cambiar este
@@ -77,7 +77,7 @@ function aprobadoDeExamen(raiz, fm = {}) {
 
 // Un examen cuenta como "de módulo" (nota de la unidad, 🏁, marca estudiada, sustituye a otros de módulo) si es
 // de toda la vida (sin tipo_examen), o de tipo módulo o "lo que me falta"; y no tiene escalón. El final y el
-// trimestre quedan fuera: son de otro alcance (docs/planes/2026-09-25-examen-v1.md, decisión 6).
+// trimestre quedan fuera: son de otro alcance (docs/planes/_archivo/2026-09-25-examen-v1.md, decisión 6).
 function esDeModulo(fm = {}) {
   if (v.numero(fm.escalon) !== null) return false;
   return !fm.tipo_examen || fm.tipo_examen === 'modulo' || fm.tipo_examen === 'lo-que-falta';

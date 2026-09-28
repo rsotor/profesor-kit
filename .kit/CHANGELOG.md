@@ -13,6 +13,13 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.27.1
+Un arreglo para quien empezó su curso antes de la 0.26.
+- **Tu progreso recupera sus pruebas.** Si tu tabla de progreso tenía la columna "Última prueba", al actualizar
+  a la 0.26 algunas casillas quedaron como "sin prueba" aunque la prueba estaba en esa columna, y salían muchos
+  avisos de más. Ahora esa prueba pasa a su casilla y la columna desaparece. Si alguna no encaja en ninguna
+  casilla, no se pierde: la tienes en una lista debajo de la tabla. Ninguna casilla cambia de estado.
+
 ## 0.27.0
 - **Tu curso, desde cualquier sitio.** Si lo usas en tu ordenador y también en un asistente en la nube, al
   empezar tu profesor mira si hay cambios hechos desde el otro sitio y los trae antes de seguir. Si los dos

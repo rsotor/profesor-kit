@@ -1,13 +1,13 @@
 # Para continuar · 2026-09-25
 
 Cierre de la sesión del 2026-09-24. Rama **`mi-perfil-y-evolucion`** (solo en local, sin subir), sobre `main` en la
-**v0.22.3**. Fuente única de lo pendiente: `docs/planes/2026-09-24-plan-de-accion.md`. Página del plan para Roberto:
+**v0.22.3**. Fuente única de lo pendiente: `docs/planes/_archivo/2026-09-24-plan-de-accion.md`. Página del plan para Roberto:
 https://claude.ai/artifact/5bNRiKXX6e6UbyFyRHYzvC
 
 ## Texto para abrir la sesión nueva
 
 > Seguimos con el profesor-kit (repo en ~/Documents/courses/profesor-kit, cuenta de GitHub rsotor, rama
-> `mi-perfil-y-evolucion`). Lee `docs/planes/2026-09-25-para-continuar.md` y sigue desde "Siguiente paso".
+> `mi-perfil-y-evolucion`). Lee `docs/planes/_archivo/2026-09-25-para-continuar.md` y sigue desde "Siguiente paso".
 
 ## Lo hecho el 2026-09-24
 
@@ -16,9 +16,9 @@ https://claude.ai/artifact/5bNRiKXX6e6UbyFyRHYzvC
 - **0.23.0 programada** en esta rama (423 tests en verde): mi perfil y señales, alumno simulado, la prueba real mide la
   corrección, barrera de PR estricta, el material no da órdenes, avisos que crecen, "si algo tarda", "test" en vez
   de "parcial", exámenes que miden entender y distinguir (petición de Roberto), arreglos de la revisión
-  independiente, `dudas.js`. Detalle: `docs/planes/2026-09-24-plan-de-accion.md`, sección 5.
+  independiente, `dudas.js`. Detalle: `docs/planes/_archivo/2026-09-24-plan-de-accion.md`, sección 5.
 - **Diseño de permisos (0.24.0)** decidido y probado en el Mac con Claude Code (de 5 peticiones a 0 desde Obsidian):
-  `docs/planes/2026-09-24-permisos-diseno.md`. Windows con Codex: issue #42, pendiente de respuesta.
+  `docs/planes/_archivo/2026-09-24-permisos-diseno.md`. Windows con Codex: issue #42, pendiente de respuesta.
 - **Diagnóstico de skills y AGENTS.md:** `docs/auditoria/2026-09-24-diagnostico-skills.md`.
 
 ## El problema que se repite (leer antes de nada)

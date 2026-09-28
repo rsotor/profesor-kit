@@ -130,7 +130,7 @@ test('cli: lee la corrección de un JSON, la registra y borra el JSON; con error
   assert.equal(cli([], raiz), 2);
 });
 
-// --- examen.js --corregir: el examen tipo test (docs/planes/2026-09-25-examen-v1.md) ------------------------
+// --- examen.js --corregir: el examen tipo test (docs/planes/_archivo/2026-09-25-examen-v1.md) ------------------------
 
 const EXAMEN_TEST = [
   '---', 'tipo: examen', 'tipo_examen: modulo', 'unidad: 01', 'fecha: 2026-10-01', 'nota:', 'aprobado: 6', '---',

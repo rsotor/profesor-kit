@@ -14,12 +14,12 @@
 //
 //     node .kit/herramientas/examen.js --registrar <examen.md> --correccion <fichero.json>
 //
-// - **Test** (docs/planes/2026-09-25-examen-v1.md): casillas `- [ ] a) …`, corrige el código con la clave de
+// - **Test** (docs/planes/_archivo/2026-09-25-examen-v1.md): casillas `- [ ] a) …`, corrige el código con la clave de
 //   config/claves/: nada de juicio que aportar.
 //
 //     node .kit/herramientas/examen.js --corregir <examen.md>
 //
-// Y para componer un examen nuevo reutilizando preguntas (docs/planes/2026-09-25-examen-v1.md, "Reutilizar
+// Y para componer un examen nuevo reutilizando preguntas (docs/planes/_archivo/2026-09-25-examen-v1.md, "Reutilizar
 // preguntas propias" y "Examen de referencia del centro"): las falladas en el último intento de cada examen
 // (enunciado con sus opciones, tal cual del .md; respuesta correcta y concepto, de la clave) y, aparte, las
 // del centro ya usadas, para rotarlas.
@@ -241,7 +241,7 @@ function corregir(raiz, rel) {
   return { ...r, aprobo: nota >= r.aprobado, aciertos, fallos, blancos: total - aciertos - fallos, fallosPorConcepto };
 }
 
-// Las preguntas que reutiliza la skill al componer un examen nuevo (docs/planes/2026-09-25-examen-v1.md,
+// Las preguntas que reutiliza la skill al componer un examen nuevo (docs/planes/_archivo/2026-09-25-examen-v1.md,
 // "Reutilizar preguntas propias" y "Examen de referencia del centro"): las falladas en el último intento de
 // cada examen de la unidad (o de todo el curso, sin unidad) y, aparte, las del centro que ya han salido, para
 // rotarlas. `unidad` es un prefijo: "01" trae también los exámenes de "01-02", "01-03"…

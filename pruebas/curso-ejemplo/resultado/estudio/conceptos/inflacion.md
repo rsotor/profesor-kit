@@ -1,6 +1,6 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
+bloques: ["Módulo 1 · Fundamentos del dinero"]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
@@ -9,30 +9,35 @@ tags: [dinero]
 ---
 # Inflación
 
-> **En una frase:** La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** La inflación es la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-El dinero guardado tiene que valer más o menos lo mismo mañana (es su función de depósito de valor, ver [[funciones-del-dinero]]). Si los precios suben, ese dinero compra menos y el depósito falla poco a poco.
+Guardar dinero (el depósito de valor) solo sirve si mantiene su valor. Si los precios de casi todo suben, lo
+guardado compra cada vez menos y esa función falla.
 
 ## El ejemplo
 
-Con una inflación del 3 % anual, 100,00 € de hoy valen, en poder de compra, unos 97,00 € del año que viene.
-
-El billete sigue diciendo 100,00 €. Lo que ha bajado es lo que puedes comprar con él.
-
-## El nombre
-
-**Inflación.** Se mide como una tasa que siempre lleva su periodo (por ejemplo, 3 % anual): un porcentaje sin periodo no dice nada.
+Con una inflación del 3% anual, 100,00 € de hoy valdrán, en compra real, como unos 97,00 € del año que viene.
+La cantidad no ha cambiado; lo que ha bajado es lo que puedes comprar con ella.
 
 ## El error típico
 
-Confundir "sube el precio de una cosa" con "inflación". Un precio concreto puede subir por moda o por escasez de esa cosa. Hay inflación cuando sube el nivel general de precios, de casi todo a la vez.
+Confundir "sube el precio de una cosa" con "inflación".
+
+| Sube el precio de… | ¿Es inflación? |
+|---|---|
+| Una cosa concreta (por moda, o porque esa cosa escasea) | No |
+| Casi todo a la vez, de forma sostenida (el nivel general de precios) | Sí |
+
+> [!tip] Visto desde tus ingresos irregulares
+> Si guardas 1.000,00 € para los meses flojos, con una inflación del 3% anual dentro de un año comprarán
+> como unos 970,00 €. El colchón no se ha gastado, pero cubre menos.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la inflación ataca el depósito de valor
-- [[liquidez]] — el otro rasgo de tener el dinero a mano
+- [[funciones-del-dinero]] — la inflación ataca la función de depósito de valor
+- [[liquidez]] — el resumen de la clase las pone juntas: la inflación como enemigo de guardar dinero, la liquidez como ventaja
 
 ## Historial
 

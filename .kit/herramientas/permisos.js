@@ -1,5 +1,5 @@
 'use strict';
-// El "servicio técnico" del kit (docs/planes/2026-09-24-permisos-diseno.md): con un sí del alumno, su profesor edita
+// El "servicio técnico" del kit (docs/planes/_archivo/2026-09-24-permisos-diseno.md): con un sí del alumno, su profesor edita
 // sus notas y ejecuta las herramientas del kit sin preguntar a cada paso, solo dentro del curso. Qué se permite lo
 // decide el kit, igual para todos; dónde y cómo se escribe, el adaptador de cada asistente (`aceptar_una_vez`).
 // Nunca: nada fuera del curso, ningún comando genérico (python3, bash…), ni el modo "sin preguntar nada".

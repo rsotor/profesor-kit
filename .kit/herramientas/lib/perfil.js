@@ -123,7 +123,7 @@ const nombreExamen = e => e.escalon !== null
 // Lo que dice que algo no funciona, calculado. El profesor las lee en estado.js --json (arranque, /examen, /dudas).
 // Un examen deja de contar si es la versión anterior de otro, o si hay otro posterior que cubre sus mismas unidades
 // (una versión nueva, o el examen del módulo tras el de una de sus unidades): lo que vale es el último. Un examen
-// final solo lo sustituye otro de su mismo escalón (decisión 6 de docs/planes/2026-09-25-examen-v1.md): no lo
+// final solo lo sustituye otro de su mismo escalón (decisión 6 de docs/planes/_archivo/2026-09-25-examen-v1.md): no lo
 // sustituye uno de módulo ni el de otro escalón, ni al revés.
 const ultimoIntento = e => e.intentos[e.intentos.length - 1];
 function cubre(despues, antes) {

@@ -4,39 +4,40 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 ---
 # Flashcards · 01-01-01-el-dinero-y-sus-funciones
 
-> Se responde mentalmente antes de desplegar.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Un pastor quiere grano pero el agricultor no quiere carne esta semana. ¿Qué problema del trueque es este?**
+**El pastor quiere grano, pero el agricultor no quiere carne esta semana y no hay trato. ¿Qué función del dinero evita ese bloqueo?**
 > [!success]- Respuesta
-> La doble coincidencia de deseos: cada uno tiene que querer justo lo que ofrece el otro, y a la vez.
+> El medio de cambio: se acepta a cambio de cualquier cosa, sin que quien vende tenga que querer justo lo que tú ofreces.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 25/9*
+*Caja 1 de 5 · te toca el 28/9*
 
-**Un café cuesta 1,50 € y un corte de pelo 12,00 €, y los comparas directamente. ¿Qué función del dinero usas?**
+**Un cartel dice "corte de pelo: 12,00 €" y todavía nadie ha pagado. ¿Qué función del dinero está actuando?**
 > [!success]- Respuesta
-> Unidad de cuenta: la misma vara de medir para todo. No es medio de cambio (pagar) ni depósito de valor (guardar).
+> La unidad de cuenta: pone precio. Pagar sería el medio de cambio, y aquí aún no ha ocurrido.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 25/9*
+*Caja 1 de 5 · te toca el 28/9*
 
-**Guardas 100,00 € y el año que viene compran menos. ¿Qué función del dinero falla y por qué?**
+**Las mandarinas se encarecen mucho por una helada y el resto de precios no se mueve. ¿Es inflación? (explica el porqué en una frase)**
 > [!success]- Respuesta
-> El depósito de valor, por la inflación: los precios en general han subido.
+> No. La inflación es la subida general y sostenida de los precios, de casi todo a la vez; aquí sube solo una cosa por una causa suya.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 25/9*
+*Caja 1 de 5 · te toca el 28/9*
 
-**Sube el precio de las entradas de un concierto por moda. ¿Es inflación? ¿Por qué?**
+**Un piso vale mucho más que 100,00 € en la cartera, pero no sirve para pagar el súper hoy. ¿Por qué? (en una frase)**
 > [!success]- Respuesta
-> No. Es un precio concreto. Inflación es la subida general y sostenida de casi todos los precios.
+> Porque es poco líquido: convertirlo en dinero sin perder valor lleva meses. Valor y liquidez son cosas distintas.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 25/9*
+*Caja 1 de 5 · te toca el 28/9*
 
 ---
-Conceptos que cubren: [[doble-coincidencia-de-deseos]] · [[funciones-del-dinero]] · [[inflacion]]
+Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]

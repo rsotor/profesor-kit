@@ -62,6 +62,7 @@ function cli(args, raiz, opciones = {}) {
   const ficheroCuerpo = valor('--cuerpo');
   if (!titulo || !ficheroCuerpo || !fs.existsSync(ficheroCuerpo)) { console.log('Uso: node .kit/herramientas/issue.js --titulo "[skill] qué pasa" --cuerpo <fichero.md> [--enviar]'); return 2; }
   const p = prepararIssue({ raiz, titulo, cuerpo: fs.readFileSync(ficheroCuerpo, 'utf8'), ...opciones });
+  if (!p.ok && p.motivo === 'titulo') { console.log(`No se envía: ${p.problemas[0]}.`); return 1; }
   if (!p.ok) { console.log(`No se envía: el texto lleva ${p.problemas.join(' y ')}. Quítalo y vuelve a probar.`); return 1; }
   if (p.parecidas.length) {
     console.log('Ya hay issues parecidas; si es la misma, comenta ahí en vez de abrir otra:');

@@ -9,7 +9,7 @@ const path = require('node:path');
 const v = require('./lib/vault');
 const indice = require('./lib/indice');
 
-// Peso de cada señal, de más a menos (docs/planes/2026-09-25-0.26.0-alcance.md, "P5+H12"): la definición del
+// Peso de cada señal, de más a menos (docs/planes/_archivo/2026-09-25-0.26.0-alcance.md, "P5+H12"): la definición del
 // índice pesa más que un alias o el nombre de la nota, y eso pesa más que las palabras sueltas del slug.
 const PESO_DEFINICION = 3;
 const PESO_ALIAS = 2;

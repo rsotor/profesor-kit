@@ -13,7 +13,7 @@ vacía para que conteste el examen sin ver las soluciones.
 
 **Tech Stack:** Node 24, `node:test`, sin dependencias nuevas.
 
-**Spec:** `docs/planes/2026-09-23-mi-perfil-y-evolucion.md`
+**Spec:** `docs/planes/_archivo/2026-09-23-mi-perfil-y-evolucion.md`
 
 ## Global Constraints
 
@@ -667,7 +667,7 @@ git commit -m "feat(estado): señales de que algo no funciona en el JSON y en el
 **Files:**
 - Modify: `AGENTS.md` (tres sitios), `.kit/skills/examen/SKILL.md`, `.kit/skills/dudas/SKILL.md`,
   `.kit/plantillas/guia-de-uso.md`, `.kit/CHANGELOG.md`, `.kit/VERSION`, `docs/arquitectura.md`,
-  `docs/planes/2026-09-23-mi-perfil-y-evolucion.md` (desviaciones), `docs/auditoria/2026-09-23-auditoria-del-kit.md` (§0)
+  `docs/planes/_archivo/2026-09-23-mi-perfil-y-evolucion.md` (desviaciones), `docs/auditoria/2026-09-23-auditoria-del-kit.md` (§0)
 
 - [ ] **Step 1: `AGENTS.md`**
 
