@@ -1,8 +1,8 @@
 ---
 tipo: sesion
-bloque: modulo-02
-clases: 2.1
-trabajada: 2026-09-25
+bloque: "Módulo 2 · Ahorro e interés"
+clases: ["2.1"]
+trabajada: 2026-09-28
 fuente: inbox/clase-03-interes-simple-y-compuesto.md
 estudiada: false
 ---
@@ -10,11 +10,12 @@ estudiada: false
 
 ## En una frase
 
-Cómo crece el dinero cuando cobra intereses: si se reinvierten (compuesto) o no (simple), cada cuánto se suman, y una regla rápida para saber cuándo se dobla.
+Cómo crece el dinero cuando se presta o se ahorra a un interés: el simple crece en línea recta, el compuesto
+reinvierte sus intereses y cada vez crece más deprisa, y la regla del 72 da a ojo cuánto tarda en doblarse.
 
 ## Conceptos
 
-- [[tipo-de-interes]] — **nuevo** (capital y tipo de interés)
+- [[capital-y-tipo-de-interes]] — **nuevo**
 - [[interes-simple]] — **nuevo**
 - [[interes-compuesto]] — **nuevo**
 - [[capitalizacion]] — **nuevo**
@@ -22,47 +23,61 @@ Cómo crece el dinero cuando cobra intereses: si se reinvierten (compuesto) o no
 
 ## Lo que hay que llevarse
 
-1. Un tipo de interés sin periodo no dice nada: siempre "anual", "mensual"…
-2. Simple: intereses siempre sobre el capital inicial (línea recta). Compuesto: intereses sobre intereses (cada vez más rápido).
-3. Con 1.000,00 € al 5 % anual y 3 años: 1.150,00 € con simple y 1.157,63 € con compuesto. La diferencia es pequeña al principio y se dispara con los años.
-4. La regla del 72 (72 ÷ tipo anual) da los años para doblar a ojo; es una aproximación.
+1. Un tipo de interés siempre lleva su periodo: un 5 % anual no es un 5 % mensual.
+2. Simple: intereses siempre sobre el capital inicial. Compuesto: los intereses generan intereses.
+3. Con 1.000,00 € al 5 % anual, 3 años: 1.150,00 € (simple) frente a 1.157,63 € (compuesto).
+4. Cuanto más a menudo se capitaliza, más crece; y la regla del 72 (72 ÷ tipo anual) da los años para doblar.
 
 ## Material
 
-- Flashcards: [[flashcards/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]]
-- Ejercicios: [[ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-frente-a-compuesto]] (uno, de respuesta abierta: al mover los años se ve cuándo se separan el simple y el compuesto)
-- Un solo fichero de la clase, sin hoja de cálculo.
+- Flashcards: [[flashcards/02-01-01-interes-simple-y-compuesto]]
+- Ejercicios: [[ejercicios/02-01-01-simple-frente-a-compuesto]]. Aquí sí se mueve algo: al alargar los años o
+  cambiar el tipo, la distancia entre simple y compuesto se dispara.
 
 ## Cobertura del material
 
-| Sección del material | Destino |
+Fuente: `clase-03-interes-simple-y-compuesto` (diapositivas exportadas a texto, 6 diapositivas).
+
+| Sección | Dónde ha quedado |
 |---|---|
-| Diap. 1 · El capital y el tipo de interés | [[tipo-de-interes]] |
-| Diap. 2 · Interés simple | [[interes-simple]] |
-| Diap. 3 · Interés compuesto | [[interes-compuesto]] |
-| Diap. 4 · La capitalización | [[capitalizacion]] (los apuntes no traen cifras: las de la nota son cálculo propio, marcado) |
-| Diap. 5 · La regla del 72 | [[regla-del-72]] |
-| Diap. 6 · Resumen | Repite lo anterior: va a "Lo que hay que llevarse" |
+| Diapositiva 1 · El capital y el tipo de interés | [[capital-y-tipo-de-interes]] |
+| Diapositiva 2 · Interés simple | [[interes-simple]] |
+| Diapositiva 3 · Interés compuesto | [[interes-compuesto]] |
+| Diapositiva 4 · La capitalización | [[capitalizacion]] (el ejemplo con cifras es mío, ver auditoría) |
+| Diapositiva 5 · La regla del 72 | [[regla-del-72]] |
+| Diapositiva 6 · Resumen | Ideas de esta nota; sin concepto propio |
 
 ## Auditoría del material
 
-*Control de calidad del material, no contenido del curso.*
+> Control de calidad del material, no contenido del curso.
 
-- **Reproducido con mi cálculo, todo cuadra:** simple 1.000,00 × 0,05 × 3 = 150,00 € → 1.150,00 €; compuesto 1.000,00 × 1,05³ = 1.157,625 → 1.157,63 €; diferencia 7,63 € (exacta: 7,625 €); regla del 72 al 6 % anual: 12 años frente a 11,9 exactos (11,896).
-- **Diap. 4 sin cifras.** Dice que la capitalización mensual da "algo más" que la anual, sin cuantificarlo. Con 1.000,00 € al 5 % anual y 1 año: 1.050,00 € anual, 1.050,95 € trimestral, 1.051,16 € mensual (cálculo mío, marcado como ampliación en la nota).
-- **Nombre del fichero.** Se llama `clase-03-…` y dentro se titula "Clase 2.1": la 3.ª clase entregada es la 2.1 del temario. El id sigue el temario: 02-01-01.
-- Es la primera clase del módulo 2: no hay otra del módulo con la que comparar. Sin instrucciones para el asistente en este fichero.
+- **Reproducido con mi cálculo, todo cuadra.** 1.000 × 0,05 × 3 = 150,00 €; 1,05³ = 1,157625, así que
+  1.000,00 € × 1,157625 = 1.157,63 €; la diferencia con el simple es 7,63 €; y la regla del 72 al 6 % anual da
+  12 años frente a 11,9 exactos (ln 2 ÷ ln 1,06 = 11,90).
+- **La diapositiva 3 dice que la diferencia "crece cada vez más rápido".** Comprobado con 1.000,00 € al 5 % anual:
+  a 10 años son 1.628,89 € frente a 1.500,00 € (128,89 € de diferencia), y a 20 años 2.653,30 € frente a 2.000,00 €
+  (653,30 €). Al duplicar el plazo, la diferencia se multiplica por más de 5.
+- **La diapositiva 4 no trae ninguna cifra.** Dice que la capitalización mensual da "algo mayor" que la anual.
+  Cuantificado: 1.000,00 € al 5 % anual, un año, son 1.050,00 € con capitalización anual y unos 1.051,16 € con
+  mensual (1,16 € más). El ejemplo de la nota es mío y va marcado como ampliación.
+- **Nombre del fichero frente a su contenido.** El fichero se llama `clase-03-…`, pero la cabecera dice "Clase 2.1".
+  El id se ha tomado del temario (`02-01-01`), no del número del fichero.
+- **Sin hoja de cálculo ni instrucciones raras.** Solo hay diapositivas en texto: nada que contrastar por fórmulas
+  y ninguna instrucción dirigida al asistente. Sin errores repetidos de otras clases.
 
 ## Para pensarlo despacio
 
-1. Con interés compuesto, el primer año da lo mismo que con simple. ¿Por qué se separan después, y qué crees que pasa con la distancia entre los dos a los 30 años?
-2. Un banco te ofrece un 5 % mensual y otro un 12 % anual. Sin calcular, ¿cuál miras primero y por qué?
-3. Capitalizar cada mes en vez de cada año da poco más. ¿Qué pesa más para que tu dinero crezca: la frecuencia o los años que lo dejas?
-4. Con ingresos irregulares, ¿qué parte de lo que ahorras te conviene dejar donde componga y cuál dejar líquida?
+1. Si tuvieras un colchón de tres meses de gastos en una cuenta con interés compuesto, ¿qué pasaría con el
+   interés si lo vacías en un mes flojo?
+2. ¿Por qué un 5 % anual capitalizado cada mes acaba dando más que un 5 % anual capitalizado una vez al año?
+3. ¿En qué se parecen y en qué se diferencian el interés simple y una cuenta de la que retiras los intereses cada año?
+4. La regla del 72 solo vale para interés compuesto: ¿qué le pasaría al resultado si la aplicaras a uno simple?
 
 ## Pendiente
 
-- Nada abierto: ni `TODO` ni `FALTA INFO`.
+- **TODO:** confirmar con quien dio la clase si "capitalización mensual" en el curso significa dividir el tipo
+  anual entre 12 (lo que dice la diapositiva 4 y he usado) o si trabaja con un tipo mensual equivalente.
+- **TODO:** el material no trae ejercicios propios de cálculo; el ejercicio de esta clase es mío.
 
 %% navegación: la genera guardar.js; no se edita a mano %%
 

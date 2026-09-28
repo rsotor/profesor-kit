@@ -4,23 +4,24 @@ sesion: 02-01-01-interes-simple-y-compuesto
 ---
 # Flashcards · 02-01-01-interes-simple-y-compuesto
 
-> Se responde mentalmente antes de desplegar.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Un banco te ofrece "un 4 por ciento de interés" y nada más. ¿Qué falta para poder comparar esa oferta con otra?**
+**Te ofrecen "un 4 por ciento" y nada más. ¿Qué falta para saber qué te ofrecen? (una palabra)**
 > [!success]- Respuesta
-> El periodo: 4 % anual y 4 % mensual son ofertas muy distintas.
+> El periodo: no es lo mismo un 4 % anual que un 4 % mensual.
 
-**Depositas 1.000,00 € al 5 % anual. Pasado 1 año, ¿tienes más con interés simple o con compuesto?**
+**Mismo capital, mismo tipo y 3 años: ¿cuál da más, el interés simple o el compuesto? (explica el porqué en una frase)**
 > [!success]- Respuesta
-> Igual: 1.050,00 € con los dos. La diferencia empieza en el segundo año, cuando el compuesto cobra también sobre los intereses del primero.
+> El compuesto: los intereses ya ganados se suman al capital y generan intereses ellos también (1.157,63 € frente a 1.150,00 € con 1.000,00 € al 5 % anual).
 
-**Con 1.000,00 € al 5 % anual durante 3 años, ¿por qué el compuesto da 1.157,63 € y el simple 1.150,00 €?**
+**Con el mismo tipo anual, ¿una cuenta que capitaliza cada mes da más, menos o lo mismo al cabo de un año que una que capitaliza una vez? (una palabra y el porqué)**
 > [!success]- Respuesta
-> Porque el compuesto suma los intereses de cada año al capital y estos generan más intereses; el simple los calcula siempre sobre los 1.000,00 € iniciales.
+> Más: cada mes se aplica el tipo sobre el capital ya crecido (1.051,16 € frente a 1.050,00 € con 1.000,00 € al 5 % anual).
 
-**Un depósito rinde un 9 % anual compuesto. ¿En cuántos años se dobla, a ojo?**
+**Con la regla del 72, ¿cuántos años tarda en doblarse un capital a un 4 % anual? (una cifra)**
 > [!success]- Respuesta
-> 72 ÷ 9 = 8 años, aproximadamente (el cálculo exacto da unos 8,04).
+> Unos 18 años: 72 ÷ 4. Es una aproximación (la fórmula exacta da unos 17,7).
 
 ---
-Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[regla-del-72]]
+Conceptos que cubren: [[capital-y-tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[capitalizacion]] · [[regla-del-72]]
