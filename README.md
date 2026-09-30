@@ -97,7 +97,7 @@ Si quieres cambiar el código, lee [CONTRIBUTING.md](CONTRIBUTING.md). Para fall
 | `.kit/herramientas/` | Herramientas en Node, sin dependencias: guardan, comprueban la calidad del material y migran los datos entre versiones. |
 | `pruebas/` | Un curso inventado sobre el que un asistente de verdad pasa por todas las skills antes de cada versión. |
 
-Cada cambio pasa por tests en Linux y Windows con cobertura mínima del 80 %, y cada versión se publica como
+Cada cambio pasa por tests en Mac, Windows y Linux con cobertura mínima del 80 %, y cada versión se publica como
 release, que es lo que descargan los cursos al actualizar. Mapa completo en
 [`docs/arquitectura.md`](docs/arquitectura.md); historial en [`.kit/CHANGELOG.md`](.kit/CHANGELOG.md).
 

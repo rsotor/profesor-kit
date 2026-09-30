@@ -6,7 +6,7 @@ const { execFileSync } = require('node:child_process');
 
 // Los tests trabajan en repos temporales. Si el proceso hereda GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE… (git las
 // pone dentro de un hook), cada git de un test escribiría en el repo que las fijó, no en el temporal. Se quitan
-// para este proceso y para todo lo que lance. Ver .githooks/pre-push.
+// para este proceso y para todo lo que lance. Pasó el 2026-09-23, con los tests lanzados desde el hook de pre-push.
 for (const variable of execFileSync('git', ['rev-parse', '--local-env-vars'], { encoding: 'utf8' }).split(/\r?\n/).filter(Boolean)) {
   delete process.env[variable];
 }

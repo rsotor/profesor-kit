@@ -4,8 +4,10 @@ Lo que se publica llega a **todos los cursos** con `/actualizar`. Por eso a `mai
 forma, y de `main` solo sale lo que se publica como release:
 
 1. **Rama** desde `main` (`git checkout -b <tema>`).
-2. **Tests en local** antes de subir: `npm test` (o `node --test ".kit/herramientas/tests/*.test.js"`). El hook
-   de pre-push los lanza solo; se activa una vez por copia del repo: `git config core.hooksPath .githooks`.
+2. **Tests en local** cuando quieras comprobar algo antes de subir: `npm test` (o
+   `node --test ".kit/herramientas/tests/*.test.js"`). No son obligatorios: los pasa el CI en cada push. El hook
+   de pre-push solo impide subir directo a `main`; se activa una vez por copia del repo:
+   `git config core.hooksPath .githooks`.
 3. **Pull request**, con el título como dice [Títulos de los pull requests](#títulos-de-los-pull-requests). Cada PR lanza el CI: todos los tests en Mac, Windows y Linux (no se soporta, pero ahí
    corren el linter y las comprobaciones de una sola vez), con Node 24, y una **cobertura mínima del 80 %** de las
    herramientas. Un push nuevo cancela el run anterior de la misma rama.
@@ -57,7 +59,7 @@ función falsa (`ejecutarPs`).
 **Ni se escapa al repo del kit.** Dentro de un hook, git fija `GIT_DIR` y otras variables apuntando al repo; si
 un test las hereda, sus `git commit`, `git config` o `reset` escriben en el repo del kit y no en su temporal
 (pasó el 2026-09-23: commits de prueba en una rama, `core.bare=true`, identidad `Test` y el remoto cambiado).
-`tests/ayuda.js` y `.githooks/pre-push` las quitan (`git rev-parse --local-env-vars`). Un test nuevo que lance
+`tests/ayuda.js` las quita (`git rev-parse --local-env-vars`). Un test nuevo que lance
 git sin pasar por `ayuda.js` tiene que hacer lo mismo.
 ## Prueba real del profesor
 
@@ -140,8 +142,9 @@ su `resultado/`: es el curso del que partirá la prueba de la siguiente.
 `main` tiene protección de rama en GitHub con el check `tests-ok` obligatorio (se aplica mientras el repo sea
 público; en un repo privado del plan gratuito GitHub deja crearla pero **no la aplica**). El hook
 `.githooks/pre-push` es la segunda barrera y la única que no depende de GitHub: rechaza el push directo a
-`main` y no sube nada con los tests en rojo. Es un seguro contra despistes, no una cárcel: se salta a
-propósito con `PERMITIR_PUSH_A_MAIN=1` o `SALTAR_TESTS=1`.
+`main`. Es un seguro contra despistes, no una cárcel: se salta a propósito con `PERMITIR_PUSH_A_MAIN=1`. Los
+tests no los pasa: hasta el 2026-10-01 lo hacía, porque el CI no probaba en Mac y sus minutos costaban; en un
+repo público los dos motivos desaparecen, y pasarlos también en local solo hacía esperar en cada push.
 
 ## Documentación viva: quién es la fuente de verdad de qué
 

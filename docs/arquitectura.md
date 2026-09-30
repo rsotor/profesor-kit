@@ -213,8 +213,8 @@ actualizar hay más errores que antes, `restaurar()` deja el curso exactamente e
 (`git read-tree --empty` + `reset --hard` + `clean -fd`, para que git reescriba todo por contenido y no se
 fíe de fechas/tamaños) y reinstala las skills viejas.
 
-**Publicación** (`CONTRIBUTING.md`): rama desde `main` → tests en local (hook `pre-push`) → PR → CI
-(`tests.yml`: Linux + Windows, Node 24, cobertura ≥80 %) → check `tests-ok` obligatorio → merge a `main`
+**Publicación** (`CONTRIBUTING.md`): rama desde `main` → PR → CI
+(`tests.yml`: Mac, Windows y Linux, Node 24, cobertura ≥80 %) → check `tests-ok` obligatorio → merge a `main`
 → los tests vuelven a correr en `main` y, solo si terminan en verde, `release.yml` publica ese mismo commit: si
 `.kit/VERSION` tiene una versión sin release, crea la etiqueta `vX.Y.Z` con las notas de esa versión del
 CHANGELOG (`.github/release-notas.js`). `actualizar.js` **solo** descarga releases publicadas, nunca
@@ -295,14 +295,13 @@ El resto son unitarios por fichero (`vault.test.js`, `indice.test.js`, `generado
 `adaptadores.test.js`, `diagnostico.test.js`, `crear-atajo.test.js`, `instalar-skills.test.js`,
 `reparar.test.js`, `issue.test.js`, `obsidian.test.js`, `release-notas.test.js`, `cli.test.js`).
 
-**CI** (`.github/workflows/tests.yml`): un job matricial en Linux y Windows con Node 24; falla si algún
+**CI** (`.github/workflows/tests.yml`): un job matricial en Mac, Windows y Linux con Node 24; falla si algún
 test falla o si la cobertura de `.kit/herramientas/**` baja del 80 % (líneas, funciones y ramas); el lint
 (`eslint .`) corre una sola vez, en el job de Linux; `tests-ok` agrega toda la matriz y es el check
 obligatorio de la rama `main`. **Hook local** (`.githooks/pre-push`, se activa con
-`git config core.hooksPath .githooks`): rechaza el push directo a `main` y no sube nada con los tests en
-rojo — es la segunda barrera, la que no depende de que GitHub aplique la protección de rama (en un repo
-privado del plan gratuito, GitHub deja crearla pero no la aplica). Saltable a propósito con
-`PERMITIR_PUSH_A_MAIN=1` / `SALTAR_TESTS=1`. El checkout del job de Linux usa `fetch-depth: 0` (con
+`git config core.hooksPath .githooks`): rechaza el push directo a `main` — es la segunda barrera, la que no depende de que GitHub aplique
+la protección de rama (en un repo privado del plan gratuito, GitHub deja crearla pero no la aplica). Saltable a
+propósito con `PERMITIR_PUSH_A_MAIN=1`. No pasa los tests: los pasa el CI. El checkout del job de Linux usa `fetch-depth: 0` (con
 etiquetas): lo necesitan `cambio-grande.js` (comparar con la rama base) y `prueba-actualizar.js`
 (reconstruir una versión antigua del kit con `git archive`).
 
