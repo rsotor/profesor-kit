@@ -4,12 +4,13 @@ Lo que se publica llega a **todos los cursos** con `/actualizar`. Por eso a `mai
 forma, y de `main` solo sale lo que se publica como release:
 
 1. **Rama** desde `main` (`git checkout -b <tema>`).
-2. **Tests en local** antes de subir: `npm test` (o `node --test ".kit/herramientas/tests/*.test.js"`). El hook
-   de pre-push los lanza solo; se activa una vez por copia del repo: `git config core.hooksPath .githooks`.
-3. **Pull request.** Cada PR lanza el CI: todos los tests en Linux (hace de Mac; Linux no se soporta) y Windows, con Node 24, y una
-   **cobertura mínima del 80 %** de las herramientas. Mac no está en el CI a propósito (cuesta 10 minutos
-   facturables por minuto): los tests corren en tu Mac en el hook de pre-push. Un push nuevo cancela el run
-   anterior de la misma rama.
+2. **Tests en local** cuando quieras comprobar algo antes de subir: `npm test` (o
+   `node --test ".kit/herramientas/tests/*.test.js"`). No son obligatorios: los pasa el CI en cada push. El hook
+   de pre-push solo impide subir directo a `main`; se activa una vez por copia del repo:
+   `git config core.hooksPath .githooks`.
+3. **Pull request**, con el título como dice [Títulos de los pull requests](#títulos-de-los-pull-requests). Cada PR lanza el CI: todos los tests en Mac, Windows y Linux (no se soporta, pero ahí
+   corren el linter y las comprobaciones de una sola vez), con Node 24, y una **cobertura mínima del 80 %** de las
+   herramientas. Un push nuevo cancela el run anterior de la misma rama.
 4. **Merge solo con el check `tests-ok` en verde.** Compruébalo: `gh pr checks <número> --watch`.
    Un PR en rojo no se mezcla, tampoco "para arreglarlo luego": se arregla en la rama.
 5. **Si el alumno va a notar el cambio:** una línea en `.kit/CHANGELOG.md` **y `.kit/VERSION` subido** (ver
@@ -32,6 +33,21 @@ forma, y de `main` solo sale lo que se publica como release:
    profesor>`. `/actualizar` la lee y se lo ofrece al alumno tras actualizar; él puede decir que no. Si no
    se le puede ofrecer (porque hace falta cambiar sus datos sí o sí), no es una oferta: es una migración.
 
+## Títulos de los pull requests
+
+Los PR se mezclan con squash y **el título del PR es el mensaje del commit en `main`**: es el historial del kit.
+Dos formas, según publique versión o no:
+
+| El PR… | Título | Ejemplo |
+|---|---|---|
+| sube `.kit/VERSION` (publica) | `X.Y.Z: qué cambia`, con esa versión | `0.28.0: repo público y macOS en el CI` |
+| no la sube (se acumula) | `tipo: qué cambia` | `arreglo: guardar no avisa sin identidad de git` |
+
+Tipos: `arreglo`, `mejora`, `docs`, `ci`, `test`, `build` y `chore` (los dos últimos, sobre todo para
+Dependabot), con ámbito opcional: `build(deps): …`. Lo comprueba `.github/titulo-pr.js` dentro de `tests-ok`: un
+título que no cuadra con `.kit/VERSION` no deja mezclar. Si falla, se cambia el título en GitHub y el check se
+repite solo.
+
 ## Tests: nada se queda en el disco
 
 Toda carpeta temporal de un test se crea con `temporal()` o `cursoTemporal()` de `tests/ayuda.js`, que la borran
@@ -43,7 +59,7 @@ función falsa (`ejecutarPs`).
 **Ni se escapa al repo del kit.** Dentro de un hook, git fija `GIT_DIR` y otras variables apuntando al repo; si
 un test las hereda, sus `git commit`, `git config` o `reset` escriben en el repo del kit y no en su temporal
 (pasó el 2026-09-23: commits de prueba en una rama, `core.bare=true`, identidad `Test` y el remoto cambiado).
-`tests/ayuda.js` y `.githooks/pre-push` las quitan (`git rev-parse --local-env-vars`). Un test nuevo que lance
+`tests/ayuda.js` las quita (`git rev-parse --local-env-vars`). Un test nuevo que lance
 git sin pasar por `ayuda.js` tiene que hacer lo mismo.
 ## Prueba real del profesor
 
@@ -126,8 +142,9 @@ su `resultado/`: es el curso del que partirá la prueba de la siguiente.
 `main` tiene protección de rama en GitHub con el check `tests-ok` obligatorio (se aplica mientras el repo sea
 público; en un repo privado del plan gratuito GitHub deja crearla pero **no la aplica**). El hook
 `.githooks/pre-push` es la segunda barrera y la única que no depende de GitHub: rechaza el push directo a
-`main` y no sube nada con los tests en rojo. Es un seguro contra despistes, no una cárcel: se salta a
-propósito con `PERMITIR_PUSH_A_MAIN=1` o `SALTAR_TESTS=1`.
+`main`. Es un seguro contra despistes, no una cárcel: se salta a propósito con `PERMITIR_PUSH_A_MAIN=1`. Los
+tests no los pasa: hasta el 2026-10-01 lo hacía, porque el CI no probaba en Mac y sus minutos costaban; en un
+repo público los dos motivos desaparecen, y pasarlos también en local solo hacía esperar en cada push.
 
 ## Documentación viva: quién es la fuente de verdad de qué
 
@@ -135,6 +152,7 @@ propósito con `PERMITIR_PUSH_A_MAIN=1` o `SALTAR_TESTS=1`.
 |---|---|---|
 | El alumno | `estudio/como-usar-tu-profesor.md` (hoja) y `README.md` del curso (portada) | El profesor: la hoja al configurar; la portada, "Estado" lo escribe `guardar.js` solo |
 | El profesor (el LLM) | `AGENTS.md` y `.kit/skills/*/SKILL.md`; `.kit/guias/INSTALAR-AGENTE.md` al instalar; `.kit/ESTANDARES.md` si no es Claude Code | Nosotros, en cada PR que cambie comportamiento |
+| Quien visita el repo | `README.md` (portada), `SECURITY.md` y las plantillas de `.github/ISSUE_TEMPLATE/` | Nosotros. El README empieza siempre por `# profesor-kit`: así lo reconoce `preparar-curso.js` para cambiarlo por la portada del curso. Capturas y vídeo, con el curso de ejemplo: `docs/capturas/LEEME.md` |
 | Quien instala | `.kit/guias/INSTALACION.md` | Nosotros |
 | Nosotros | este fichero y `.kit/CHANGELOG.md` | Nosotros, en cada PR |
 | Quien cambia el kit | `docs/arquitectura.md` | Nosotros, en cada PR que cambie la estructura |
@@ -147,8 +165,9 @@ que estar explicada en `AGENTS.md` o en `INSTALAR-AGENTE.md`, toda plantilla tie
 y lo que las skills citan tiene que existir. Lo que el CI no ve —que la explicación sea buena— lo ve la
 revisión del PR.
 
-Lo que solo es del repo del kit (`docs/`, `.github/`, `.githooks/`, `pruebas/`, este fichero,
-`package.json`) lo borra `preparar-curso.js` al crear un curso.
+Lo que solo es del repo del kit (`docs/`, `.github/`, `.githooks/`, `pruebas/`, este fichero, `SECURITY.md`,
+`LICENSE`, `package.json`) lo borra `preparar-curso.js` al crear un curso. La licencia viaja al curso como
+`.kit/LICENSE`, dentro del motor: en la raíz daría a entender que el material del alumno también es MIT.
 
 ## Versiones
 

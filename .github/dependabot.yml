@@ -1,0 +1,18 @@
+# Una vez al mes, un PR por ecosistema. Las Actions van fijadas por sha: Dependabot sube el sha y el comentario
+# de versión. Las versiones mayores de npm no llegan como PR: pueden romper y se hacen a mano; las alertas de
+# seguridad siguen saliendo en la pestaña Security.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      actions: { patterns: ["*"] }
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      desarrollo: { update-types: [minor, patch] }
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

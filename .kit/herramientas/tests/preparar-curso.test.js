@@ -16,12 +16,12 @@ function conObsidian(raiz) {
 }
 
 test('borra docs y .github, y crea ajustes con la version_datos del motor', () => {
-  const raiz = conObsidian(cursoTemporal({ ...MOTOR, 'docs/spec.md': 'x', '.github/ISSUE_TEMPLATE/f.md': 'x', 'README.md': '# profesor-kit\n\ndel kit', 'CONTRIBUTING.md': 'del kit', '.githooks/pre-push': 'del kit', 'package.json': '{}',
+  const raiz = conObsidian(cursoTemporal({ ...MOTOR, 'docs/spec.md': 'x', '.github/ISSUE_TEMPLATE/f.md': 'x', 'README.md': '# profesor-kit\n\ndel kit', 'CONTRIBUTING.md': 'del kit', 'SECURITY.md': 'del kit', 'LICENSE': 'del kit', '.githooks/pre-push': 'del kit', 'package.json': '{}',
     'pruebas/curso-ejemplo/README.md': 'x', '.claude/rules/desarrollo.md': 'del kit', '.claude/settings.json': '{}',
     '.kit/plantillas/readme-del-curso.md': '# {{NOMBRE_DEL_CURSO}}\n\n{{DE_QUE_VA}}\n\n{{TEMARIO}}\n\n{{ESTADO}}\n\n`{{ATAJO}}`\n' }));
   fs.rmSync(path.join(raiz, 'config', 'ajustes.json'));
   const r = prepararCurso({ raiz, subir: false });
-  assert.deepEqual(r.borrado.sort(), ['.claude/rules', '.githooks', '.github', 'CONTRIBUTING.md', 'docs', 'package.json', 'pruebas'].sort());
+  assert.deepEqual(r.borrado.sort(), ['.claude/rules', '.githooks', '.github', 'CONTRIBUTING.md', 'LICENSE', 'SECURITY.md', 'docs', 'package.json', 'pruebas'].sort());
   assert.ok(fs.existsSync(path.join(raiz, '.claude', 'settings.json')), 'los permisos del curso se quedan');
   assert.equal(r.readmeCreado, true);
   const readme = fs.readFileSync(path.join(raiz, 'README.md'), 'utf8');
@@ -66,4 +66,9 @@ test('el README del curso lleva su nombre, y uno ya escrito por el alumno no se 
   fs.writeFileSync(path.join(raiz, 'README.md'), '# Mi curso, ya rellenado por el profesor\n');
   assert.equal(prepararCurso({ raiz, subir: false, nombre: 'Otro' }).readmeCreado, false);
   assert.match(fs.readFileSync(path.join(raiz, 'README.md'), 'utf8'), /ya rellenado/);
+});
+
+test('la licencia que viaja en el motor es la misma que la del repo', () => {
+  const licencia = fs.readFileSync(path.join(KIT_REAL, '..', 'LICENSE'), 'utf8');
+  assert.equal(fs.readFileSync(path.join(KIT_REAL, 'LICENSE'), 'utf8'), licencia);
 });

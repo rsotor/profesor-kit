@@ -69,6 +69,9 @@ test('guardar: sin identidad de git lo explica en vez de fallar', t => {
   iniciarGit(raiz);
   git(raiz, 'config', '--unset', 'user.name');
   git(raiz, 'config', '--unset', 'user.email');
+  // Sin esto, git se inventa una identidad con el usuario y el nombre de la máquina si este tiene dominio
+  // (pasa en los Mac del CI: runner@<máquina>.local), y entonces sí sabe quién eres.
+  git(raiz, 'config', 'user.useConfigOnly', 'true');
   escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
   // Aísla de la identidad global de la máquina que ejecuta los tests.
   const antes = { ...process.env };

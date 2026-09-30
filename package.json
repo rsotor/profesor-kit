@@ -2,7 +2,7 @@
   "name": "profesor-kit",
   "private": true,
   "description": "Convierte un LLM de terminal en el profesor personal de un curso. Sin dependencias.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": { "node": ">=24" },
   "scripts": {
     "test": "node --test \".kit/herramientas/tests/*.test.js\"",

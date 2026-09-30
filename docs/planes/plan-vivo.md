@@ -17,6 +17,14 @@ Para abrir una sesión:
   009: la columna `Última prueba` pasa a la cita de sus casillas y se quita; `version_datos` 9; el mensaje de
   título de `issue.js`) más K1, G5 y K2. Al salir la release: cerrar la #54 con el enlace. Pendiente de la #54,
   menor: `issue.js --enviar` sigue necesitando `gh`.
+- **Repo público presentable** (rama `claude/project-docs-config-d2a93f`, modelo: finanzas-app). Hecho: licencia
+  MIT (también como `.kit/LICENSE` en los cursos), README para quien llega, plantillas de issue en formulario,
+  `SECURITY.md`, Dependabot, macOS en el CI, check del título del PR (`.github/titulo-pr.js`) y ajustes de GitHub
+  (squash con título, topics, etiquetas, seguridad, CodeQL). Queda: mezclar la #60; Roberto graba vídeo y capturas
+  (`docs/capturas/LEEME.md`).
+  - **Fuera:** Discussions y Code of Conduct (sobran para un proyecto de una persona); tocar `INSTALACION.md`.
+  - **Cómo sabremos:** la portada de GitHub muestra licencia MIT, descripción y topics; *New issue* ofrece las
+    tres plantillas y no deja abrir una en blanco; un curso nuevo no trae `LICENSE` ni `SECURITY.md` en la raíz.
 
 ## Siguiente: que no se repita la #54
 

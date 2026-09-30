@@ -1,9 +1,8 @@
 #!/bin/sh
-# Seguro local del flujo de trabajo: a main solo se llega por PR con los tests en verde, y no se sube nada
-# con los tests en rojo. GitHub no aplica la protección de ramas en repos privados del plan gratuito, y los
-# minutos de Actions cuestan: aquí los tests se descubren; el CI solo confirma.
+# Seguro local contra despistes: a main solo se llega por PR. Los tests no se pasan aquí: los pasa el CI en
+# Mac, Windows y Linux (gratis en un repo público), y el PR no se puede mezclar sin `tests-ok` en verde.
 # Se activa una vez por copia del repo:   git config core.hooksPath .githooks
-# Saltárselo a propósito (no por despiste): PERMITIR_PUSH_A_MAIN=1 / SALTAR_TESTS=1
+# Saltárselo a propósito (no por despiste): PERMITIR_PUSH_A_MAIN=1
 while read -r _ref_local _sha_local ref_remota _sha_remota; do
   if [ "$ref_remota" = "refs/heads/main" ] && [ "$PERMITIR_PUSH_A_MAIN" != "1" ]; then
     echo "✗ Push directo a main rechazado. Flujo: rama → PR → check 'tests-ok' en verde → merge." >&2
@@ -11,15 +10,4 @@ while read -r _ref_local _sha_local ref_remota _sha_remota; do
     exit 1
   fi
 done
-if [ "$SALTAR_TESTS" != "1" ]; then
-  # Dentro de un hook, git fija GIT_DIR y compañía apuntando a ESTE repo. Los tests crean repos temporales y,
-  # con esas variables puestas, sus git (commit, config, reset…) acababan escribiendo en el repo del kit: pasó
-  # el 2026-09-23 desde una segunda carpeta de trabajo. Se quitan antes de lanzar nada.
-  unset $(git rev-parse --local-env-vars)
-  echo "pre-push: ejecutando los tests…" >&2
-  if ! node --test ".kit/herramientas/tests/*.test.js" >/dev/null 2>&1; then
-    echo "✗ Hay tests en rojo: no se sube. Ejecuta node --test \".kit/herramientas/tests/*.test.js\" para verlos." >&2
-    exit 1
-  fi
-fi
 exit 0

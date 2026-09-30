@@ -1,6 +1,8 @@
 name: tests
 on:
+  # `edited`: al cambiar el título del PR se repite el check del título (y con él, el resto).
   pull_request:
+    types: [opened, edited, synchronize, reopened]
   push:
     branches: [main]
 
@@ -9,16 +11,19 @@ concurrency:
   group: tests-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   herramientas:
-    # Sin macOS a propósito: cuesta 10 minutos facturables por minuto, y los tests ya corren en el Mac de
-    # quien desarrolla antes de cada push (hook .githooks/pre-push). Linux no es un sistema soportado: está aquí
-    # porque es el runner barato y hace de Mac (mismo tipo de sistema). Windows sí se soporta y no está a mano.
+    # Los dos sistemas soportados (Mac y Windows) y Linux, que no se soporta pero es donde corren el linter y
+    # las comprobaciones de una sola vez. En un repo público los runners son gratis, también los de macOS.
     strategy:
       fail-fast: false
       matrix:
         include:
           - { os: ubuntu-latest, node: 24 }
+          - { os: macos-latest, node: 24 }
           - { os: windows-latest, node: 24 }
     runs-on: ${{ matrix.os }}
     steps:
@@ -52,6 +57,11 @@ jobs:
       # push a main ya no hay "rama base" con la que comparar).
       - if: github.event_name == 'pull_request' && matrix.os == 'ubuntu-latest' && matrix.node == 24
         run: node .github/cambio-grande.js
+      # El título del PR es el commit en main: dice si publica versión y cuadra con .kit/VERSION.
+      - if: github.event_name == 'pull_request' && matrix.os == 'ubuntu-latest' && matrix.node == 24
+        env:
+          TITULO_PR: ${{ github.event.pull_request.title }}
+        run: node .github/titulo-pr.js
 
   # Un único check que resume toda la matriz: es el que se marca como obligatorio en la regla de main.
   tests-ok:
