@@ -6,10 +6,9 @@ forma, y de `main` solo sale lo que se publica como release:
 1. **Rama** desde `main` (`git checkout -b <tema>`).
 2. **Tests en local** antes de subir: `npm test` (o `node --test ".kit/herramientas/tests/*.test.js"`). El hook
    de pre-push los lanza solo; se activa una vez por copia del repo: `git config core.hooksPath .githooks`.
-3. **Pull request.** Cada PR lanza el CI: todos los tests en Linux (hace de Mac; Linux no se soporta) y Windows, con Node 24, y una
-   **cobertura mínima del 80 %** de las herramientas. Mac no está en el CI a propósito (cuesta 10 minutos
-   facturables por minuto): los tests corren en tu Mac en el hook de pre-push. Un push nuevo cancela el run
-   anterior de la misma rama.
+3. **Pull request.** Cada PR lanza el CI: todos los tests en Mac, Windows y Linux (no se soporta, pero ahí
+   corren el linter y las comprobaciones de una sola vez), con Node 24, y una **cobertura mínima del 80 %** de las
+   herramientas. Un push nuevo cancela el run anterior de la misma rama.
 4. **Merge solo con el check `tests-ok` en verde.** Compruébalo: `gh pr checks <número> --watch`.
    Un PR en rojo no se mezcla, tampoco "para arreglarlo luego": se arregla en la rama.
 5. **Si el alumno va a notar el cambio:** una línea en `.kit/CHANGELOG.md` **y `.kit/VERSION` subido** (ver

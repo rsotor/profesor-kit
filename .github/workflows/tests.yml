@@ -9,16 +9,19 @@ concurrency:
   group: tests-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   herramientas:
-    # Sin macOS a propósito: cuesta 10 minutos facturables por minuto, y los tests ya corren en el Mac de
-    # quien desarrolla antes de cada push (hook .githooks/pre-push). Linux no es un sistema soportado: está aquí
-    # porque es el runner barato y hace de Mac (mismo tipo de sistema). Windows sí se soporta y no está a mano.
+    # Los dos sistemas soportados (Mac y Windows) y Linux, que no se soporta pero es donde corren el linter y
+    # las comprobaciones de una sola vez. En un repo público los runners son gratis, también los de macOS.
     strategy:
       fail-fast: false
       matrix:
         include:
           - { os: ubuntu-latest, node: 24 }
+          - { os: macos-latest, node: 24 }
           - { os: windows-latest, node: 24 }
     runs-on: ${{ matrix.os }}
     steps:
