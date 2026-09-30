@@ -1,3 +1,5 @@
+<!-- Título: «X.Y.Z: qué cambia» si sube .kit/VERSION; si no, «tipo: qué cambia» (arreglo, mejora, docs, ci, test, build, chore). Es el commit en main. Ver CONTRIBUTING.md -->
+
 ## Qué cambia
 
 ## Comprobaciones

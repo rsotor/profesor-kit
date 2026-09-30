@@ -19,8 +19,8 @@ Para abrir una sesión:
   menor: `issue.js --enviar` sigue necesitando `gh`.
 - **Repo público presentable** (rama `claude/project-docs-config-d2a93f`, modelo: finanzas-app). Hecho: licencia
   MIT (también como `.kit/LICENSE` en los cursos), README para quien llega, plantillas de issue en formulario,
-  `SECURITY.md`, Dependabot. Queda: PR (con OK); en GitHub, con OK: descripción y topics, etiquetas
-  `instalación` y `mejora`, aviso privado de vulnerabilidades y secret scanning; Roberto graba vídeo y capturas
+  `SECURITY.md`, Dependabot, macOS en el CI, check del título del PR (`.github/titulo-pr.js`) y ajustes de GitHub
+  (squash con título, topics, etiquetas, seguridad, CodeQL). Queda: mezclar la #60; Roberto graba vídeo y capturas
   (`docs/capturas/LEEME.md`).
   - **Fuera:** Discussions y Code of Conduct (sobran para un proyecto de una persona); tocar `INSTALACION.md`.
   - **Cómo sabremos:** la portada de GitHub muestra licencia MIT, descripción y topics; *New issue* ofrece las

@@ -6,7 +6,7 @@ forma, y de `main` solo sale lo que se publica como release:
 1. **Rama** desde `main` (`git checkout -b <tema>`).
 2. **Tests en local** antes de subir: `npm test` (o `node --test ".kit/herramientas/tests/*.test.js"`). El hook
    de pre-push los lanza solo; se activa una vez por copia del repo: `git config core.hooksPath .githooks`.
-3. **Pull request.** Cada PR lanza el CI: todos los tests en Mac, Windows y Linux (no se soporta, pero ahí
+3. **Pull request**, con el título como dice [Títulos de los pull requests](#títulos-de-los-pull-requests). Cada PR lanza el CI: todos los tests en Mac, Windows y Linux (no se soporta, pero ahí
    corren el linter y las comprobaciones de una sola vez), con Node 24, y una **cobertura mínima del 80 %** de las
    herramientas. Un push nuevo cancela el run anterior de la misma rama.
 4. **Merge solo con el check `tests-ok` en verde.** Compruébalo: `gh pr checks <número> --watch`.
@@ -30,6 +30,21 @@ forma, y de `main` solo sale lo que se publica como release:
    configurar…), la entrada del CHANGELOG lleva una línea `- **Si ya tenías tu curso:** <qué te ofrece tu
    profesor>`. `/actualizar` la lee y se lo ofrece al alumno tras actualizar; él puede decir que no. Si no
    se le puede ofrecer (porque hace falta cambiar sus datos sí o sí), no es una oferta: es una migración.
+
+## Títulos de los pull requests
+
+Los PR se mezclan con squash y **el título del PR es el mensaje del commit en `main`**: es el historial del kit.
+Dos formas, según publique versión o no:
+
+| El PR… | Título | Ejemplo |
+|---|---|---|
+| sube `.kit/VERSION` (publica) | `X.Y.Z: qué cambia`, con esa versión | `0.28.0: repo público y macOS en el CI` |
+| no la sube (se acumula) | `tipo: qué cambia` | `arreglo: guardar no avisa sin identidad de git` |
+
+Tipos: `arreglo`, `mejora`, `docs`, `ci`, `test`, `build` y `chore` (los dos últimos, sobre todo para
+Dependabot), con ámbito opcional: `build(deps): …`. Lo comprueba `.github/titulo-pr.js` dentro de `tests-ok`: un
+título que no cuadra con `.kit/VERSION` no deja mezclar. Si falla, se cambia el título en GitHub y el check se
+repite solo.
 
 ## Tests: nada se queda en el disco
 
