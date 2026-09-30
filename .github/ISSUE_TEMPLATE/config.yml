@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Guía de instalación
+    url: https://github.com/rsotor/profesor-kit/blob/main/.kit/guias/INSTALACION.md
+    about: Paso a paso para Mac y Windows, con qué hacer si ves otra cosa.
+  - name: Fallo de seguridad
+    url: https://github.com/rsotor/profesor-kit/security/advisories/new
+    about: En privado, nunca en una issue pública.

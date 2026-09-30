@@ -1,0 +1,50 @@
+name: Problema de instalación
+description: No consigues instalar el kit o arrancar a tu profesor.
+title: "[instalación] "
+labels: ["instalación"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > ⚠ **Nunca pegues material de tu curso, datos personales ni contraseñas o tokens.**
+        > Si en el error sale tu nombre de usuario en una ruta (`/Users/tunombre/...`), cámbialo por `<usuario>`.
+        >
+        > Si tu profesor ya arranca, lo más fácil es decirle «abre una issue con esto»: la escribe él y te la enseña antes de enviarla.
+  - type: dropdown
+    id: sistema
+    attributes:
+      label: Sistema operativo
+      options: [macOS, Windows, Otro]
+    validations: { required: true }
+  - type: dropdown
+    id: asistente
+    attributes:
+      label: Asistente
+      options: [Claude Code, Codex CLI, Otro]
+    validations: { required: true }
+  - type: input
+    id: paso
+    attributes:
+      label: En qué paso de la guía te has quedado
+      placeholder: "Paso 3 — Arrancar al profesor"
+    validations: { required: true }
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Qué hiciste
+      description: Lo que escribiste o pegaste, en orden.
+    validations: { required: true }
+  - type: textarea
+    id: error
+    attributes:
+      label: Qué salió
+      description: El mensaje completo, copiado de la terminal.
+      render: shell
+    validations: { required: true }
+  - type: checkboxes
+    id: guia
+    attributes:
+      label: Comprobaciones
+      options:
+        - label: He mirado el apartado «Si ves otra cosa» de ese paso en la guía de instalación
+          required: true

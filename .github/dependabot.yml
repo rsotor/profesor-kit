@@ -1,0 +1,13 @@
+# Las Actions van fijadas por sha: Dependabot las sube (y el comentario de versión) una vez al mes, todas en un PR.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      actions: { patterns: ["*"] }
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      desarrollo: { patterns: ["*"] }

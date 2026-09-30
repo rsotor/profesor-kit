@@ -1,0 +1,50 @@
+name: Algo del profesor no va bien
+description: Una herramienta falla, una skill hace algo raro o el material sale mal.
+title: "[skill o herramienta] "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > ⚠ **Nunca pegues material de tu curso, tu `config/alumno.md`, datos personales ni rutas con tu nombre de usuario.**
+        >
+        > Lo más fácil: dile a tu profesor «esto cuéntaselo al kit». Escribe la issue él, quita lo personal y te la enseña antes de enviarla.
+  - type: input
+    id: version
+    attributes:
+      label: Versión del kit
+      description: Lo que dice `.kit/VERSION`, o pregúntaselo a tu profesor.
+      placeholder: "0.27.1"
+    validations: { required: true }
+  - type: dropdown
+    id: sistema
+    attributes:
+      label: Sistema operativo
+      options: [macOS, Windows, Otro]
+    validations: { required: true }
+  - type: input
+    id: asistente
+    attributes:
+      label: Asistente y versión
+      placeholder: "Claude Code 2.1.0, Sonnet"
+    validations: { required: true }
+  - type: input
+    id: donde
+    attributes:
+      label: Skill o herramienta
+      placeholder: "/sesion, /examen, guardar.js…"
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Qué esperabas
+    validations: { required: true }
+  - type: textarea
+    id: paso
+    attributes:
+      label: Qué pasó
+    validations: { required: true }
+  - type: textarea
+    id: arreglo
+    attributes:
+      label: Arreglo aplicado, si lo hubo
+      description: Incluye aquí `config/adaptador-llm.json` si usas otro asistente.
