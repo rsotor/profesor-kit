@@ -62,7 +62,7 @@ Para abrir una sesión:
     tasa de ahorro ampliada (01-02 y 02-02 en `visto_en`), una fila de `progreso` por concepto nuevo y `comprobar.js` sin errores. Gasta más: se pasa una vez,
     sobre el commit de la release.
 
-- **Prueba real más barata** (propuesta 2026-10-01, sin empezar): `prueba-real.js --solo "<paso>"` (restaura la copia
+- **Prueba real más barata** (hecho en la rama de la #56, 2026-10-01; falta probarla con una prueba entera de verdad): `prueba-real.js --solo "<paso>"` (restaura la copia
   del paso anterior, ejecuta ese paso y para) y las copias de la última prueba entera guardadas en `pruebas-local/`.
   Mientras se desarrolla, se paga solo el paso que cambia; la entera, solo antes de la release (sin cambios).
   - **Fuera:** saltarse la prueba entera antes de una release; cambiar de modelo para abaratarla.

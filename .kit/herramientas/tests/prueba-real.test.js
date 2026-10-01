@@ -11,8 +11,9 @@ const { temporal, escribir } = require('./ayuda');
 const {
   ejecutar, cli, markdownResumen, agruparPorRegla, modeloRecomendado,
   construirDefinicionDePasos, nombresDePasos, ejecutarListaDePasos, restaurarPasoAnterior, carpetaCopiasMasReciente,
-  repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError,
+  repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError, refrescarCursoRestaurado,
 } = require('../../../pruebas/prueba-real');
+const { montarCurso, git: gitDe } = require('../../../pruebas/lib/montaje');
 const p = require('../../../pruebas/lib/pasos');
 
 const RAIZ = path.resolve(__dirname, '..', '..', '..');
@@ -1162,4 +1163,48 @@ test('restaurarPasoAnterior: nunca borra una ruta que no sea una carpeta de prue
   });
   assert.throws(() => restaurarPasoAnterior(copiasDir, ['a', 'b'], 'b'), /no es una carpeta de prueba/);
   assert.equal(fs.readFileSync(path.join(fuera, 'importante.txt'), 'utf8'), 'no se toca');
+});
+
+// --- --solo: pagar solo el paso que cambia (plan vivo, "Prueba real más barata") --------------------------------
+
+test('carpetaCopiasMasReciente: con varias bases, la más reciente de todas (la de una prueba fallida o la guardada)', () => {
+  const temporalDelSistema = temporal('copias-tmp-');
+  const guardadas = temporal('copias-guardadas-');
+  const vieja = fs.mkdtempSync(path.join(temporalDelSistema, 'prueba-real-pasos-'));
+  const nueva = path.join(guardadas, 'prueba-real-pasos-claude-code');
+  fs.mkdirSync(nueva);
+  const antes = new Date(Date.now() - 60000);
+  fs.utimesSync(vieja, antes, antes);
+  assert.equal(carpetaCopiasMasReciente([temporalDelSistema, guardadas]), nueva);
+  assert.equal(carpetaCopiasMasReciente([temporalDelSistema, path.join(guardadas, 'no-existe')]), vieja);
+});
+
+test('markdownResumen con --solo: lo dice arriba y la línea de resultado no cuenta como prueba completa', () => {
+  const md = markdownResumen({ fecha: '2026-10-01', version: '0.29.0', modelo: 'sonnet', sinLlm: false, solo: '/dudas', desde: '/dudas',
+    pasos: [{ paso: '/dudas', ok: true, duracionMs: 10, detalle: 'ok' }], informe: { errores: [], avisos: [] }, conteos: {},
+    perfil: { existe: true, conContenido: 0, total: 5, senales: [] } });
+  assert.match(md, /Solo un paso, con `--solo "\/dudas"`/);
+  assert.match(md, /Resultado: 1\/1 pasos bien \(solo "\/dudas"\)/);
+  assert.doesNotMatch(md, /Reanudada con/);
+});
+
+test('cli: --desde y --solo juntos se niegan antes de tocar nada', () => {
+  assert.equal(cli(['--desde', '/dudas', '--solo', '/ejercicio']), 2);
+});
+
+test('refrescarCursoRestaurado: el curso restaurado se queda con el motor actual y el inbox del ejemplo, guardado en su git', () => {
+  const { destino } = montarCurso({ trabajo: RAIZ, datosCurso: EJEMPLO, nombre: 'Curso de prueba', destino: temporal('profesor-kit-prueba-') });
+  // Como una copia vieja: un motor que ya no es el de ahora y un material del inbox que entonces no estaba.
+  fs.appendFileSync(path.join(destino, 'AGENTS.md'), '\nmotor viejo\n');
+  const deInbox = fs.readdirSync(path.join(EJEMPLO, 'estudio', 'inbox'))[0];
+  fs.rmSync(path.join(destino, 'estudio', 'inbox', deInbox));
+  gitDe(destino, ['add', '-A']);
+  gitDe(destino, ['commit', '-q', '-m', 'copia vieja']);
+
+  assert.equal(refrescarCursoRestaurado({ trabajo: RAIZ, datosCurso: EJEMPLO, destino }), true);
+  assert.equal(fs.readFileSync(path.join(destino, 'AGENTS.md'), 'utf8'), fs.readFileSync(path.join(RAIZ, 'AGENTS.md'), 'utf8'));
+  assert.ok(fs.existsSync(path.join(destino, 'estudio', 'inbox', deInbox)));
+  assert.equal(gitDe(destino, ['status', '--porcelain']).trim(), '', 'guardado: una preparación en segundo plano sale del último commit');
+  assert.match(gitDe(destino, ['log', '-1', '--format=%s']), /motor y material de la copia de trabajo actual/);
+  assert.equal(refrescarCursoRestaurado({ trabajo: RAIZ, datosCurso: EJEMPLO, destino }), false, 'sin nada que cambiar, no hace commit');
 });

@@ -118,11 +118,20 @@ qué llegó de verdad. Con un asistente sin lanzador propio, el error lo dice: "
 curso (y de lo que necesitan los siguientes) en una carpeta temporal `prueba-real-pasos-XXXX/`; si algo falla,
 se queda ahí (con la ruta impresa) en vez de borrarse. `npm run prueba-real -- --desde "<paso>"` restaura la
 copia del paso anterior y sigue desde ahí hasta el final, con el mismo orden y sin repetir los que ya salieron
-bien (`--copias <carpeta>` para indicar cuál, si no es la más reciente del temporal). Si la clase en segundo
+bien (`--copias <carpeta>` para indicar cuál, si no es la más reciente). Si la clase en segundo
 plano se había quedado a medias (el proceso de la ejecución anterior ya no existe), se relanza sola antes de
 juntarla. El `RESUMEN.md` que deja marca los pasos de antes como "de la ejecución anterior" y, aunque todo
 salga bien, **no cuenta como prueba real completa para el PR** (`cambio-grande.js` lo rechaza): hace falta una
 `npm run prueba-real` entera y seguida.
+
+**Mientras desarrollas, paga solo el paso que cambia.** Cuando una prueba entera sale bien, sus copias no se borran:
+se guardan en `pruebas-local/prueba-real-pasos-<asistente>/` (ignorado por git). `npm run prueba-real -- --solo
+"<paso>"` restaura la copia del paso anterior, le pone el motor de tu copia de trabajo y el inbox del curso de ejemplo
+(lo que estás cambiando), ejecuta ese paso y para. `--desde` también refresca el motor y el inbox al restaurar. El
+resultado de `--solo` va a `pruebas-local/solo-<asistente>/`, no pisa el del repo, y tampoco cuenta como prueba
+completa. La prueba entera, antes de cada release, no cambia.
+
+    npm run prueba-real -- --solo "/dudas"
 
 **Cuánto tarda y cuánto gasta.** Primera ejecución (2026-09-23, kit 0.21.0, Sonnet): **unos 49 minutos** en total.
 Cada clase, entre 10 y 12 minutos; dudas, ejercicio, examen y repaso, entre 1,5 y 5 minutos cada uno. Son unas
