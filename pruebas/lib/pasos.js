@@ -307,6 +307,24 @@ function formatoDeOpciones(destino, ficheroExamen) {
     : { ok: true, detalle: `las ${preguntas.length} preguntas tienen ${esperado} opciones, como la clave` };
 }
 
+// #55: el examen recién escrito pregunta cada concepto desde ángulos distintos. Se fía de las mismas reglas que
+// comprobar.js (examen-sin-angulos, definicion-de-mas): si avisa, el paso falla. pregunta-calcada solo se cuenta
+// (8 palabras seguidas pueden coincidir con una frase hecha del temario sin que la pregunta sea de memoria).
+function angulosDelExamen(destino, ficheroExamen) {
+  const { comprobar } = require('../../.kit/herramientas/comprobar');
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  let clave;
+  try { clave = examenesLib.leerClave(destino, relExamen); } catch (error) { return { ok: false, detalle: `no se pudo leer la clave: ${error.message}` }; }
+  const avisos = comprobar(destino).avisos.filter(a => a.fichero === relExamen);
+  const de = regla => avisos.filter(a => a.regla === regla);
+  const cuenta = {};
+  for (const pr of clave.preguntas || []) if (pr && pr.origen !== 'centro') cuenta[pr.angulo || 'sin ángulo'] = (cuenta[pr.angulo || 'sin ángulo'] || 0) + 1;
+  const reparto = Object.entries(cuenta).map(([a, n]) => `${a} ${n}`).join(', ');
+  const fallos = [...de('examen-sin-angulos'), ...de('definicion-de-mas')].map(a => a.detalle);
+  const calcadas = de('pregunta-calcada').length;
+  return { ok: !fallos.length, detalle: `ángulos: ${reparto || 'ninguno'}${calcadas ? ` · ${calcadas} pregunta(s) calcada(s) de la nota` : ''}${fallos.length ? ` · ${fallos.join(' · ')}` : ''}` };
+}
+
 // Normaliza un enunciado para comparar "literal" sin que el markdown (negritas, marcadores de fuente) ni los
 // espacios de más lo desincronicen: sin eso, "**1.** Un depósito…" y "1. Un depósito…" nunca coincidirían.
 function normalizarTexto(s) {
@@ -597,6 +615,6 @@ module.exports = {
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
   casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
-  referenciaCoherente, formatoDeOpciones, preguntasReferencia, preguntasLiteralesDelCentro,
+  referenciaCoherente, formatoDeOpciones, angulosDelExamen, preguntasReferencia, preguntasLiteralesDelCentro,
   falladasTopeTres, preguntasReutilizadas, verificarReutilizacionFalladas,
 };

@@ -93,9 +93,10 @@ guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
 ## Avisos pedagógicos de `comprobar.js`
 
 La calidad del material no puede depender solo de que sigas la skill al pie de la letra: `comprobar.js`
-también vigila ocho señales de calidad pedagógica, calculadas desde disco: `nota-larga`,
+también vigila once señales de calidad pedagógica, calculadas desde disco: `nota-larga`,
 `concepto-sin-ejemplo`, `sesion-incompleta`, `flashcards-fuera-de-rango`, `requiere-vacio`, `pregunta-doble`,
-`falta-info-mal-usado` y `progreso-sin-prueba`. Cada aviso dice qué falta.
+`falta-info-mal-usado`, `progreso-sin-prueba` y, en un examen recién escrito, `examen-sin-angulos`,
+`definicion-de-mas` y `pregunta-calcada`. Cada aviso dice qué falta.
 
 **Se arreglan siempre antes de guardar**, igual que `no-se-vera-bien`, salvo que tengas un motivo concreto
 para dejarlos (un concepto que de verdad no se puede partir sin perder sentido, una sesión cuyo material no

@@ -50,15 +50,25 @@ const ultimoCommit = (rango, rutas, raiz) => {
   const r = spawnSync('git', ['log', '-1', '--format=%H', rango, '--', ...rutas], { cwd: raiz, encoding: 'utf8' });
   return r.status === 0 ? r.stdout.trim() : '';
 };
-// ¿La prueba real se hizo después del último cambio de comportamiento del PR?
-function resumenAlDia(ramaBase, raiz = RAIZ) {
+// El commit que de verdad se probó: el que apunta prueba-real.js en su línea "Resultado:".
+const commitProbado = resumen => (/^Resultado: .* · commit (\S+)$/m.exec(resumen || '') || [])[1] || null;
+const esAncestro = (a, b, raiz) => spawnSync('git', ['merge-base', '--is-ancestor', a, b], { cwd: raiz }).status === 0;
+
+// ¿La prueba real se hizo después del último cambio de comportamiento del PR? Dos cosas: que el resumen se subiera
+// después de ese cambio y, con su texto, que el código que se probó (su `commit`) ya lo incluya. Sin lo segundo, un
+// resumen recién subido pero hecho sobre una copia atrasada pasaba (2026-10-01: dos veces en el mismo día).
+function resumenAlDia(ramaBase, raiz = RAIZ, textoResumen = null) {
   const rango = `origin/${ramaBase}..HEAD`;
   const comportamiento = ultimoCommit(rango, RUTAS_COMPORTAMIENTO, raiz);
   if (!comportamiento) return { alDia: true };
   const resumen = ultimoCommit(rango, [RESUMEN], raiz);
-  if (!resumen) return { alDia: false, comportamiento };
-  const r = spawnSync('git', ['merge-base', '--is-ancestor', comportamiento, resumen], { cwd: raiz });
-  return { alDia: r.status === 0, comportamiento, resumen };
+  if (!resumen || !esAncestro(comportamiento, resumen, raiz)) return { alDia: false, comportamiento, resumen };
+  if (textoResumen === null) return { alDia: true, comportamiento, resumen };
+  const corto = commitProbado(textoResumen);
+  const r = corto ? spawnSync('git', ['rev-parse', '--verify', '--quiet', `${corto}^{commit}`], { cwd: raiz, encoding: 'utf8' }) : null;
+  const probado = r && r.status === 0 ? r.stdout.trim() : null;
+  if (!probado) return { alDia: false, comportamiento, resumen, probado: corto || 'desconocido', motivo: 'commit-desconocido' };
+  return { alDia: esAncestro(comportamiento, probado, raiz), comportamiento, resumen, probado: corto, motivo: 'commit-viejo' };
 }
 
 function cli(args) {
@@ -69,13 +79,16 @@ function cli(args) {
   try { ficheros = ficherosCambiados(ramaBase); } catch (error) { console.error(error.message); return 1; }
 
   const f = path.join(RAIZ, ...RESUMEN.split('/'));
-  const orden = resumenAlDia(ramaBase);
-  const r = evaluar(ficheros, require('node:fs').existsSync(f) ? require('node:fs').readFileSync(f, 'utf8') : '', orden.alDia);
+  const texto = require('node:fs').existsSync(f) ? require('node:fs').readFileSync(f, 'utf8') : '';
+  const orden = resumenAlDia(ramaBase, RAIZ, texto);
+  const r = evaluar(ficheros, texto, orden.alDia);
   if (!r.ok) {
     console.error(
       'Este PR cambia cómo trabaja el profesor (toca .kit/skills/, AGENTS.md o .kit/plantillas/) pero no '
       + `trae ${RESUMEN} de una prueba real${r.tocaResumen && !r.resumenReal ? ' (el que trae es de --sin-llm)' : ''}`
-      + `${r.resumenReal && !r.alDia ? ` hecha después del último cambio (${orden.comportamiento.slice(0, 7)}): el que trae es anterior` : ''}`
+      + `${r.resumenReal && !r.alDia && orden.motivo === 'commit-viejo' ? ` hecha sobre el código del PR: el resumen dice que se probó el commit ${orden.probado}, que no incluye el último cambio (${orden.comportamiento.slice(0, 7)}) — ¿la copia de tu Mac iba atrasada?` : ''}`
+      + `${r.resumenReal && !r.alDia && orden.motivo === 'commit-desconocido' ? ` de un commit de este repo: el resumen dice que se probó ${orden.probado}, y ese commit no existe aquí` : ''}`
+      + `${r.resumenReal && !r.alDia && !orden.motivo ? ` hecha después del último cambio (${orden.comportamiento.slice(0, 7)}): el que trae es anterior` : ''}`
       + `${r.resumenReal && !r.completo ? ' que saliera entera bien: su línea "Resultado:" dice que algún paso o algún veredicto falló, o no la tiene' : ''}.\n\n`
       + 'Ejecuta `npm run prueba-real` en tu Mac, revisa el resumen y súbelo con este PR.',
     );
@@ -87,4 +100,4 @@ function cli(args) {
 
 if (require.main === module) process.exit(cli(process.argv.slice(2)));
 
-module.exports = { evaluar, ficherosCambiados, resumenAlDia, cli, TOCA_COMPORTAMIENTO, RESUMEN };
+module.exports = { evaluar, ficherosCambiados, resumenAlDia, commitProbado, cli, TOCA_COMPORTAMIENTO, RESUMEN };

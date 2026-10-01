@@ -7,6 +7,7 @@ const { escanearSecretos } = require('./lib/secretos');
 const indice = require('./lib/indice');
 const generados = require('./lib/generados');
 const paginasWeb = require('./lib/paginas-web');
+const examenesLib = require('./lib/examenes');
 
 const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidian', 'docs', 'node_modules', 'pruebas-local']);
 
@@ -548,6 +549,56 @@ function comprobarPreguntaDoble(raiz, informe) {
   }
 }
 
+// #55: cada concepto se pregunta desde ángulos distintos, no con la definición del apunte. La clave de cada pregunta
+// nueva lleva su `angulo` (skill /examen, apartado 3). Solo se mira un examen recién escrito (tipo test, `intentos: 0`):
+// los ya corregidos se escribieron con otras reglas y no tiene sentido llenar de avisos un curso al actualizar. Las
+// preguntas del examen de referencia del centro (`origen: "centro"`) son literales a propósito: no cuentan.
+const ANGULOS = ['reconocer', 'distinguir', 'predecir', 'detectar-error', 'transferir', 'definicion'];
+const PALABRAS_CALCADAS = 8;
+const palabrasDe = t => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').split(/[^a-z0-9]+/).filter(Boolean);
+function tramos(palabras) {
+  const lista = [];
+  for (let i = 0; i + PALABRAS_CALCADAS <= palabras.length; i++) lista.push(palabras.slice(i, i + PALABRAS_CALCADAS).join(' '));
+  return lista;
+}
+// El enunciado sin el número, sin "(elige una)" y sin las opciones: lo que de verdad se pregunta.
+const enunciadoDe = pregunta => pregunta.split('\n').filter(l => !ES_OPCION(l)).join(' ')
+  .replace(/^(\d+\.\s|\*\*\d+\.\*\*)/, '').replace(/\*\((elige una|varias)\)\*/g, '');
+
+function comprobarAngulos(raiz, informe) {
+  for (const abs of v.recorrer(path.join(v.baseAlumno(raiz), 'examenes'), n => n.endsWith('.md'))) {
+    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
+    const texto = fs.readFileSync(abs, 'utf8');
+    const fm = v.leerFrontmatter(texto) || {};
+    if (!fm.tipo_examen || String(fm.intentos ?? '0').trim() !== '0') continue;
+    const clave = examenesLib.leerClaveSegura(raiz, rel);
+    if (!clave || !Array.isArray(clave.preguntas)) continue;
+    const enunciados = examenesLib.preguntasDelMd(texto);
+    const propias = clave.preguntas.map((p, i) => ({ ...(p || {}), numero: i + 1 })).filter(p => p.origen !== 'centro');
+    if (!propias.length) continue;
+
+    const sinAngulo = propias.filter(p => !p.origen && !ANGULOS.includes(p.angulo)).map(p => p.numero);
+    const distintos = [...new Set(propias.map(p => p.angulo).filter(a => ANGULOS.includes(a)))];
+    const minimo = Math.min(fm.tipo_examen === 'lo-que-falta' ? 2 : 3, propias.length);
+    const fallos = [];
+    if (sinAngulo.length) fallos.push(`pregunta(s) ${sinAngulo.join(', ')} sin \`angulo\` válido en la clave (${ANGULOS.join(', ')})`);
+    if (distintos.length < minimo) fallos.push(`solo cubre ${distintos.length} ángulo(s) (${distintos.join(', ') || 'ninguno'}) y hacen falta al menos ${minimo}`);
+    if (fallos.length) informe.avisos.push({ regla: 'examen-sin-angulos', fichero: rel, detalle: `${fallos.join('; ')} — pregunta cada concepto de maneras distintas, no solo "¿qué es X?"` });
+
+    const definiciones = propias.filter(p => p.angulo === 'definicion').map(p => p.numero);
+    if (definiciones.length > 1) informe.avisos.push({ regla: 'definicion-de-mas', fichero: rel, detalle: `${definiciones.length} preguntas de definición (${definiciones.join(', ')}): como mucho una por examen — pasa las demás a reconocer, distinguir, predecir…` });
+
+    for (const p of propias) {
+      if (!p.concepto || !enunciados[p.numero - 1]) continue;
+      const nota = path.join(v.baseAlumno(raiz), 'conceptos', `${p.concepto}.md`);
+      if (!fs.existsSync(nota)) continue;
+      const deLaNota = new Set(tramos(palabrasDe(fs.readFileSync(nota, 'utf8').replace(/^---\r?\n[\s\S]*?\r?\n---/, ''))));
+      const calcado = tramos(palabrasDe(enunciadoDe(enunciados[p.numero - 1]))).find(t => deLaNota.has(t));
+      if (calcado) informe.avisos.push({ regla: 'pregunta-calcada', fichero: rel, detalle: `la pregunta ${p.numero} copia de la nota ${p.concepto} «${calcado}…» — pregunta por entender, no por repetir: cuéntalo con otro caso u otras palabras` });
+    }
+  }
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -605,6 +656,7 @@ function comprobar(raiz) {
   comprobarFlashcardsFueraDeRango(raiz, informe);
   comprobarRequiereVacio(raiz, informe);
   comprobarPreguntaDoble(raiz, informe);
+  comprobarAngulos(raiz, informe);
   comprobarObsidianVeEjercicios(raiz, informe);
   comprobarAjustes(raiz, informe);
   comprobarEnlacesDelPerfil(raiz, informe);

@@ -9,7 +9,7 @@ description: Use when the student wants an exam or test to check what they have 
 `.kit/herramientas/lib/examenes.js`: no lo crees a mano.
 
 **Solo tipo test.** Todo examen nuevo se contesta con casillas (`- [ ] a) …`); lo corrige el código, no tú
-(huecos ✍️ → "Exámenes de antes", al final). **Solo se lanza cuando lo pide** — no forma parte del ciclo
+(huecos ✍️: es de antes, sigue `.kit/guias/examenes-de-antes.md`). **Solo se lanza cuando lo pide** — no forma parte del ciclo
 normal de una sesión.
 
 ## 1. Qué tipo de examen
@@ -63,7 +63,7 @@ Todas de opción múltiple, con las opciones de `config/examenes.json` (`opcione
 
    (`<unidad>` es un prefijo, como `01`; sin él, todo el curso). Su segunda línea es un JSON
    `{ "falladas": […], "centroUsadas": […] }`. Reutiliza `falladas` tal cual: cada entrada trae `enunciado`
-   (con sus opciones, del propio `.md`), `correctas`, `explicacion`, `concepto` y `examen` (de dónde sale).
+   (con sus opciones, del propio `.md`), `correctas`, `explicacion`, `concepto`, `angulo` y `examen` (de dónde sale).
    En la clave del examen nuevo, marca cada una con `origen: "examen anterior"` y `de: "<examen>, p.<numero>"`,
    con `examen` y `numero` tal cual los da el JSON (apartado 4), para poder trazarla; si la fallada trae
    `origen: "centro"`, se queda `"centro"` (cuenta para el tope de la mitad) y lleva también su `de`. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
@@ -88,17 +88,35 @@ llega al nivel que le toca, añade preguntas nuevas más difíciles hasta que s�
 | Fórmulas de `estudio/formulario.md` | 20 % |
 | Cobertura del resto | 15 % |
 
-Si `estudio/formulario.md` está vacío, su 20 % pasa a cobertura (35 %). Si el alumno es nuevo y no tiene
-errores repetidos, su 40 % pasa también a cobertura (55 %).
+Si `estudio/formulario.md` está vacío, o `config/profesor.md` dice que las fórmulas son de apoyo y no de
+memoria, su 20 % pasa a cobertura (35 %). Si el alumno es nuevo y no tiene errores repetidos, su 40 % pasa
+también a cobertura (55 %).
+
+**El reparto decide qué conceptos entran; el ángulo, cómo se pregunta cada uno.** Toda pregunta
+nueva lleva uno en la clave (`angulo`), y el examen reparte entre ellos:
+
+| `angulo` | Qué pide |
+|---|---|
+| `reconocer` | Verlo en un caso nuevo, sin su nombre en el enunciado |
+| `distinguir` | Separarlo del concepto con el que se confunde |
+| `predecir` | Qué pasa si cambia una condición |
+| `detectar-error` | El fallo de un razonamiento o una afirmación |
+| `transferir` | Aplicarlo a otro caso o contexto del mismo temario |
+| `definicion` | "¿Qué es X?": **como mucho una por examen** |
+
+Al menos 3 ángulos distintos por examen (2 en `lo-que-falta`). El enunciado nunca copia una frase de la nota:
+el concepto es del temario; el caso, la situación y los distractores pueden ser nuevos. `comprobar.js` lo
+vigila (`examen-sin-angulos`, `definicion-de-mas`, `pregunta-calcada`).
 
 **Distractores de verdad** ("Cuando preguntas para medir", `AGENTS.md`): la opción incorrecta es el error
 típico o el concepto con que se confunde; las opciones se parecen entre sí y ninguna se adivina sin saber el
 concepto. `*(elige una)*` / `*(varias)*` (acierta solo si marca todas las correctas y ninguna más).
 
 **Dificultad según el propósito**: `lo-que-falta` < `modulo` < `trimestre` < `final`, y dentro del final,
-cada escalón más que el anterior. Más difícil es **un caso más concreto o rebuscado** (2×2 frente a
-132×122, una cesta de más productos, un periodo más largo), **nunca una trampa de redacción** — una
-palabra que cambia todo el sentido y que un alumno que domina el concepto también pasaría por alto.
+cada escalón más que el anterior. Más difícil es **más profundo**: `lo-que-falta`, sobre todo reconocer y
+distinguir; el final, sobre todo predecir, detectar-error y transferir. Un caso más concreto (132×122 frente
+a 2×2, un periodo más largo) suma, pero no basta. **Nunca una trampa de redacción** — una palabra que cambia
+todo el sentido y que un alumno que domina el concepto también pasaría por alto.
 
 **Todas las preguntas salen de las notas del curso**, salvo que falten para completar el número del tipo:
 entonces, solo sobre conceptos ya en el temario, puedes traer un caso de internet, contrastado con las
@@ -148,13 +166,13 @@ nace el examen:
       "resta_fallo": 0,
       "aprobado": 6,
       "preguntas": [
-        { "correctas": ["b"], "explicacion": "300 ÷ 1.500 = 20 %.", "concepto": "tipo-de-interes" }
+        { "correctas": ["b"], "explicacion": "300 ÷ 1.500 = 20 %.", "concepto": "tipo-de-interes", "angulo": "reconocer" }
       ]
     }
 
 Una entrada de `preguntas` por pregunta, **en el mismo orden**: `correctas` (la letra o letras que valen,
 minúscula), `explicacion` (por qué la correcta es correcta; si viene de internet, aquí la fuente externa),
-`concepto` (el slug de `estudio/conceptos/`, o `null`). Si está reutilizada (apartado 3), añade
+`concepto` (el slug de `estudio/conceptos/`, o `null`) y `angulo` (apartado 3; una reutilizada conserva el suyo). Si está reutilizada (apartado 3), añade
 `origen: "examen anterior"` con `de: "<ruta del examen>, p.<n>"`, o `origen: "centro"` si es literal del test de
 referencia; sin ninguna, es nueva.
 
@@ -262,20 +280,3 @@ cambio y aplícalo solo con su sí.
 
 Después de las dos preguntas (o si las salta), cierra con `Del kit: nada` o `Del kit: <qué>` (ver "Feedback
 al kit" en `AGENTS.md`).
-
-## Exámenes de antes de esta versión
-
-Un examen sin `tipo_examen` en el frontmatter y con huecos `✍️ **Tu respuesta:**` en vez de casillas es del
-formato libre de antes: se sigue registrando igual que siempre, con tu propio juicio pregunta a pregunta. Escribe
-la corrección en `correccion-examen.json`, **en la raíz del curso** (nunca en `/tmp` ni fuera del curso: se
-deniega), y regístrala; `examen.js` la borra al terminar:
-
-    node .kit/herramientas/examen.js --registrar <examen.md> --correccion correccion-examen.json
-
-(`nota`, `veredicto` y `preguntas` con `resultado` empezando por `✅ Correcta` · `⚠️ Le falta: <qué>` ·
-`❌ Incorrecta`, como antes). No lo migres a tipo test tú mismo: si el alumno quiere repetirlo, ofrécele
-mejor un examen nuevo, de test, sobre el mismo alcance.
-
-Después, igual que en el apartado 5: da el veredicto en el chat y **guarda**:
-
-    node .kit/herramientas/guardar.js "examen: <alcance>"

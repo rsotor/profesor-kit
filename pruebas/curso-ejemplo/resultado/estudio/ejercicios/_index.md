@@ -7,14 +7,12 @@
 
 | Ejercicio | Concepto | Lo que se descubre fallándolo |
 |---|---|---|
-| [01 02 01 colchon financiero](modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero.html) | [[colchon-financiero\|Colchón financiero]] | Ejercicio: [[ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero\|¿Aguanta la racha?]]. Mueve la parte del colchón que está disponible ya y la duración de la racha floja: verás en qué punto el mismo colchón pasa de aguantar a no aguantar. |
-| [02 01 01 simple o compuesto](modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-o-compuesto.html) | [[interes-compuesto\|Interés compuesto]] | Con un simple del 8 % anual frente a un compuesto del 5 % anual, el simple gana a 3 años y pierde a partir de los 19: busca ese punto moviendo el tiempo. |
-| [02 01 01 simple o compuesto](modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-o-compuesto.html) | [[interes-simple\|Interés simple]] | Pon un tipo simple más alto que el compuesto y ve alargando el tiempo: el simple gana al principio, y después deja de hacerlo. |
+| [01 02 01 colchon financiero](modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero.html) | [[colchon-financiero\|Colchón financiero]] | Mueve los gastos, los meses de objetivo y el dinero guardado hasta que la respuesta se invierta; mueve también lo que facturas y comprueba que no cambia nada: el colchón se mide con lo que gastas. |
+| [02 01 01 interes simple y compuesto](modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto.md) | [[interes-compuesto\|Interés compuesto]] | Alarga los años con el mismo capital y tipo y mira cómo se separan las dos cuentas. |
 
 ## Por concepto
 
 | Concepto | Ejercicio | Lo que se descubre fallándolo |
 |---|---|---|
-| [[colchon-financiero\|Colchón financiero]] | [01 02 01 colchon financiero](modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero.html) | Ejercicio: [[ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero\|¿Aguanta la racha?]]. Mueve la parte del colchón que está disponible ya y la duración de la racha floja: verás en qué punto el mismo colchón pasa de aguantar a no aguantar. |
-| [[interes-compuesto\|Interés compuesto]] | [02 01 01 simple o compuesto](modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-o-compuesto.html) | Con un simple del 8 % anual frente a un compuesto del 5 % anual, el simple gana a 3 años y pierde a partir de los 19: busca ese punto moviendo el tiempo. |
-| [[interes-simple\|Interés simple]] | [02 01 01 simple o compuesto](modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-o-compuesto.html) | Pon un tipo simple más alto que el compuesto y ve alargando el tiempo: el simple gana al principio, y después deja de hacerlo. |
+| [[colchon-financiero\|Colchón financiero]] | [01 02 01 colchon financiero](modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero.html) | Mueve los gastos, los meses de objetivo y el dinero guardado hasta que la respuesta se invierta; mueve también lo que facturas y comprueba que no cambia nada: el colchón se mide con lo que gastas. |
+| [[interes-compuesto\|Interés compuesto]] | [02 01 01 interes simple y compuesto](modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto.md) | Alarga los años con el mismo capital y tipo y mira cómo se separan las dos cuentas. |

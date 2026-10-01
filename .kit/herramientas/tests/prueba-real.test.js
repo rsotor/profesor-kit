@@ -422,6 +422,34 @@ test('formatoDeOpciones: detecta cuando el examen no respeta el número de opcio
   assert.match(r.detalle, /5 de 5 pregunta\(s\) no tienen las 3 opciones de la clave/);
 });
 
+function ponerAngulos(destino, angulos) {
+  const rutaClave = path.join(destino, 'config', 'claves', '01-examen-2026-10-02.json');
+  const clave = JSON.parse(fs.readFileSync(rutaClave, 'utf8'));
+  clave.preguntas.forEach((pr, i) => { if (angulos[i]) pr.angulo = angulos[i]; });
+  fs.writeFileSync(rutaClave, JSON.stringify(clave));
+}
+
+test('angulosDelExamen (#55): con 3 ángulos o más y una sola definición, ok, y dice el reparto', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  ponerAngulos(destino, ['reconocer', 'distinguir', 'predecir', 'transferir', 'definicion']);
+  const r = p.angulosDelExamen(destino, ficheroExamen);
+  assert.equal(r.ok, true, r.detalle);
+  assert.match(r.detalle, /ángulos: reconocer 1, distinguir 1, predecir 1, transferir 1, definicion 1/);
+});
+
+test('angulosDelExamen (#55): sin ángulos, o con dos de definición, falla y dice por qué', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  const sin = p.angulosDelExamen(destino, ficheroExamen);
+  assert.equal(sin.ok, false);
+  assert.match(sin.detalle, /sin ángulo 5 · pregunta\(s\) 1, 2, 3, 4, 5 sin `angulo`/);
+  ponerAngulos(destino, ['reconocer', 'distinguir', 'predecir', 'definicion', 'definicion']);
+  const dos = p.angulosDelExamen(destino, ficheroExamen);
+  assert.equal(dos.ok, false);
+  assert.match(dos.detalle, /2 preguntas de definición/);
+});
+
 // --- Reutilizar preguntas literales del centro (decisión del mantenedor, 2026-09-24) --------------------
 
 const REFERENCIA_FIXTURE = fs.readFileSync(
