@@ -264,7 +264,9 @@ function verificarCorreccionTest(destino, ficheroExamen, contestacion) {
 // Lo que config/examenes.json tiene que respetar tras leer un examen de referencia del centro: lo que el
 // texto declara manda (nunca al revés) y nada de lo que no declara se inventa — ni en el tipo que toca
 // (aquí, `modulo`, según lo que pide el fixture) ni en los demás tipos, que no deberían tocarse.
-const CLAVES_TIPO_VALIDAS = new Set(['preguntas', 'aprobado', 'escalones']);
+// La referencia y sus notas documentan la fuente y lo que declara el centro. No cambian la configuración
+// que consume lib/examenes.js, pero la skill las conserva para que el profesor pueda aplicarlas después.
+const CLAVES_TIPO_VALIDAS = new Set(['preguntas', 'aprobado', 'escalones', 'referencia', 'notas']);
 
 function referenciaCoherente(destino, textoReferencia) {
   const f = path.join(destino, 'config', 'examenes.json');
