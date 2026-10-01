@@ -138,6 +138,8 @@ que no tiene) y **falsos positivos** (das por sabido lo que acertó de rebote).
   darlo por sabido o por fallado; en un examen escrito no se puede, así que la pregunta tenía que pedirlo.
 - **Tres veredictos, no dos:** correcta · correcta pero le falta *algo que se pedía* (y dices qué) ·
   incorrecta.
+- **Su respuesta se cita tal cual**, nunca se reescribe: ni para que pase una regla del dominio ni para que
+  quede mejor. Las reglas de `config/curso.md` son para lo que escribes tú.
 
 ## Cómo aprendes del alumno
 

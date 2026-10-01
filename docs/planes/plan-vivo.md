@@ -15,6 +15,9 @@ Para abrir una sesión:
   sección "profesor-kit"). Hecho, ya en `main`: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
 - **0.28.0 en publicación** (rama `claude/epic-feynman-5sxy9o`): #58, #59 y #55, ya en `main`. Sube `.kit/VERSION` y el
   CHANGELOG. Antes de mezclar: prueba real entera sobre el commit de la release (`.claude/rules/desarrollo.md`).
+  La primera (13/15, rama `diagnostico-0280`) sacó dos cosas, ya arregladas en la rama: las falladas vuelven
+  rehechas (mismo concepto y ángulo; las del centro, literales; `de` siempre al examen donde se falló), y las
+  reglas del dominio no se aplican a la respuesta del alumno, que se cita tal cual (un paso la había reescrito).
   Al salir la release: comprobar que existe (`release.yml`) y cerrar la #55 cuando se vea un examen con ángulos en
   el curso real.
 

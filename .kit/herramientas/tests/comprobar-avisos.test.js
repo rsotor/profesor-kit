@@ -48,6 +48,23 @@ test('patrón prohibido de ajustes.json es error', () => {
   assert.match(e[0].detalle, /línea 5/);
 });
 
+// Prueba real de la 0.28.0: el alumno contestó "20 %" sin periodo; la regla del dominio saltaba sobre SU respuesta y un
+// paso posterior la reescribió para poder guardar. Su respuesta se cita tal cual: las reglas son para el profesor.
+test('patrones del dominio: no se aplican a la respuesta del alumno en un examen, sí a lo que escribe el profesor', () => {
+  const tasa = { patron: '\\d+([.,]\\d+)?\\s?%(?!\\s*(anual|mensual|diari))', mensaje: 'tasa sin periodo' };
+  const raiz = cursoTemporal({
+    'config/ajustes.json': JSON.stringify({ patrones_prohibidos: [tasa] }),
+    'estudio/examenes/01-examen-correccion.md': [
+      '**1.** ¿Qué tipo paga? *(una cifra)*', '', '✍️ **Tu respuesta:** 20 %', '',
+      '> | # | Tu respuesta | Resultado | Por qué |', '> |---|---|---|---|',
+      '> | 1 | 20 % | ⚠️ Le falta: el periodo | Es un 20 % mensual. |',
+      '> | 2 | 2 % | ⚠️ Le falta: el periodo | Sin periodo, un 2 % no dice nada. |',
+    ].join('\n'),
+  });
+  const e = comprobar(raiz).errores.filter(x => x.regla === 'patron-prohibido');
+  assert.deepEqual(e.map(x => x.detalle.match(/línea (\d+)/)[1]), ['8'], 'solo la explicación del profesor de la fila 2 ("un 2 % no dice")');
+});
+
 test('un patrón mal escrito no rompe la herramienta: es aviso', () => {
   const raiz = cursoTemporal({ 'config/ajustes.json': JSON.stringify({ patrones_prohibidos: [{ patron: '(', mensaje: 'x' }] }) });
   assert.equal(avisos(raiz, 'patron-invalido').length, 1);

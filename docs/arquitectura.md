@@ -170,7 +170,7 @@ definición, y ningún enunciado comparte 8 palabras seguidas con la nota de su 
 (`estudiada`, `nota`, `dificultad`…) de una forma que el kit no sabe interpretar (`vault.js#ESPERADO`).
 
 **Pendientes y patrones del curso (aviso salvo `patron-prohibido`, que es error)**: `duda-pendiente` ·
-`todo` · `falta-info` · `patron-prohibido` (regex de `config/ajustes.json#patrones_prohibidos`) ·
+`todo` · `falta-info` · `patron-prohibido` (regex de `config/ajustes.json#patrones_prohibidos`; en un examen no se aplica a la respuesta del alumno —tras `✍️ **Tu respuesta:**` y la 2.ª columna de las tablas numeradas—, que se cita tal cual) ·
 `patron-invalido` (esa regex no compila).
 
 ## 6. Invariantes que no se rompen nunca
