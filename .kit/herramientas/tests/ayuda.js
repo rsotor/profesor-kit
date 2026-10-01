@@ -11,6 +11,16 @@ for (const variable of execFileSync('git', ['rev-parse', '--local-env-vars'], { 
   delete process.env[variable];
 }
 
+// Cada `git commit` lanza `git maintenance run --auto`, y desde git 2.47 en segundo plano (`maintenance.autoDetach`).
+// Ese proceso sigue escribiendo en `.git` mientras un test borra la carpeta: en la CI (git 2.55) dejaba un `.git` a
+// medias ("bad object HEAD" en "una carpeta que no es repo git") o no dejaba borrarla (ENOTEMPTY en macOS). En los
+// repos de los tests no hace falta mantenimiento: se apaga para este proceso y todo lo que lance.
+Object.assign(process.env, {
+  GIT_CONFIG_COUNT: '2',
+  GIT_CONFIG_KEY_0: 'maintenance.auto', GIT_CONFIG_VALUE_0: 'false',
+  GIT_CONFIG_KEY_1: 'gc.auto', GIT_CONFIG_VALUE_1: '0',
+});
+
 const BASE = {
   'config/profesor.md': '---\nmarcador_dudas: "@@"\n---\n# Profesor\n',
   'config/ajustes.json': JSON.stringify({ subir_a_github: false, llm: 'claude-code', version_datos: 1 }, null, 2),
