@@ -64,14 +64,14 @@ intentos: 1
 > [!example]- Intento 1 · 2026-10-01 · tus respuestas y la corrección
 >
 > ✅ Dominado → tasa-de-ahorro
-> ⚠️ Hay que repasar → liquidez (1 fallo: sabe qué es, no dijo el nombre que se pedía), gastos-fijos-y-variables (1 fallo: p.5), colchon-financiero (1 fallo: p.6 en blanco), y el periodo de la tasa de interés (p.4: cifra sin periodo; sin nota de concepto propia)
-> 🔴 Vuelve a la nota → ninguno (ningún concepto con 2 o más fallos en este examen)
+> ⚠️ Hay que repasar → liquidez (p.3: tiene la idea, no el nombre), gastos-fijos-y-variables (p.5), colchon-financiero (p.6, en blanco); p.4 (interés: falta el periodo) no tiene nota de concepto asignada
+> 🔴 Vuelve a la nota → ninguno (ningún concepto con 2 o más fallos en este test)
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20 por ciento | ✅ Correcta | 300 ÷ 1.500 = 20 por ciento de lo que cobra: la cifra pedida es la correcta. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no se puede sacar a tiempo: es la idea de inmovilizado. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre del concepto (liquidez) | Describe bien la idea (no se vende rápido para tener el dinero ya), pero la pregunta pedía el nombre y no lo da. |
-> | 4 | 2 por ciento, sin periodo | ⚠️ Le falta: el periodo (mensual) | La cifra es la correcta, pero la pregunta pedía la cifra con su periodo: un 2 % mensual. Sin periodo no dice cuánto pagas. |
-> | 5 | Variable. | ❌ Incorrecta | Responde variable. Es un gasto fijo: se repite cada mes con la misma cifra sin que decidas nada; la subida anual con el IPC no lo convierte en variable. |
-> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin respuesta. El curso recomienda 3 meses de gastos con nómina fija. |
+> | 1 | 20 % | ✅ Correcta | 300 ÷ 1.500 = 20 % mensual. La pregunta pedía una cifra. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado al piso y no lo puede sacar a tiempo: es la idea de dinero inmovilizado. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre. Describe bien la idea (no se puede convertir rápido en dinero), pero la pregunta pedía el nombre del concepto: liquidez. | La idea está bien; el nombre solo cuenta porque la pregunta lo pedía. |
+> | 4 | 2 % | ⚠️ Le falta: el periodo. La cifra es correcta, pero la pregunta pedía la cifra con su periodo: 2 % mensual. | Sin el periodo, la cifra no dice cuánto pagas. |
+> | 5 | Variable. | ❌ Incorrecta | Responde variable; según el curso es un gasto fijo (700 € cada mes, aunque se actualice una vez al año). |
+> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin respuesta; no se sabe si es hueco o falta de tiempo. La clave dice 3 meses. |

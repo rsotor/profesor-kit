@@ -1,47 +1,46 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
-visto_en: [01-01-01]
-dificultad: 1
+bloques: ["1.1"]
+visto_en: ["01-01-01-el-dinero-y-sus-funciones"]
+dificultad: 2
 requiere: [funciones-del-dinero]
 alias: []
-tags: [dinero, ahorro]
+tags: [fundamentos]
 ---
 # Liquidez
 
-> **En una frase:** La liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor no basta: hay que poder usarlo cuando hace falta. Un piso vale mucho, pero no sirve para pagar
-el súper de mañana.
+Tener valor no basta: a veces lo necesitas ya. Si lo que tienes tarda meses en convertirse en dinero, o solo lo vendes bien con calma, no te sirve para una urgencia.
 
 ## El ejemplo
 
 | Qué tienes | Liquidez | Por qué |
 |---|---|---|
-| 50,00 € en la cartera | Total | Se gastan al instante |
-| Un piso | Muy poca | Venderlo bien lleva meses |
+| Dinero en la cartera | Total | Se gasta al instante |
+| Un piso | Muy baja | Venderlo bien lleva meses |
 
-Importa en el módulo 2, cuando se compare ahorrar (muy líquido) con invertir (a veces, menos líquido).
+El material avisa de que esto importará en el módulo 2, al comparar ahorrar (muy líquido) con invertir (a veces, menos líquido).
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Pensar que "valer mucho" y "ser líquido" es lo mismo. El piso vale mucho y es poco líquido; vender con
-> prisa obliga a bajar el precio, que es justo la pérdida de valor de la definición.
+> Confundir liquidez con valor: un piso vale mucho más que lo que llevas en la cartera, pero es mucho menos líquido. Que algo valga mucho no dice nada de lo rápido que se convierte en dinero.
 
 ## Visto desde tus ingresos irregulares
 
 > [!info] Ampliación fuera de los apuntes
-> Con facturación irregular, un mes flojo se paga con lo que tengas disponible ya. Qué parte de lo que
-> guardas es líquida decide si llegas a fin de mes sin vender nada con prisas.
+> Lo que guardas para los meses flojos tiene que estar donde puedas cogerlo rápido. Para ese uso importa más la liquidez que lo que rinda.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — es el depósito de valor, pero que se pueda gastar ya
-- [[inflacion]] — el otro rasgo de guardar dinero
+- [[funciones-del-dinero]] — el dinero es lo más líquido que existe
+- [[inflacion]] — el enemigo de guardar dinero líquido sin más
+- [[colchon-financiero]] — la reserva para meses flojos tiene que ser líquida
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez
+- **01-02-01-presupuesto-personal** · enlazada desde el colchón financiero
