@@ -44,8 +44,16 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 
 ## Issues abiertas por decidir
 
-- **#56** subagentes con roles: el revisor independiente, ya en `main` (#65); queda el `pendiente` de Codex y la
-  preparación en paralelo (~900.000 tokens por módulo). Encaja con K6 (base-kit).
+- **#56** subagentes con roles: el revisor independiente, ya en `main` (#65); Codex declara `spawn_agent` (#66, falta
+  su prueba real larga). Quedan, para otra sesión y con plan propio (mejor una release aparte, no con la 0.30):
+  - **Preparación en paralelo** (punto 2; ~900.000 tokens por módulo). Propuesta, por decidir con Roberto: no con
+    subagentes, sino lanzando varias `preparar.js --lanzar` a la vez (una rama `preparacion/*` por clase) y que
+    `--juntar` cierre al final `_index.md`, `progreso.md` y `mapa-del-curso.md` (el "coordinador" de la issue). Vale
+    para cualquier asistente con `segundo_plano`. Antes de nada: comprobar si `--juntar` resuelve dos ramas que tocan
+    esos ficheros, y cómo se evita que dos clases creen el mismo concepto (`candidatos.js`). Avisar del coste antes.
+  - **Auditor de material** (punto 3): un subagente en `/sesion` que reproduce las cifras de los Excel y lista
+    discrepancias; entrega algo comprobable.
+  - El punto 4 (dudas y conversación, no como rol aparte) no pide trabajo. Encaja con K6 (base-kit).
 - **#46**, **#47**: peticiones sin cambios.
 - **#59** abierta: falta que quien la abrió diga si su Codex tiene una herramienta de opciones (para quitar el
   `pendiente` del adaptador).
