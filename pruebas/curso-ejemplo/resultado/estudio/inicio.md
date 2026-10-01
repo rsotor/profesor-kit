@@ -9,14 +9,11 @@
 
 👉 Sigue por aquí: [[02-01-01-interes-simple-y-compuesto|2.1 Interés simple y compuesto]]
 
-🗂️ Flashcards para repasar:
-- Hasta el 3/10 · 8 tarjetas: [[flashcards/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones|1.1 El dinero y sus funciones]] (4) · [[flashcards/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal|1.2 Presupuesto personal]] (4)
-
-Estudiadas 2 de 3 · Pendientes abiertos: 15 → [[pendientes]]
+Estudiadas 2 de 3 · Pendientes abiertos: 11 → [[pendientes]]
 
 🏁 Módulo 1 · Fundamentos del dinero superado el 2026-10-01 con un 6,0
 
-## Módulo 1 · Fundamentos del dinero · 2/2 estudiadas · 4/7 conceptos dominados · 📝 6,0 (2026-10-01)
+## Módulo 1 · Fundamentos del dinero · 2/2 estudiadas · 2/7 conceptos dominados · 📝 6,0 (2026-10-01)
 
 ### 1.1 El dinero y sus funciones · 1/1 estudiadas
 

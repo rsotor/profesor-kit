@@ -44,9 +44,8 @@ Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces 
 
 | Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |
 |---|---|---|
-| Bloque 01-01 | 1 · 2 · 0 · 0 | 0 · 0 · 0 · 3 |
-| Bloque 01-02 | 3 · 1 · 0 · 0 | 0 · 0 · 0 · 4 |
-| Bloque 02-01 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
+| modulo-01 | 2 · 5 · 0 · 0 | 0 · 0 · 0 · 7 |
+| modulo-02 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
 
 ### Donde más dudas
 

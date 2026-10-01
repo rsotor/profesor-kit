@@ -1,11 +1,11 @@
 ---
 tipo: concepto
-bloques: [01-01]
-visto_en: [01-01-01-el-dinero-y-sus-funciones]
-dificultad: 2
+bloques: [modulo-01]
+visto_en: [01-01-01]
+dificultad: 1
 requiere: [funciones-del-dinero]
 alias: []
-tags: [fundamentos]
+tags: [dinero, ahorro]
 ---
 # Liquidez
 
@@ -13,31 +13,35 @@ tags: [fundamentos]
 
 ## El problema
 
-Tener valor guardado no basta: hay que poder usarlo cuando hace falta. Un patrimonio que no puedes convertir en dinero a tiempo no resuelve un pago urgente.
+Tener valor no basta: hay que poder usarlo cuando hace falta. Un piso vale mucho, pero no sirve para pagar
+el súper de mañana.
 
 ## El ejemplo
 
-| Qué tienes | Cuánto tardas en gastarlo | Liquidez |
+| Qué tienes | Liquidez | Por qué |
 |---|---|---|
-| 50,00 € en la cartera | Al instante | Total |
-| Un piso | Meses, si quieres venderlo bien | Muy poca |
+| 50,00 € en la cartera | Total | Se gastan al instante |
+| Un piso | Muy poca | Venderlo bien lleva meses |
 
-Si el piso hay que venderlo en una semana, probablemente se venda más barato. Esa es "la pérdida de valor por las prisas".
+Importa en el módulo 2, cuando se compare ahorrar (muy líquido) con invertir (a veces, menos líquido).
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Pensar que algo que vale mucho es líquido. El valor y la liquidez son cosas distintas: un piso vale mucho y es poco líquido, y 50,00 € valen poco y son totalmente líquidos.
+> Pensar que "valer mucho" y "ser líquido" es lo mismo. El piso vale mucho y es poco líquido; vender con
+> prisa obliga a bajar el precio, que es justo la pérdida de valor de la definición.
 
 ## Visto desde tus ingresos irregulares
 
-Cuando un mes factures poco, necesitarás dinero rápido. Cuánto de lo que tienes está disponible en días y cuánto no es una pregunta que importará al montar un colchón financiero. El material solo anticipa esto para el módulo 2 (ahorrar es muy líquido, invertir a veces menos).
+> [!info] Ampliación fuera de los apuntes
+> Con facturación irregular, un mes flojo se paga con lo que tengas disponible ya. Qué parte de lo que
+> guardas es líquida decide si llegas a fin de mes sin vender nada con prisas.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero es lo más líquido que hay
-- [[inflacion]] — el otro factor al decidir cómo guardar
+- [[funciones-del-dinero]] — es el depósito de valor, pero que se pueda gastar ya
+- [[inflacion]] — el otro rasgo de guardar dinero
 
 ## Historial
 
-- **01-01-01-el-dinero-y-sus-funciones** · primera vez
+- **01-01-01** · primera vez

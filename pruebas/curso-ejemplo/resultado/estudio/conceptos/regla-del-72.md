@@ -1,44 +1,42 @@
 ---
 tipo: concepto
-bloques: [02-01]
-visto_en: [02-01-01-interes-simple-y-compuesto]
+bloques: [modulo-02]
+visto_en: [02-01-01]
 dificultad: 2
 requiere: [interes-compuesto]
 alias: []
-tags: [interes]
+tags: [interes, ahorro]
 ---
 # Regla del 72
 
-> **En una frase:** Dividir 72 entre el tipo anual da, a ojo, los años que tarda un capital en doblarse a interés compuesto.
+> **En una frase:** La regla del 72 es un atajo para saber, a ojo, cuántos años tarda en doblarse un capital a interés compuesto: 72 dividido entre el tipo anual.
 
 ## El problema
 
-Quieres saber cuánto tarda tu dinero en duplicarse y no tienes calculadora a mano para despejar la fórmula del [[interes-compuesto]].
-
-> Recuerda: el compuesto reinvierte los intereses, así que el tiempo para doblar depende solo del tipo, no del capital.
+Quieres saber si merece la pena una inversión en cuanto a cuánto tarda en duplicarse tu dinero, sin sacar la
+calculadora ni despejar $n$ de la fórmula del compuesto.
 
 ## El ejemplo
 
-A un **6 % anual**: 72 ÷ 6 = **12 años**, aproximadamente. El cálculo exacto con la fórmula da 11,9 años: sirve para orientarse, no para dar cifras exactas.
+Un capital al 6 % anual: 72 ÷ 6 = **12 años**, aproximadamente. Con la fórmula exacta salen 11,9 años: la regla es
+una aproximación, no el resultado exacto.
 
 ## La fórmula
 
 $$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número}} $$
 
-"En número" es sin el símbolo de por ciento: 6 % anual entra como 6.
+El tipo va como número, sin el signo de porcentaje (6, no 0,06). Solo vale para interés compuesto.
 
 ## El error típico
 
-Usarla con interés simple, o con un tipo que no es anual. Vale para compuesto y con el tipo en años.
-
 > [!info] Ampliación fuera de los apuntes
-> Propuesta propia; la clase solo dice que es una aproximación.
+> Usarla con interés simple, o con el tipo en tanto por uno (72 ÷ 0,06 = 1.200 años). Con simple, doblar un capital
+> tarda siempre 100 ÷ tipo en años, que es mucho más.
 
 ## Relacionados
 
-- [[interes-compuesto]] — de dónde sale la regla
-- [[capital-y-tipo-de-interes]] — el tipo anual que entra en la división
+- [[interes-compuesto]] — la fórmula exacta de la que esta regla es un atajo
 
 ## Historial
 
-- **02-01-01-interes-simple-y-compuesto** · primera vez
+- **02-01-01** · primera vez
