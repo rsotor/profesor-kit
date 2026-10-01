@@ -51,6 +51,65 @@ function fusionarParteEscrita(raiz, rel) {
   }
 }
 
+// Una nota de concepto tocada en los dos lados (prueba real de la #56): la preparación la amplía (`bloques`, `visto_en`,
+// una sección, el historial) y la tutoría le cambia otro campo de la cabecera (un examen sube `dificultad`). Son cambios
+// distintos, pero en líneas contiguas, y git no sabe juntarlos. Se juntan aparte: la cabecera, campo a campo (cada
+// campo, el lado que lo cambió; si los dos cambiaron el mismo de forma distinta, choque), y el cuerpo, a tres bandas.
+// Lo que de verdad se pisa (la misma línea del cuerpo, el mismo campo) sigue siendo un choque y se para.
+const esNotaDeConcepto = rel => /^estudio\/conceptos\/[^/]+\.md$/.test(rel) && !path.posix.basename(rel).startsWith('_');
+
+function partirNota(texto) {
+  const m = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(texto);
+  if (!m) return null;
+  // Cada campo con sus líneas de continuación (una lista en bloque: "  - x").
+  const campos = new Map();
+  let actual = null;
+  for (const linea of m[1].split(/\r?\n/)) {
+    const clave = /^([A-Za-z_][\w-]*):/.exec(linea);
+    if (clave) { actual = clave[1]; campos.set(actual, linea); continue; }
+    if (actual === null) return null;
+    campos.set(actual, `${campos.get(actual)}\n${linea}`);
+  }
+  return { campos, cuerpo: texto.slice(m[0].length) };
+}
+
+function fusionarCabecera(comun, nuestra, suya) {
+  const claves = [...nuestra.keys(), ...[...suya.keys()].filter(k => !nuestra.has(k))];
+  const salida = [];
+  for (const k of claves) {
+    const [b, o, t] = [comun.get(k), nuestra.get(k), suya.get(k)];
+    let valor;
+    if (o === t) valor = o;
+    else if (o === b) valor = t;
+    else if (t === b) valor = o;
+    else return null;
+    if (valor !== undefined) salida.push(valor);
+  }
+  return salida.join('\n');
+}
+
+function fusionarNotaDeConcepto(raiz, rel) {
+  if (![1, 2, 3].every(e => existeEnEtapa(raiz, rel, e))) return false;
+  const [comun, nuestra, suya] = [1, 2, 3].map(e => partirNota(g.intentarGit(raiz, ['show', `:${e}:${rel}`]).stdout || ''));
+  if (!comun || !nuestra || !suya) return false;
+  const cabecera = fusionarCabecera(comun.campos, nuestra.campos, suya.campos);
+  if (cabecera === null) return false;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kit-concepto-'));
+  try {
+    const [fn, fc, fs2] = ['nuestra', 'comun', 'suya'].map(n => path.join(dir, n));
+    fs.writeFileSync(fn, nuestra.cuerpo);
+    fs.writeFileSync(fc, comun.cuerpo);
+    fs.writeFileSync(fs2, suya.cuerpo);
+    const r = spawnSync('git', ['merge-file', '-p', fn, fc, fs2], { encoding: 'utf8' });
+    if (r.status !== 0) return false;
+    fs.writeFileSync(path.join(raiz, ...rel.split('/')), `---\n${cabecera}\n---\n${r.stdout}`);
+    g.git(raiz, ['add', '--', rel]);
+    return true;
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 // Ficheros que los dos lados tocan a la vez con filas, una por concepto: la tutoría cambia el estado de filas que
 // ya existían (un examen) y la preparación (o el otro sitio) añade filas nuevas al final. Si quedan pegadas, git
 // no sabe juntarlas (visto en la prueba real de la 0.22). Se juntan por concepto: todas las filas del curso
@@ -174,7 +233,7 @@ function resolverConflictos(raiz, conflictos, { conservar = {} } = {}) {
     if (!quedarseConLado(raiz, f, lado === 'alla' ? '--theirs' : '--ours')) return { ok: false, ficheros: [f] };
   }
   const resto = conflictos.filter(f => !conservar[f]);
-  const noResolubles = resto.filter(f => !ficheroResoluble(f) && !POR_FILAS[f]);
+  const noResolubles = resto.filter(f => !ficheroResoluble(f) && !POR_FILAS[f] && !(esNotaDeConcepto(f) && fusionarNotaDeConcepto(raiz, f)));
   if (noResolubles.length) return { ok: false, ficheros: noResolubles };
   for (const f of resto.filter(x => POR_FILAS[x])) {
     if (!resolverPorFilas(raiz, f)) return { ok: false, ficheros: [f] };
@@ -232,7 +291,7 @@ function ficherosEnConflicto(raiz) {
 }
 
 module.exports = {
-  generadoEntero, parteEscrita, ficheroResoluble, fusionarParteEscrita,
+  generadoEntero, parteEscrita, ficheroResoluble, fusionarParteEscrita, partirNota, fusionarCabecera,
   POR_FILAS, juntarPorFilas, resolverPorFilas, configurarUnionParaDiario, resolverConflictos, ficherosEnConflicto,
   volcarVersionAjena, limpiarVolcadoAnterior, resolverPorTrozos, quedarseConLado, existeEnEtapa,
 };

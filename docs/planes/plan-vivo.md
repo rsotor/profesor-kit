@@ -65,6 +65,10 @@ Para abrir una sesión:
     curso; juntar espera el límite de una preparación (90 min); las descartadas se conservan por fecha, no por nombre;
     una copia solo se restaura si es de ese paso; `conceptoCompartido` busca también por alias, caza la nota duplicada
     con el nombre dentro y cuenta filas exactas; las copias no llevan las skills y se guardan aunque falle algún paso.
+  - **Prueba real entera (2026-10-01, f2a6ac0): 14/16.** Falló `--juntar`: choque en `tasa-de-ahorro.md` (el examen
+    subió `dificultad` y la 02-02 amplió la nota: campos distintos en líneas contiguas). Bug del kit, no solo del
+    paralelo. Arreglo: `lib/mezcla.js` junta las notas de concepto por cabecera (campo a campo) y cuerpo (a tres
+    bandas). Y el curso de una prueba con fallos ya no se borra al salir. Se comprueba con `--solo` del lanzar.
   - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
     una preparación fallida conserva en su rama descartada lo que escribió, y el prompt del coordinador con las dos fases. Prueba real:
     02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,
@@ -110,6 +114,10 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
   hoja/celda; cifra mala y la buena; qué dice (o calla) la auditoría; quién lo descubrió y cuándo. Diseño ya
   pensado: lo lanza el coordinador o el profesor (un subagente no lanza otro), marca de origen como el revisor de
   exámenes, y la prueba real exige las cifras.
+- **#68** (sarainieto, Codex en Windows, kit 0.27.1, 2026-10-01): el examen se escribe en `estudio/examenes/` pero la
+  clave no puede ir a `config/claves/` porque el asistente solo puede escribir en `estudio/`; `examen.js --corregir`
+  dice que falta la clave y no se registra nada. Pide detectarlo antes de crear un examen a medias y una forma soportada
+  de guardar la clave. Sin decidir.
 - **#46**, **#47**: peticiones sin cambios.
 - **#59** abierta: falta que quien la abrió diga si su Codex tiene una herramienta de opciones (para quitar el
   `pendiente` del adaptador).

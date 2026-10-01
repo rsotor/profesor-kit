@@ -20,7 +20,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { borrar, montarCurso, comprobarJson, copiarMotor, copiar, ejecutarNodo, git } = require('./lib/montaje');
+const { borrar, conservar, montarCurso, comprobarJson, copiarMotor, copiar, ejecutarNodo, git } = require('./lib/montaje');
 // "vault", no "v": este fichero ya usa `v` como nombre local para el resultado de validaciones (p.ej. en
 // pasoExamenReferencia) — con el mismo nombre para el vault del kit, uno de los dos taparía al otro.
 const vault = require('../.kit/herramientas/lib/vault');
@@ -849,6 +849,7 @@ function ejecutar({
       borrar(destino);
       if (copiasPorPaso) borrar(copiasPorPaso);
     } else {
+      conservar(destino);   // si no, montaje.js lo borra al salir, aunque aquí se diga que se queda
       console.log(`\nAlgo ha fallado: el curso de la prueba se queda en ${destino}`
         + (copiasPorPaso ? ` y la copia tras cada paso en ${copiasPorPaso}` : '') + '. Bórralos cuando ya no hagan falta.');
     }
