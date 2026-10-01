@@ -56,6 +56,10 @@ Para abrir una sesión:
       dos subagentes, un concepto) y tasa de ahorro (de 01-02: amplía una nota existente). El paso de segundo plano
       (`prueba-real.js:634-672`) lanza 02-01 y 02-02 juntas.
     - **Auditor:** fuera del plan (aparcado).
+  - **Diablo corto sobre `segundo-plano.md` (2026-10-01, 4 objeciones, todas aplicadas):** el subagente no se cree
+    coordinador ni guarda; devuelve secciones fijas (`_index`, `progreso`, `mapa-del-curso`, notas ajenas, unidad
+    nueva); el cierre añade `estructura.json` y `organizar.js`; si un subagente falla, no se guarda nada; la cuota se
+    reconoce en las líneas del registro que enseña `--estado`. Falta la ronda completa antes de cerrar.
   - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
     una preparación fallida conserva en su rama descartada lo que escribió, y el prompt del coordinador con las dos fases. Prueba real:
     02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,

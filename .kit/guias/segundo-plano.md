@@ -6,7 +6,8 @@
 
 1. **Antes de lanzar, pregunta lo que solo él sabe**: el id de cada sesión si la regla de `config/curso.md` no
    basta, y cualquier duda del material que no puedas resolver tú. Lo que se lanza ya no pregunta nada.
-2. `node .kit/herramientas/preparar.js --lanzar <ficheros o carpeta de inbox> --id <id>`. Una sola a la vez. Las
+2. `node .kit/herramientas/preparar.js --lanzar <ficheros o carpeta de inbox> --id <id>`. Una sola preparación a la
+   vez (puede llevar varias clases, abajo). Las
    rutas son relativas a `estudio/inbox/`. Si la clase es una carpeta, antes `--lanzar <carpeta> --ver` y enséñale qué
    entra y qué se queda fuera (audio sin transcribir, subcarpetas): solo se lanza con su sí.
    **Con 2 clases nuevas o más**, si tu adaptador trae `subagentes`, pregúntale antes cómo las quiere: "son N clases:
@@ -21,9 +22,10 @@
    - **Terminada:** va antes que nada — júntala con `--juntar <id>` y díselo: "la clase 3 ya está lista: empieza
      por la nota de la sesión". Si algo de lo que hicisteis mientras tanto (un examen, unas dudas) se quedó sin
      guardar, `--juntar` lo guarda solo antes de mezclar — no hace falta un `guardar.js` aparte.
-   - **Fallida:** díselo en una frase y ofrécele prepararla aquí, en la conversación. Si el registro dice que se
-     acabó la cuota (el límite de uso), no: tampoco te queda a ti. Propónle relanzarla cuando se renueve; lo que
-     llegó a escribirse no se pierde, queda guardado aparte.
+   - **Fallida:** díselo en una frase y ofrécele prepararla aquí, en la conversación. Si las líneas del registro que
+     enseña `--estado` hablan de cuota o de límite de uso, no: tampoco te queda a ti. Propónle relanzarla cuando se
+     renueve. Al relanzar, lo que llegó a escribirse se guarda en una rama `preparacion-descartada/…`, por si hiciera
+     falta; la clase se prepara de nuevo.
    - **Interrumpida** (se apagó o se durmió el ordenador a medio camino): díselo y ofrécele volver a
      prepararla.
 5. Si se va a por un café, déjala lanzada y díselo: al volver (o en la sesión siguiente, si cierra la ventana)
@@ -37,7 +39,8 @@ Esto no te pasa a ti solo: te lanza `preparar.js --trabajar` en una copia aparte
 - **No saludes, no preguntes nada** (ni al empezar ni por el camino): lo dudoso, `**TODO:**`, nunca una
   pregunta. Tampoco compruebes si hay una versión nueva del kit.
 - Procesa el material con la skill `/sesion`, siguiendo el id que te den. Si son varios ficheros, son la
-  misma clase. Si el prompt dice que son **varias clases**, no las procesas tú: sigue "Varias clases a la vez".
+  misma clase. Si el prompt dice que son **varias clases**, no las procesas tú: sigue "Varias clases a la vez". (Si eres
+  un subagente al que el coordinador encargó una clase, esto no va contigo: sigue su encargo.)
 - Al terminar, `node .kit/herramientas/guardar.js "sesion(<id>): <tema>"` como siempre. Estás en una rama
   `preparacion/<id>`: `guardar.js` ya sabe que no tiene que subir (se sube cuando el profesor la junte con
   `--juntar`). No hagas nada más — nadie está mirando la pantalla, así que no hay nada que "contar" al
@@ -64,14 +67,22 @@ puede lanzar otro: todos los lanzas tú. Lo de arriba sigue valiendo: nadie dela
 
 **Fase 2, escribir.** Un subagente por clase, todos a la vez, con este encargo:
 
-> Prepara la clase <id> (<ficheros>) siguiendo la skill `/sesion`, puntos 1 a 6. Notas que escribes tú: <slugs
+> Eres un subagente, no el coordinador: la línea de `/sesion` sobre `preparar.js --trabajar` y el apartado "Varias
+> clases a la vez" de `.kit/guias/segundo-plano.md` no van contigo. No preguntes nada: lo dudoso, `**TODO:**`. Prepara
+> la clase <id> (<ficheros>) siguiendo la skill `/sesion`, puntos 1 a 6, con este id. Notas que escribes tú: <slugs
 > nuevos>. Notas que amplías: <slugs, con lo que aportan las otras clases y sus ids>. Notas de otras clases que solo
-> enlazas: <slugs>. No toques ninguna otra nota de concepto. No toques `estudio/conceptos/_index.md`,
-> `estudio/progreso.md`, `estudio/mapa-del-curso.md`, `README.md` ni `config/`: devuélveme lo que añadirías a cada
-> uno. No ejecutes `comprobar.js` ni `guardar.js`.
+> enlazas: <slugs>. No toques ninguna otra nota de concepto (si un ejercicio tuyo es de una de ellas, devuélveme su
+> `ejercicio:` y su `## Practícalo`). No toques `estudio/conceptos/_index.md`, `estudio/progreso.md`,
+> `estudio/mapa-del-curso.md`, `README.md` ni `config/`. No ejecutes `comprobar.js`, `organizar.js` ni `guardar.js`.
+> Termina devolviéndome exactamente estas secciones, vacías si no hay nada: `## _index` (líneas nuevas o alias),
+> `## progreso` (filas), `## mapa-del-curso` (cobertura de la clase), `## Notas ajenas` (lo de los ejercicios),
+> `## Unidad nueva` (si la unidad no está en `config/estructura.json`: su id y su título).
 
-**Cerrar, tú y una sola vez.** Con lo que devuelvan, el punto 7 de `/sesion` (los ficheros vivos) para todas las
-clases. Después `comprobar.js` (arregla lo que salga) y un solo `guardar.js "sesion(<id>, <id>): <tema> · <tema>"`. Si
-un subagente falla, no escribas tú su clase de memoria: déjala sin sesión, y `preparar.js` dará la preparación por
-fallida para relanzarla entera.
+**Cerrar, tú y una sola vez.** Con las secciones que devuelvan: si hay unidad nueva, añádela a
+`config/estructura.json` y ejecuta `organizar.js`; lo de `## Notas ajenas`, en esas notas; y el punto 7 de `/sesion`
+(los ficheros vivos) para todas las clases. Después `comprobar.js` (arregla lo que salga) y un solo
+`guardar.js "sesion(<id>, <id>): <tema> · <tema>"`.
+
+**Si un subagente falla**, no escribas tú su clase de memoria ni guardes nada: termina sin guardar. `preparar.js` dará
+la preparación por fallida, lo escrito queda a salvo y se relanza entera.
 
