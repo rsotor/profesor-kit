@@ -13,17 +13,12 @@ Para abrir una sesión:
 
 - **forma-de-trabajar** (plan en `~/Documents/workspace/initiatives/forma-de-trabajar/plan-phase-1.md`,
   sección "profesor-kit"). Hecho, ya en `main`: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
-- **#56, revisor independiente de exámenes** (rama `claude/epic-feynman-5sxy9o`; 0.28.0 ya publicada). Cada
-  examen tipo test nuevo lo resuelve a ciegas alguien sin el contexto de quien lo escribió: un subagente (adaptador
-  `subagentes`), si no un proceso en segundo plano (`examen.js --revisar`), si no el profesor de la sesión siguiente
-  (`estado.js` → `examenesSinRevisar`). La revisión va a `config/revisiones/`; el examen no se ofrece hasta resolverla
-  y el alumno no se entera. `examen.js --corregir` no corrige la primera vez sin ella (`--sin-revision` la salta y
-  marca el intento). Van en la misma rama el punto 2 de la #54 y el `>>` (Siguiente, 4). Falta: prueba real entera sobre el commit, y Codex (`subagentes` pendiente en su adaptador).
-  - **Fuera:** la preparación en paralelo con subagentes; el auditor del material; revisar exámenes de respuesta
-    libre; revisar exámenes que ya tienen intentos.
-  - **Cómo sabremos:** en la prueba real, los dos exámenes generados tienen su revisión resuelta por `subagente`
-    antes de contestarse (`pasos.js#revisionDelExamen`); un examen sin revisión sale en `estado.js` y en
-    `comprobar.js` (`examen-sin-revisar`) y `--corregir` se niega.
+- **0.29.0, por publicar** (no antes del 2026-10-02: la 0.28.0 salió el 2026-10-01). En `main` ya está la #65: el
+  revisor independiente de exámenes (#56), el aviso de `actualizar.js` cuando se disparan los avisos (#54, punto 2) y
+  nada de `>>` en `/sesion` y `/ejercicio`; prueba real 15/15 sobre ella, 0 permisos denegados. Se espera a Codex
+  (@sarainieto, en la #45: prueba real en Windows, selector de la #59 y subagentes de la #56) para meter lo que salga
+  en esta release; si el 2026-10-02 por la tarde no hay nada, o necesita más de un día, se publica sin ello. Si lo de
+  Codex cambia adaptadores o skills, prueba real de Claude otra vez antes de publicar, con todo junto.
 
 ## Siguiente: que no se repita la #54
 
@@ -49,8 +44,8 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 
 ## Issues abiertas por decidir
 
-- **#56** subagentes con roles: el revisor independiente, en curso (arriba); la preparación en paralelo después
-  (~900.000 tokens por módulo). Encaja con K6 (base-kit).
+- **#56** subagentes con roles: el revisor independiente, ya en `main` (#65); queda el `pendiente` de Codex y la
+  preparación en paralelo (~900.000 tokens por módulo). Encaja con K6 (base-kit).
 - **#46**, **#47**: peticiones sin cambios.
 - **#59** abierta: falta que quien la abrió diga si su Codex tiene una herramienta de opciones (para quitar el
   `pendiente` del adaptador).
@@ -73,6 +68,8 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 
 ## Hecho
 
+- **#65** fusionada: revisor independiente de exámenes (#56), avisos disparados al actualizar (#54, punto 2) y
+  nada de `>>` en `/sesion` y `/ejercicio`. Sale en la 0.29.0.
 - **0.28.0** fusionada (#64) y publicada (release `v0.28.0`, 2026-10-01). #55 y #39 cerradas.
 - **#55** fusionada (#63): `/examen` por ángulos; la CI comprueba el commit que probó la prueba real y
   `prueba-real.js` no arranca sobre una copia atrasada. Sale en la 0.28.0.
