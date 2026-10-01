@@ -178,9 +178,11 @@ function resolverEntradas(raiz, entradas) {
   for (const entrada of entradas) {
     const rel = aRutaDeInbox(raiz, entrada);
     if (rel === '' || rel === 'inbox' || rel === `${v.CARPETA_ALUMNO}/inbox`) return { ok: false, motivo: 'inbox-entera', entrada };
-    if (motivoRutaNoSegura(rel) || !estaDentro(inbox, rel)) return { ok: false, motivo: 'fuera-de-inbox', entrada };
+    if (motivoRutaNoSegura(rel)) return { ok: false, motivo: 'fuera-de-inbox', entrada };
     const absoluta = path.join(inbox, ...rel.split('/'));
     if (!fs.existsSync(absoluta)) return { ok: false, motivo: 'fichero-ausente', fichero: entrada };
+    // Ya existe: estaDentro compara rutas reales (en macOS /var es /private/var; en Windows, RUNNER~1 es runneradmin).
+    if (!estaDentro(inbox, rel)) return { ok: false, motivo: 'fuera-de-inbox', entrada };
     if (!fs.statSync(absoluta).isDirectory()) { anadir(rel); continue; }
     const antes = ficheros.length;
     for (const d of fs.readdirSync(absoluta, { withFileTypes: true }).sort((a, b) => ordenNatural(a.name, b.name))) {
