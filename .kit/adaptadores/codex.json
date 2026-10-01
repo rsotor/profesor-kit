@@ -24,6 +24,9 @@
     "-"
   ],
   "prompt_por_stdin": true,
+  "preguntar_con_opciones": {
+    "pendiente": "issue #59: comprobar si Codex tiene una herramienta para que el alumno elija entre opciones y las envíe; si la tiene, aquí van herramienta y limites"
+  },
   "soporte": [
     {
       "sistema": "Windows",

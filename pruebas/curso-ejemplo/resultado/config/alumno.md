@@ -35,9 +35,6 @@
 
 ## Errores repetidos
 
-- **gastos-fijos-y-variables**: en el examen del módulo 1 falla las dos preguntas del concepto. En la p.6 marca "fijo" porque gasta algo en ocio todos los meses (que se repita no lo hace fijo: lo que cuenta es quién decide la cifra) y la p.5 (alquiler) la deja en blanco. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-28.md, p.5 y p.6*
-  Se repite en el test de corrección: clasifica el alquiler de 700 € (cifra fijada por contrato, con una subida anual por IPC) como variable, cuando es fijo. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-09-28-correccion.md, p.5*
-
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
 
@@ -46,10 +43,10 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-09-28 · respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-10-01 · sesión 01-01-01, respuesta del alumno en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-09-28 · conceptos/colchon-financiero.md, 2026-09-28 |
+| colchon-financiero | 1 | 2026-10-01 · conceptos/colchon-financiero.md, 2026-10-01 |

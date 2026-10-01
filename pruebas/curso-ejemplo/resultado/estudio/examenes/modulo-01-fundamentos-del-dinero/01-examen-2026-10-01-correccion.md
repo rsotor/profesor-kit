@@ -1,7 +1,7 @@
 ---
 tipo: examen
 unidad: 01
-fecha: 2026-09-28
+fecha: 2026-10-01
 nota: 5
 parcial: true
 intentos: 1
@@ -59,20 +59,20 @@ intentos: 1
 
 | Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |
 |---|---|---|---|---|---|---|
-| 1 | 2026-09-28 | 5 | 2 | 2 | 1 | 1 |
+| 1 | 2026-10-01 | 5 | 2 | 2 | 1 | 1 |
 
-> [!example]- Intento 1 · 2026-09-28 · tus respuestas y la corrección
+> [!example]- Intento 1 · 2026-10-01 · tus respuestas y la corrección
 >
 > ✅ Dominado → tasa-de-ahorro
-> ⚠️ Hay que repasar → liquidez (sabe la idea, no dio el nombre que se pedía)
-> 🔴 Vuelve a la nota → gastos-fijos-y-variables (segundo examen seguido con fallo)
-> Sin evidencia → colchon-financiero (p.6 en blanco). La p.4 (interés con su periodo) no depende de ningún concepto del módulo 1.
+> ⚠️ Hay que repasar → gastos-fijos-y-variables (1 fallo) · liquidez (la idea la tiene, falta el nombre) · pregunta 4, interés con su periodo (aún sin nota de concepto en el curso: TODO si el alumno quiere que se cree)
+> 🔴 Vuelve a la nota → ninguno
+> ⬜ Sin evidencia → colchon-financiero (pregunta en blanco)
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20 por ciento | ✅ Correcta | 300 ÷ 1.500 = 0,20, es decir, 20 por ciento. Se pedía una cifra y la cifra es correcta. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no lo puede sacar a tiempo: es la idea de inmovilizado. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre del concepto (liquidez) | Explica bien la idea (no puede venderlo rápido), pero la pregunta pedía el nombre y no lo da. |
-> | 4 | 2 por ciento | ⚠️ Le falta: el periodo (mensual) | El 2 por ciento es la cifra correcta, pero la pregunta pedía la cifra con su periodo: sin "al mes" no se sabe cuánto paga. |
-> | 5 | Variable. | ❌ Incorrecta | Responde variable; es fijo: la cifra la marca el contrato y no depende de lo que decidas gastar. Que la suba el IPC una vez al año no lo convierte en variable. |
-> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin responder. La respuesta es 3 meses de gastos; no se apunta como hueco de conocimiento, solo como pregunta sin contestar. |
+> | 1 | 20 por cien | ✅ Correcta | 300 ÷ 1.500 = 20 % mensual. La pregunta pedía una cifra. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no se puede sacar a tiempo: es la idea de inmovilizado. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre (liquidez) | La idea es correcta (no lo puede vender rápido para tener el dinero ya), pero la pregunta pedía el nombre del concepto y no lo da. |
+> | 4 | 2 por cien | ⚠️ Le falta: el periodo (mensual) | La cifra es correcta, pero la pregunta pedía la cifra con su periodo: es un 2 % mensual. |
+> | 5 | Variable. | ❌ Incorrecta | El alquiler es fijo: 700 € todos los meses, y que se actualice una vez al año con el IPC no lo hace variable. |
+> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin respuesta. Según el curso, con nómina fija el colchón cubre 3 meses de gastos. |

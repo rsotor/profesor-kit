@@ -4,40 +4,39 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 ---
 # Flashcards · 01-01-01-el-dinero-y-sus-funciones
 
-> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
-> y lo que huela a examen. Se responde mentalmente antes de desplegar.
+> Se responde mentalmente antes de desplegar.
 
-**El pastor quiere grano, pero el agricultor no quiere carne esta semana y no hay trato. ¿Qué función del dinero evita ese bloqueo?**
+**Un freelance cobra un trabajo con dinero y no tiene que buscar a nadie que quiera su diseño a cambio de algo. ¿Qué problema del trueque evita?**
 > [!success]- Respuesta
-> El medio de cambio: se acepta a cambio de cualquier cosa, sin que quien vende tenga que querer justo lo que tú ofreces.
+> La doble coincidencia de deseos: ya no hace falta que el otro quiera justo lo que tú ofreces, y en ese momento.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 28/9*
+*Caja 1 de 5 · te toca el 1/10*
 
-**Un cartel dice "corte de pelo: 12,00 €" y todavía nadie ha pagado. ¿Qué función del dinero está actuando?**
+**Un café cuesta 1,50 € y un corte de pelo 12,00 €. ¿Qué función del dinero permite compararlos directamente?**
 > [!success]- Respuesta
-> La unidad de cuenta: pone precio. Pagar sería el medio de cambio, y aquí aún no ha ocurrido.
+> La de unidad de cuenta: poner precio a todo con la misma vara.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 28/9*
+*Caja 1 de 5 · te toca el 1/10*
 
-**Las mandarinas se encarecen mucho por una helada y el resto de precios no se mueve. ¿Es inflación? (explica el porqué en una frase)**
+**Sube mucho el precio de los tomates por una mala cosecha. ¿Es inflación?**
 > [!success]- Respuesta
-> No. La inflación es la subida general y sostenida de los precios, de casi todo a la vez; aquí sube solo una cosa por una causa suya.
+> No. Es la subida de una cosa concreta. Inflación es que suba el nivel general de precios, de casi todo a la vez.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 28/9*
+*Caja 1 de 5 · te toca el 1/10*
 
-**Un piso vale mucho más que 100,00 € en la cartera, pero no sirve para pagar el súper hoy. ¿Por qué? (en una frase)**
+**¿Qué es más líquido: 50,00 € en la cartera o un piso, y por qué?**
 > [!success]- Respuesta
-> Porque es poco líquido: convertirlo en dinero sin perder valor lleva meses. Valor y liquidez son cosas distintas.
+> Los 50,00 €: se gastan al instante. Al piso hay que venderlo, y con prisa se vende peor.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 28/9*
+*Caja 1 de 5 · te toca el 1/10*
 
 ---
 Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]
