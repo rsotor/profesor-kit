@@ -130,9 +130,9 @@ function leerSalida(stdout) {
 }
 
 // Comprobado en Windows con Codex 0.159.3 (#45): al lanzar Codex desde otra sesión de Codex, cualquier variable
-// `CODEX_*` del padre puede arrastrar el entorno gestionado o su perfil de permisos. El hijo solo necesita
-// CODEX_HOME para reutilizar la autenticación; todo lo demás lo decide su propia invocación (`--sandbox`, `-c`...).
-const VARIABLES_DE_SESION = /^CODEX_(?!HOME$)/;
+// `CODEX_*` del padre puede arrastrar el entorno gestionado o su perfil de permisos. El hijo conserva
+// CODEX_HOME o CODEX_API_KEY para reutilizar la autenticación; todo lo demás lo decide su propia invocación.
+const VARIABLES_DE_SESION = /^CODEX_(?!(HOME|API_KEY)$)/;
 function entorno(env = process.env) {
   return Object.fromEntries(Object.entries(env).filter(([k]) => !VARIABLES_DE_SESION.test(k)));
 }

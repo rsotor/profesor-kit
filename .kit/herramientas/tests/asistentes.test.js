@@ -85,13 +85,13 @@ test('codex.argsTarea/argsSondeo: sin el "-" final del prompt por stdin, con --e
   }
 });
 
-test('codex.entorno: un hijo solo hereda CODEX_HOME, no el entorno gestionado del Codex padre (issue #45)', () => {
+test('codex.entorno: un hijo hereda la autenticación, no el entorno gestionado del Codex padre (issue #45)', () => {
   const env = codex.entorno({
-    CODEX_HOME: 'auth', CODEX_CI: '1', CODEX_VERSION: '0.159.3', PATH: 'bin',
+    CODEX_HOME: 'auth', CODEX_API_KEY: 'key', CODEX_CI: '1', CODEX_VERSION: '0.159.3', PATH: 'bin',
     CODEX_SANDBOX_NETWORK_DISABLED: '1', CODEX_THREAD_ID: 'thread', CODEX_SESSION_ID: 'session',
     CODEX_PERMISSION_PROFILE: 'managed', CODEX_DAEMON_SHUTDOWN_SOCKET: 'socket',
   });
-  assert.deepEqual(env, { CODEX_HOME: 'auth', PATH: 'bin' });
+  assert.deepEqual(env, { CODEX_HOME: 'auth', CODEX_API_KEY: 'key', PATH: 'bin' });
 });
 
 // --- Confianza de la carpeta: la ruta va en el VALOR, nunca en la clave (openai/codex#35780) ------------------
