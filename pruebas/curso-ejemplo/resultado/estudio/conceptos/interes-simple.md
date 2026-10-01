@@ -1,12 +1,12 @@
 ---
 tipo: concepto
-bloques: ["Módulo 2 · Ahorro e interés"]
+bloques: [02-01]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [capital-y-tipo-de-interes]
 alias: []
 tags: [interes]
-ejercicio: 02-01-01-simple-frente-a-compuesto
+ejercicio: 02-01-01-simple-o-compuesto
 ---
 # Interés simple
 
@@ -14,43 +14,41 @@ ejercicio: 02-01-01-simple-frente-a-compuesto
 
 ## El problema
 
-Quieres saber cuánto tendrás dentro de unos años si el banco te paga un tipo fijo. Lo más sencillo es que cada
-año te pague lo mismo, calculado siempre sobre lo que pusiste el primer día.
+Hay que acordar cuántos intereses se pagan por un préstamo o un depósito. La forma más sencilla: cada periodo se paga lo mismo, sobre el dinero de partida, y nada más.
 
 ## El ejemplo
 
-Depositas 1.000,00 € a un interés simple del 5 % anual, durante 3 años.
+**1.000,00 €** al **5 % anual** de interés simple, durante **3 años**:
 
-- Cada año: 1.000,00 € × 0,05 = 50,00 € de intereses.
-- En 3 años: 50,00 € × 3 = **150,00 €**.
-- Capital final: 1.000,00 € + 150,00 € = **1.150,00 €**.
+| Año | Intereses del año | Capital acumulado |
+|---|---|---|
+| 1 | 50,00 € | 1.050,00 € |
+| 2 | 50,00 € | 1.100,00 € |
+| 3 | 50,00 € | 1.150,00 € |
 
-Los 50,00 € del primer año no se vuelven a meter: el año siguiente vuelven a ser 50,00 €, ni un céntimo más.
+Cada año son 50,00 €, sin importar cuánto llevas acumulado: crece en línea recta.
 
 ## La fórmula
 
 $$ I = C \cdot i \cdot t \qquad C_f = C + I $$
 
-`C` es el capital inicial, `i` el tipo en tanto por uno (5 % anual = 0,05) y `t` el tiempo **en el mismo
-periodo que `i`** (si `i` es anual, `t` en años). `I` son los intereses y `C_f` el capital final.
+$C$ es el capital inicial, $i$ el tipo en tanto por uno y $t$ el tiempo **en el mismo periodo que $i$** (si $i$ es anual, $t$ en años). Con el ejemplo: $I$ = 1.000 × 0,05 × 3 = **150,00 €**, y $C_f$ = **1.150,00 €**.
 
 ## El error típico
 
-> [!info] Ampliación fuera de los apuntes
-> Mezclar periodos: poner un tipo anual con el tiempo en meses. Con 0,05 anual y `t` = 36 salen 1.800,00 €
-> de intereses en vez de 150,00 €. `i` y `t` deben hablar del mismo periodo.
+Mezclar periodos: usar un tipo anual con el tiempo en meses (3 años → 36). La fórmula solo vale si $i$ y $t$ hablan del mismo periodo.
 
 ## Practícalo
 
-→ **[Simple frente a compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-frente-a-compuesto.md)**
+→ **[Simple o compuesto: ¿cuál gana?](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-o-compuesto.html)**
 
-Desde el lado del simple: alarga los años y mira que la línea sube siempre igual, 50,00 € cada año.
+Pon un tipo simple más alto que el compuesto y ve alargando el tiempo: el simple gana al principio, y después deja de hacerlo.
 
 ## Relacionados
 
-- [[capital-y-tipo-de-interes]] — de dónde salen `C` e `i`
-- [[interes-compuesto]] — el mismo caso, pero reinvirtiendo los intereses
+- [[interes-compuesto]] — el mismo ejemplo reinvirtiendo los intereses
+- [[capital-y-tipo-de-interes]] — de dónde salen $C$ e $i$
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez

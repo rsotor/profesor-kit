@@ -1,41 +1,40 @@
 ---
 tipo: concepto
-bloques: ["Módulo 2 · Ahorro e interés"]
+bloques: [02-01]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 1
-requiere: [tasa-de-ahorro]
-alias: []
+requiere: []
+alias: [capital, tipo de interés, tasa de interés]
 tags: [interes]
 ---
-# Capital y tipo de interés
+# El capital y el tipo de interés
 
-> **En una frase:** El capital es el dinero del que se parte, y el tipo de interés es el precio de tenerlo prestado durante un tiempo, dicho siempre con su periodo (anual, mensual…).
+> **En una frase:** El capital es el dinero de partida; el tipo de interés es el precio de tenerlo prestado durante un tiempo, y siempre se dice con su periodo.
 
 ## El problema
 
-Alguien te deja 1.000,00 € y quiere algo a cambio por dejártelos. Hace falta una forma de decir cuánto: no
-vale "un poco más", tiene que ser una cifra que se pueda comparar entre ofertas.
+Si prestas 1.000,00 € a un amigo y te los devuelve sin más, le has hecho un favor gratis: durante ese tiempo tú no podías usarlos. Hace falta una forma de ponerle precio a "tener el dinero de otro durante un tiempo".
 
 ## El ejemplo
 
-Depositas 1.000,00 € en una cuenta que paga un 5 % anual.
+Depositas **1.000,00 €** en un banco y te pagan **50,00 € al año** por tenerlos. Esos 1.000,00 € son el capital; los 50,00 € son lo que cobras por el año, y 50,00 € sobre 1.000,00 € es **5 % anual**.
 
-- **Capital:** 1.000,00 € (con lo que empiezas).
-- **Tipo de interés:** 5 % anual. Al cabo de un año, el banco te paga por tener tu dinero 50,00 €.
+## La fórmula
 
-El mismo "5" con otro periodo es otra cosa: un 5 % mensual serían 50,00 € **cada mes**, 600,00 € en un año.
+$$ i = \frac{\text{intereses de un periodo}}{C} $$
+
+$C$ es el capital e $i$ el tipo en tanto por uno (5 % anual = 0,05). En las fórmulas de las notas siguientes se usa siempre en tanto por uno.
 
 ## El error típico
 
-Quedarse con el número y olvidar el periodo. Un tanto por ciento sin periodo no dice nada: en este curso
-**siempre** se dice "anual", "mensual" o "diario".
+Decir "me dan un cinco por ciento" y quedarse ahí. Un 5 % anual y un 5 % mensual no se parecen en nada: el segundo, al cabo de un año, es mucho más dinero. **En este curso un tipo siempre lleva su periodo.**
 
 ## Relacionados
 
-- [[interes-simple]] — la forma más sencilla de calcular los intereses de un capital
-- [[interes-compuesto]] — la forma en que los intereses también generan intereses
-- [[tasa-de-ahorro]] — otro porcentaje que solo se entiende con su periodo (mensual)
+- [[interes-simple]] — la forma más sencilla de aplicar el tipo
+- [[interes-compuesto]] — la otra forma, con interés sobre interés
+- [[inflacion]] — otra subida porcentual que también necesita su periodo (suele darse anual)
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez

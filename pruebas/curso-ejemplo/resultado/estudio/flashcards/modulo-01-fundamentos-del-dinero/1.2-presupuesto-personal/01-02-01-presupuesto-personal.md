@@ -4,40 +4,39 @@ sesion: 01-02-01-presupuesto-personal
 ---
 # Flashcards · 01-02-01-presupuesto-personal
 
-> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
-> y lo que huela a examen. Se responde mentalmente antes de desplegar.
+> Se responde mentalmente antes de desplegar.
 
-**Todos los meses gastas algo en ocio. ¿Es un gasto fijo? (explica el porqué en una frase)**
+**Alguien mete el ocio en gastos fijos porque "todos los meses gasto algo". ¿Es fijo?**
 > [!success]- Respuesta
-> No, es variable: que gastes algo siempre no lo hace fijo; la cifra exacta la decides tú cada mes.
+> No. Que gastes algo siempre no lo hace fijo: la cifra la decides tú cada mes, y eso lo define como variable.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 28/9*
+*Caja 1 de 5 · te toca el 1/10*
 
-**Como freelance, ¿con qué ingreso montas el presupuesto? (en una frase)**
+**Un mes factura 2.400,00 € y otro 1.300,00 €. ¿Con qué ingreso se presupuesta?**
 > [!success]- Respuesta
 > Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 28/9*
+*Caja 1 de 5 · te toca el 1/10*
 
-**¿Qué te dice la tasa de ahorro que no te dice la cifra de ahorro en euros? (en una frase)**
+**Dos personas ahorran 655,00 € al mes, con ingresos distintos. ¿Qué medida permite compararlas?**
 > [!success]- Respuesta
-> Qué parte de lo que ganas te queda, así que se puede comparar entre personas (o meses) con ingresos distintos.
+> La tasa de ahorro: ahorro ÷ ingresos × 100. La cifra en euros no se puede comparar.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 28/9*
+*Caja 1 de 5 · te toca el 1/10*
 
-**¿Por qué un freelance apunta a más meses de colchón que alguien con nómina fija? (en una frase)**
+**Con gastos de 1.195,00 € al mes, ¿cuánto es un colchón de 3 meses?**
 > [!success]- Respuesta
-> Porque sus ingresos son irregulares: un mes flojo hay que pagar los gastos igual. Suele apuntar a 5-6 meses en vez de 3.
+> 3 × 1.195,00 € = 3.585,00 €.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 28/9*
+*Caja 1 de 5 · te toca el 1/10*
 
 ---
 Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

@@ -1,11 +1,11 @@
 ---
 tipo: concepto
-bloques: ["Módulo 1 · Fundamentos del dinero"]
+bloques: [01-01]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
 alias: []
-tags: [dinero]
+tags: [fundamentos]
 ---
 # Liquidez
 
@@ -13,34 +13,31 @@ tags: [dinero]
 
 ## El problema
 
-Tener valor no basta: a veces hay que pagar hoy. Algo puede valer mucho y, aun así, no servir para pagar
-mañana si convertirlo en dinero lleva tiempo.
+Tener valor guardado no basta: hay que poder usarlo cuando hace falta. Un patrimonio que no puedes convertir en dinero a tiempo no resuelve un pago urgente.
 
 ## El ejemplo
 
-| Lo que tienes | Cómo lo conviertes en dinero | Liquidez |
+| Qué tienes | Cuánto tardas en gastarlo | Liquidez |
 |---|---|---|
-| Dinero en la cartera | Ya es dinero: se gasta al instante | Máxima |
-| Un piso | Venderlo bien lleva meses | Muy poca |
+| 50,00 € en la cartera | Al instante | Total |
+| Un piso | Meses, si quieres venderlo bien | Muy poca |
 
-La clase la deja preparada para el módulo 2, donde se compara ahorrar (muy líquido) con invertir (a veces,
-menos líquido).
+Si el piso hay que venderlo en una semana, probablemente se venda más barato. Esa es "la pérdida de valor por las prisas".
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundir liquidez con valor. Un piso vale mucho más que lo que llevas en la cartera, y aun así es mucho
-> menos líquido: vender deprisa suele obligar a aceptar menos de lo que vale.
+> Pensar que algo que vale mucho es líquido. El valor y la liquidez son cosas distintas: un piso vale mucho y es poco líquido, y 50,00 € valen poco y son totalmente líquidos.
 
-> [!tip] Visto desde tus ingresos irregulares
-> Un mes flojo hay que pagar el alquiler en su fecha. Lo guardado para ese mes tiene que poder gastarse ya:
-> lo que tarda meses en convertirse en dinero no cubre ese mes.
+## Visto desde tus ingresos irregulares
+
+Cuando un mes factures poco, necesitarás dinero rápido. Cuánto de lo que tienes está disponible en días y cuánto no es una pregunta que importará al montar un colchón financiero. El material solo anticipa esto para el módulo 2 (ahorrar es muy líquido, invertir a veces menos).
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — algo es líquido si se puede usar ya como medio de cambio
-- [[inflacion]] — el otro lado de guardar dinero: la inflación lo encoge, la liquidez lo mantiene disponible
+- [[funciones-del-dinero]] — el dinero es lo más líquido que hay
+- [[inflacion]] — el otro factor al decidir cómo guardar
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

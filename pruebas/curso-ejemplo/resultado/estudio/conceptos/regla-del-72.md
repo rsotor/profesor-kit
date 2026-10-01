@@ -1,47 +1,44 @@
 ---
 tipo: concepto
-bloques: ["Módulo 2 · Ahorro e interés"]
+bloques: [02-01]
 visto_en: [02-01-01-interes-simple-y-compuesto]
-dificultad: 1
+dificultad: 2
 requiere: [interes-compuesto]
 alias: []
 tags: [interes]
 ---
 # Regla del 72
 
-> **En una frase:** La regla del 72 es un atajo para saber, a ojo, cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
+> **En una frase:** Dividir 72 entre el tipo anual da, a ojo, los años que tarda un capital en doblarse a interés compuesto.
 
 ## El problema
 
-Quieres saber si tu dinero se dobla en 10 años o en 40, y no tienes calculadora a mano.
+Quieres saber cuánto tarda tu dinero en duplicarse y no tienes calculadora a mano para despejar la fórmula del [[interes-compuesto]].
 
-Antes, dos líneas de [[interes-compuesto]]: con él, el capital final es `C · (1 + i)^n`, y "doblarse" es que `C_f` valga el doble de `C`.
+> Recuerda: el compuesto reinvierte los intereses, así que el tiempo para doblar depende solo del tipo, no del capital.
 
 ## El ejemplo
 
-Un capital al 6 % anual.
-
-72 ÷ 6 = **12 años**, aproximadamente.
-
-Con la fórmula exacta salen 11,9 años: la regla es una aproximación, no el resultado exacto.
+A un **6 % anual**: 72 ÷ 6 = **12 años**, aproximadamente. El cálculo exacto con la fórmula da 11,9 años: sirve para orientarse, no para dar cifras exactas.
 
 ## La fórmula
 
-$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual (el número, sin el símbolo)}} $$
+$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número}} $$
 
-El tipo entra como número: para un 6 % anual, se divide entre 6 (no entre 0,06).
+"En número" es sin el símbolo de por ciento: 6 % anual entra como 6.
 
 ## El error típico
 
+Usarla con interés simple, o con un tipo que no es anual. Vale para compuesto y con el tipo en años.
+
 > [!info] Ampliación fuera de los apuntes
-> Usarla con interés simple. La regla es solo para compuesto: a un 6 % anual simple, 1.000,00 € tardan
-> 1 ÷ 0,06 ≈ 16,7 años en doblarse, no 12.
+> Propuesta propia; la clase solo dice que es una aproximación.
 
 ## Relacionados
 
-- [[interes-compuesto]] — el tipo de interés al que se aplica
-- [[capitalizacion]] — cuanto más frecuente, algo antes se dobla
+- [[interes-compuesto]] — de dónde sale la regla
+- [[capital-y-tipo-de-interes]] — el tipo anual que entra en la división
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez
