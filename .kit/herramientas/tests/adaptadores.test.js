@@ -22,7 +22,9 @@ test('cada adaptador del kit tiene los campos obligatorios; el modelo recomendad
     }
     if (a.preguntar_con_opciones) {
       const p = a.preguntar_con_opciones;
-      assert.ok(typeof p.herramienta === 'string' && p.herramienta && typeof p.limites === 'string' && p.limites, `${id}: preguntar_con_opciones sin herramienta o sin limites`);
+      const lleno = x => typeof x === 'string' && x.length > 0;
+      assert.ok(p.pendiente ? lleno(p.pendiente) && !p.herramienta : lleno(p.herramienta) && lleno(p.limites),
+        `${id}: preguntar_con_opciones lleva herramienta y limites, o solo pendiente`);
     }
   }
 });

@@ -116,8 +116,10 @@ que no tiene) y **falsos positivos** (das por sabido lo que acertó de rebote).
   *(explica el porqué en 2-3 líneas)*. Si quieres razonamiento, pídelo; si quieres el nombre o la fórmula,
   pídelos. Lo que no pides, no lo puedes corregir.
 - **Con opciones en el chat, nunca casillas `- [ ]`:** lo que marca ahí no te llega. Si tu adaptador trae
-  `preguntar_con_opciones`, usa esa herramienta (elige y envía); si no la trae o falla, pide la respuesta en
-  una línea: «1b, 2a». Las casillas son para un fichero (un examen en Obsidian), que sí se lee.
+  `preguntar_con_opciones` con `herramienta`, úsala (elige y envía); si no, o falla, pide la respuesta en una
+  línea: «1b, 2a». Si trae `pendiente`, nadie ha comprobado aún si la tienes: si la tienes, escálalo ("Feedback
+  al kit"). Las casillas son para un fichero (un examen en Obsidian), que sí se lee. **Hasta 5 preguntas, en el
+  chat directamente; más es un examen** (`/examen`, que le deja elegir cómo contestarlo).
 - **Se pregunta por entender y distinguir, no por repetir.** Nunca pidas reproducir la definición o la
   redacción literal del material: lo que cuenta es tener el concepto y saber diferenciarlo de los que se le
   parecen. El nombre se pide solo cuando saberlo importa (el examen del centro lo usa, o hay dos parecidos que

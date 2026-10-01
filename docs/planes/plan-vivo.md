@@ -19,7 +19,10 @@ Para abrir una sesión:
     leer; lo demás se dice) y rutas escritas de cualquier forma (`estudio/inbox/…`, `inbox/…`, `\`, ruta entera).
     `--ver` enseña qué entraría sin lanzar. Antes se aceptaba `../` fuera de inbox: ya no.
   - **#59:** en el chat, nunca casillas. Si el adaptador trae `preguntar_con_opciones` (Claude Code:
-    `AskUserQuestion`), se usa; si no, «1b, 2a». Codex no lo trae: falta comprobar si tiene una herramienta así.
+    `AskUserQuestion`), se usa; si no, «1b, 2a». Hasta 5 preguntas, en el chat; más es un examen, y el alumno
+    elige: en Obsidian de golpe, o en el chat por tandas sin corregir nada hasta el final (el profesor marca sus
+    casillas en la nota y corrige `examen.js`). Codex lleva `pendiente`: al probarlo con Codex (#45), confirmar si
+    tiene una herramienta así y poner su `herramienta` y `limites`.
   - **Fuera:** examen entero en el chat (sigue siendo un fichero en Obsidian); subcarpetas dentro de la carpeta.
   - **Cómo sabremos:** tests 20 y 21 de `preparar.test.js` y `resolverEntradas`; en un curso real con Claude
     Code, el calentamiento sale con opciones para elegir y la respuesta llega; quien abrió la #59 lo confirma
@@ -63,7 +66,8 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    registre (así cuenta para el tercer tropiezo) y medir.
 2. **Claude en la nube (#50, issue cerrada):** verificar de verdad que `guardar.js` sube y `--traer` trae con el
    proxy local (`http://…@127.0.0.1:PORT/git/<owner>/<repo>`), y trabajar en una rama `claude/…`. Lo prueba Roberto.
-3. **Codex en el Mac (#45, abierta):** `codex login` y los pasos del comentario de la #45 (9 supuestos).
+3. **Codex en el Mac (#45, abierta):** `codex login` y los pasos del comentario de la #45 (9 supuestos). Y el
+   `pendiente` de `preguntar_con_opciones` (#59).
 4. **0.28.0:** plan con calendario (E2 + E9) y examen acumulativo (E7).
    - **Fuera:** TODO: decidir con Roberto al abrir el plan.
    - **Cómo sabremos:** TODO: decidir con Roberto al abrir el plan.

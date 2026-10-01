@@ -161,6 +161,19 @@ referencia; sin ninguna, es nueva.
 **En el final**, la clave lleva además `"escalones"`: el array completo de `tipos.final.escalones` tal como
 estaba, para que la escalera siga coherente si luego cambia la configuración.
 
+### Cómo lo contesta: lo elige él
+
+Con el examen y la clave escritos, pregúntale cómo quiere contestarlo (si dice "siempre así", va a
+`config/profesor.md` y no vuelves a preguntar):
+
+- **En Obsidian, de golpe:** "abre la nota **<nombre>**, en la carpeta **examenes**, marca tus respuestas y
+  avísame cuando acabes".
+- **Aquí, por tandas:** le pasas las preguntas en el chat, en orden, como dice "Cuando preguntas para medir"
+  de `AGENTS.md` (con la herramienta de `preguntar_con_opciones`, una tanda por llamada; en texto, de 5 en 5, y
+  responde «1b, 2a…»). **Nada de ninguna respuesta hasta el final:** ni acierto, ni pista. Tras la última tanda,
+  marca tú en la nota del examen las casillas que eligió, tal cual; una respuesta que no es ninguna opción se
+  queda en blanco, y se lo dices. Después, el apartado 5, igual que si las hubiera marcado él.
+
 ## 5. Corregir
 
 Cuando el alumno diga "he terminado el examen" (o "corrígelo"), sus casillas ya están marcadas en la propia
