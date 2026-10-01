@@ -48,14 +48,17 @@ test('claude-code.argsSondeo: sin permisos de escritura, en stream, y sin entrad
 
 // --- 2. Codex: args desde el segundo_plano del adaptador, prompt por stdin ----------------------------------
 
-test('codex.argsTarea: sale de segundo_plano del adaptador; el prompt no va en args, va en entrada; lleva --json y web_search=disabled', () => {
+test('codex.argsTarea: usa revisión automática en workspace-write, conserva las reglas y manda el prompt por stdin', () => {
   const cwd = temporal('kit-asistente-codex-');
   const { args, entrada } = codex.argsTarea({ prompt: 'hola codex', modelo: null, cwd, adaptador: CODEX_JSON });
   assert.equal(entrada, 'hola codex');
   assert.ok(!args.includes('hola codex'), 'el prompt nunca va como argumento');
   assert.ok(args.includes('--json'));
   assert.ok(args.includes('web_search=disabled'));
-  assert.ok(args.includes('--sandbox') && args[args.indexOf('--sandbox') + 1] === 'workspace-write');
+  assert.ok(!args.includes('--sandbox'), '--approve-for-me ya selecciona workspace-write y no admite --sandbox');
+  assert.ok(args.includes('--approve-for-me'));
+  assert.ok(!args.some(x => /^approval_policy=/.test(x)), 'approval_policy=never bloqueó incluso lecturas en la prueba real');
+  assert.ok(!args.includes('--ignore-rules'), 'una tarea real conserva las reglas de permisos del curso');
   assert.ok(!args.includes('-m'), 'sin modelo, no hay -m');
 });
 
@@ -96,7 +99,7 @@ test('codex.entorno: un hijo hereda la autenticación, no el entorno gestionado 
 
 // --- Confianza de la carpeta: la ruta va en el VALOR, nunca en la clave (openai/codex#35780) ------------------
 
-test('codex.argsTarea: la confianza va en el valor de "projects" (TOML en línea), con la ruta canónica; approval_policy sin comillas', () => {
+test('codex.argsTarea: la confianza va en el valor de "projects" (TOML en línea), con la ruta canónica', () => {
   // Una carpeta con puntos y espacios en el nombre: si la ruta fuera la CLAVE (`projects."<ruta>".trust_level`),
   // Codex la partiría por cada punto — con la ruta en el valor, da igual cuántos puntos traiga.
   const cwd = path.join(temporal('kit.codex 45.'), 'curso real');
@@ -109,7 +112,7 @@ test('codex.argsTarea: la confianza va en el valor de "projects" (TOML en línea
   assert.ok(confianza, 'falta la anulación de confianza');
   assert.equal(confianza, `projects={${JSON.stringify(fs.realpathSync(cwd))}={trust_level="trusted"}}`);
   assert.ok(!confianza.includes('projects.'), 'la ruta no puede ir como parte de la clave');
-  assert.ok(valores.includes('approval_policy=never'), 'approval_policy sin comillas');
+  assert.ok(!valores.some(v => /^approval_policy=/.test(v)), 'la revisión automática decide sin approval_policy=never');
   assert.ok(i >= 0);
 });
 
