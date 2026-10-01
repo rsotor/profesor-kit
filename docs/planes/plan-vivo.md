@@ -13,13 +13,17 @@ Para abrir una sesión:
 
 - **forma-de-trabajar** (plan en `~/Documents/workspace/initiatives/forma-de-trabajar/plan-phase-1.md`,
   sección "profesor-kit"). Hecho, ya en `main`: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
-- **0.28.0 en publicación** (rama `claude/epic-feynman-5sxy9o`): #58, #59 y #55, ya en `main`. Sube `.kit/VERSION` y el
-  CHANGELOG. Antes de mezclar: prueba real entera sobre el commit de la release (`.claude/rules/desarrollo.md`).
-  La primera (13/15, rama `diagnostico-0280`) sacó dos cosas, ya arregladas en la rama: las falladas vuelven
-  rehechas (mismo concepto y ángulo; las del centro, literales; `de` siempre al examen donde se falló), y las
-  reglas del dominio no se aplican a la respuesta del alumno, que se cita tal cual (un paso la había reescrito).
-  Al salir la release: comprobar que existe (`release.yml`) y cerrar la #55 cuando se vea un examen con ángulos en
-  el curso real.
+- **#56, revisor independiente de exámenes** (rama `claude/epic-feynman-5sxy9o`; 0.28.0 ya publicada). Cada
+  examen tipo test nuevo lo resuelve a ciegas alguien sin el contexto de quien lo escribió: un subagente (adaptador
+  `subagentes`), si no un proceso en segundo plano (`examen.js --revisar`), si no el profesor de la sesión siguiente
+  (`estado.js` → `examenesSinRevisar`). La revisión va a `config/revisiones/`; el examen no se ofrece hasta resolverla
+  y el alumno no se entera. `examen.js --corregir` no corrige la primera vez sin ella (`--sin-revision` la salta y
+  marca el intento). Van en la misma rama el punto 2 de la #54 y el `>>` (Siguiente, 4). Falta: prueba real entera sobre el commit, y Codex (`subagentes` pendiente en su adaptador).
+  - **Fuera:** la preparación en paralelo con subagentes; el auditor del material; revisar exámenes de respuesta
+    libre; revisar exámenes que ya tienen intentos.
+  - **Cómo sabremos:** en la prueba real, los dos exámenes generados tienen su revisión resuelta por `subagente`
+    antes de contestarse (`pasos.js#revisionDelExamen`); un examen sin revisión sale en `estado.js` y en
+    `comprobar.js` (`examen-sin-revisar`) y `--corregir` se niega.
 
 ## Siguiente: que no se repita la #54
 
@@ -34,8 +38,9 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    - **Fuera:** subir datos de un alumno al repo; anonimizar.
    - **Cómo sabremos:** con la copia del curso de antes de la 0.27.1, la comprobación falla con la 0.27.0 y pasa
      con la 0.27.1.
-2. **`actualizar.js` avisa si los avisos se disparan** tras actualizar (la #54: de 40 a 147); hoy solo compara
-   errores.
+2. **`actualizar.js` avisa si los avisos se disparan** tras actualizar (la #54: de 40 a 147). Hecho en la rama de la
+   #56 (sale en la 0.29.0): compara los avisos del `comprobar.js` viejo con los del nuevo y, con 10 más o la mitad
+   más, lo dice en una línea; `/actualizar` le cuenta al alumno qué hacer.
    - **Fuera:** bloquear la actualización por avisos.
    - **Cómo sabremos:** test con un curso que pasa de N a muchos más avisos → el resumen lo dice.
 3. **El formato de `progreso.md` fijado en una plantilla**, para que el profesor no se invente columnas.
@@ -44,9 +49,8 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 
 ## Issues abiertas por decidir
 
-- **#56** subagentes con roles: primero el revisor independiente de exámenes (verifica los ángulos de la #55);
-  la preparación en paralelo después (~900.000 tokens por módulo). Encaja con K6 (base-kit).
-- **#39** se puede cerrar: H12 salió en la 0.26 y H09 lo sigue la #45. Cerrarla necesita el OK de Roberto.
+- **#56** subagentes con roles: el revisor independiente, en curso (arriba); la preparación en paralelo después
+  (~900.000 tokens por módulo). Encaja con K6 (base-kit).
 - **#46**, **#47**: peticiones sin cambios.
 - **#59** abierta: falta que quien la abrió diga si su Codex tiene una herramienta de opciones (para quitar el
   `pendiente` del adaptador).
@@ -61,16 +65,15 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    proxy local (`http://…@127.0.0.1:PORT/git/<owner>/<repo>`), y trabajar en una rama `claude/…`. Lo prueba Roberto.
 3. **Codex en el Mac (#45, abierta):** `codex login` y los pasos del comentario de la #45 (9 supuestos). Y el
    `pendiente` de `preguntar_con_opciones` (#59).
-4. **El profesor escribe con `>>` aunque `AGENTS.md` lo prohíbe** (tres pruebas reales seguidas: `cat >`/`printf >>` en
-   `/ejercicio` y `/sesion`, para añadir filas a `progreso.md` o `mapa-del-curso.md`). Se deniega y lo rehace bien, pero
-   gasta un intento. En el próximo cambio de skills: decirlo en `/sesion` donde añade filas ("edita con tu herramienta,
-   nunca `>>`") y medirlo en la prueba real.
-5. **0.29.0:** plan con calendario (E2 + E9) y examen acumulativo (E7), o el revisor independiente (#56).
+4. **El profesor escribe con `>>` aunque `AGENTS.md` lo prohíbe** (tres pruebas reales seguidas). Hecho en la rama de
+   la #56: `/sesion` y `/ejercicio` lo dicen donde se añaden filas. Se mide en "Permisos denegados" del RESUMEN.
+5. **0.29.0:** el revisor independiente (#56, en curso) y, después, plan con calendario (E2 + E9) y examen acumulativo (E7).
    - **Fuera:** TODO: decidir con Roberto al abrir el plan.
    - **Cómo sabremos:** TODO: decidir con Roberto al abrir el plan.
 
 ## Hecho
 
+- **0.28.0** fusionada (#64) y publicada (release `v0.28.0`, 2026-10-01). #55 y #39 cerradas.
 - **#55** fusionada (#63): `/examen` por ángulos; la CI comprueba el commit que probó la prueba real y
   `prueba-real.js` no arranca sobre una copia atrasada. Sale en la 0.28.0.
 - **#58 y #59** fusionadas (#62), salen en la 0.28.0: `preparar.js --lanzar` con carpeta de inbox; en el chat,

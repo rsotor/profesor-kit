@@ -26,6 +26,7 @@
     "WebSearch"
   ],
   "prompt_por_stdin": true,
+  "subagentes": {"herramienta": "Agent"},
   "preguntar_con_opciones": {
     "herramienta": "AskUserQuestion",
     "limites": "de 1 a 4 preguntas por vez y de 2 a 4 opciones por pregunta; el alumno siempre puede escribir otra respuesta, que se corrige como respuesta abierta"

@@ -4,6 +4,7 @@ const path = require('node:path');
 const v = require('./lib/vault');
 const indice = require('./lib/indice');
 const perfil = require('./lib/perfil');
+const examenesLib = require('./lib/examenes');
 const { comprobar } = require('./comprobar');
 const g = require('./lib/git');
 
@@ -170,6 +171,8 @@ function calcularEstado(raiz, { ejecutarFetch } = {}) {
     enRepaso,
     preparaciones,
     caso,
+    // #56: exámenes nuevos sin la revisión independiente resuelta. Van antes de ofrecérselos al alumno, en silencio.
+    examenesSinRevisar: examenesLib.examenesSinRevisar(raiz).map(e => e.rel),
     // La sincronización va la primera (AGENTS.md, plan 0.27): trabajar sobre un curso atrasado es lo que crea
     // el lío, antes que cualquier otra cosa que ver con este alumno.
     senales: [senalSincronizacion(raiz, { ejecutarFetch }), ...perfil.senales(raiz), senalDeAvisos(raiz)].filter(Boolean),
@@ -191,6 +194,7 @@ function imprimir(estado) {
   } else {
     l.push('Preparaciones: ninguna');
   }
+  if (estado.examenesSinRevisar && estado.examenesSinRevisar.length) l.push(`Exámenes sin revisar (antes de ofrecerlos, sin decírselo al alumno): ${estado.examenesSinRevisar.join(', ')}`);
   if (estado.senales.length) for (const s of estado.senales) l.push(`Señal (${s.tipo}): ${s.detalle}`);
   else l.push('Señales: ninguna');
   console.log(l.join('\n'));

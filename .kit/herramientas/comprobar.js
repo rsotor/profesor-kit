@@ -614,6 +614,16 @@ function comprobarAngulos(raiz, informe) {
   }
 }
 
+// #56: un examen nuevo no se le ofrece al alumno hasta que alguien sin el contexto de quien lo escribió lo ha resuelto a
+// ciegas y lo que salió está resuelto (lib/examenes.estadoRevision). Aviso para el profesor, nunca para el alumno: lo
+// revisa en silencio (.kit/guias/revisor-de-examenes.md). examen.js --corregir no lo corrige sin ella.
+function comprobarRevisiones(raiz, informe) {
+  for (const e of examenesLib.examenesSinRevisar(raiz)) {
+    const que = e.pendientes.map(x => (x.numero ? `p.${x.numero}: ` : '') + x.motivo).join(' · ');
+    informe.avisos.push({ regla: 'examen-sin-revisar', fichero: e.rel, detalle: `${que} — revísalo antes de ofrecérselo al alumno (.kit/guias/revisor-de-examenes.md), sin decírselo` });
+  }
+}
+
 function comprobarPiezas(raiz, informe) {
   for (const p of v.piezasAusentes(raiz)) {
     informe.errores.push({ regla: 'pieza-ausente', fichero: p.ruta, detalle: 'falta (¿borrado o movido sin querer?) → node .kit/herramientas/reparar.js lo recupera' });
@@ -672,6 +682,7 @@ function comprobar(raiz) {
   comprobarRequiereVacio(raiz, informe);
   comprobarPreguntaDoble(raiz, informe);
   comprobarAngulos(raiz, informe);
+  comprobarRevisiones(raiz, informe);
   comprobarObsidianVeEjercicios(raiz, informe);
   comprobarAjustes(raiz, informe);
   comprobarEnlacesDelPerfil(raiz, informe);

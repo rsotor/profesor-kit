@@ -6,37 +6,37 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 
 > Se responde mentalmente antes de desplegar.
 
-**Un freelance cobra 40,00 € por un trabajo, y otro día ve que un café cuesta 1,50 € y un corte de pelo 12,00 €. ¿Qué función del dinero se usa al cobrar y cuál al comparar los precios?**
+**¿Qué problema del trueque resuelve el dinero como medio de cambio?**
 > [!success]- Respuesta
-> Al cobrar: medio de cambio. Al comparar precios: unidad de cuenta.
+> La doble coincidencia de deseos: ya no hace falta que el otro quiera justo lo que tú ofreces.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 1/10*
 
-**¿Qué problema del trueque resuelve el dinero?**
+**Un café cuesta 1,50 € y un corte de pelo 12,00 €. ¿Qué función del dinero permite compararlos directamente?**
 > [!success]- Respuesta
-> La doble coincidencia de deseos: no hace falta que el otro quiera justo lo que tú ofreces, y en el momento justo.
+> La de unidad de cuenta: todo tiene precio con la misma vara de medir.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 1/10*
 
-**Un abrigo sube de precio porque se ha puesto de moda. ¿Es inflación?**
+**Los precios del súper suben, pero el de los tomates sube solo porque hay escasez. ¿Es inflación?**
 > [!success]- Respuesta
-> No. Inflación es la subida general y sostenida de los precios, de casi todo a la vez; aquí solo sube una cosa.
+> No. La inflación es la subida general y sostenida de los precios, casi de todo a la vez; lo de los tomates es una subida concreta.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 1/10*
 
-**¿Por qué el dinero de la cartera es más líquido que un piso, aunque el piso valga mucho más?**
+**¿Qué función del dinero daña la inflación?**
 > [!success]- Respuesta
-> Porque la liquidez no mide cuánto vale algo, sino lo rápido que se convierte en dinero sin perder valor: la cartera se gasta al instante, el piso tarda meses en venderse bien.
+> El depósito de valor: lo guardado compra menos con el tiempo.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 1/10*
 
 ---
-Conceptos que cubren: [[trueque]] · [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]
+Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]]

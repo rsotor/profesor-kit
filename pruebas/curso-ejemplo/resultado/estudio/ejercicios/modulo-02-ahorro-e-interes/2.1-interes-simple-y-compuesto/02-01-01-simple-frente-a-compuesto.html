@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple frente a compuesto</title>
+<style>
+  :root { color-scheme: light dark; --borde: #8884; --acento: #2a6fdb; --ok: #1f8a4c; --mal: #c0392b; }
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 1.6rem; }
+  section { border: 1px solid var(--borde); border-radius: 8px; padding: .8rem 1rem; margin-top: 1rem; }
+  label { display: block; margin-top: .6rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem .9rem; margin: .3rem .3rem 0 0; border-radius: 6px; border: 1px solid var(--borde); cursor: pointer; }
+  button.elegir { border-color: var(--acento); }
+  button:disabled { opacity: .5; cursor: default; }
+  table { border-collapse: collapse; width: 100%; margin-top: .5rem; }
+  td, th { border: 1px solid var(--borde); padding: .3rem .5rem; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  .ok { color: var(--ok); font-weight: 600; }
+  .mal { color: var(--mal); font-weight: 600; }
+  .suave { opacity: .75; }
+</style>
+</head>
+<body>
+<h1>Simple frente a compuesto</h1>
+<p class="suave">Practica: <a href="../../../conceptos/interes-simple.md">interés simple</a> · <a href="../../../conceptos/interes-compuesto.md">interés compuesto</a>. Clase 02-01-01.</p>
+
+<section id="condiciones">
+  <h2>1 · Condiciones</h2>
+  <p>Mueve lo que quieras. Los intereses se calculan una vez al año.</p>
+  <label>Capital: <strong id="v-capital"></strong>
+    <input type="range" id="capital" min="500" max="20000" step="500" value="1000"></label>
+  <label>Tipo de interés: <strong id="v-tipo"></strong>
+    <input type="range" id="tipo" min="1" max="15" step="0.5" value="5"></label>
+  <label>Tiempo: <strong id="v-anos"></strong>
+    <input type="range" id="anos" min="1" max="40" step="1" value="10"></label>
+  <button id="otro">Otro caso al azar</button>
+</section>
+
+<section id="reto">
+  <h2>2 · Reto</h2>
+  <p>Con estas condiciones, la ventaja del compuesto sobre el simple (los intereses extra que da el compuesto), ¿supera la mitad de los intereses que daría el simple?</p>
+  <p class="suave">Piénsalo antes de elegir: la solución no se ve hasta que respondes.</p>
+  <button class="elegir" data-r="supera">Sí, la supera</button>
+  <button class="elegir" data-r="no-supera">No, se queda por debajo</button>
+</section>
+
+<section id="explicacion">
+  <h2>3 · Explicación</h2>
+  <div id="texto" class="suave">Elige una respuesta y aquí verás por qué, con las cifras de simple y compuesto.</div>
+</section>
+
+<script>
+(function () {
+  function resultado(caso) {
+    var i = caso.tipo / 100, n = caso.anos, c = caso.capital;
+    var simple = c * i * n;
+    var compuesto = c * (Math.pow(1 + i, n) - 1);
+    var ventaja = compuesto - simple;
+    return { simple: simple, compuesto: compuesto, ventaja: ventaja,
+      respuesta: ventaja > simple / 2 ? 'supera' : 'no-supera' };
+  }
+
+  // Misma lógica que decide el botón, expuesta para barrer casos con verificar-ejercicio.js.
+  window.verificar = function (caso) { return resultado(caso).respuesta; };
+
+  function num(x, dec) {
+    var partes = x.toFixed(dec).split('.');
+    partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return partes.join(',');
+  }
+  function eur(x) { return num(x, 2) + ' €'; }
+
+  var el = function (id) { return document.getElementById(id); };
+  var respondido = false;
+
+  function leer() {
+    return { capital: Number(el('capital').value), tipo: Number(el('tipo').value), anos: Number(el('anos').value) };
+  }
+  function pintarCondiciones() {
+    var c = leer();
+    el('v-capital').textContent = eur(c.capital);
+    el('v-tipo').textContent = num(c.tipo, 1) + ' % anual';
+    el('v-anos').textContent = c.anos + (c.anos === 1 ? ' año' : ' años');
+  }
+  function reiniciar() {
+    respondido = false;
+    pintarCondiciones();
+    el('texto').className = 'suave';
+    el('texto').textContent = 'Elige una respuesta y aquí verás por qué, con las cifras de simple y compuesto.';
+    var botones = document.querySelectorAll('button.elegir');
+    for (var k = 0; k < botones.length; k++) botones[k].disabled = false;
+  }
+  function responder(eleccion) {
+    if (respondido) return;
+    respondido = true;
+    var c = leer(), r = resultado(c);
+    var acierto = eleccion === r.respuesta;
+    var ratio = r.simple > 0 ? r.ventaja / r.simple : 0;
+    var html = '<p class="' + (acierto ? 'ok' : 'mal') + '">' + (acierto ? 'Bien.' : 'No.') + ' La respuesta correcta es: ' +
+      (r.respuesta === 'supera' ? 'sí la supera' : 'no la supera') + '.</p>' +
+      '<table><tr><th></th><th>Intereses</th><th>Capital final</th></tr>' +
+      '<tr><td>Simple</td><td>' + eur(r.simple) + '</td><td>' + eur(c.capital + r.simple) + '</td></tr>' +
+      '<tr><td>Compuesto</td><td>' + eur(r.compuesto) + '</td><td>' + eur(c.capital + r.compuesto) + '</td></tr>' +
+      '<tr><td>Ventaja del compuesto</td><td>' + eur(r.ventaja) + '</td><td></td></tr></table>' +
+      '<p>La ventaja es el ' + num(ratio * 100, 0) + ' de cada 100,00 € de intereses simples (la mitad serían 50,00 €).</p>' +
+      '<p>Qué probar: sube los años con el mismo tipo y verás que el compuesto se aleja del simple cada vez más rápido. ' +
+      'Cambia solo el capital y la respuesta no se mueve: todo escala igual. Lo que decide es el tipo y el tiempo.</p>';
+    el('texto').className = '';
+    el('texto').innerHTML = html;
+    var botones = document.querySelectorAll('button.elegir');
+    for (var k = 0; k < botones.length; k++) botones[k].disabled = true;
+  }
+  function azar(id) {
+    var e = el(id), min = Number(e.min), max = Number(e.max), paso = Number(e.step);
+    var pasos = Math.round((max - min) / paso);
+    e.value = min + Math.floor(Math.random() * (pasos + 1)) * paso;
+  }
+
+  ['capital', 'tipo', 'anos'].forEach(function (id) { el(id).addEventListener('input', reiniciar); });
+  el('otro').addEventListener('click', function () { azar('capital'); azar('tipo'); azar('anos'); reiniciar(); });
+  var botones = document.querySelectorAll('button.elegir');
+  for (var k = 0; k < botones.length; k++) {
+    (function (b) { b.addEventListener('click', function () { responder(b.getAttribute('data-r')); }); })(botones[k]);
+  }
+  pintarCondiciones();
+})();
+</script>
+</body>
+</html>

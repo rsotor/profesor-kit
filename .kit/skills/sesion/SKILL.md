@@ -137,7 +137,9 @@ Donde nada se mueve, una línea de por qué no lo lleva.
 
 ### 7. Actualizar los ficheros vivos
 
-Los cinco que se siguen a mano, sin saltarse ninguno:
+Los cinco que se siguen a mano, sin saltarse ninguno. **Cada fila se añade con tu herramienta de editar
+ficheros, nunca con `>>`, `cat >` ni `printf`:** sin nadie delante se deniega, y aunque haya alguien, le hace
+aceptar un permiso para nada.
 
 1. `estudio/conceptos/_index.md` — línea nueva o alias actualizado
 2. `estudio/mapa-del-curso.md` — solo la cobertura del material de la clase (qué apartado quedó en qué nota)

@@ -311,3 +311,22 @@ test('pregunta-calcada: el mismo concepto contado con otro caso no avisa, ni una
   const centro = { origen: 'centro', enunciado: 'El dinero que guardas para cubrir los gastos de varios meses sin ingresos es…' };
   assert.equal(avisos(examenConClave([...tres, nueva, centro], { nota: NOTA_ALFA }), 'pregunta-calcada').length, 0);
 });
+
+// --- #56: examen-sin-revisar ------------------------------------------------------------------------------------
+
+test('examen-sin-revisar: un examen nuevo sin revisión avisa (para el profesor) y estado.js lo lista; con la revisión resuelta, nada', () => {
+  const { calcularEstado } = require('../estado');
+  const raiz = examenConClave(tres);
+  const a = avisos(raiz, 'examen-sin-revisar');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /no tiene revisión — revísalo antes de ofrecérselo al alumno.*sin decírselo/);
+  assert.deepEqual(calcularEstado(raiz, { ejecutarFetch: false }).examenesSinRevisar, ['examenes/01-examen.md']);
+
+  const fs = require('node:fs');
+  const path = require('node:path');
+  fs.mkdirSync(path.join(raiz, 'config', 'revisiones'), { recursive: true });
+  fs.writeFileSync(path.join(raiz, 'config', 'revisiones', '01-examen.json'), JSON.stringify({ revisor: 'otra-sesion', fecha: '2026-10-02',
+    preguntas: tres.map((_, i) => ({ numero: i + 1, respuesta: ['a'], seguridad: 'alta', problemas: [] })) }));
+  assert.equal(avisos(raiz, 'examen-sin-revisar').length, 0);
+  assert.deepEqual(calcularEstado(raiz, { ejecutarFetch: false }).examenesSinRevisar, []);
+});

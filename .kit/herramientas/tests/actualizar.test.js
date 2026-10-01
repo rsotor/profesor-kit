@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { actualizar } = require('../actualizar');
+const { actualizar, avisosDisparados, cli } = require('../actualizar');
 const { comprobar } = require('../comprobar');
 const { cursoTemporal, escribir, iniciarGit, git, temporal } = require('./ayuda');
 
@@ -95,6 +95,38 @@ test('un curso que ya tenía errores se actualiza igual (no empeora)', () => {
   const { raiz, origen } = montar();
   escribir(raiz, { 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
   assert.equal(actualizar({ raiz, origen }).actualizado, true);
+});
+
+test('si los avisos se disparan al actualizar, lo dice (no bloquea); si apenas cambian, nada (issue #54)', () => {
+  // Como la #54: tras actualizar, una tabla de progreso que el kit nuevo lee distinto llena el curso de avisos.
+  const dispara = `module.exports = { descripcion: 'dispara', migrar(raiz) {
+    const f = require('node:path').join(raiz, 'estudio/progreso.md');
+    require('node:fs').appendFileSync(f, '\\n' + '| [[alfa]] | 🟡 flojo | 🟡 flojo |\\n'.repeat(8));
+  } };`;
+  const { raiz, origen } = montar({ motorNuevo: { version_datos: 2 }, extraOrigen: { '.kit/herramientas/migraciones/002-dispara.js': dispara } });
+  const r = actualizar({ raiz, origen });
+  assert.equal(r.actualizado, true);
+  assert.ok(r.avisosDisparados, 'tenía que avisar');
+  assert.equal(r.avisosDisparados.despues - r.avisosDisparados.antes, 16);
+  assert.deepEqual(r.avisosDisparados.reglas[0], { regla: 'progreso-sin-prueba', mas: 16 });
+
+  const tranquilo = montar();
+  assert.equal(actualizar(tranquilo).avisosDisparados, null);
+
+  const otro = montar({ motorNuevo: { version_datos: 2 }, extraOrigen: { '.kit/herramientas/migraciones/002-dispara.js': dispara } });
+  const lineas = [];
+  const log = console.log;
+  console.log = x => lineas.push(String(x));
+  try { assert.equal(cli(['--aplicar', '--origen', otro.origen], otro.raiz), 0); } finally { console.log = log; }
+  assert.match(lineas.join('\n'), /Actualizado de 1\.0\.0 a 2\.0\.0[\s\S]*Ojo: tras actualizar, los avisos han pasado de \d+ a \d+ \(progreso-sin-prueba \+16\)/);
+});
+
+test('avisosDisparados: umbral de 10 o la mitad de los que había, y sin informe de antes no compara', () => {
+  assert.equal(avisosDisparados({ a: 5 }, { a: 14 }), null);
+  assert.deepEqual(avisosDisparados({ a: 5 }, { a: 15, b: 1 }).reglas, [{ regla: 'a', mas: 10 }, { regla: 'b', mas: 1 }]);
+  assert.equal(avisosDisparados({ a: 40 }, { a: 59 }), null);
+  assert.equal(avisosDisparados({ a: 40, b: 0 }, { a: 147 }).despues, 147);
+  assert.equal(avisosDisparados(null, { a: 100 }), null);
 });
 
 test('.kit/adaptadores/ viaja con el motor; config/adaptador-llm.json (local, del alumno) no se toca', () => {

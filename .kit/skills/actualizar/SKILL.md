@@ -57,6 +57,10 @@ Termina con `node .kit/herramientas/comprobar.js` y guarda con
 
 - **"Actualizado de X a Y"** → díselo en una frase. Si migró datos, añade: "he adaptado tus notas
   al formato nuevo; no se ha perdido nada".
+- **"Ojo: tras actualizar, los avisos han pasado de X a Y"** → no le preocupes: no bloquea y no ha perdido
+  nada. Si las novedades del paso 1 lo explican (una regla nueva), díselo en una frase y ofrécele ordenarlos. Si no,
+  algo del kit no encaja con su curso: propón abrir una issue con esa línea (sección "Feedback al kit" de
+  `AGENTS.md`).
 - **"No se ha actualizado: todo sigue como estaba"** → tranquilízale primero: **no ha perdido nada
   y puede seguir estudiando igual.** Después propón abrir una issue con el motivo que ha dado la
   herramienta (sección "Feedback al kit" de `AGENTS.md`). No reintentes en bucle ni arregles el

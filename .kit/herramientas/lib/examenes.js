@@ -230,9 +230,78 @@ function infoFinal(raiz, examenesFinales) {
   return { total, pendiente: null, aprobado: null, fechaSuperado: (porEscalon.get(total) || {}).fecha || null };
 }
 
+// --- La revisión independiente de un examen (#56) ---------------------------------------------------------
+//
+// Antes de ofrecerle al alumno un examen nuevo, alguien sin el contexto de quien lo escribió lo resuelve a ciegas
+// (sin la clave ni las notas): un subagente, un proceso en segundo plano o el profesor de la sesión siguiente
+// (.kit/guias/revisor-de-examenes.md). Su informe vive fuera de la bóveda, como la clave, en
+// config/revisiones/<misma ruta que el examen, en .json>:
+//
+//   { "revisor": "subagente" | "segundo-plano" | "otra-sesion", "fecha": "AAAA-MM-DD",
+//     "preguntas": [ { "numero": 1, "respuesta": ["b"], "seguridad": "alta" | "media" | "baja",
+//                      "problemas": ["se acierta sin saber: la opción c es la única larga", …],
+//                      "resolucion": "…" } ] }
+//
+// El revisor escribe todo menos `resolucion`. Una pregunta queda pendiente si su respuesta no coincide con la clave o
+// trae problemas, hasta que el profesor la resuelve (arregla la clave o la pregunta) y lo escribe en `resolucion`.
+const RUTA_REVISIONES = 'config/revisiones';
+const REVISORES = ['subagente', 'segundo-plano', 'otra-sesion'];
+
+function rutaRevision(raiz, relExamen) {
+  const relDesdeExamenes = v.aPosix(relExamen).replace(/^examenes\//, '');
+  return path.join(raiz, ...RUTA_REVISIONES.split('/'), ...relDesdeExamenes.replace(/\.md$/, '.json').split('/'));
+}
+
+const letras = xs => (Array.isArray(xs) ? xs : [xs]).filter(x => x !== null && x !== undefined && String(x).trim())
+  .map(x => String(x).trim().toLowerCase()).sort();
+
+// Cómo está la revisión de un examen: `resuelta` solo si existe, la escribió un revisor válido, cubre todas las
+// preguntas de la clave y no deja nada pendiente. `pendientes` dice qué falta, pregunta a pregunta.
+function estadoRevision(raiz, relExamen) {
+  const f = rutaRevision(raiz, relExamen);
+  if (!fs.existsSync(f)) return { existe: false, resuelta: false, pendientes: [{ numero: null, motivo: 'no tiene revisión' }] };
+  let revision;
+  try { revision = JSON.parse(fs.readFileSync(f, 'utf8')); } catch {
+    return { existe: true, resuelta: false, pendientes: [{ numero: null, motivo: 'la revisión no es un JSON válido' }] };
+  }
+  const clave = leerClaveSegura(raiz, relExamen);
+  const clavePreguntas = (clave && Array.isArray(clave.preguntas)) ? clave.preguntas : [];
+  const revisadas = Array.isArray(revision.preguntas) ? revision.preguntas : [];
+  const pendientes = [];
+  if (!REVISORES.includes(revision.revisor)) pendientes.push({ numero: null, motivo: `"revisor" tiene que ser ${REVISORES.join(', ')}` });
+  clavePreguntas.forEach((c, i) => {
+    const numero = i + 1;
+    const r = revisadas.find(x => Number(x && x.numero) === numero);
+    if (!r) { pendientes.push({ numero, motivo: 'el revisor no la ha contestado' }); return; }
+    if (String(r.resolucion || '').trim()) return;
+    const suya = letras(r.respuesta);
+    const correctas = letras(c.correctas);
+    if (suya.join() !== correctas.join()) pendientes.push({ numero, motivo: `el revisor contesta ${suya.join(', ') || '(nada)'} y la clave dice ${correctas.join(', ')}` });
+    const problemas = (Array.isArray(r.problemas) ? r.problemas : []).filter(x => String(x).trim());
+    if (problemas.length) pendientes.push({ numero, motivo: problemas.join(' · ') });
+  });
+  return { existe: true, revisor: revision.revisor, resuelta: pendientes.length === 0, pendientes };
+}
+
+// Los exámenes tipo test que todavía no se han corregido nunca (`intentos: 0`) y no tienen la revisión resuelta: los
+// que no se le pueden ofrecer al alumno. Los ya corregidos se escribieron antes o ya pasaron por aquí.
+function examenesSinRevisar(raiz) {
+  const base = path.join(v.baseAlumno(raiz), 'examenes');
+  const lista = [];
+  for (const abs of v.recorrer(base, n => n.endsWith('.md'))) {
+    const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
+    const fm = v.leerFrontmatter(fs.readFileSync(abs, 'utf8')) || {};
+    if (!fm.tipo_examen || String(fm.intentos ?? '0').trim() !== '0') continue;
+    const e = estadoRevision(raiz, rel);
+    if (!e.resuelta) lista.push({ rel, pendientes: e.pendientes });
+  }
+  return lista;
+}
+
 module.exports = {
   RUTA_CONFIG, RUTA_CLAVES, POR_DEFECTO, APROBADO_POR_DEFECTO,
   leer, aprobadoDeCurso, aprobadoDeTipo, aprobadoDeExamen, esDeModulo,
   rutaClave, leerClave, leerClaveSegura, escalonesFinal, infoFinal,
   preguntasDelMd, falladasDelUltimoIntento, preguntasFalladas, preguntasCentroUsadas,
+  RUTA_REVISIONES, rutaRevision, estadoRevision, examenesSinRevisar,
 };

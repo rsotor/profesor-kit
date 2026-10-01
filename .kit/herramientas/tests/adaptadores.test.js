@@ -26,6 +26,11 @@ test('cada adaptador del kit tiene los campos obligatorios; el modelo recomendad
       assert.ok(p.pendiente ? lleno(p.pendiente) && !p.herramienta : lleno(p.herramienta) && lleno(p.limites),
         `${id}: preguntar_con_opciones lleva herramienta y limites, o solo pendiente`);
     }
+    if (a.subagentes) {
+      const lleno = x => typeof x === 'string' && x.length > 0;
+      assert.ok(a.subagentes.pendiente ? lleno(a.subagentes.pendiente) && !a.subagentes.herramienta : lleno(a.subagentes.herramienta),
+        `${id}: subagentes lleva herramienta, o solo pendiente`);
+    }
   }
 });
 

@@ -6,37 +6,37 @@ sesion: 01-02-01-presupuesto-personal
 
 > Se responde mentalmente antes de desplegar.
 
-**Todos los meses gastas algo en ocio. ¿Es un gasto fijo o variable?**
+**Un mes factura 2.400,00 € y otro 1.300,00 €. ¿Qué cifra de ingresos usas para presupuestar?**
 > [!success]- Respuesta
-> Variable. Que gastes algo siempre no lo hace fijo: la cifra la decides tú cada mes.
+> La media de los últimos 6-12 meses, no la del mejor mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 1/10*
 
-**Un freelance factura 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso presupuesta sin sustos?**
+**Gastas algo en ocio todos los meses, pero la cifra la eliges tú. ¿Fijo o variable?**
 > [!success]- Respuesta
-> Con la media de los últimos 6-12 meses, no con la del mejor mes.
+> Variable: que se repita no lo hace fijo; lo que define "fijo" es que no dependa de lo que decidas cada mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 1/10*
 
-**Ingresas 1.850,00 € y ahorras 655,00 €. ¿Qué tasa de ahorro tienes?**
+**Ahorras 200,00 € y otra persona también, pero ella gana mucho más. ¿Qué mide la tasa de ahorro que no mide la cifra?**
 > [!success]- Respuesta
-> 655,00 ÷ 1.850,00 × 100 ≈ 35,4 % mensual.
+> Qué parte de los ingresos te queda, y por eso permite comparar.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 1/10*
 
-**Gastas 1.195,00 € al mes. ¿Cuánto es un colchón de 3 meses y por qué un freelance apunta a más?**
+**¿Por qué un freelance apunta a un colchón de 5-6 meses y no de 3?**
 > [!success]- Respuesta
-> 3.585,00 €. Con ingresos irregulares conviene cubrir 5-6 meses, porque habrá meses flojos.
+> Porque sus ingresos son irregulares y puede haber varios meses flojos seguidos.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 1/10*
 
 ---
-Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[presupuesto]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

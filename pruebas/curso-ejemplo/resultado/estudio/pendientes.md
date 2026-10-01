@@ -6,17 +6,23 @@
 
 ## Bloque 1.1 (4)
 
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — el patrón oro (diapositiva 6) solo traía el título. Hay que conseguir el contenido de la clase para poder hacer la nota.
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — la masa monetaria M1 (diapositiva 7) solo trae una definición de una línea: falta qué incluye M1, y un ejemplo.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — decidir si la masa monetaria y el patrón oro merecen concepto propio cuando llegue el material.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — el material de esta clase no dice cómo se conecta la inflación con lo que sigue (el módulo 2, interés). Cuando haya material, se completa; no lo doy por supuesto.
+- [ ] **Pendiente del profesor** · [[conceptos/liquidez]] — el módulo 2 compara ahorrar (muy líquido) con invertir (a veces menos líquido); ampliar esta nota cuando llegue esa clase.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — diapositiva 6, patrón oro: el PDF solo traía el título. Hace falta el texto de la clase para hacer nota.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — diapositiva 7, masa monetaria (M1): solo hay una frase. Falta qué incluye, para qué sirve y si entra en el temario.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — decidir con el alumno si patrón oro y M1 son contenido del curso o ampliación.
 
-## Bloque 1.2 (3)
+## Bloque 1.2 (4)
 
-- [ ] **Pendiente del profesor** · [[conceptos/colchon-financiero]] — el marcador no decía qué parte exacta no se entendía. Si sigue sin quedar claro, apunta cuál (la fórmula, los 3 meses o los 5-6 de ingresos irregulares).
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — cifra real de «Suscripciones» (25,00 € en las diapositivas, 52,00 € en la hoja). Solo la resuelve el profesor del curso o el alumno si recuerda la clase.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — cuando se aclare la cifra, decidir si se corrigen los ejemplos y se prepara un ejercicio de tasa de ahorro y colchón.
+- [ ] **Pendiente del profesor** · [[conceptos/colchon-financiero]] — la clase no dice qué gastos entran en el cálculo (¿todos, o solo los fijos?) ni dónde guardarlo. Aquí se usa el total de gastos del ejemplo. Confirmar con el material del curso.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — cuánto cuestan de verdad las suscripciones (25,00 € en las diapositivas, 52,00 € en la hoja). Solo lo resuelve el alumno o quien dio la clase; de ello dependen total de gastos, ahorro, tasa y colchón del ejemplo.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — qué gastos entran en el cálculo del colchón (todos o solo los fijos) y dónde guardarlo; la clase no lo dice.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — ejercicio de [[tasa-de-ahorro]] y [[colchon-financiero]] (al cambiar ingresos o gastos, algo se mueve). No se ha creado hoy porque la cifra base del ejemplo no está confirmada.
 
-## Bloque 2.1 (1)
+## Bloque 2.1 (2)
 
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — el curso no da ningún ejemplo para la diapositiva 4 con cifras; si el profesor del curso tiene uno propio (trimestral, mensual), sustituiría al calculado aquí.
+- [ ] **Falta material del curso** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — la clase no da la fórmula de la capitalización con varios periodos al año ni ninguna cifra; solo la idea. El ejemplo de la nota ([[capitalizacion]]) es ampliación mía. Solo lo resuelve el alumno o quien dio la clase.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — el material no dice hasta qué tipos o plazos es fiable la regla del 72; la nota solo recoge el caso del 6 % anual.
+
+## Sin bloque (1)
+
+- [ ] **Pendiente del profesor** · [[ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-financiero]] — la clase no dice qué gastos entran en el colchón (¿todos o solo los fijos?). El ejercicio usa el gasto total, como el ejemplo de la nota.

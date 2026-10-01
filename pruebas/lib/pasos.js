@@ -325,6 +325,20 @@ function angulosDelExamen(destino, ficheroExamen) {
   return { ok: !fallos.length, detalle: `ángulos: ${reparto || 'ninguno'}${calcadas ? ` · ${calcadas} pregunta(s) calcada(s) de la nota` : ''}${fallos.length ? ` · ${fallos.join(' · ')}` : ''}` };
 }
 
+// #56: el examen recién escrito llega revisado. Con un asistente que tiene subagentes (su adaptador trae
+// `subagentes.herramienta`), la revisión la hace un subagente en el mismo paso y tiene que quedar resuelta; sin ellos,
+// va al segundo plano o a la sesión siguiente y aquí solo se informa de cómo está.
+function revisionDelExamen(destino, ficheroExamen, adaptador) {
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  const e = examenesLib.estadoRevision(destino, relExamen);
+  const conSubagentes = !!(adaptador && adaptador.subagentes && adaptador.subagentes.herramienta);
+  const pendiente = e.pendientes.map(x => (x.numero ? `p.${x.numero}: ` : '') + x.motivo).join(' · ');
+  if (!conSubagentes) return { ok: true, detalle: e.resuelta ? `revisión resuelta (${e.revisor})` : `revisión pendiente, sin subagentes (${pendiente})` };
+  if (!e.resuelta) return { ok: false, detalle: `la revisión independiente no está resuelta: ${pendiente}` };
+  if (e.revisor !== 'subagente') return { ok: false, detalle: `revisión resuelta, pero la hizo "${e.revisor}" y el asistente tiene subagentes` };
+  return { ok: true, detalle: 'revisión de un subagente, resuelta' };
+}
+
 // Normaliza un enunciado para comparar "literal" sin que el markdown (negritas, marcadores de fuente) ni los
 // espacios de más lo desincronicen: sin eso, "**1.** Un depósito…" y "1. Un depósito…" nunca coincidirían.
 function normalizarTexto(s) {
@@ -630,6 +644,6 @@ module.exports = {
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
   casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
-  referenciaCoherente, formatoDeOpciones, angulosDelExamen, preguntasReferencia, preguntasLiteralesDelCentro,
+  referenciaCoherente, formatoDeOpciones, angulosDelExamen, revisionDelExamen, preguntasReferencia, preguntasLiteralesDelCentro,
   falladasTopeTres, preguntasReutilizadas, verificarReutilizacionFalladas,
 };

@@ -127,6 +127,7 @@ del punto 1: no lo toques a mano.
 
 Un fallo en un ejercicio es una prueba: va a `config/alumno.md` citando el ejercicio, y mueve el eje
 *aplicación* de `estudio/progreso.md`, con su cita: `🟡 flojo · ejercicio velocidad-media: invierte la fórmula`.
+Las dos cosas, con tu herramienta de editar ficheros, nunca con `>>`, `cat >` ni `printf`.
 
 ### 8. Cerrar
 

@@ -64,7 +64,7 @@ el alumno/instalador a través del LLM.
 | `estado.js` | La foto del curso al abrir (plan 0.22, §3.1): material nuevo en `inbox/` sin procesar, siguiente sesión y sesiones preparadas sin estudiar, sesiones en 🔁, preparaciones en segundo plano (en curso, terminadas sin juntar, fallidas o interrumpidas si el proceso ya no existe) y el caso sugerido (1/2/3), y las señales de que algo no funciona (`lib/perfil.js#senales`) | `AGENTS.md`, "Al empezar cada sesión" |
 | `comprobar.js` | Valida el curso entero (estructura, enlaces, secretos, "se verá bien", lint pedagógico, propiedades no estándar) y devuelve `{ errores, avisos }` | Todas las skills de trabajo antes de guardar; internamente `guardar.js`, `actualizar.js` y `diagnostico.js` |
 | `guardar.js` | Regenera los ficheros derivados, comprueba, hace `commit` (y `push` si procede) | Toda skill de trabajo al terminar (`sesion`, `dudas`, `examen`, `ejercicio`, `repaso`, `configurar`, `actualizar`) |
-| `actualizar.js` | Descarga la última release publicada, sustituye el motor, aplica migraciones pendientes y reinstala skills; vuelve atrás si algo empeora | Skill `/actualizar`; `--comprobar` lo lanza AGENTS.md al empezar cada sesión (silencioso, una vez al día) |
+| `actualizar.js` | Descarga la última release publicada, sustituye el motor, aplica migraciones pendientes y reinstala skills; vuelve atrás si hay errores nuevos, y si los avisos se disparan (≥ 10 más, o la mitad más de los que había) lo dice sin bloquear (#54) | Skill `/actualizar`; `--comprobar` lo lanza AGENTS.md al empezar cada sesión (silencioso, una vez al día) |
 | `organizar.js` | Mueve sesiones/flashcards/ejercicios/exámenes a la carpeta de su unidad según `config/estructura.json` y reescribe los enlaces afectados | Skill `/configurar` (al escribir la estructura) y skill `/sesion` |
 | `reparar.js` | Recupera piezas ausentes del motor o del alumno (fichero suelto → su sitio; si no, última versión en git; si no, carpeta vacía), sin pisar nada existente | El profesor, cuando `comprobar.js` da `pieza-ausente` |
 | `preparar-curso.js` | Borra lo que es solo del repo del kit (`docs/`, `.github/`…), sustituye el README, quita el remoto del kit y crea `config/ajustes.json` | Solo al instalar (paso 5 de `INSTALAR-AGENTE.md`) |
@@ -131,7 +131,10 @@ enlace a `.html` que no existe).
 **Navegación del curso (aviso, no bloquean)**: `huerfano` (concepto que ninguna nota enlaza) ·
 `alias-repetido` · `posible-duplicado` (slugs sospechosamente parecidos) · `sin-unidad` (fichero suelto
 que `organizar.js` colocaría) · `orden-ambiguo` · `navegacion-rota` (pie con un marcador `%%` roto) ·
-`examen-sin-nota` · `ejercicio-suelto` (`.html` que ningún concepto declara).
+`examen-sin-nota` · `ejercicio-suelto` (`.html` que ningún concepto declara) · `examen-sin-revisar` (#56: un examen tipo test, `intentos: 0`,
+sin su revisión independiente resuelta en `config/revisiones/`; solo para el profesor, que no se lo ofrece al alumno
+hasta resolverla. `examen.js --corregir` no corrige la primera vez sin ella, salvo con `--sin-revision`, que marca el
+intento; ver `.kit/guias/revisor-de-examenes.md`).
 
 **Secretos (error)**: `secreto` — un fichero de secretos sin ignorar (`.env`, `.pem`, `.key`) o un patrón
 de token/clave conocido (`lib/secretos.js#PATRONES`) en cualquier línea de un fichero candidato a `git`.

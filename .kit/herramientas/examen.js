@@ -25,8 +25,18 @@
 // del centro ya usadas, para rotarlas.
 //
 //     node .kit/herramientas/examen.js --falladas [<unidad>]   # unidad = prefijo; sin ella, todo el curso
+//
+// Y la revisión independiente de un examen nuevo (#56, .kit/guias/revisor-de-examenes.md): cómo está, y lanzarla en
+// segundo plano cuando el asistente no tiene subagentes. Un examen tipo test sin revisión resuelta no se corrige la
+// primera vez: su clave no la ha comprobado nadie más y la nota podría ser falsa (--sin-revision, solo si de verdad
+// no se puede revisar: el intento queda marcado).
+//
+//     node .kit/herramientas/examen.js --revision <examen.md>
+//     node .kit/herramientas/examen.js --revisar <examen.md>
+//     node .kit/herramientas/examen.js --corregir <examen.md> [--sin-revision]
 const fs = require('node:fs');
 const path = require('node:path');
+const { spawn } = require('node:child_process');
 const v = require('./lib/vault');
 const indice = require('./lib/indice');
 const examenes = require('./lib/examenes');
@@ -193,9 +203,13 @@ function notaTest({ aciertos, fallos, total, restaFallo }) {
   return Math.max(0, Math.floor(((aciertos - restaFallo * fallos) * 100) / total + 1e-9) / 10);
 }
 
-function corregir(raiz, rel) {
+const SIN_REVISION = '⚠️ Corregido sin revisión independiente: nadie más ha comprobado la clave de este examen.';
+
+function corregir(raiz, rel, { sinRevision = false } = {}) {
   const fichero = path.resolve(raiz, rel);
   const original = fs.readFileSync(fichero, 'utf8');
+  const fmAntes = v.leerFrontmatter(original) || {};
+  const primeraVez = String(fmAntes.intentos ?? '0').trim() === '0';
   const eol = original.includes('\r\n') ? '\r\n' : '\n';
   const lineas = original.replace(/\r\n/g, '\n').split('\n');
   const preguntas = preguntasTest(lineas);
@@ -206,6 +220,13 @@ function corregir(raiz, rel) {
   const clavePreguntas = Array.isArray(clave.preguntas) ? clave.preguntas : [];
   if (clavePreguntas.length !== preguntas.length) {
     throw new Error(`el examen tiene ${preguntas.length} preguntas y la clave trae ${clavePreguntas.length}`);
+  }
+  if (fmAntes.tipo_examen && primeraVez) {
+    const revision = examenes.estadoRevision(raiz, v.aPosix(path.relative(v.baseAlumno(raiz), fichero)));
+    if (!revision.resuelta && !sinRevision) {
+      throw new Error(`este examen no tiene la revisión independiente resuelta (${revision.pendientes.map(x => (x.numero ? `p.${x.numero}: ` : '') + x.motivo).join(' · ')}). `
+        + 'Revísalo primero (.kit/guias/revisor-de-examenes.md) y corrige después: con una clave sin comprobar, la nota podría ser falsa');
+    }
   }
 
   const restaFallo = v.numero(clave.resta_fallo) ?? 0;
@@ -233,8 +254,10 @@ function corregir(raiz, rel) {
     for (const o of [...p.opciones].reverse()) lineas[o.linea] = lineas[o.linea].replace(/^(-\s*)\[[ xX]\]/, '$1[ ]');
   }
 
-  const fm = v.leerFrontmatter(original) || {};
-  const r = escribirIntento(raiz, fichero, eol, lineas, { nota, fecha, filas, fm });
+  const fm = fmAntes;
+  const marcaSinRevision = fm.tipo_examen && primeraVez && sinRevision
+    && !examenes.estadoRevision(raiz, v.aPosix(path.relative(v.baseAlumno(raiz), fichero))).resuelta;
+  const r = escribirIntento(raiz, fichero, eol, lineas, { nota, fecha, filas, fm, veredicto: marcaSinRevision ? [SIN_REVISION] : [] });
 
   const fallosPorConcepto = {};
   filas.forEach(f => { if (f.resultado !== '✅ Correcta' && f.concepto) fallosPorConcepto[f.concepto] = (fallosPorConcepto[f.concepto] || 0) + 1; });
@@ -249,6 +272,50 @@ function falladasCli(raiz, unidad) {
   const todos = indice.leerExamenes(raiz);
   const examenesUnidad = unidad ? todos.filter(e => e.unidades.some(u => u === unidad || u.startsWith(`${unidad}-`))) : todos;
   return { falladas: examenes.preguntasFalladas(raiz, examenesUnidad), centroUsadas: examenes.preguntasCentroUsadas(raiz, examenesUnidad) };
+}
+
+// --- La revisión en segundo plano (#56): cuando el asistente no tiene subagentes pero sí `segundo_plano` -----------
+
+const LIMITE_REVISION_MS = 20 * 60 * 1000;
+const relDeExamen = (raiz, arg) => v.aPosix(path.relative(v.baseAlumno(raiz), path.resolve(raiz, arg)));
+const relDeRevision = (raiz, rel) => v.aPosix(path.relative(raiz, examenes.rutaRevision(raiz, rel)));
+
+function promptRevisor(raiz, rel) {
+  return 'Trabajas en segundo plano, sin el alumno delante: no saludes, no preguntes nada y no compruebes si hay una '
+    + 'versión nueva del kit. Eres el revisor independiente de un examen que ha escrito otro profesor: sigue '
+    + `.kit/guias/revisor-de-examenes.md, apartado "Si eres el revisor". El examen es estudio/${rel}. Tu revisión va en `
+    + `${relDeRevision(raiz, rel)}, con "revisor": "segundo-plano". No abras config/claves/ ni estudio/conceptos/: lo resuelves a ciegas.`;
+}
+
+// Lanza la revisión como un proceso aparte (detached) que sobrevive a cerrar la ventana. No espera: si no llega a
+// escribir la revisión, el examen sigue pendiente y lo revisa el profesor de la sesión siguiente.
+function revisarEnSegundoPlano(raiz, arg) {
+  const rel = relDeExamen(raiz, arg);
+  if (!fs.existsSync(path.join(v.baseAlumno(raiz), ...rel.split('/')))) return { lanzada: false, motivo: `no existe estudio/${rel}` };
+  const adaptador = v.leerAdaptador(raiz, v.leerAjustes(raiz).llm);
+  if (!adaptador || !Array.isArray(adaptador.segundo_plano) || !adaptador.segundo_plano.length) {
+    return { lanzada: false, motivo: 'tu asistente no puede trabajar en segundo plano: lo revisará el profesor de la sesión siguiente' };
+  }
+  const hijo = spawn(process.execPath, [__filename, '--revisar-trabajar', rel], { cwd: raiz, detached: true, stdio: 'ignore' });
+  hijo.unref();
+  return { lanzada: true, rel, revision: relDeRevision(raiz, rel) };
+}
+
+// Lo que corre en el proceso aparte: el asistente sin conversación (el `segundo_plano` del adaptador), con el
+// prompt del revisor. Su salida queda en .preparacion/revisiones/ (fuera del curso guardado) para poder ver qué pasó.
+function revisarTrabajar(raiz, rel, { limiteMs = Number(process.env.PROFESOR_KIT_REVISION_LIMITE_MS) || LIMITE_REVISION_MS } = {}) {
+  const { comoLanzar, lanzarAsistente } = require('./preparar');
+  const adaptador = v.leerAdaptador(raiz, v.leerAjustes(raiz).llm);
+  const modelo = (adaptador.modelo_recomendado && adaptador.modelo_recomendado.id) || null;
+  const plan = comoLanzar({ comando: adaptador.comando, segundoPlano: adaptador.segundo_plano, promptPorStdin: adaptador.prompt_por_stdin === true,
+    prompt: promptRevisor(raiz, rel), modelo });
+  const registro = path.join(raiz, '.preparacion', 'revisiones', `${rel.replace(/[\\/]/g, '__')}.txt`);
+  fs.mkdirSync(path.dirname(registro), { recursive: true });
+  if (plan.error) { fs.writeFileSync(registro, `${plan.error}\n`); return { ok: false, motivo: plan.error }; }
+  const r = lanzarAsistente(plan, raiz, limiteMs);
+  fs.writeFileSync(registro, `${((r.stdout || '') + (r.stderr || '') + (r.error ? `\n${r.error.message}` : '')).trim()}\n`);
+  const escrita = fs.existsSync(examenes.rutaRevision(raiz, rel));
+  return { ok: !r.error && r.status === 0 && escrita, escrita };
 }
 
 function cli(args, raiz) {
@@ -267,9 +334,26 @@ function cli(args, raiz) {
     return 0;
   }
 
+  if (args.includes('--revisar-trabajar')) { revisarTrabajar(raiz, valor('--revisar-trabajar')); return 0; }
+  if (valor('--revisar')) {
+    const r = revisarEnSegundoPlano(raiz, valor('--revisar'));
+    if (!r.lanzada) { console.log(`No se ha lanzado la revisión: ${r.motivo}.`); return 1; }
+    console.log(`Revisión de estudio/${r.rel} lanzada en segundo plano: la dejará en ${r.revision}. Mira cómo va con --revision.`);
+    return 0;
+  }
+  if (valor('--revision')) {
+    const rel = relDeExamen(raiz, valor('--revision'));
+    const e = examenes.estadoRevision(raiz, rel);
+    if (e.resuelta) { console.log(`Revisión resuelta (revisor: ${e.revisor}): este examen se le puede ofrecer al alumno.`); return 0; }
+    console.log(`Revisión ${e.existe ? 'con cosas pendientes' : 'pendiente'} de estudio/${rel}:`);
+    for (const x of e.pendientes) console.log(`  ${x.numero ? `p.${x.numero}: ` : ''}${x.motivo}`);
+    console.log(e.existe ? 'Arregla cada una (la clave o la pregunta) y escribe qué hiciste en su "resolucion".' : 'Revísalo: .kit/guias/revisor-de-examenes.md.');
+    return 1;
+  }
+
   if (corregirArg) {
     try {
-      const r = corregir(raiz, corregirArg);
+      const r = corregir(raiz, corregirArg, { sinRevision: args.includes('--sin-revision') });
       const veredicto = r.parcial ? 'test: no pone nota a la unidad' : r.aprobo ? 'aprobado' : `suspenso (aprobado: ${r.aprobado})`;
       console.log(`Intento ${r.intento} corregido: ${notaEnTexto(r.nota)} · ${veredicto} · ${r.aciertos} aciertos, ${r.fallos} fallos, ${r.blancos} en blanco.`
         + (r.estudiadas.length ? ` Sesiones marcadas como estudiadas: ${r.estudiadas.join(', ')}.` : ''));
@@ -283,7 +367,8 @@ function cli(args, raiz) {
 
   if (!registrarArg || !json) {
     console.error('Uso: node .kit/herramientas/examen.js --registrar <examen.md> --correccion <fichero.json>'
-      + ' · node .kit/herramientas/examen.js --corregir <examen.md>'
+      + ' · node .kit/herramientas/examen.js --corregir <examen.md> [--sin-revision]'
+      + ' · node .kit/herramientas/examen.js --revision <examen.md> · node .kit/herramientas/examen.js --revisar <examen.md>'
       + ' · node .kit/herramientas/examen.js --falladas [<unidad>]');
     return 2;
   }
@@ -305,4 +390,4 @@ function cli(args, raiz) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'examen.js');
 
-module.exports = { registrar, corregir, cli, notaTest };
+module.exports = { registrar, corregir, cli, notaTest, revisarEnSegundoPlano, revisarTrabajar, promptRevisor };
