@@ -1,20 +1,19 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
-visto_en: [01-02-01]
+bloques: ["1.2"]
+visto_en: ["01-02-01-presupuesto-personal"]
 dificultad: 2
-requiere: [presupuesto]
+requiere: [presupuesto-personal]
 alias: [gastos fijos, gastos variables]
-tags: [dinero, presupuesto]
+tags: [presupuesto]
 ---
 # Gastos fijos y variables
 
-> **En una frase:** Un gasto es fijo si se repite cada mes con casi la misma cifra sin que decidas nada, y variable si la cifra exacta la decides tú cada mes.
+> **En una frase:** un gasto es fijo si se repite cada mes con casi la misma cifra sin que decidas nada, y variable si la cifra la decides tú cada mes.
 
 ## El problema
 
-Para saber cuánto margen tienes hay que separar lo que no puedes tocar de lo que sí. Meterlo todo en una lista
-no dice dónde se puede recortar.
+Si todos los gastos van en un mismo saco, no sabes cuáles puedes recortar un mes flojo y cuáles te llegan igual.
 
 ## El ejemplo
 
@@ -27,18 +26,24 @@ no dice dónde se puede recortar.
 | Transporte | Variable | 60,00 € |
 | Ocio | Variable | 120,00 € |
 
-Fijos: 715,00 €. Variables: 480,00 €. Total de gastos: **1.195,00 €**.
+Fijos: 715,00 €. Variables: 480,00 €. Total: **1.195,00 €**.
+
+> [!warning] Cifra discutida
+> La hoja de cálculo de la clase pone las suscripciones a 52,00 €, no a 25,00 €. Aquí se usa la cifra de las diapositivas (ver la auditoría de la sesión).
+
+## La fórmula
+
+$$ \text{total gastos} = \text{gastos fijos} + \text{gastos variables} $$
 
 ## El error típico
 
-Meter el ocio en "fijos" porque "todos los meses gasto algo en ocio". Que gastes algo siempre no lo hace fijo: la
-cifra exacta la decides tú cada mes, y eso es justo lo que define "variable".
+Meter el ocio en «fijos» porque «todos los meses gasto algo en ocio». Que gastes algo siempre no lo hace fijo: la cifra exacta la decides tú cada mes, y eso es justo lo que define «variable».
 
 ## Relacionados
 
-- [[presupuesto]] — los gastos son la mitad de la cuenta
-- [[colchon-financiero]] — se mide en meses de gastos
+- [[presupuesto-personal]] — son las dos partes de la columna de gastos
+- [[colchon-financiero]] — se calcula con los gastos mensuales
 
 ## Historial
 
-- **01-02-01** · primera vez
+- **01-02-01-presupuesto-personal** · primera vez

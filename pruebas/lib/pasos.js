@@ -455,7 +455,7 @@ function preguntasDeLaClave(destino, ficheroExamen) {
   const clave = examenesLib.leerClave(destino, relExamen);
   const clavePreguntas = Array.isArray(clave.preguntas) ? clave.preguntas : [];
   const preguntasMd = examenesLib.preguntasDelMd(fs.readFileSync(ficheroExamen, 'utf8'));
-  return clavePreguntas.map((c, i) => ({ numero: i + 1, enunciado: preguntasMd[i] || '', concepto: c.concepto || null, origen: c.origen || null, de: c.de || null }));
+  return clavePreguntas.map((c, i) => ({ numero: i + 1, enunciado: preguntasMd[i] || '', concepto: c.concepto || null, angulo: c.angulo || null, origen: c.origen || null, de: c.de || null }));
 }
 
 function preguntasReutilizadas(destino, ficheroExamen) {
@@ -481,27 +481,42 @@ function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
 
   const esperadas = falladasTopeTres(falladas);
   const mismoBloque = (a, b) => normalizarTexto(sinNumeroDePregunta(a)) === normalizarTexto(sinNumeroDePregunta(b));
-  // Una fallada que era del examen del centro vuelve marcada `origen: "centro"` (cuenta para el tope de la mitad y
-  // para rotarlas): también es reutilizada si es la misma pregunta (prueba real de la 0.27.0). Su "de", si lo trae,
-  // tiene que ser el examen anterior.
+  // #55, decisión del mantenedor (2026-10-01): una fallada vuelve con el mismo concepto y el mismo ángulo pero
+  // rehecha (otro caso, otras cifras), para medir si ahora lo entiende y no si recuerda la corrección. Las del centro
+  // vuelven literales: son del examen oficial. Cada reutilizada se identifica por su "de" (el examen anterior,
+  // ", p.<n>"), o, si es del centro y no trae número, por ser la misma pregunta.
+  // `de` lo lee una persona: basta con que identifique el examen anterior, con o sin "estudio/" o "examenes/" delante.
+  const identifica = de => !!de && sinPrefijos(de.replace(/,\s*p\.\s*\d+\s*$/, '')) === sinPrefijos(relAnterior);
+  const numeroDe = de => { const m = /,\s*p\.\s*(\d+)\s*$/.exec(de || ''); return m ? Number(m[1]) : null; };
   const reutilizadas = preguntasDeLaClave(destino, nuevo).filter(pr => pr.origen === 'examen anterior'
-    || (pr.origen === 'centro' && esperadas.some(f => mismoBloque(f.enunciado, pr.enunciado))));
+    || (pr.origen === 'centro' && (identifica(pr.de) || esperadas.some(f => mismoBloque(f.enunciado, pr.enunciado)))));
   const problemas = [];
+  const cubiertas = new Set();
 
   for (const r of reutilizadas) {
-    // `de` lo lee una persona, no el código: basta con que identifique el examen anterior (mismo fichero), con o
-    // sin "estudio/" o "examenes/" delante y con o sin ", p.<n>" detrás (3 pruebas reales, 3 formas distintas).
-    const identifica = de => !!de && sinPrefijos(de.replace(/,\s*p\.\s*\d+\s*$/, '')) === sinPrefijos(relAnterior);
-    if ((r.origen === 'examen anterior' || r.de) && !identifica(r.de)) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}"`);
-    if (!esperadas.some(f => mismoBloque(f.enunciado, r.enunciado))) {
-      problemas.push(`la pregunta ${r.numero} está marcada como reutilizada pero su enunciado no coincide con ninguna fallada`);
+    if (!identifica(r.de)) problemas.push(`la pregunta ${r.numero} trae "de": ${r.de || '(vacío)'}, y tenía que ser "${relAnterior}, p.<n>"`);
+    const n = numeroDe(r.de);
+    const f = (n && falladas.find(x => x.numero === n)) || esperadas.find(x => mismoBloque(x.enunciado, r.enunciado));
+    if (!f) {
+      problemas.push(n ? `la pregunta ${r.numero} dice que viene de la p.${n}, y esa no es una fallada del examen anterior`
+        : `la pregunta ${r.numero} trae "de" sin el número de pregunta (", p.<n>"): sin él no se sabe qué fallada rehace`);
+      continue;
     }
+    cubiertas.add(f.numero);
+    const literal = mismoBloque(f.enunciado, r.enunciado);
+    if (f.origen === 'centro') {
+      if (!literal) problemas.push(`la pregunta ${r.numero} rehace la p.${f.numero}, que era del centro: esas vuelven literales`);
+      continue;
+    }
+    if (literal) problemas.push(`la pregunta ${r.numero} repite la p.${f.numero} tal cual: tenía que rehacerla con otro caso`);
+    if ((r.concepto || null) !== (f.concepto || null)) problemas.push(`la pregunta ${r.numero} rehace la p.${f.numero} con otro concepto (${r.concepto || 'ninguno'} en vez de ${f.concepto || 'ninguno'})`);
+    if (f.angulo && r.angulo !== f.angulo) problemas.push(`la pregunta ${r.numero} rehace la p.${f.numero} con otro ángulo (${r.angulo || 'ninguno'} en vez de ${f.angulo})`);
   }
 
   const porConcepto = new Map();
   for (const f of esperadas) porConcepto.set(f.concepto || null, [...(porConcepto.get(f.concepto || null) || []), f]);
   for (const [concepto, grupo] of porConcepto) {
-    const entraron = grupo.filter(f => reutilizadas.some(r => mismoBloque(f.enunciado, r.enunciado)));
+    const entraron = grupo.filter(f => cubiertas.has(f.numero));
     if (entraron.length < grupo.length) problemas.push(`del concepto ${concepto || '(sin concepto)'} solo entraron ${entraron.length} de ${grupo.length} falladas esperadas (tope 3)`);
   }
   const porConceptoReutilizadas = new Map();

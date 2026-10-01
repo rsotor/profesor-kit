@@ -43,7 +43,7 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-10-01 · sesión 01-01-01, respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-10-01 · respuesta del alumno en /dudas |
 
 ## Registro de dudas
 

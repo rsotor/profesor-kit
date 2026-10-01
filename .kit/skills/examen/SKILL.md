@@ -62,11 +62,13 @@ Todas de opción múltiple, con las opciones de `config/examenes.json` (`opcione
        node .kit/herramientas/examen.js --falladas <unidad>
 
    (`<unidad>` es un prefijo, como `01`; sin él, todo el curso). Su segunda línea es un JSON
-   `{ "falladas": […], "centroUsadas": […] }`. Reutiliza `falladas` tal cual: cada entrada trae `enunciado`
-   (con sus opciones, del propio `.md`), `correctas`, `explicacion`, `concepto`, `angulo` y `examen` (de dónde sale).
-   En la clave del examen nuevo, marca cada una con `origen: "examen anterior"` y `de: "<examen>, p.<numero>"`,
-   con `examen` y `numero` tal cual los da el JSON (apartado 4), para poder trazarla; si la fallada trae
-   `origen: "centro"`, se queda `"centro"` (cuenta para el tope de la mitad) y lleva también su `de`. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
+   `{ "falladas": […], "centroUsadas": […] }`. Cada entrada trae `enunciado` (con sus opciones, del propio
+   `.md`), `correctas`, `explicacion`, `concepto`, `angulo`, `origen`, `examen` y `numero`. **Una fallada vuelve
+   rehecha:** mismo `concepto` y mismo `angulo`, pero otro caso, otras cifras y otras opciones. Ya vio la
+   corrección: repetirla mide si la recuerda, no si lo entiende. **Las del centro (`origen: "centro"`) vuelven
+   literales**, porque son del examen oficial, y siguen siendo `"centro"` (cuentan para el tope de la mitad). En la
+   clave, cada una lleva `de: "<examen>, p.<numero>"`, con `examen` y `numero` tal cual del JSON: el examen donde
+   la falló, también si es del centro, nunca el test del centro. Las demás, `origen: "examen anterior"`. **No leas el histórico de intentos a mano**: es justo lo que calcula este comando.
 2. **Las del examen de referencia del centro que todavía no han salido**, si el alumno trajo uno: `falladas`
    ya trae marcadas `origen: "centro"` si las falló; `centroUsadas` (del mismo JSON) trae **todas** las que ya
    salieron, las haya fallado o no — prioriza las que no estén en ninguna de las dos. Ver "Examen de
@@ -173,8 +175,8 @@ nace el examen:
 Una entrada de `preguntas` por pregunta, **en el mismo orden**: `correctas` (la letra o letras que valen,
 minúscula), `explicacion` (por qué la correcta es correcta; si viene de internet, aquí la fuente externa),
 `concepto` (el slug de `estudio/conceptos/`, o `null`) y `angulo` (apartado 3; una reutilizada conserva el suyo). Si está reutilizada (apartado 3), añade
-`origen: "examen anterior"` con `de: "<ruta del examen>, p.<n>"`, o `origen: "centro"` si es literal del test de
-referencia; sin ninguna, es nueva.
+`origen` (`"examen anterior"`, o `"centro"` si es literal del test de referencia) y `de: "<examen donde la
+falló>, p.<n>"`; sin ninguna, es nueva.
 
 **En el final**, la clave lleva además `"escalones"`: el array completo de `tipos.final.escalones` tal como
 estaba, para que la escalera siga coherente si luego cambia la configuración.

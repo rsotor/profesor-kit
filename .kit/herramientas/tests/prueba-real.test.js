@@ -648,25 +648,30 @@ function examenAnteriorCorregido(raiz) {
   return path.join(raiz, 'estudio', ...RUTA_ANTERIOR.split('/'));
 }
 
-// El examen nuevo "correcto": reutiliza, trazadas, las 3 de concepto-a (tope) y la de concepto-b, más dos
-// nuevas — mismo orden que exigiría el tipo `modulo` con `preguntas: 6` (ajustado en config/examenes.json).
-function examenNuevoOk(raiz, { ajustesClave = {} } = {}) {
+// Una fallada rehecha (#55, opción b): mismo concepto y ángulo, otro caso — no es el mismo bloque.
+function bloqueRehecho(n, concepto) {
+  return `**${n}.** Un caso nuevo, con otras cifras, sobre ${concepto}. ¿Qué pasa ahora? *(elige una)*\n\n- [ ] a) correcta\n- [ ] b) distractor\n- [ ] c) distractor\n- [ ] d) distractor\n`;
+}
+
+// El examen nuevo "correcto": rehace, trazadas a su pregunta (`de: <anterior>, p.<n>`), las 3 de concepto-a (tope:
+// p.1, p.2 y p.4) y la de concepto-b (p.3), más dos nuevas — 6 preguntas, como el tipo `modulo` con `preguntas: 6`.
+function examenNuevoOk(raiz, { ajustesClave = {}, bloques = {} } = {}) {
   const orden = [
-    { n: 1, concepto: 'concepto-b', reutilizada: true },
-    { n: 2, concepto: 'concepto-a', reutilizada: true },
-    { n: 3, concepto: 'concepto-nueva-1', reutilizada: false },
-    { n: 4, concepto: 'concepto-a', reutilizada: true },
-    { n: 5, concepto: 'concepto-a', reutilizada: true },
-    { n: 6, concepto: 'concepto-nueva-2', reutilizada: false },
+    { n: 1, concepto: 'concepto-b', de: 3 },
+    { n: 2, concepto: 'concepto-a', de: 1 },
+    { n: 3, concepto: 'concepto-nueva-1' },
+    { n: 4, concepto: 'concepto-a', de: 2 },
+    { n: 5, concepto: 'concepto-a', de: 4 },
+    { n: 6, concepto: 'concepto-nueva-2' },
   ];
-  const preguntas = orden.map(q => bloquePregunta(q.n, q.concepto)).join('\n');
+  const preguntas = orden.map(q => bloques[q.n] || (q.de ? bloqueRehecho(q.n, q.concepto) : bloquePregunta(q.n, q.concepto))).join('\n');
   escribirExamen(raiz, RUTA_NUEVO, [
     '---', 'tipo: examen', 'unidad: "01"', 'fecha: 2026-10-05', 'tipo_examen: modulo', '---',
     '# Examen', '', preguntas,
   ].join('\n'));
   const clavePreguntas = orden.map(q => ({
     correctas: ['a'], explicacion: 'x', concepto: q.concepto,
-    ...(q.reutilizada ? { origen: 'examen anterior', de: RUTA_ANTERIOR } : {}),
+    ...(q.de ? { origen: 'examen anterior', de: `${RUTA_ANTERIOR}, p.${q.de}` } : {}),
     ...(ajustesClave[q.n] || {}),
   }));
   escribirClave(raiz, RUTA_NUEVO, { opciones: 4, resta_fallo: 0, aprobado: 6, preguntas: clavePreguntas });
@@ -689,7 +694,7 @@ test('preguntasReutilizadas: solo las que la clave marca con origen "examen ante
   const ficheroNuevo = examenNuevoOk(raiz);
   const reutilizadas = p.preguntasReutilizadas(raiz, ficheroNuevo);
   assert.deepEqual(reutilizadas.map(r => r.numero), [1, 2, 4, 5]);
-  assert.ok(reutilizadas.every(r => r.de === RUTA_ANTERIOR));
+  assert.ok(reutilizadas.every(r => r.de.startsWith(`${RUTA_ANTERIOR}, p.`)));
 });
 
 test('verificarReutilizacionFalladas: todas las falladas del anterior reaparecen, trazadas y con el tope de 3 por concepto', () => {
@@ -732,17 +737,53 @@ test('verificarReutilizacionFalladas: "de" apuntando a otro examen, no pasa', ()
   assert.match(r.detalle, /trae "de": examenes\/otro-examen\.md/);
 });
 
-test('verificarReutilizacionFalladas: marcada como reutilizada pero con otro enunciado, no pasa', () => {
+test('verificarReutilizacionFalladas (#55): una fallada repetida tal cual, no pasa — tenía que rehacerla', () => {
   const raiz = temporal('reutilizacion-');
   const ficheroAnterior = examenAnteriorCorregido(raiz);
   escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
-  const ficheroNuevo = examenNuevoOk(raiz);
-  const bloqueOriginal = bloquePregunta(2, 'concepto-a');
-  const bloqueCambiado = '**2.** ¿Otra pregunta, sin relación? *(elige una)*\n\n- [ ] a) x\n- [ ] b) y\n- [ ] c) z\n- [ ] d) w\n';
-  fs.writeFileSync(ficheroNuevo, fs.readFileSync(ficheroNuevo, 'utf8').replace(bloqueOriginal, bloqueCambiado));
+  examenNuevoOk(raiz, { bloques: { 2: bloquePregunta(2, 'concepto-a') } });
   const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
   assert.equal(r.ok, false);
-  assert.match(r.detalle, /su enunciado no coincide con ninguna fallada/);
+  assert.match(r.detalle, /la pregunta 2 repite la p\.1 tal cual: tenía que rehacerla con otro caso/);
+});
+
+test('verificarReutilizacionFalladas (#55): rehecha con otro concepto u otro ángulo, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  const clave = path.join(raiz, 'config', 'claves', RUTA_ANTERIOR.replace(/^examenes\//, '').replace(/\.md$/, '.json'));
+  const anterior = JSON.parse(fs.readFileSync(clave, 'utf8'));
+  anterior.preguntas[0].angulo = 'predecir';
+  fs.writeFileSync(clave, JSON.stringify(anterior));
+  examenNuevoOk(raiz, { ajustesClave: { 2: { angulo: 'reconocer' }, 4: { concepto: 'concepto-b' } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /la pregunta 2 rehace la p\.1 con otro ángulo \(reconocer en vez de predecir\)/);
+  assert.match(r.detalle, /la pregunta 4 rehace la p\.2 con otro concepto \(concepto-b en vez de concepto-a\)/);
+});
+
+test('verificarReutilizacionFalladas (#55): una fallada del centro vuelve literal, con "de" al examen anterior; rehecha, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  const clave = path.join(raiz, 'config', 'claves', RUTA_ANTERIOR.replace(/^examenes\//, '').replace(/\.md$/, '.json'));
+  const anterior = JSON.parse(fs.readFileSync(clave, 'utf8'));
+  anterior.preguntas[2].origen = 'centro';   // la p.3 (concepto-b) era del test del centro
+  fs.writeFileSync(clave, JSON.stringify(anterior));
+
+  examenNuevoOk(raiz, { bloques: { 1: bloquePregunta(1, 'concepto-b') }, ajustesClave: { 1: { origen: 'centro' } } });
+  const literal = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(literal.ok, true, literal.detalle);
+
+  examenNuevoOk(raiz, { ajustesClave: { 1: { origen: 'centro' } } });
+  const rehecha = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(rehecha.ok, false);
+  assert.match(rehecha.detalle, /la pregunta 1 rehace la p\.3, que era del centro: esas vuelven literales/);
+
+  examenNuevoOk(raiz, { bloques: { 1: bloquePregunta(1, 'concepto-b') }, ajustesClave: { 1: { origen: 'centro', de: 'test-autoevaluacion-modulo-1.md, p.1' } } });
+  const deDelCentro = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(deDelCentro.ok, false, 'lo de la prueba real del 2026-10-01: "de" al test del centro en vez de al examen anterior');
+  assert.match(deDelCentro.detalle, /la pregunta 1 trae "de": test-autoevaluacion-modulo-1\.md, p\.1/);
 });
 
 test('verificarReutilizacionFalladas: falta una fallada por reutilizar (concepto-b nunca reaparece), no pasa', () => {
@@ -761,7 +802,7 @@ test('verificarReutilizacionFalladas: más de 3 preguntas reutilizadas del mismo
   const ficheroAnterior = examenAnteriorCorregido(raiz);
   escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
   // La 3 (nueva) pasa a ser también concepto-a reutilizada: 4 preguntas de concepto-a en el examen nuevo.
-  examenNuevoOk(raiz, { ajustesClave: { 3: { origen: 'examen anterior', de: RUTA_ANTERIOR, concepto: 'concepto-a' } } });
+  examenNuevoOk(raiz, { ajustesClave: { 3: { origen: 'examen anterior', de: `${RUTA_ANTERIOR}, p.6`, concepto: 'concepto-a' } } });
   const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
   assert.equal(r.ok, false);
   assert.match(r.detalle, /más de 3 preguntas reutilizadas del mismo concepto: concepto-a/);
@@ -804,13 +845,18 @@ test('verificarReutilizacionFalladas: aunque los dos exámenes tengan la misma h
 
 // Prueba real de la 0.27.0: una fallada que era del examen del centro vuelve marcada `origen: "centro"` (cuenta para
 // el tope de la mitad y para rotarlas), no "examen anterior". También vale, si es la misma pregunta.
-test('verificarReutilizacionFalladas: una fallada del centro puede volver marcada "centro" (con o sin "de")', () => {
+test('verificarReutilizacionFalladas: una fallada del centro vuelve marcada "centro", y sin "de" no pasa', () => {
   const raiz = temporal('reutilizacion-');
   const ficheroAnterior = examenAnteriorCorregido(raiz);
   escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
-  examenNuevoOk(raiz, { ajustesClave: { 1: { origen: 'centro', de: undefined }, 2: { origen: 'centro' } } });
+  const clave = path.join(raiz, 'config', 'claves', RUTA_ANTERIOR.replace(/^examenes\//, '').replace(/\.md$/, '.json'));
+  const anterior = JSON.parse(fs.readFileSync(clave, 'utf8'));
+  anterior.preguntas[2].origen = 'centro';
+  fs.writeFileSync(clave, JSON.stringify(anterior));
+  examenNuevoOk(raiz, { bloques: { 1: bloquePregunta(1, 'concepto-b') }, ajustesClave: { 1: { origen: 'centro', de: undefined } } });
   const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
-  assert.equal(r.ok, true, r.detalle);
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /la pregunta 1 trae "de": \(vacío\)/);
 });
 
 test('verificarReutilizacionFalladas: marcada "centro" pero con "de" de otro examen, no pasa', () => {
@@ -822,8 +868,8 @@ test('verificarReutilizacionFalladas: marcada "centro" pero con "de" de otro exa
   assert.equal(r.ok, false);
 });
 
-// Prueba real de la 0.27.0 (2.ª): el profesor escribió `de: "<examen>, p.1"`. Nadie lee `de` salvo una persona, y
-// con el número se traza mejor: vale con o sin él, pero el examen tiene que ser el anterior.
+// Prueba real de la 0.27.0 (2.ª): el profesor escribió `de: "<examen>, p.1"`. Desde la #55 (falladas rehechas) el
+// número es obligatorio, porque es lo único que dice qué fallada rehace; el examen tiene que ser el anterior.
 test('verificarReutilizacionFalladas: "de" con el número de pregunta (", p.N") también vale', () => {
   const raiz = temporal('reutilizacion-');
   const ficheroAnterior = examenAnteriorCorregido(raiz);
@@ -841,8 +887,18 @@ test('verificarReutilizacionFalladas: "de" identifica el examen anterior aunque 
   const ficheroAnterior = examenAnteriorCorregido(raiz);
   escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
   const sinPrefijo = RUTA_ANTERIOR.replace(/^examenes\//, '');
-  examenNuevoOk(raiz, { ajustesClave: { 1: { de: `${sinPrefijo}, p.3` }, 2: { de: `estudio/${RUTA_ANTERIOR}` } } });
+  examenNuevoOk(raiz, { ajustesClave: { 1: { de: `${sinPrefijo}, p.3` }, 2: { de: `estudio/${RUTA_ANTERIOR}, p.1` } } });
   assert.equal(p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior }).ok, true);
+});
+
+test('verificarReutilizacionFalladas (#55): una rehecha sin el número de pregunta en "de" no se puede trazar, no pasa', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  examenNuevoOk(raiz, { ajustesClave: { 2: { de: RUTA_ANTERIOR } } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /la pregunta 2 trae "de" sin el número de pregunta/);
 });
 
 // --- Repetir desde un paso (--desde): la lista de pasos como datos, restaurar y saltar --------------------

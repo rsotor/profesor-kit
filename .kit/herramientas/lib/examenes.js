@@ -167,6 +167,7 @@ function preguntasFalladas(raiz, examenesUnidad) {
       salida.push({
         examen: examen.rel, numero, enunciado,
         correctas: c.correctas || [], explicacion: c.explicacion || '', concepto: c.concepto || null, angulo: c.angulo || null,
+        origen: c.origen || null,
       });
     }
   }

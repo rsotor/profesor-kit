@@ -1,49 +1,49 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
-visto_en: [01-02-01]
+bloques: ["1.2"]
+visto_en: ["01-02-01-presupuesto-personal"]
 dificultad: 2
-requiere: [presupuesto]
+requiere: [presupuesto-personal]
 alias: []
-tags: [dinero, ahorro]
+tags: [presupuesto]
 ---
 # Tasa de ahorro
 
-> **En una frase:** La tasa de ahorro dice qué parte de lo que ganas te queda, en vez de la cifra absoluta, para poder comparar entre ingresos distintos.
+> **En una frase:** la parte de lo que ingresas que te queda al acabar el mes, en porcentaje.
 
 ## El problema
 
-Ahorrar 655,00 € no dice nada por sí solo: es mucho con 1.850,00 € de ingresos y poco con 5.000,00 €. La cifra
-absoluta no se puede comparar entre dos personas con sueldos distintos.
+Ahorrar 655,00 € no dice si es mucho o poco: depende de cuánto ganes. Con la cifra absoluta no se pueden comparar dos personas con sueldos distintos, ni tú contigo en meses distintos.
 
 ## El ejemplo
 
-Con el ejemplo del presupuesto: ahorro 655,00 € sobre ingresos 1.850,00 €. 655,00 ÷ 1.850,00 × 100 ≈ **35,4**:
-de cada 100,00 € que entran, te quedan unos 35,40 €.
+Ingresos de 1.850,00 € y ahorro de 655,00 €:
+
+655,00 € ÷ 1.850,00 € × 100 ≈ **35,4 % mensual** (la parte del ingreso del mes que se ahorra).
+
+Alguien que ingresa 3.000,00 € y ahorra 655,00 € ahorra menos en proporción, aunque la cifra sea la misma.
 
 ## La fórmula
 
-$$ t = \frac{A}{I} \times 100 $$
+$$ \text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100 $$
 
-$t$ es la tasa de ahorro (cuántos euros se ahorran de cada 100,00 € ingresados), $A$ el ahorro del mes e $I$ los
-ingresos del mes. No es un interés: no lleva periodo, solo compara un mes con sus propios ingresos.
+Es el ahorro del mes dividido entre lo que ingresaste ese mes.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundirla con un interés. Aquí no hay nadie pagándote nada: es solo cuánto de tus ingresos no gastaste.
+> Calcularla sobre los gastos en vez de sobre los ingresos. El denominador es siempre lo que entra.
 
 ## Visto desde tus ingresos irregulares
 
 > [!info] Ampliación fuera de los apuntes
-> Con ingresos que cambian, la tasa de un mes suelto engaña: un mes de 2.400,00 € y otro de 1.300,00 € con los
-> mismos gastos dan tasas muy distintas. Conviene calcularla con el ingreso medio.
+> Si tus ingresos cambian, la tasa de un mes suelto engaña: un mes flojo puede dar una tasa negativa y uno bueno una altísima. Para una idea realista, mírala con el ingreso medio, no mes a mes.
 
 ## Relacionados
 
-- [[presupuesto]] — de donde sale el ahorro del mes
-- [[colchon-financiero]] — a dónde va primero ese ahorro
+- [[presupuesto-personal]] — de ahí sale el ahorro del mes
+- [[colchon-financiero]] — el primer destino de lo que se ahorra
 
 ## Historial
 
-- **01-02-01** · primera vez
+- **01-02-01-presupuesto-personal** · primera vez

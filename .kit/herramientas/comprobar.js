@@ -199,6 +199,20 @@ function comprobarMarcadoresDeConflicto(raiz, notas, informe) {
   }
 }
 
+// Las reglas del dominio (`patrones_prohibidos`) son para lo que escribe el profesor, no para lo que contestó el alumno:
+// su respuesta se cita tal cual, aunque esté mal (prueba real de la 0.28.0: el alumno contestó "20 %" sin periodo, la
+// regla saltó sobre su respuesta y un paso posterior la reescribió para poder guardar). En un examen, la respuesta
+// del alumno es lo que va tras "✍️ **Tu respuesta:**" y la segunda columna de las tablas numeradas de corrección.
+const HUECO_RESPUESTA = '✍️ **Tu respuesta:**';
+function sinRespuestaDelAlumno(linea) {
+  const i = linea.indexOf(HUECO_RESPUESTA);
+  if (i >= 0) return linea.slice(0, i + HUECO_RESPUESTA.length);
+  if (!/^\s*(>\s*)?\|\s*\d+\s*\|/.test(linea)) return linea;
+  const celdas = linea.split(/(?<!\\)\|/);
+  if (celdas.length > 3) celdas[2] = ' ';
+  return celdas.join('|');
+}
+
 function comprobarPatrones(raiz, notas, informe) {
   for (const { patron, mensaje } of v.leerAjustes(raiz).patrones_prohibidos || []) {
     let regex;
@@ -207,8 +221,9 @@ function comprobarPatrones(raiz, notas, informe) {
       continue;
     }
     for (const nota of notas) {
+      const esExamen = nota.startsWith('examenes/');
       leer(raiz, nota).split(/\r?\n/).forEach((linea, i) => {
-        if (regex.test(linea)) informe.errores.push({ regla: 'patron-prohibido', fichero: nota, detalle: `línea ${i + 1}: ${mensaje}` });
+        if (regex.test(esExamen ? sinRespuestaDelAlumno(linea) : linea)) informe.errores.push({ regla: 'patron-prohibido', fichero: nota, detalle: `línea ${i + 1}: ${mensaje}` });
       });
     }
   }

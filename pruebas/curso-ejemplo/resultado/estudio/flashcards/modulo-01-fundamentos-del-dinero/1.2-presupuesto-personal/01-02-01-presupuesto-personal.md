@@ -1,26 +1,42 @@
 ---
 tipo: flashcards
-sesion: 01-02-01
+sesion: 01-02-01-presupuesto-personal
 ---
-# Flashcards · 01-02-01
+# Flashcards · 01-02-01-presupuesto-personal
 
 > Se responde mentalmente antes de desplegar.
 
-**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué cifra de ingresos presupuestas?**
+**Todos los meses gastas algo en ocio. ¿Es un gasto fijo o variable?**
 > [!success]- Respuesta
-> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
+> Variable. Que gastes algo siempre no lo hace fijo: la cifra la decides tú cada mes.
 
-**Todos los meses gastas algo en ocio. ¿Es un gasto fijo?**
-> [!success]- Respuesta
-> No, es variable: la cifra exacta la decides tú cada mes. Que se repita no lo hace fijo.
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 1/10*
 
-**Ingresas 1.850,00 € y gastas 1.195,00 €. ¿Cuánto ahorras y qué tasa de ahorro es?**
+**Un freelance factura 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué ingreso presupuesta sin sustos?**
 > [!success]- Respuesta
-> 655,00 €. La tasa es 655 ÷ 1.850 × 100 ≈ 35,4: te quedan unos 35,40 € de cada 100,00 €.
+> Con la media de los últimos 6-12 meses, no con la del mejor mes.
 
-**¿Cuántos meses de gastos conviene tener de colchón si eres freelance, y por qué más que con nómina?**
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 1/10*
+
+**Ingresas 1.850,00 € y ahorras 655,00 €. ¿Qué tasa de ahorro tienes?**
 > [!success]- Respuesta
-> 5-6 meses, frente a 3: tus ingresos son irregulares y un mes flojo es más probable.
+> 655,00 ÷ 1.850,00 × 100 ≈ 35,4 % mensual.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 1/10*
+
+**Gastas 1.195,00 € al mes. ¿Cuánto es un colchón de 3 meses y por qué un freelance apunta a más?**
+> [!success]- Respuesta
+> 3.585,00 €. Con ingresos irregulares conviene cubrir 5-6 meses, porque habrá meses flojos.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 1/10*
 
 ---
-Conceptos que cubren: [[presupuesto]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
