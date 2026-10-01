@@ -6,7 +6,7 @@ El único plan abierto del kit. Se actualiza mientras se trabaja, no al cerrar. 
 
 Para abrir una sesión:
 
-> Seguimos con el profesor-kit (repo en ~/Documents/courses/profesor-kit, cuenta rsotor). Lee
+> Seguimos con el profesor-kit (repo en ~/Documents/personal/formacion/profesor-kit, cuenta rsotor). Lee
 > `docs/planes/plan-vivo.md` y dime por dónde seguimos.
 
 ## En curso
