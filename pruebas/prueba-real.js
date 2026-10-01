@@ -270,6 +270,18 @@ function pasoPrepararEnSegundoPlano(ctx, clase) {
   return { ok: r.ok, detalle: r.ok ? `lanzada la preparación de ${clase.id} en segundo plano` : `no se pudo lanzar: ${r.salida}` };
 }
 
+// Las reglas de inicio de sesión pueden ordenar al asistente juntar una preparación terminada antes de
+// atender otra petición. En ese caso la nota y el diario prueban que ya se juntó, aunque --estado devuelva [].
+function preparacionYaJuntada(ctx, clase) {
+  const diario = path.join(ctx.destino, 'config', 'diario.md');
+  if (!fs.existsSync(diario)) return false;
+  const registrada = fs.readFileSync(diario, 'utf8').split(/\r?\n/).some(linea =>
+    linea.includes(`sesion(${clase.id}):`) && linea.includes('(preparada en segundo plano)'));
+  if (!registrada) return false;
+  return p.recorrerMd(path.join(ctx.destino, 'estudio', 'sesiones'))
+    .some(fichero => path.basename(fichero).startsWith(`${clase.id}-`));
+}
+
 // Espera (sondeando --estado, sin sleeps largos de un tirón) a que termine, y la junta con la principal.
 // Si venimos de restaurar una copia (--desde) y la preparación se tuvo que relanzar (ctx.preparacionReparada:
 // repararPreparacionSiHaceFalta), se cuenta en el propio detalle de este paso — no como un paso aparte.
@@ -284,6 +296,9 @@ function pasoJuntarPreparacion(ctx, clase) {
     const r = preparar(ctx, '--estado', '--json');
     if (!r.ok) return { ok: false, detalle: `${nota}preparar.js --estado falló: ${r.salida}` };
     estado = JSON.parse(r.salida || '[]').find(e => e.id === clase.id);
+    if (!estado && preparacionYaJuntada(ctx, clase)) {
+      return { ok: true, detalle: `${clase.id} ya se juntó antes durante la prueba (diario y nota de sesión confirmados)` };
+    }
     if (estado && estado.resultadoEnCaliente !== 'en-curso') break;
     if (Date.now() > limite) return { ok: false, detalle: `${nota}la preparación de ${clase.id} no terminó a tiempo (${estado ? estado.resultadoEnCaliente : 'no se encuentra'})` };
     dormir(2000);
