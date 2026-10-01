@@ -68,7 +68,8 @@ Para abrir una sesión:
   - **Prueba real entera (2026-10-01, f2a6ac0): 14/16.** Falló `--juntar`: choque en `tasa-de-ahorro.md` (el examen
     subió `dificultad` y la 02-02 amplió la nota: campos distintos en líneas contiguas). Bug del kit, no solo del
     paralelo. Arreglo: `lib/mezcla.js` junta las notas de concepto por cabecera (campo a campo) y cuerpo (a tres
-    bandas). Y el curso de una prueba con fallos ya no se borra al salir. Se comprueba con `--solo` del lanzar.
+    bandas). Y el curso de una prueba con fallos ya no se borra al salir. `--solo` del lanzar, sobre 6820b75: 3/3
+    (juntada sin choque; interés compuesto y tasa de ahorro, una nota cada uno con las dos sesiones y una fila).
   - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
     una preparación fallida conserva en su rama descartada lo que escribió, y el prompt del coordinador con las dos fases. Prueba real:
     02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,
@@ -117,7 +118,11 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 - **#68** (sarainieto, Codex en Windows, kit 0.27.1, 2026-10-01): el examen se escribe en `estudio/examenes/` pero la
   clave no puede ir a `config/claves/` porque el asistente solo puede escribir en `estudio/`; `examen.js --corregir`
   dice que falta la clave y no se registra nada. Pide detectarlo antes de crear un examen a medias y una forma soportada
-  de guardar la clave. Sin decidir.
+  de guardar la clave. Causa: lo lanzó desde Obsidian con Claudian, que trabaja desde `estudio/` (el atajo del kit
+  abre desde la raíz). Propuesta (rama aparte, tras cerrar la #56): `/examen` escribe primero la clave y, si no puede,
+  no crea el examen y ofrece `permisos.js --aplicar`; y probar nosotros si Claudian respeta esos permisos (con Claude
+  Code aquí; con Codex, en el Mac). Sin comentario en la issue: quien la abrió no sabría contestarlo (Roberto,
+  2026-10-01).
 - **#46**, **#47**: peticiones sin cambios.
 - **#59** abierta: falta que quien la abrió diga si su Codex tiene una herramienta de opciones (para quitar el
   `pendiente` del adaptador).

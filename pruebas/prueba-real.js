@@ -909,9 +909,10 @@ function cli(args) {
   }
 
   const resultadoDir = carpetaDeResultado({ sinLlm, asistente });
-  let pasos, informe;
+  let pasos, informe, resultadoUsado;
   try {
-    ({ pasos, informe } = ejecutar({ sinLlm, modelo, limiteMs, asistente, resultadoDir, volcarDir, desde, solo, copiasDir }));
+    // --solo escribe en otra carpeta (pruebas-local/solo-<asistente>): se dice la que de verdad usó.
+    ({ pasos, informe, resultadoDir: resultadoUsado } = ejecutar({ sinLlm, modelo, limiteMs, asistente, resultadoDir, volcarDir, desde, solo, copiasDir }));
   } catch (error) {
     if (error instanceof PasoDesconocidoError) {
       console.error(`Paso desconocido: "${solo || desde}". Pasos válidos:\n${error.validos.map(n => `  - ${n}`).join('\n')}`);
@@ -920,7 +921,7 @@ function cli(args) {
     if (error instanceof SinCopiasError) { console.error(error.message); return 2; }
     throw error;
   }
-  console.log(`Resultado en ${path.relative(RAIZ_KIT, resultadoDir)}/RESUMEN.md`);
+  console.log(`Resultado en ${path.relative(RAIZ_KIT, resultadoUsado)}/RESUMEN.md`);
   const denegados = pasos.reduce((n, x) => n + (x.denegaciones || []).length, 0);
   console.log(`${pasos.filter(x => x.ok).length}/${pasos.filter(x => x.ok !== null).length} pasos bien · ${denegados} permiso(s) denegado(s)`);
   const fallo = pasos.some(x => x.ok === false) || informe.errores.length > 0;
