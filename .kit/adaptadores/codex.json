@@ -12,7 +12,7 @@
     "tipo": "codex",
     "probado": "Windows · Codex CLI 0.156.1 · 2026-09-24 (issue #42): .codex/config.toml con la raíz del curso en writable_roots y reglas en .codex/rules/, desde la raíz y desde estudio/"
   },
-  "probado": "Windows · Codex CLI 0.156.1 · 2026-09-24",
+  "probado": "Windows · Codex CLI 0.159.3 · 2026-10-01",
   "segundo_plano": [
     "exec",
     "--ephemeral",
@@ -24,15 +24,12 @@
     "-"
   ],
   "prompt_por_stdin": true,
-  "subagentes": {"pendiente": "issue #56: comprobar si Codex puede lanzar un subagente con su propio contexto; si puede, aquí va su herramienta. Mientras, revisa el segundo plano"},
-  "preguntar_con_opciones": {
-    "pendiente": "issue #59: comprobar si Codex tiene una herramienta para que el alumno elija entre opciones y las envíe; si la tiene, aquí van herramienta y limites"
-  },
+  "subagentes": {"herramienta": "spawn_agent"},
   "soporte": [
     {
       "sistema": "Windows",
       "estado": "con-limitaciones",
-      "evidencia": "instalación, skills, permisos de una vez y segundo plano (codex exec, sin red) probados · Codex CLI 0.156.1 · 2026-09-24 (issue #42); sin prueba real completa, y la regla que hace preguntar por python sin comprobar con Python instalado"
+      "evidencia": "instalación, skills, permisos de una vez y segundo plano (codex exec, sin red) probados; disparadores 3/3, guías 3/3 y subagentes probados · Codex CLI 0.159.3 · 2026-10-01 (issues #42, #45, #56 y #59); sin prueba real completa, sin selector de opciones en modo normal y la regla que hace preguntar por python sin comprobar con Python instalado"
     },
     {
       "sistema": "macOS",
