@@ -629,6 +629,28 @@ function comprobarTrampa(destino, { id, concepto, progresoAntes = null }) {
 }
 
 // HTML de repaso generados en estudio/repasos/.
+// #56: un concepto que sale en varias clases (preparadas a la vez o no) queda en UNA sola nota, con todas esas sesiones
+// en `visto_en`, y con una sola fila en progreso.md. Se busca por el título (`# <titulo>`), no por el slug: el slug lo
+// decide el coordinador.
+function conceptoCompartido(destino, { titulo, sesiones }) {
+  const dir = path.join(destino, 'estudio', 'conceptos');
+  const normal = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  const notas = recorrerMd(dir).filter(f => !path.basename(f).startsWith('_')).filter(f => {
+    const m = /^#\s+(.+)$/m.exec(fs.readFileSync(f, 'utf8'));
+    return m && normal(m[1]) === normal(titulo);
+  });
+  if (notas.length !== 1) return { ok: false, detalle: `"${titulo}": ${notas.length} notas (${notas.map(f => path.basename(f)).join(', ') || 'ninguna'}), tiene que haber una` };
+  const texto = fs.readFileSync(notas[0], 'utf8');
+  const visto = (/^visto_en:\s*\[([^\]]*)\]/m.exec(texto) || [, ''])[1];
+  const faltan = sesiones.filter(id => !visto.split(',').some(v => v.trim().replace(/^["']|["']$/g, '').startsWith(`${id}-`) || v.trim() === id));
+  if (faltan.length) return { ok: false, detalle: `"${titulo}" (${path.basename(notas[0])}): visto_en no tiene ${faltan.join(', ')}` };
+  const slug = path.basename(notas[0], '.md');
+  const progreso = path.join(destino, 'estudio', 'progreso.md');
+  const filas = fs.existsSync(progreso) ? fs.readFileSync(progreso, 'utf8').split(/\r?\n/).filter(l => l.startsWith('|') && l.includes(`[[${slug}`)).length : 0;
+  if (filas !== 1) return { ok: false, detalle: `"${titulo}" (${slug}): ${filas} filas en progreso.md, tiene que haber una` };
+  return { ok: true, detalle: `"${titulo}": una nota (${slug}), vista en ${sesiones.join(' y ')}, una fila en progreso` };
+}
+
 function repasosGenerados(destino) {
   const dir = path.join(destino, 'estudio', 'repasos');
   if (!fs.existsSync(dir)) return [];
@@ -640,7 +662,7 @@ function repasosGenerados(destino) {
 
 module.exports = {
   recorrerMd, primerConcepto, primeraSesion, insertarAntesDelPie, simularAlumnoTrasSesiones, quedaMarcador,
-  conceptoConFormula, examenMasReciente, repasosGenerados,
+  conceptoConFormula, examenMasReciente, repasosGenerados, conceptoCompartido,
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
   casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,

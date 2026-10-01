@@ -937,13 +937,13 @@ const CLASES_EJEMPLO = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'clases.jso
 
 test('nombresDePasos: el orden real del curso de ejemplo, con la trampa y sin ella', () => {
   const conTrampa = nombresDePasos(CLASES_EJEMPLO, false);
-  // La única clase en segundo plano (02-01) se procesa entera con --lanzar/--juntar: no hay un "/sesion 02-01"
-  // aparte (eso lo hace el asistente en segundo plano, no un paso más del ejecutor).
+  // Las clases en segundo plano (02-01 y 02-02, #56) se procesan enteras con un solo --lanzar/--juntar: no hay un
+  // "/sesion 02-0x" aparte (eso lo hace el asistente en segundo plano, no un paso más del ejecutor).
   assert.deepEqual(conTrampa, [
-    '/sesion 01-01', 'material con órdenes (01-01)', '/sesion 01-02', 'preparar.js --lanzar 02-01',
+    '/sesion 01-01', 'material con órdenes (01-01)', '/sesion 01-02', 'preparar.js --lanzar 02-01, 02-02',
     '/dudas', '/ejercicio', '/examen (referencia del centro)', '/examen (generar)', '/examen (contestar)',
     '/examen (corregir)', '/examen (progreso con prueba)', '/examen (otra vez, reutiliza falladas)',
-    '/examen (corrección con veredictos esperados)', 'preparar.js --juntar 02-01', '/repaso',
+    '/examen (corrección con veredictos esperados)', 'preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases', '/repaso',
   ]);
   // --sin-llm nunca pide el paso de la trampa (sin LLM no hay nada que comprobar en la auditoría): un
   // paso menos, mismo orden en lo demás.
@@ -954,7 +954,7 @@ test('nombresDePasos: el orden real del curso de ejemplo, con la trampa y sin el
 
 test('construirDefinicionDePasos: cada paso trae su función, sin ejecutarla (ctx vacío no revienta al construir)', () => {
   const { lista, claseEnSegundoPlano } = construirDefinicionDePasos({ sinLlm: true }, CLASES_EJEMPLO);
-  assert.equal(claseEnSegundoPlano.id, '02-01');
+  assert.equal(claseEnSegundoPlano.id, '02-01_02-02');
   assert.equal(lista.length, nombresDePasos(CLASES_EJEMPLO, true).length);
   assert.equal(lista.every(d => typeof d.fn === 'function'), true);
 });
@@ -1208,3 +1208,39 @@ test('refrescarCursoRestaurado: el curso restaurado se queda con el motor actual
   assert.match(gitDe(destino, ['log', '-1', '--format=%s']), /motor y material de la copia de trabajo actual/);
   assert.equal(refrescarCursoRestaurado({ trabajo: RAIZ, datosCurso: EJEMPLO, destino }), false, 'sin nada que cambiar, no hace commit');
 });
+
+// --- #56: varias clases en segundo plano, en una sola preparación ---------------------------------------------
+
+test('construirDefinicionDePasos: las clases fuera del módulo del examen, en una sola preparación con --clase, y luego los compartidos', () => {
+  const clases = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'clases.json'), 'utf8'));
+  const { lista, claseEnSegundoPlano } = construirDefinicionDePasos({ sinLlm: true }, clases);
+  assert.equal(claseEnSegundoPlano.id, '02-01_02-02', 'el id que le da preparar.js a varias clases');
+  assert.deepEqual(claseEnSegundoPlano.clases.map(c => c.id), ['02-01', '02-02']);
+  const nombres = lista.map(d => d.nombre);
+  assert.ok(nombres.includes('preparar.js --lanzar 02-01, 02-02') && nombres.includes('preparar.js --juntar 02-01, 02-02'));
+  assert.ok(!nombres.includes('/sesion 02-02'), 'la 02-02 no se procesa aparte en primer plano');
+  assert.ok(nombres.indexOf('conceptos compartidos entre clases') > nombres.indexOf('preparar.js --juntar 02-01, 02-02'));
+});
+
+test('conceptoCompartido: una nota con todas las sesiones en visto_en y una fila en progreso; si no, dice qué falla', () => {
+  const destino = temporal('compartido-');
+  const nota = visto => `---\ntipo: concepto\nvisto_en: [${visto}]\n---\n# Interés compuesto\n`;
+  escribir(destino, {
+    'estudio/conceptos/interes-compuesto.md': nota('02-01-01-interes, 02-02-01-ahorro'),
+    'estudio/progreso.md': '| Concepto | Estado |\n|---|---|\n| [[interes-compuesto]] | ⬜ |\n',
+  });
+  const caso = { titulo: 'Interés compuesto', sesiones: ['02-01', '02-02'] };
+  assert.equal(p.conceptoCompartido(destino, caso).ok, true);
+
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto.md'), nota('02-01-01-interes'));
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /visto_en no tiene 02-02/);
+
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto.md'), nota('02-01-01-interes, 02-02-01-ahorro'));
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-2.md'), nota('02-02-01-ahorro'));
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /2 notas/, 'duplicado entre subagentes');
+
+  fs.rmSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-2.md'));
+  fs.appendFileSync(path.join(destino, 'estudio', 'progreso.md'), '| [[interes-compuesto]] | ⬜ |\n');
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /2 filas en progreso/);
+});
+

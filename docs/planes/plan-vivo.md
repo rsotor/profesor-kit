@@ -70,7 +70,7 @@ Para abrir una sesión:
   del paso anterior, ejecuta ese paso y para) y las copias de la última prueba entera guardadas en `pruebas-local/`.
   Mientras se desarrolla, se paga solo el paso que cambia; la entera, solo antes de la release (sin cambios).
   - **Fuera:** saltarse la prueba entera antes de una release; cambiar de modelo para abaratarla.
-  - **Cómo sabremos:** tras una prueba entera, `--solo "preparar.js --lanzar 02-01"` ejecuta solo ese paso sobre la
+  - **Cómo sabremos:** tras una prueba entera, `--solo "preparar.js --lanzar 02-01, 02-02"` ejecuta solo ese paso sobre la
     copia guardada y su resultado coincide con el de la prueba entera.
 
 ## Siguiente: que no se repita la #54

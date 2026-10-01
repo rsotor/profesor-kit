@@ -287,7 +287,9 @@ function pasoSesion(ctx, clase) {
 // módulo se prepara en segundo plano mientras el examen (y lo que venga antes) sigue en primer plano.
 function pasoPrepararEnSegundoPlano(ctx, clase) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
-  const r = preparar(ctx, '--lanzar', ...clase.ficheros, '--id', clase.id);
+  // Varias clases (#56): una sola preparación con `--clase` por cada una; su id es el de todas unidas con `_`.
+  const args = clase.clases ? clase.clases.flatMap(c => ['--clase', c.id, ...c.ficheros]) : [...clase.ficheros, '--id', clase.id];
+  const r = preparar(ctx, '--lanzar', ...args);
   return { ok: r.ok, detalle: r.ok ? `lanzada la preparación de ${clase.id} en segundo plano` : `no se pudo lanzar: ${r.salida}` };
 }
 
@@ -657,7 +659,13 @@ function construirDefinicionDePasos(ctx, clases) {
   const prefijoExamen = clases.examen_modulo.prefijo;
   const clasesModuloDelExamen = clases.clases.filter(c => c.id.startsWith(prefijoExamen));
   const clasesEnSegundoPlano = clases.clases.filter(c => !c.id.startsWith(prefijoExamen));
-  const [claseEnSegundoPlano, ...otrasEnSegundoPlano] = clasesEnSegundoPlano;
+  // Las que no son del módulo del examen se preparan todas a la vez, en una sola preparación (#56: los dos adaptadores
+  // traen `subagentes`). Con una sola, como siempre.
+  const claseEnSegundoPlano = clasesEnSegundoPlano.length > 1
+    ? { id: clasesEnSegundoPlano.map(c => c.id).join('_'), clases: clasesEnSegundoPlano, ficheros: clasesEnSegundoPlano.flatMap(c => c.ficheros) }
+    : clasesEnSegundoPlano[0];
+  const nombreEnSegundoPlano = claseEnSegundoPlano && (claseEnSegundoPlano.clases ? claseEnSegundoPlano.clases.map(c => c.id).join(', ') : claseEnSegundoPlano.id);
+  const compartidos = clases.clases.flatMap(c => c.compartidos || []);
   const progresoAntesPorClase = {};
 
   const lista = [];
@@ -677,7 +685,7 @@ function construirDefinicionDePasos(ctx, clases) {
       });
     }
   }
-  if (claseEnSegundoPlano) lista.push({ nombre: `preparar.js --lanzar ${claseEnSegundoPlano.id}`, fn: () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano) });
+  if (claseEnSegundoPlano) lista.push({ nombre: `preparar.js --lanzar ${nombreEnSegundoPlano}`, fn: () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano) });
   lista.push({ nombre: '/dudas', fn: () => pasoDudas(ctx) });
   lista.push({ nombre: '/ejercicio', fn: () => pasoEjercicio(ctx) });
   lista.push({ nombre: '/examen (referencia del centro)', fn: () => pasoExamenReferencia(ctx) });
@@ -687,8 +695,17 @@ function construirDefinicionDePasos(ctx, clases) {
   lista.push({ nombre: '/examen (progreso con prueba)', fn: () => pasoProgresoConPrueba(ctx) });
   lista.push({ nombre: '/examen (otra vez, reutiliza falladas)', fn: () => pasoExamenSegundoGenerar(ctx, clases.examen_modulo) });
   lista.push({ nombre: '/examen (corrección con veredictos esperados)', fn: () => pasoCorreccionOraculo(ctx) });
-  if (claseEnSegundoPlano) lista.push({ nombre: `preparar.js --juntar ${claseEnSegundoPlano.id}`, fn: () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano) });
-  for (const clase of otrasEnSegundoPlano) lista.push({ nombre: `/sesion ${clase.id}`, fn: () => pasoSesion(ctx, clase) });
+  if (claseEnSegundoPlano) lista.push({ nombre: `preparar.js --juntar ${nombreEnSegundoPlano}`, fn: () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano) });
+  if (compartidos.length) {
+    lista.push({
+      nombre: 'conceptos compartidos entre clases',
+      fn: () => {
+        if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+        const rs = compartidos.map(c => p.conceptoCompartido(ctx.destino, c));
+        return { ok: rs.every(r => r.ok), detalle: rs.map(r => r.detalle).join(' · ') };
+      },
+    });
+  }
   lista.push({ nombre: '/repaso', fn: () => pasoRepaso(ctx, clases.examen_modulo) });
 
   return { lista, claseEnSegundoPlano };
