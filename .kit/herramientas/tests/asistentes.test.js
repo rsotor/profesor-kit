@@ -65,11 +65,13 @@ test('codex.argsTarea: con modelo, añade -m <modelo>', () => {
   assert.equal(args[args.indexOf('-m') + 1], 'gpt-5.1-codex');
 });
 
-test('codex.argsSondeo: solo lectura (read-only), nunca workspace-write', () => {
+test('codex.argsSondeo: revisa automáticamente los comandos sobre la copia temporal (issue #45)', () => {
   const cwd = temporal('kit-asistente-codex-');
   const { args } = codex.argsSondeo({ prompt: 'x', modelo: null, cwd, adaptador: CODEX_JSON });
-  assert.equal(args[args.indexOf('--sandbox') + 1], 'read-only');
-  assert.ok(!args.includes('workspace-write'));
+  assert.ok(!args.includes('--sandbox'), '--approve-for-me ya selecciona workspace-write y no admite --sandbox');
+  assert.ok(!args.some(x => /^approval_policy=/.test(x)) && args.includes('--approve-for-me'), 'las lecturas las revisa automáticamente, sin esperar al usuario');
+  assert.ok(args.includes('--ignore-rules'), 'las reglas prompt del curso bloquearían comandos con approval_policy=never');
+  assert.ok(!args.some(x => /danger|bypass|full-access/.test(x)), 'la copia temporal sigue dentro del sandbox');
 });
 
 test('codex.argsTarea/argsSondeo: sin el "-" final del prompt por stdin, con --ephemeral e --ignore-user-config', () => {
@@ -81,6 +83,15 @@ test('codex.argsTarea/argsSondeo: sin el "-" final del prompt por stdin, con --e
     assert.ok(args.includes('--ephemeral'));
     assert.ok(args.includes('--ignore-user-config'));
   }
+});
+
+test('codex.entorno: un hijo hereda la autenticación, no el entorno gestionado del Codex padre (issue #45)', () => {
+  const env = codex.entorno({
+    CODEX_HOME: 'auth', CODEX_API_KEY: 'key', CODEX_CI: '1', CODEX_VERSION: '0.159.3', PATH: 'bin',
+    CODEX_SANDBOX_NETWORK_DISABLED: '1', CODEX_THREAD_ID: 'thread', CODEX_SESSION_ID: 'session',
+    CODEX_PERMISSION_PROFILE: 'managed', CODEX_DAEMON_SHUTDOWN_SOCKET: 'socket',
+  });
+  assert.deepEqual(env, { CODEX_HOME: 'auth', CODEX_API_KEY: 'key', PATH: 'bin' });
 });
 
 // --- Confianza de la carpeta: la ruta va en el VALOR, nunca en la clave (openai/codex#35780) ------------------
@@ -365,10 +376,14 @@ test('ejecutarAsistente: con entrada, el prompt llega entero por stdin y el proc
     lanzador, adaptador: {}, frase: PROMPT_LARGO, destino, modelo: null,
     detectar: lineas => decidirEleccion(lineas, codex),
     sinDecidir: nota => ({ decidido: true, skill: null, nota }),
+    volcarDir: destino, etiquetaVolcado: 'prueba-stream',
   });
   assert.equal(r.skill, 'dudas');
   assert.ok(Date.now() - inicio < 5000, 'se corta al decidir: no espera el LIMITE_MS de 3 minutos');
   assert.equal(fs.readFileSync(eco, 'utf8'), PROMPT_LARGO, 'el prompt llegó entero por stdin');
+  const stderr = fs.readdirSync(destino).find(f => f.endsWith('-stderr.txt'));
+  assert.ok(stderr, 'el volcado conserva stderr por separado del JSONL');
+  assert.match(fs.readFileSync(path.join(destino, stderr), 'utf8'), /diagnóstico del asistente/);
 });
 
 test('ejecutarAsistente: sin entrada (como Claude Code), stdin va "ignore": no se cuelga esperando escribirle nada', { timeout: 8000 }, async () => {

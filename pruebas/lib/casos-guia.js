@@ -13,10 +13,13 @@ const { recorrerMd } = require('./pasos');
 // concreta, como lo haría desde Obsidian: dispara el aviso `propiedad-no-estandar` de comprobar.js.
 // Busca la sesión por `clases: [<clase>]` en el frontmatter (formato de pruebas/curso-ejemplo).
 function marcarEstudiadaASuManera(destino, { clase = '1.1' } = {}) {
-  // `clases:` puede venir como `1.1`, `[1.1]` o `["1.1"]` (las tres valen; la prueba real de la 0.26.0 dejó la primera).
+  // `clases:` puede venir como `1.1`, `[1.1]`, `["1.1"]` o `[Clase 1.1]`. Las primeras formas salieron de
+  // pruebas reales antiguas; la última es la que escribe ahora el curso de ejemplo.
   const esLaClase = texto => {
     const m = /^clases:\s*(.*)$/m.exec(texto);
-    return !!m && m[1].replace(/[[\]"']/g, '').split(',').map(c => c.trim()).includes(clase);
+    return !!m && m[1].replace(/[[\]"']/g, '').split(',')
+      .map(c => c.trim().replace(/^clase\s+/i, ''))
+      .includes(clase);
   };
   for (const f of recorrerMd(path.join(destino, 'estudio', 'sesiones'))) {
     const texto = fs.readFileSync(f, 'utf8');

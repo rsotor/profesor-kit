@@ -102,3 +102,9 @@ test('el segundo plano de Codex va sin red: sandbox de escritura, sin búsqueda 
   assert.ok(a.segundo_plano.includes('web_search=disabled') && a.segundo_plano.includes('--ignore-user-config'));
   assert.ok(!a.segundo_plano.some(x => /danger|bypass|full-access/.test(x)));
 });
+
+test('Codex: subagentes disponibles y sin selector de opciones en una sesión normal (issues #56 y #59)', () => {
+  const a = Object.fromEntries(adaptadores).codex;
+  assert.deepEqual(a.subagentes, { herramienta: 'spawn_agent' });
+  assert.equal(a.preguntar_con_opciones, undefined);
+});

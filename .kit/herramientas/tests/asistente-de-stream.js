@@ -13,6 +13,7 @@ process.stdin.on('data', chunk => { entrada += chunk; });
 process.stdin.on('end', () => {
   const i = process.argv.indexOf('--eco-a');
   if (i >= 0) fs.writeFileSync(process.argv[i + 1], entrada);
+  console.error('diagnóstico del asistente');
   console.log(JSON.stringify({ type: 'item.completed', item: { id: '1', type: 'command_execution', command: 'sed -n 1,10p .agents/skills/dudas/SKILL.md', status: 'completed' } }));
   // Se queda vivo: solo lo termina un kill de verdad (setInterval no está en los globals del linter del kit).
   (function mantenerVivo() { setTimeout(mantenerVivo, 60 * 60 * 1000); })();

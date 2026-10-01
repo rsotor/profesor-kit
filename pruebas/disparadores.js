@@ -183,10 +183,10 @@ function markdownResumen({ fecha, version, modelo, resultados, resultadosGuia = 
 // Un nombre de fichero legible para --volcar: el stream crudo de cada ejecución (obligatorio en la primera
 // medición con un asistente nuevo, para poder revisar a mano qué llegó de verdad).
 let contadorVolcado = 0;
-function volcar(dir, etiqueta, texto) {
+function volcar(dir, etiqueta, texto, extension = 'jsonl') {
   if (!dir) return;
   fs.mkdirSync(dir, { recursive: true });
-  const nombreFichero = `${String(++contadorVolcado).padStart(3, '0')}-${etiqueta.replace(/[^\w-]+/g, '_').slice(0, 60)}.jsonl`;
+  const nombreFichero = `${String(++contadorVolcado).padStart(3, '0')}-${etiqueta.replace(/[^\w-]+/g, '_').slice(0, 60)}.${extension}`;
   fs.writeFileSync(path.join(dir, nombreFichero), texto);
 }
 
@@ -212,13 +212,18 @@ function ejecutarAsistente({ lanzador, adaptador, frase, destino, modelo, detect
     });
     const lineas = [];
     let resto = '';
+    let stderr = '';
     let hecho = false;
     const terminar = resultado => {
       if (hecho) return;
       hecho = true;
       clearTimeout(reloj);
       hijo.kill('SIGTERM');
-      if (volcarDir) volcar(volcarDir, etiquetaVolcado || frase, [...lineas, resto].join('\n'));
+      if (volcarDir) {
+        const etiqueta = etiquetaVolcado || frase;
+        volcar(volcarDir, etiqueta, [...lineas, resto].join('\n'));
+        if (stderr.trim()) volcar(volcarDir, `${etiqueta}-stderr`, stderr, 'txt');
+      }
       resolve(resultado);
     };
     const reloj = setTimeout(() => terminar(sinDecidir('tiempo agotado')), LIMITE_MS);
@@ -240,6 +245,7 @@ function ejecutarAsistente({ lanzador, adaptador, frase, destino, modelo, detect
       const d = detectar(lineas);
       if (d.decidido) terminar(d);
     });
+    hijo.stderr.on('data', trozo => { stderr += trozo; });
     hijo.on('close', codigo => {
       const d = detectar([...lineas, resto]);
       terminar(d.decidido ? d : sinDecidir(`terminó (código ${codigo}) sin decidir`));

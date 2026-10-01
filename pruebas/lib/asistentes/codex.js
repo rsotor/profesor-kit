@@ -13,7 +13,8 @@ const preparar = require('../../../.kit/herramientas/preparar');
 function base({ adaptador, sandbox }) {
   const args = adaptador.segundo_plano.filter(a => a !== '-');
   const i = args.indexOf('--sandbox');
-  if (i >= 0) args[i + 1] = sandbox;
+  if (i >= 0 && sandbox) args[i + 1] = sandbox;
+  else if (i >= 0) args.splice(i, 2);
   return args;
 }
 
@@ -29,10 +30,11 @@ function conConfianza(args, cwd) {
   return [...args, '-c', `projects={${ruta}={trust_level="trusted"}}`];
 }
 
-function argsComunes({ adaptador, sandbox, modelo, cwd }) {
+function argsComunes({ adaptador, sandbox, modelo, cwd, approvalPolicy = 'never' }) {
   // `approval_policy=never` sin comillas: a diferencia de `projects={...}` (una tabla TOML en línea de
   // verdad), esta es una anulación de un campo con un valor de tipo enumerado — Codex la admite sin comillas.
-  const args = [...conConfianza(base({ adaptador, sandbox }), cwd), '--json', '-c', 'approval_policy=never'];
+  const args = [...conConfianza(base({ adaptador, sandbox }), cwd), '--json'];
+  if (approvalPolicy) args.push('-c', `approval_policy=${approvalPolicy}`);
   if (modelo) args.push('-m', modelo);
   return args;
 }
@@ -42,9 +44,14 @@ function argsTarea({ prompt, modelo, cwd, adaptador }) {
   return { args: argsComunes({ adaptador, sandbox: 'workspace-write', modelo, cwd }), entrada: prompt };
 }
 
-// disparadores.js: solo lectura, nunca escribe en el curso montado.
+// disparadores.js trabaja sobre una copia temporal que borra al terminar. También necesita `workspace-write`:
+// desde Codex 0.159, `read-only` exige aprobación incluso para ejecutar comandos de lectura. El sondeo se corta
+// en cuanto elige y cualquier escritura accidental queda confinada a esa copia desechable. Las reglas del curso
+// se ignoran y las lecturas pasan por el revisor automático del CLI: así no esperan al usuario ni quedan bloqueadas.
 function argsSondeo({ prompt, modelo, cwd, adaptador }) {
-  return { args: argsComunes({ adaptador, sandbox: 'read-only', modelo, cwd }), entrada: prompt };
+  const args = argsComunes({ adaptador, sandbox: null, modelo, cwd, approvalPolicy: null });
+  args.push('--ignore-rules', '--approve-for-me');
+  return { args, entrada: prompt };
 }
 
 // SUPUESTO (#45) S1: el modelo lee SKILL.md con un `command_execution` (un futuro flag `skill_search` podría
@@ -122,10 +129,10 @@ function leerSalida(stdout) {
   return { texto: ultimoMensaje.trim(), denegaciones };
 }
 
-// SUPUESTO (#45) S6: los nombres exactos de las variables de entorno de la sesión de Codex están por
-// comprobar con una sesión real (se ven en su código fuente: CODEX_SANDBOX*, CODEX_THREAD_ID). Nunca se toca
-// CODEX_HOME: es donde el alumno guarda su propia configuración de Codex.
-const VARIABLES_DE_SESION = /^CODEX_(SANDBOX|THREAD_ID)/;
+// Comprobado en Windows con Codex 0.159.3 (#45): al lanzar Codex desde otra sesión de Codex, cualquier variable
+// `CODEX_*` del padre puede arrastrar el entorno gestionado o su perfil de permisos. El hijo conserva
+// CODEX_HOME o CODEX_API_KEY para reutilizar la autenticación; todo lo demás lo decide su propia invocación.
+const VARIABLES_DE_SESION = /^CODEX_(?!(HOME|API_KEY)$)/;
 function entorno(env = process.env) {
   return Object.fromEntries(Object.entries(env).filter(([k]) => !VARIABLES_DE_SESION.test(k)));
 }
