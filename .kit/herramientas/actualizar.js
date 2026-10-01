@@ -27,16 +27,45 @@ function nodo(script, args, cwd) {
 // comprobar.js --json sale con el código 1 cuando el curso tiene errores: eso no es un fallo del proceso,
 // es su contrato (ver comprobar.js#cli). Lo que sí es un fallo real es que el proceso ni llegara a
 // arrancar (permiso denegado, comando inexistente): ahí no hay stdout que parsear, solo lo dice `motivo`.
-// Devuelve cada error como "regla · fichero": se compara cuáles hay, no cuántos (issue #39, H10). Si no, arreglar
+// erroresDe devuelve cada error como "regla · fichero": se compara cuáles hay, no cuántos (issue #39, H10). Si no, arreglar
 // uno y romper otro distinto pasaría por "no empeora".
-function erroresDe(dirKit, raiz) {
+function informeDe(dirKit, raiz) {
   const r = nodo(path.join(dirKit, '.kit', 'herramientas', 'comprobar.js'), ['--json', '--raiz', raiz], raiz);
   if (['permiso', 'no-existe'].includes(r.motivo)) throw new Error(`comprobar.js falló: ${explicar(r)}`);
   try {
-    return JSON.parse(r.stdout).errores.map(e => `${e.regla} · ${e.fichero}`);
+    return JSON.parse(r.stdout);
   } catch {
     throw new Error(`comprobar.js --json no devolvió un informe legible (llegaron ${r.stdout.length} bytes; el final: ${r.salida.slice(-300)})`);
   }
+}
+const erroresDe = informe => informe.errores.map(e => `${e.regla} · ${e.fichero}`);
+
+// Los avisos no bloquean, pero si se disparan al actualizar (issue #54: de 40 a 147, una columna que el kit nuevo
+// no entendía), algo del kit no encaja con este curso y nadie lo ve hasta que la bola es enorme. Antes, con el
+// comprobar.js que el curso ya tenía (lo que el alumno veía); después, con el nuevo. Si el viejo no da un informe,
+// no se compara: esto avisa, nunca impide actualizar.
+const AVISOS_MINIMO = 10;
+function contarAvisos(informe) {
+  const cuenta = {};
+  for (const a of informe.avisos || []) cuenta[a.regla] = (cuenta[a.regla] || 0) + 1;
+  return cuenta;
+}
+function avisosDisparados(antes, despues) {
+  if (!antes) return null;
+  const total = c => Object.values(c).reduce((x, y) => x + y, 0);
+  const [a, d] = [total(antes), total(despues)];
+  if (d - a < Math.max(AVISOS_MINIMO, a / 2)) return null;
+  const reglas = Object.keys(despues)
+    .map(regla => ({ regla, mas: despues[regla] - (antes[regla] || 0) }))
+    .filter(x => x.mas > 0)
+    .sort((x, y) => y.mas - x.mas);
+  return { antes: a, despues: d, reglas };
+}
+function lineaAvisos(disparados) {
+  if (!disparados) return '';
+  const reglas = disparados.reglas.slice(0, 3).map(x => `${x.regla} +${x.mas}`).join(', ');
+  return `\nOjo: tras actualizar, los avisos han pasado de ${disparados.antes} a ${disparados.despues} (${reglas}). ` +
+    'No bloquean, pero si las novedades no lo explican, algo del kit no encaja con tu curso: es del kit.';
 }
 
 // Sin adaptador para un LLM que no es Claude Code, instalar-skills.js se niega a adivinar destino (ver
@@ -109,7 +138,9 @@ function actualizar({ raiz, origen }) {
   if (secretos.length) {
     return { actualizado: false, motivo: 'secreto', de, a, migraciones: [], detalle: `hay un posible secreto en ${[...new Set(secretos.map(x => x.fichero))].join(', ')}: quítalo antes de actualizar; no se toca nada` };
   }
-  const antes = erroresDe(origen, raiz);
+  const antes = erroresDe(informeDe(origen, raiz));
+  let avisosAntes = null;
+  try { avisosAntes = contarAvisos(informeDe(raiz, raiz)); } catch { /* sin informe del comprobar.js viejo, no se compara */ }
   // No es una copia aparte: es un commit de lo que hubiera sin guardar, para poder volver exactamente aquí.
   // Si no se pudo guardar (git sin identidad, por ejemplo), no se sigue: la vuelta atrás borraría lo que no
   // llegó a guardarse, y eso es lo único que la actualización promete no tocar nunca.
@@ -120,6 +151,7 @@ function actualizar({ raiz, origen }) {
   const sha = g.shaActual(raiz);
 
   const hechas = [];
+  let disparados = null;
   try {
     for (const f of motorViejo.ficheros) {
       if (!motorNuevo.ficheros.includes(f)) fs.rmSync(path.join(raiz, ...f.split('/')), { recursive: true, force: true, maxRetries: 3 });
@@ -150,8 +182,10 @@ function actualizar({ raiz, origen }) {
     if (hechas.length) v.escribirAjustes(raiz, { ...v.leerAjustes(raiz), version_datos: motorNuevo.version_datos });
 
     reinstalarSkills(raiz);
-    const nuevos = erroresDe(raiz, raiz).filter(e => !antes.includes(e));
+    const despues = informeDe(raiz, raiz);
+    const nuevos = erroresDe(despues).filter(e => !antes.includes(e));
     if (nuevos.length) throw new Error(`tras actualizar hay errores que antes no estaban: ${[...new Set(nuevos)].join('; ')}`);
+    disparados = avisosDisparados(avisosAntes, contarAvisos(despues));
   } catch (error) {
     restaurar(raiz, sha);
     reinstalarSkills(raiz);
@@ -161,7 +195,7 @@ function actualizar({ raiz, origen }) {
   // Con el guardar.js del motor nuevo, como las migraciones: el importado arriba es el de la versión vieja, y
   // regeneraría inicio.md y compañía como los hacía ella (sin mi-perfil al pasar a la 0.23.0, prueba-actualizar).
   require(path.join(raiz, '.kit', 'herramientas', 'guardar.js')).guardar({ raiz, mensaje: `kit: actualizado a ${a}`, permitirErrores: true });
-  return { actualizado: true, de, a, migraciones: hechas };
+  return { actualizado: true, de, a, migraciones: hechas, avisosDisparados: disparados };
 }
 
 function gh(args) {
@@ -307,7 +341,8 @@ function aplicarSiguiente(raiz, descargarKit, { listar = listarReleases, continu
     }
     const quedan = pasos.length - 1;
     console.log(`Actualizado de ${r.de} a ${r.a}.${r.migraciones.length ? ` Datos migrados: ${r.migraciones.join(', ')}.` : ''}` +
-      (quedan ? ` ${quedan === 1 ? 'Queda 1 versión' : `Quedan ${quedan} versiones`}: sigo con la ${pasos[1].slice(1)}.` : ''));
+      (quedan ? ` ${quedan === 1 ? 'Queda 1 versión' : `Quedan ${quedan} versiones`}: sigo con la ${pasos[1].slice(1)}.` : '') +
+      lineaAvisos(r.avisosDisparados));
   } finally {
     fs.rmSync(origen, { recursive: true, force: true, maxRetries: 3 });
   }
@@ -331,7 +366,7 @@ function cli(args, raiz, descargarKit = descargar, consultar = versionPublicada,
     }
     const r = actualizar({ raiz, origen });
     if (r.actualizado) {
-      console.log(`Actualizado de ${r.de} a ${r.a}.${r.migraciones.length ? ` Datos migrados: ${r.migraciones.join(', ')}.` : ''}`);
+      console.log(`Actualizado de ${r.de} a ${r.a}.${r.migraciones.length ? ` Datos migrados: ${r.migraciones.join(', ')}.` : ''}${lineaAvisos(r.avisosDisparados)}`);
       return 0;
     }
     console.log(`No se ha actualizado: todo sigue como estaba, en la ${r.de}. Motivo: ${r.detalle || r.motivo}`);
@@ -346,5 +381,5 @@ if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolv
 
 module.exports = {
   actualizar, restaurar, validarMotor, novedades, comprobarNovedades, fusionarGitignore, etiquetaPublicada, etiquetaViaGit, versionPublicada,
-  descargar, listarReleases, pasosPendientes, cli,
+  descargar, listarReleases, pasosPendientes, cli, avisosDisparados,
 };

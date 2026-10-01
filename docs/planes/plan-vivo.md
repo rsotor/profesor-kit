@@ -18,7 +18,7 @@ Para abrir una sesión:
   `subagentes`), si no un proceso en segundo plano (`examen.js --revisar`), si no el profesor de la sesión siguiente
   (`estado.js` → `examenesSinRevisar`). La revisión va a `config/revisiones/`; el examen no se ofrece hasta resolverla
   y el alumno no se entera. `examen.js --corregir` no corrige la primera vez sin ella (`--sin-revision` la salta y
-  marca el intento). Falta: prueba real entera sobre el commit, y Codex (`subagentes` pendiente en su adaptador).
+  marca el intento). Van en la misma rama el punto 2 de la #54 y el `>>` (Siguiente, 4). Falta: prueba real entera sobre el commit, y Codex (`subagentes` pendiente en su adaptador).
   - **Fuera:** la preparación en paralelo con subagentes; el auditor del material; revisar exámenes de respuesta
     libre; revisar exámenes que ya tienen intentos.
   - **Cómo sabremos:** en la prueba real, los dos exámenes generados tienen su revisión resuelta por `subagente`
@@ -38,8 +38,9 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    - **Fuera:** subir datos de un alumno al repo; anonimizar.
    - **Cómo sabremos:** con la copia del curso de antes de la 0.27.1, la comprobación falla con la 0.27.0 y pasa
      con la 0.27.1.
-2. **`actualizar.js` avisa si los avisos se disparan** tras actualizar (la #54: de 40 a 147); hoy solo compara
-   errores.
+2. **`actualizar.js` avisa si los avisos se disparan** tras actualizar (la #54: de 40 a 147). Hecho en la rama de la
+   #56 (sale en la 0.29.0): compara los avisos del `comprobar.js` viejo con los del nuevo y, con 10 más o la mitad
+   más, lo dice en una línea; `/actualizar` le cuenta al alumno qué hacer.
    - **Fuera:** bloquear la actualización por avisos.
    - **Cómo sabremos:** test con un curso que pasa de N a muchos más avisos → el resumen lo dice.
 3. **El formato de `progreso.md` fijado en una plantilla**, para que el profesor no se invente columnas.
@@ -64,10 +65,8 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    proxy local (`http://…@127.0.0.1:PORT/git/<owner>/<repo>`), y trabajar en una rama `claude/…`. Lo prueba Roberto.
 3. **Codex en el Mac (#45, abierta):** `codex login` y los pasos del comentario de la #45 (9 supuestos). Y el
    `pendiente` de `preguntar_con_opciones` (#59).
-4. **El profesor escribe con `>>` aunque `AGENTS.md` lo prohíbe** (tres pruebas reales seguidas: `cat >`/`printf >>` en
-   `/ejercicio` y `/sesion`, para añadir filas a `progreso.md` o `mapa-del-curso.md`). Se deniega y lo rehace bien, pero
-   gasta un intento. En el próximo cambio de skills: decirlo en `/sesion` donde añade filas ("edita con tu herramienta,
-   nunca `>>`") y medirlo en la prueba real.
+4. **El profesor escribe con `>>` aunque `AGENTS.md` lo prohíbe** (tres pruebas reales seguidas). Hecho en la rama de
+   la #56: `/sesion` y `/ejercicio` lo dicen donde se añaden filas. Se mide en "Permisos denegados" del RESUMEN.
 5. **0.29.0:** el revisor independiente (#56, en curso) y, después, plan con calendario (E2 + E9) y examen acumulativo (E7).
    - **Fuera:** TODO: decidir con Roberto al abrir el plan.
    - **Cómo sabremos:** TODO: decidir con Roberto al abrir el plan.
