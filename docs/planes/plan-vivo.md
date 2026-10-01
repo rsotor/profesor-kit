@@ -61,7 +61,11 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    proxy local (`http://…@127.0.0.1:PORT/git/<owner>/<repo>`), y trabajar en una rama `claude/…`. Lo prueba Roberto.
 3. **Codex en el Mac (#45, abierta):** `codex login` y los pasos del comentario de la #45 (9 supuestos). Y el
    `pendiente` de `preguntar_con_opciones` (#59).
-4. **0.29.0:** plan con calendario (E2 + E9) y examen acumulativo (E7), o el revisor independiente (#56).
+4. **El profesor escribe con `>>` aunque `AGENTS.md` lo prohíbe** (tres pruebas reales seguidas: `cat >`/`printf >>` en
+   `/ejercicio` y `/sesion`, para añadir filas a `progreso.md` o `mapa-del-curso.md`). Se deniega y lo rehace bien, pero
+   gasta un intento. En el próximo cambio de skills: decirlo en `/sesion` donde añade filas ("edita con tu herramienta,
+   nunca `>>`") y medirlo en la prueba real.
+5. **0.29.0:** plan con calendario (E2 + E9) y examen acumulativo (E7), o el revisor independiente (#56).
    - **Fuera:** TODO: decidir con Roberto al abrir el plan.
    - **Cómo sabremos:** TODO: decidir con Roberto al abrir el plan.
 
