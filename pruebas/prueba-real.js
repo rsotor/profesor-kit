@@ -11,6 +11,7 @@
 //   node pruebas/prueba-real.js --modelo opus   # otro modelo que el recomendado del adaptador
 //   node pruebas/prueba-real.js --asistente codex   # con el adaptador de otro asistente (issue #45)
 //   node pruebas/prueba-real.js --volcar /tmp/volcado   # guarda el stream crudo de cada llamada
+//   node pruebas/prueba-real.js --sin-comprobar-rama   # prueba la copia local aunque vaya por detrás de GitHub
 //
 // Con Claude Code, guarda el resultado en pruebas/curso-ejemplo/resultado/ (sustituye el anterior entero);
 // con otro asistente, en pruebas/curso-ejemplo/resultado-<id>-<sistema>/. Borra siempre la carpeta temporal,
@@ -25,6 +26,7 @@ const { borrar, montarCurso, comprobarJson } = require('./lib/montaje');
 const vault = require('../.kit/herramientas/lib/vault');
 const { lanzadorPara, claudeCode } = require('./lib/asistentes');
 const p = require('./lib/pasos');
+const { comprobarRama } = require('./lib/rama');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
 const EJEMPLO = path.join(__dirname, 'curso-ejemplo');
@@ -789,6 +791,13 @@ function cli(args) {
   if (!sinLlm) {
     const chequeo = lanzador.comprobar();
     if (!chequeo.ok) { console.error(chequeo.mensaje); return 1; }
+    // Antes de gastar cuota, que se pruebe el código de la rama de GitHub, no una copia atrasada.
+    if (!args.includes('--sin-comprobar-rama')) {
+      const rama = comprobarRama(RAIZ_KIT);
+      for (const aviso of rama.avisos) console.log(`Aviso: ${aviso}.`);
+      if (!rama.ok) { console.error(`${rama.mensaje}\n\nNo se ha lanzado nada. (--sin-comprobar-rama lo salta, si de verdad quieres probar esta copia.)`); return 1; }
+      console.log(`Se prueba ${rama.rama} en ${rama.commit}${rama.upstream ? `, al día con ${rama.upstream}` : ''}.`);
+    }
   }
 
   const resultadoDir = carpetaDeResultado({ sinLlm, asistente });

@@ -86,6 +86,36 @@ test('resumenAlDia: mira el orden de los commits del PR, no solo que el resumen 
   assert.equal(resumenAlDia('main', repo).alDia, false, 'un cambio posterior deja la prueba vieja');
 });
 
+// 2026-10-01: dos veces en el mismo día se subió un resumen recién hecho pero sobre una copia del Mac atrasada. El
+// resumen dice qué commit se probó; ese commit tiene que incluir el último cambio de skills, AGENTS.md o plantillas.
+test('resumenAlDia: con el texto del resumen, exige que el commit probado incluya el último cambio', () => {
+  const { resumenAlDia } = require('../../../.github/cambio-grande');
+  const { temporal, escribir, git } = require('./ayuda');
+  const repo = temporal('kit-');
+  git(repo, 'init', '-q', '-b', 'main');
+  for (const [k, val] of [['user.name', 'T'], ['user.email', 't@e.com'], ['commit.gpgsign', 'false']]) git(repo, 'config', k, val);
+  const commit = (ficheros, msg) => { escribir(repo, ficheros); git(repo, 'add', '-A'); git(repo, 'commit', '-q', '-m', msg); };
+  const sha = () => git(repo, 'rev-parse', '--short', 'HEAD').trim();
+  commit({ 'README.md': 'x' }, 'base');
+  const base = sha();
+  git(repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD');
+  commit({ '.kit/skills/examen/SKILL.md': 'ángulos' }, 'skill');
+  const skill = sha();
+  const resumenDe = probado => `# Prueba real\n\nResultado: 15/15 pasos bien · corrección 6/6 · commit ${probado}\n`;
+
+  commit({ [RESUMEN]: resumenDe(base) }, 'prueba sobre una copia atrasada');
+  const viejo = resumenAlDia('main', repo, resumenDe(base));
+  assert.equal(viejo.alDia, false, 'subido después, pero probó el código de antes');
+  assert.equal(viejo.motivo, 'commit-viejo');
+
+  commit({ [RESUMEN]: resumenDe(skill) }, 'prueba buena');
+  assert.equal(resumenAlDia('main', repo, resumenDe(skill)).alDia, true, 'probó el commit con el cambio');
+
+  const raro = resumenAlDia('main', repo, resumenDe('fedcba9'));
+  assert.equal(raro.alDia, false);
+  assert.equal(raro.motivo, 'commit-desconocido');
+});
+
 // issue #39, H08: un resumen vacío, o de una prueba con algún paso mal o con la corrección por debajo de 6/6, no pasa.
 test('evaluar: el resumen tiene que decir que todo salió bien, con la corrección entera', () => {
   const con = linea => evaluar(['AGENTS.md', RESUMEN], `# Prueba real\n\n${linea}\n`);

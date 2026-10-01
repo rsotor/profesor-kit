@@ -21,6 +21,9 @@ Para abrir una sesión:
   `pregunta-calcada` (8 palabras seguidas de la nota). La prueba real falla si el examen no cubre los ángulos. El
   20 % de fórmulas pasa a cobertura si `config/profesor.md` dice que son de apoyo. "Exámenes de antes" pasa a
   `.kit/guias/examenes-de-antes.md` (la skill estaba al límite de 18 KB).
+  - **Y, de paso, que la prueba real no se haga sobre una copia atrasada** (2026-10-01, dos veces): `cambio-grande.js`
+    exige que el commit que dice el resumen incluya el último cambio de skills, `AGENTS.md` o plantillas, y
+    `prueba-real.js` trae la rama y no lanza nada si la copia va por detrás o se ha separado (`pruebas/lib/rama.js`).
   - **Fuera:** el revisor independiente (#56); prerrequisitos fuera del temario que no puntúan (cambia
     `examen.js`); otros formatos (#46); tocar los exámenes viejos de los cursos.
   - **Cómo sabremos:** tests de los tres avisos en `revisor-pedagogico.test.js` y de `angulosDelExamen` en
