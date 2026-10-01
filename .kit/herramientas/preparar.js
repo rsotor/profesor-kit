@@ -4,7 +4,8 @@
 // una copia de trabajo independiente (`git worktree`), sin que el alumno tenga que esperar delante de la
 // pantalla. Tres órdenes:
 //
-//   --lanzar <ficheros de estudio/inbox/> --id <id de sesión>   (una sola preparación a la vez)
+//   --lanzar <ficheros o carpeta de estudio/inbox/> --id <id de sesión>   (una sola preparación a la vez)
+//   --lanzar <...> --ver                                          (qué material entraría, sin lanzar nada)
 //   --estado                                                    (en curso / terminada / fallida)
 //   --juntar <id>                                                (mezcla la copia con el curso principal)
 //
@@ -23,6 +24,8 @@ const { guardar, regenerarGenerados, anotarEnDiario, subirSiProcede } = require(
 const { instalarSkills } = require('./instalar-skills');
 const { actualizarEstadoReadme } = require('./lib/generados');
 const { ficheroResoluble, juntarPorFilas, configurarUnionParaDiario, resolverConflictos, ficherosEnConflicto } = require('./lib/mezcla');
+const { motivoRutaNoSegura, estaDentro } = require('./lib/rutas');
+const { porQueNoSeLee } = require('./leer');
 
 const CARPETA_PREPARACION = '.preparacion';
 const dirDe = (raiz, id) => path.join(raiz, CARPETA_PREPARACION, id);
@@ -146,6 +149,55 @@ function construirPrompt(ficheros, id) {
     + `skill /sesion (son la misma clase, con id ${id}).`;
 }
 
+// --- Qué material entra (issue #58) -----------------------------------------------------------------
+
+// Las rutas son relativas a estudio/inbox/, pero el profesor las escribe de muchas formas: con `estudio/inbox/` o
+// `inbox/` delante, con `\` en Windows, con `./`, o la ruta entera. Todas valen si caen dentro de inbox.
+function aRutaDeInbox(raiz, entrada) {
+  const inbox = path.join(v.baseAlumno(raiz), 'inbox');
+  let rel = String(entrada);
+  if (path.isAbsolute(rel)) rel = path.relative(inbox, rel);
+  rel = rel.replace(/\\/g, '/').replace(/^(\.\/)+/, '').replace(/\/+$/, '');
+  for (const prefijo of [`${v.CARPETA_ALUMNO}/inbox/`, 'inbox/']) {
+    if (rel.startsWith(prefijo)) { rel = rel.slice(prefijo.length); break; }
+  }
+  return rel === '.' ? '' : rel;
+}
+
+const ordenNatural = (a, b) => a.localeCompare(b, 'es', { numeric: true });
+
+// De las entradas (ficheros o carpetas de inbox) a la lista de ficheros de la clase, relativos a inbox. Una carpeta
+// aporta los ficheros que tiene directamente dentro y que se pueden leer; lo demás (subcarpetas, ocultos, audio sin
+// transcribir, formatos que no se leen) se queda fuera y se dice por qué. Nada de fuera de inbox, ni inbox entera:
+// mezclaría el material de varias clases.
+function resolverEntradas(raiz, entradas) {
+  const inbox = path.join(v.baseAlumno(raiz), 'inbox');
+  const ficheros = [];
+  const fuera = [];
+  const anadir = rel => { if (!ficheros.includes(rel)) ficheros.push(rel); };
+  for (const entrada of entradas) {
+    const rel = aRutaDeInbox(raiz, entrada);
+    if (rel === '' || rel === 'inbox' || rel === `${v.CARPETA_ALUMNO}/inbox`) return { ok: false, motivo: 'inbox-entera', entrada };
+    if (motivoRutaNoSegura(rel) || !estaDentro(inbox, rel)) return { ok: false, motivo: 'fuera-de-inbox', entrada };
+    const absoluta = path.join(inbox, ...rel.split('/'));
+    if (!fs.existsSync(absoluta)) return { ok: false, motivo: 'fichero-ausente', fichero: entrada };
+    if (!fs.statSync(absoluta).isDirectory()) { anadir(rel); continue; }
+    const antes = ficheros.length;
+    for (const d of fs.readdirSync(absoluta, { withFileTypes: true }).sort((a, b) => ordenNatural(a.name, b.name))) {
+      const hijo = `${rel}/${d.name}`;
+      if (d.name.startsWith('.')) continue;
+      if (d.isDirectory()) { fuera.push({ fichero: hijo, motivo: 'es una subcarpeta: no se mira por dentro' }); continue; }
+      if (!d.isFile()) { fuera.push({ fichero: hijo, motivo: 'no es un fichero normal' }); continue; }
+      const motivo = porQueNoSeLee(d.name);
+      if (motivo) fuera.push({ fichero: hijo, motivo });
+      else anadir(hijo);
+    }
+    if (ficheros.length === antes) return { ok: false, motivo: 'carpeta-sin-material', entrada, fuera };
+  }
+  if (!ficheros.length) return { ok: false, motivo: 'sin-ficheros' };
+  return { ok: true, ficheros, fuera };
+}
+
 // --- Lanzar ------------------------------------------------------------------------------------------
 
 function lanzar(raiz, { ficheros, id }) {
@@ -157,14 +209,14 @@ function lanzar(raiz, { ficheros, id }) {
   }
   if (!idValido(id)) return { lanzada: false, motivo: 'id-invalido' };
   if (!ficheros || !ficheros.length) return { lanzada: false, motivo: 'sin-ficheros' };
-  for (const f of ficheros) {
-    if (!fs.existsSync(path.join(v.baseAlumno(raiz), 'inbox', f))) return { lanzada: false, motivo: 'fichero-ausente', fichero: f };
-  }
+  const material = resolverEntradas(raiz, ficheros);
+  if (!material.ok) return { ...material, lanzada: false };
 
   const soltar = tomarCerrojo(raiz);
   if (!soltar) return { lanzada: false, motivo: 'lanzando' };
   try {
-    return lanzarConCerrojo(raiz, { ficheros, id, adaptador });
+    const r = lanzarConCerrojo(raiz, { ficheros: material.ficheros, id, adaptador });
+    return r.lanzada ? { ...r, ficheros: material.ficheros, fuera: material.fuera } : r;
   } finally {
     soltar();
   }
@@ -399,16 +451,21 @@ const EXPLICACION_LANZAR = {
   'sin-repo': 'la carpeta del curso no es la raíz de su propio repositorio git (no tiene uno, o está dentro de otro). Ejecuta node .kit/herramientas/diagnostico.js para ver cómo arreglarlo.',
   'sin-segundo-plano': 'tu asistente no puede trabajar en segundo plano: prepara la clase en primer plano.',
   'id-invalido': 'el id de la sesión solo puede llevar letras, números, puntos y guiones.',
-  'sin-ficheros': 'falta al menos un fichero de estudio/inbox/.',
+  'sin-ficheros': 'falta al menos un fichero o una carpeta de estudio/inbox/.',
+  'inbox-entera': 'no se prepara inbox entera (mezclaría varias clases): indica los ficheros de la clase o su carpeta dentro de inbox.',
+  'fuera-de-inbox': r => `${r.entrada} no está dentro de estudio/inbox/: solo se prepara material de ahí (las rutas son relativas a inbox, p. ej. clase-3/apuntes.pdf).`,
+  'carpeta-sin-material': r => `en ${r.entrada} no hay ningún fichero que se pueda leer.${r.fuera && r.fuera.length ? ` Se quedan fuera: ${listaFuera(r.fuera)}.` : ''}`,
   'en-marcha': r => `ya hay una preparación en marcha (${r.id}). Usa --estado para verla.`,
   'hay-terminada': r => `hay una preparación terminada sin juntar (${r.id}). Júntala primero: --juntar ${r.id}.`,
   'id-en-uso': r => `ya existe una copia con el id ${r.id}.`,
   'worktree': r => `no se pudo crear la copia de trabajo: ${r.detalle}`,
-  'fichero-ausente': r => `${r.fichero} no está en estudio/inbox/.`,
+  'fichero-ausente': r => `${r.fichero} no está en estudio/inbox/ (las rutas son relativas a inbox, p. ej. clase-3/apuntes.pdf).`,
   'lanzando': 'ahora mismo se está lanzando otra preparación: espera un momento y mira --estado.',
   'sin-identidad': 'git no sabe quién eres todavía, y hay que guardar el material de la clase antes de prepararla: configura user.name y user.email.',
   'entrada-distinta': r => `${r.fichero} no ha llegado igual a la copia de trabajo: no se prepara nada. Vuelve a intentarlo.`,
 };
+
+const listaFuera = fuera => fuera.map(f => `${f.fichero} (${f.motivo})`).join('; ');
 
 function explicar(mapa, r) {
   const e = mapa[r.motivo];
@@ -442,11 +499,19 @@ function cliLanzar(raiz, args) {
   const iId = args.indexOf('--id');
   const id = iId >= 0 ? args[iId + 1] : null;
   const ficheros = [];
-  for (let i = iLanzar + 1; i < args.length; i++) { if (args[i] === '--id') break; ficheros.push(args[i]); }
+  for (let i = iLanzar + 1; i < args.length; i++) { if (args[i] === '--id' || args[i] === '--ver') break; ficheros.push(args[i]); }
+  const queEntra = (lista, fuera) => `${lista.map(f => `  ${f}`).join('\n')}${fuera.length ? `\nSe quedan fuera: ${listaFuera(fuera)}.` : ''}`;
+  if (args.includes('--ver')) {
+    if (!ficheros.length) { console.log(`No se ha mirado nada: ${EXPLICACION_LANZAR['sin-ficheros']}`); return 1; }
+    const m = resolverEntradas(raiz, ficheros);
+    if (!m.ok) { console.log(`No vale: ${explicar(EXPLICACION_LANZAR, m)}`); return 1; }
+    console.log(`Entraría este material (${m.ficheros.length}):\n${queEntra(m.ficheros, m.fuera)}\nNo se ha lanzado nada.`);
+    return 0;
+  }
   const r = lanzar(raiz, { ficheros, id });
   if (!r.lanzada) { console.log(`No se ha lanzado: ${explicar(EXPLICACION_LANZAR, r)}`); return 1; }
-  console.log(`Preparando la clase ${r.id} en segundo plano (rama ${r.rama}). Usa --estado para ver cómo va. `
-    + 'Mientras, sigue .kit/guias/segundo-plano.md.');
+  console.log(`Preparando la clase ${r.id} en segundo plano (rama ${r.rama}) con este material:\n${queEntra(r.ficheros, r.fuera)}\n`
+    + 'Usa --estado para ver cómo va. Mientras, sigue .kit/guias/segundo-plano.md.');
   return 0;
 }
 
@@ -468,7 +533,7 @@ function cli(args, raiz) {
   if (args.includes('--estado')) return cliEstado(raiz, args.includes('--json'));
   if (args.includes('--juntar')) return cliJuntar(raiz, args[args.indexOf('--juntar') + 1]);
   if (args.includes('--lanzar')) return cliLanzar(raiz, args);
-  console.error('Uso: node .kit/herramientas/preparar.js --lanzar <ficheros de inbox> --id <id> | --estado | --juntar <id>');
+  console.error('Uso: node .kit/herramientas/preparar.js --lanzar <ficheros o carpeta, relativos a estudio/inbox/> --id <id> [--ver] | --estado | --juntar <id>');
   return 2;
 }
 
@@ -478,5 +543,5 @@ module.exports = {
   comoLanzar, lanzarAsistente, tomarCerrojo,
   juntarPorFilas,
   lanzar, trabajar, juntar, cli, todasLasPreparaciones, formatearEstado, ficheroResoluble, pidVivo, descartarCopia,
-  construirPrompt, dirDe, ramaDe,
+  construirPrompt, dirDe, ramaDe, resolverEntradas,
 };

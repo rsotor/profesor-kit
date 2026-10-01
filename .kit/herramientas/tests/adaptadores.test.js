@@ -20,6 +20,10 @@ test('cada adaptador del kit tiene los campos obligatorios; el modelo recomendad
       const m = a.modelo_recomendado;
       assert.ok(m.modelo && m.por_que && /^\d{4}-\d{2}-\d{2}$/.test(m.comprobado), `${id}: modelo_recomendado incompleto`);
     }
+    if (a.preguntar_con_opciones) {
+      const p = a.preguntar_con_opciones;
+      assert.ok(typeof p.herramienta === 'string' && p.herramienta && typeof p.limites === 'string' && p.limites, `${id}: preguntar_con_opciones sin herramienta o sin limites`);
+    }
   }
 });
 

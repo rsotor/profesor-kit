@@ -8,7 +8,7 @@ LLM no tenga que repetirlo.
 ## El adaptador: un JSON, cinco campos obligatorios y hasta dos opcionales
 
 Toda herramienta que necesita saber algo de ti (dónde buscas las skills, qué comando te abre, cómo se
-te da un permiso) lo lee de un fichero con esta forma. Los cinco primeros siempre van; los dos últimos
+te da un permiso) lo lee de un fichero con esta forma. Los obligatorios siempre van; los demás,
 solo cuando aplican — no los inventes si no los tienes comprobados.
 
 | Campo | Obligatorio | Qué es | `null` cuando… | Ejemplo (Claude Code) |
@@ -24,6 +24,7 @@ solo cuando aplican — no los inventes si no los tienes comprobados.
 | `probado` | sí | En qué sistema y cuándo lo comprobaste de verdad (no basta con leer tu documentación) | nunca | `"macOS · Claude Code CLI · 2026-09-23"` |
 | `modelo_recomendado` | no | `{ modelo, id, por_que, comprobado }` (`modelo`, el nombre que lee el alumno; `id`, el que entiende tu asistente, tal cual, que es el que va en `{modelo}` de `segundo_plano`; sin él, `segundo_plano` se lanza sin `--model {modelo}` y usas tu modelo por defecto): el modelo con el que el kit hace bien el trabajo sin gastar cuota de más, por qué, y cuándo se comprobó. Va también como fila en `.kit/adaptadores/LEEME.md` (un test exige que coincidan). **Si aún no has comparado modelos con este asistente, no pongas este campo**: `.kit/adaptadores/LEEME.md` lleva "— (sin comparar)" en su lugar, y el adaptador se propone igual — comparar modelos no es requisito para tener un adaptador | se omite el campo entero | `{ "modelo": "Sonnet", … }` |
 | `segundo_plano` | no | Solo si tu asistente puede trabajar sin conversación (lo usa `preparar.js` para preparar una clase en segundo plano, ver `.kit/guias/segundo-plano.md`): una lista de argumentos (sin `comando`, que ya lo pone delante) con el hueco `{modelo}`. **El prompt va por la entrada estándar**: añade `"prompt_por_stdin": true` y no pongas `{prompt}` en la lista (así el prompt, que lleva nombres de ficheros del alumno, nunca pasa por una shell; en Windows, un comando `.cmd` solo se puede lanzar así). Si tu asistente no lee el prompt de la entrada estándar, usa el hueco `{prompt}` sin `prompt_por_stdin`: funciona en Mac y con un `.exe` en Windows, pero no con un `.cmd`. Compruébalo de verdad antes de escribirlo: lánzalo tú a mano una vez y mira que termina sin preguntar nada. Sin este campo, `preparar.js --lanzar` se niega y el kit se queda en primer plano para todo. Añade también una columna en `.kit/adaptadores/LEEME.md` ("Segundo plano": sí/no) | se omite el campo entero | `["-p", "--model", "{modelo}", "--permission-mode", "acceptEdits", "--permission-prompts", "none"]` con `"prompt_por_stdin": true` |
+| `preguntar_con_opciones` | no | Solo si tu asistente tiene una herramienta para que el alumno elija entre opciones y las envíe (en el chat, una casilla `- [ ]` que marque no te llega, issue #59): `{ "herramienta": …, "limites": … }`, con el nombre de la herramienta y cuántas preguntas y opciones admite por vez. La usas para las preguntas con opciones en el chat (el calentamiento, "hazme unas preguntas"); sin este campo pides la respuesta en una línea («1b, 2a») | se omite el campo entero | `{ "herramienta": "AskUserQuestion", "limites": "de 1 a 4 preguntas por vez…" }` |
 
 ### `permisos`: no todos los asistentes tienen comodín
 

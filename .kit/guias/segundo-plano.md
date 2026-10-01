@@ -6,7 +6,9 @@
 
 1. **Antes de lanzar, pregunta lo que solo él sabe**: el id de cada sesión si la regla de `config/curso.md` no
    basta, y cualquier duda del material que no puedas resolver tú. Lo que se lanza ya no pregunta nada.
-2. `node .kit/herramientas/preparar.js --lanzar <ficheros de inbox> --id <id>`. Una sola a la vez.
+2. `node .kit/herramientas/preparar.js --lanzar <ficheros o carpeta de inbox> --id <id>`. Una sola a la vez. Las
+   rutas son relativas a `estudio/inbox/`. Si la clase es una carpeta, antes `--lanzar <carpeta> --ver` y enséñale qué
+   entra y qué se queda fuera (audio sin transcribir, subcarpetas): solo se lanza con su sí.
 3. Sigue con él (calentamiento, repaso, dudas, examen), y no lo dejes parado mientras se prepara: sigue según
    cómo va — si acierta, "lo estás haciendo genial, ¿quieres un par de preguntas más, un poco más difíciles?";
    si falla algo, "¿repasamos eso mientras termino?". Así hasta que la clase esté lista o prefiera parar.

@@ -488,3 +488,66 @@ test('juntarPorFilas con la versión común: una fila cambiada solo en un lado g
   const ambos = '# Índice\n\na | Def A cambiada | B1 | 1 | alias:\nb | Def B | B1 | 1 | alias:\n';
   assert.equal(juntarPorFilas(ambos, theirs, clave, base), null);
 });
+
+test('20. #58: --lanzar con la carpeta de la clase (escrita con estudio/inbox/ delante): entra lo que se lee, lo demás se dice', () => {
+  escribirAdaptador('t1');
+  const carpeta = path.join(curso, 'estudio', 'inbox', 'clase t1');
+  fs.mkdirSync(path.join(carpeta, 'viejas'), { recursive: true });
+  fs.writeFileSync(path.join(carpeta, '2-ejercicios.md'), 'ejercicios');
+  fs.writeFileSync(path.join(carpeta, '10-apuntes.pdf'), '%PDF de mentira');
+  fs.writeFileSync(path.join(carpeta, 'grabacion.mp3'), 'audio');
+  fs.writeFileSync(path.join(carpeta, '.DS_Store'), 'basura');
+
+  const ver = herramienta('preparar', '--lanzar', 'estudio/inbox/clase t1/', '--ver');
+  assert.equal(ver.codigo, 0, ver.salida);
+  assert.match(ver.salida, /Entraría este material \(2\):\n {2}clase t1\/2-ejercicios\.md\n {2}clase t1\/10-apuntes\.pdf/);
+  assert.match(ver.salida, /grabacion\.mp3 \(audio o vídeo: hace falta su transcripción\)/);
+  assert.match(ver.salida, /viejas \(es una subcarpeta/);
+  assert.doesNotMatch(ver.salida, /DS_Store/);
+  assert.deepEqual(preparaciones(), [], '--ver no lanza nada');
+
+  const r = herramienta('preparar', '--lanzar', 'estudio\\inbox\\clase t1', '--id', 't1');
+  assert.equal(r.codigo, 0, r.salida);
+  assert.match(r.salida, /con este material:\n {2}clase t1\/2-ejercicios\.md\n {2}clase t1\/10-apuntes\.pdf/);
+  const terminada = esperarTerminada('t1');
+  assert.deepEqual(terminada.ficheros, ['clase t1/2-ejercicios.md', 'clase t1/10-apuntes.pdf']);
+  assert.equal(git(['ls-files', '--', 'estudio/inbox/clase t1/grabacion.mp3']).salida, '', 'lo que se queda fuera no se guarda con la clase');
+  assert.equal(herramienta('preparar', '--juntar', 't1').codigo, 0);
+});
+
+test('21. #58: fuera de inbox, inbox entera o una carpeta sin nada legible: se niega antes de tocar git', () => {
+  escribirAdaptador('u1');
+  const antes = git(['rev-parse', 'HEAD']).salida;
+  assert.match(herramienta('preparar', '--lanzar', '../../config/ajustes.json', '--id', 'u1').salida, /no está dentro de estudio\/inbox/);
+  assert.match(herramienta('preparar', '--lanzar', 'estudio/inbox', '--id', 'u1').salida, /no se prepara inbox entera/);
+  assert.match(herramienta('preparar', '--lanzar', path.join(curso, 'config'), '--id', 'u1').salida, /no está dentro de estudio\/inbox/);
+  fs.mkdirSync(path.join(curso, 'estudio', 'inbox', 'solo-audio'), { recursive: true });
+  fs.writeFileSync(path.join(curso, 'estudio', 'inbox', 'solo-audio', 'clase.m4a'), 'audio');
+  const vacia = herramienta('preparar', '--lanzar', 'inbox/solo-audio', '--id', 'u1');
+  assert.match(vacia.salida, /en inbox\/solo-audio no hay ningún fichero que se pueda leer\. Se quedan fuera: solo-audio\/clase\.m4a/);
+  assert.equal(git(['rev-parse', 'HEAD']).salida, antes);
+  assert.deepEqual(preparaciones(), []);
+});
+
+test('resolverEntradas: rutas de muchas formas, sin repetir, y nunca fuera de inbox', () => {
+  const { resolverEntradas } = require('../preparar');
+  const raiz = temporal('kit-entradas-');
+  const inbox = path.join(raiz, 'estudio', 'inbox');
+  fs.mkdirSync(path.join(inbox, 'c3'), { recursive: true });
+  fs.writeFileSync(path.join(inbox, 'c3', 'a.docx'), 'x');
+  fs.writeFileSync(path.join(inbox, 'suelto.txt'), 'x');
+  fs.writeFileSync(path.join(inbox, 'viejo.doc'), 'x');
+  fs.writeFileSync(path.join(raiz, 'fuera.md'), 'x');
+
+  const r = resolverEntradas(raiz, ['./c3', 'inbox/c3/a.docx', path.join(inbox, 'suelto.txt'), 'viejo.doc']);
+  assert.deepEqual(r, { ok: true, ficheros: ['c3/a.docx', 'suelto.txt', 'viejo.doc'], fuera: [] },
+    'un fichero nombrado a mano entra aunque no se sepa leer: el profesor ya lo dirá');
+  assert.equal(resolverEntradas(raiz, ['../fuera.md']).motivo, 'fuera-de-inbox');
+  assert.equal(resolverEntradas(raiz, [path.join(raiz, 'fuera.md')]).motivo, 'fuera-de-inbox');
+  assert.equal(resolverEntradas(raiz, ['.']).motivo, 'inbox-entera');
+  assert.equal(resolverEntradas(raiz, ['c3/no.pdf']).motivo, 'fichero-ausente');
+  if (process.platform !== 'win32') {
+    fs.symlinkSync(raiz, path.join(inbox, 'enlace'));
+    assert.equal(resolverEntradas(raiz, ['enlace/fuera.md']).motivo, 'fuera-de-inbox', 'un enlace dentro de inbox que sale de ella no vale');
+  }
+});

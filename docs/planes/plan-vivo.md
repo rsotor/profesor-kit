@@ -13,18 +13,17 @@ Para abrir una sesión:
 
 - **forma-de-trabajar** (plan en `~/Documents/workspace/initiatives/forma-de-trabajar/plan-phase-1.md`,
   sección "profesor-kit"). Rama `forma-de-trabajar`. Hecho: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
-- **0.27.1 en publicación** (Roberto, 2026-09-28: la #54 no espera a base-kit): el arreglo de la #54 (migración
-  009: la columna `Última prueba` pasa a la cita de sus casillas y se quita; `version_datos` 9; el mensaje de
-  título de `issue.js`) más K1, G5 y K2. Al salir la release: cerrar la #54 con el enlace. Pendiente de la #54,
-  menor: `issue.js --enviar` sigue necesitando `gh`.
-- **Repo público presentable** (rama `claude/project-docs-config-d2a93f`, modelo: finanzas-app). Hecho: licencia
-  MIT (también como `.kit/LICENSE` en los cursos), README para quien llega, plantillas de issue en formulario,
-  `SECURITY.md`, Dependabot, macOS en el CI, check del título del PR (`.github/titulo-pr.js`) y ajustes de GitHub
-  (squash con título, topics, etiquetas, seguridad, CodeQL). Queda: mezclar la #60; Roberto graba vídeo y capturas
-  (`docs/capturas/LEEME.md`).
-  - **Fuera:** Discussions y Code of Conduct (sobran para un proyecto de una persona); tocar `INSTALACION.md`.
-  - **Cómo sabremos:** la portada de GitHub muestra licencia MIT, descripción y topics; *New issue* ofrece las
-    tres plantillas y no deja abrir una en blanco; un curso nuevo no trae `LICENSE` ni `SECURITY.md` en la raíz.
+- **#58 y #59, para la próxima release** (rama `claude/epic-feynman-5sxy9o`). Sin subir `.kit/VERSION` ni
+  CHANGELOG todavía: se juntan con lo siguiente.
+  - **#58:** `preparar.js --lanzar` acepta la carpeta de la clase (solo lo que está directamente dentro y se puede
+    leer; lo demás se dice) y rutas escritas de cualquier forma (`estudio/inbox/…`, `inbox/…`, `\`, ruta entera).
+    `--ver` enseña qué entraría sin lanzar. Antes se aceptaba `../` fuera de inbox: ya no.
+  - **#59:** en el chat, nunca casillas. Si el adaptador trae `preguntar_con_opciones` (Claude Code:
+    `AskUserQuestion`), se usa; si no, «1b, 2a». Codex no lo trae: falta comprobar si tiene una herramienta así.
+  - **Fuera:** examen entero en el chat (sigue siendo un fichero en Obsidian); subcarpetas dentro de la carpeta.
+  - **Cómo sabremos:** tests 20 y 21 de `preparar.test.js` y `resolverEntradas`; en un curso real con Claude
+    Code, el calentamiento sale con opciones para elegir y la respuesta llega; quien abrió la #59 lo confirma
+    con Codex.
 
 ## Siguiente: que no se repita la #54
 
@@ -54,6 +53,8 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
   la preparación en paralelo después (~900.000 tokens por módulo). Encaja con K6 (base-kit).
 - **#39** se puede cerrar: H12 salió en la 0.26 y H09 lo sigue la #45. Cerrarla necesita el OK de Roberto.
 - **#46**, **#47**: peticiones sin cambios.
+- **#58**, **#59**: en curso (arriba).
+- De la #54 (cerrada), menor: `issue.js --enviar` sigue necesitando `gh`.
 
 ## Siguiente
 
@@ -70,6 +71,8 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 ## Hecho
 
 - **0.27.0** fusionada (#53) y publicada (release `v0.27.0`, 2026-09-25).
+- **0.27.1** fusionada (#57) y publicada (release `v0.27.1`). Repo público presentable fusionado (#60); queda el
+  vídeo y las capturas (`docs/capturas/LEEME.md`).
 
 ## Cómo se trabaja (lo que funcionó)
 

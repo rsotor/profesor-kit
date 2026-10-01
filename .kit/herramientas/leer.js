@@ -105,6 +105,16 @@ function leerExcel(zip) {
 
 const LECTORES = { '.docx': leerWord, '.pptx': leerPowerPoint, '.xlsx': leerExcel };
 
+// Por qué no se puede usar un fichero como material de una clase, en pocas palabras; null si se lee (lo lee el
+// asistente o lo saca este fichero). Lo usa preparar.js para elegir qué entra cuando le dan una carpeta.
+function porQueNoSeLee(fichero) {
+  const ext = path.extname(fichero).toLowerCase();
+  if (LECTORES[ext] || LOS_LEE_EL_ASISTENTE.includes(ext)) return null;
+  if (ANTIGUOS.includes(ext)) return `formato antiguo de Office: hay que exportarlo a PDF o a ${ext}x`;
+  if (AUDIO_Y_VIDEO.includes(ext)) return 'audio o vídeo: hace falta su transcripción';
+  return 'formato que no sé leer: hay que exportarlo a PDF';
+}
+
 function leer(fichero) {
   const ext = path.extname(fichero).toLowerCase();
   const nombre = path.basename(fichero);
@@ -155,4 +165,4 @@ function cli(args) {
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'leer.js');
 
-module.exports = { leer, cli };
+module.exports = { leer, porQueNoSeLee, cli };
