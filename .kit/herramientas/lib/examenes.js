@@ -166,7 +166,7 @@ function preguntasFalladas(raiz, examenesUnidad) {
       if (!enunciado || !c) continue;
       salida.push({
         examen: examen.rel, numero, enunciado,
-        correctas: c.correctas || [], explicacion: c.explicacion || '', concepto: c.concepto || null,
+        correctas: c.correctas || [], explicacion: c.explicacion || '', concepto: c.concepto || null, angulo: c.angulo || null,
       });
     }
   }

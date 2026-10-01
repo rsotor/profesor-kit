@@ -399,6 +399,10 @@ function pasoExamenGenerar(ctx, examenModulo) {
   const formato = p.formatoDeOpciones(ctx.destino, fichero);
   let ok = formato.ok;
   let detalle = `examen escrito: ${path.relative(ctx.destino, fichero)} · ${formato.detalle}`;
+  // #55: cada concepto desde ángulos distintos, no la definición del apunte.
+  const angulos = p.angulosDelExamen(ctx.destino, fichero);
+  ok = ok && angulos.ok;
+  detalle += ` · ${angulos.detalle}`;
   // Con una referencia del centro de por medio, el examen tiene que traer alguna de sus preguntas, literal
   // y marcada, sin pasar de la mitad, con la respuesta de la clave coincidiendo con la del centro.
   if (ctx.referenciaCentro) {

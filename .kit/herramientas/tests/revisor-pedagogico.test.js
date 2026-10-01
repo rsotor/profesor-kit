@@ -253,3 +253,61 @@ test('no-se-vera-bien también mira mi-perfil.md, como aviso que remite a config
   assert.equal(a.length, 1);
   assert.match(a[0].detalle, /config\//);
 });
+
+// --- #55: ángulos, definición de más, pregunta calcada ---------------------------------------------
+
+// Un examen tipo test recién escrito (intentos: 0) con su clave: `preguntas` es [{ enunciado, angulo, origen, concepto }].
+function examenConClave(preguntas, { tipo = 'modulo', intentos = 0, nota } = {}) {
+  const md = preguntas.map((p, i) => `**${i + 1}.** ${p.enunciado || `Pregunta número ${i + 1} sobre un caso.`} *(elige una)*\n\n- [ ] a) Uno\n- [ ] b) Dos\n`).join('\n');
+  const clave = { opciones: 2, resta_fallo: 0, aprobado: 6, preguntas: preguntas.map(p => ({ correctas: ['a'], explicacion: 'x', concepto: p.concepto || 'alfa', ...(p.angulo ? { angulo: p.angulo } : {}), ...(p.origen ? { origen: p.origen } : {}) })) };
+  return cursoTemporal({
+    ...(nota ? { 'estudio/conceptos/alfa.md': nota } : {}),
+    'estudio/examenes/01-examen.md': `---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:\nintentos: ${intentos}\ntipo_examen: ${tipo}\n---\n# Examen\n\n${md}`,
+    'config/claves/01-examen.json': JSON.stringify(clave),
+  });
+}
+const tres = ['reconocer', 'distinguir', 'predecir'].map(angulo => ({ angulo }));
+
+test('examen-sin-angulos: con 3 ángulos distintos y todos en la clave, no avisa', () => {
+  assert.equal(avisos(examenConClave(tres), 'examen-sin-angulos').length, 0);
+});
+
+test('examen-sin-angulos: una pregunta nueva sin ángulo (o con uno inventado), aviso que dice cuál', () => {
+  const a = avisos(examenConClave([...tres, {}, { angulo: 'memorizar' }]), 'examen-sin-angulos');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /pregunta\(s\) 4, 5 sin `angulo`/);
+});
+
+test('examen-sin-angulos: todas del mismo ángulo, aviso; en "lo que me falta" bastan 2', () => {
+  const iguales = [{ angulo: 'reconocer' }, { angulo: 'reconocer' }, { angulo: 'distinguir' }];
+  assert.match(avisos(examenConClave(iguales), 'examen-sin-angulos')[0].detalle, /solo cubre 2 ángulo\(s\).*al menos 3/);
+  assert.equal(avisos(examenConClave(iguales, { tipo: 'lo-que-falta' }), 'examen-sin-angulos').length, 0);
+});
+
+test('examen-sin-angulos: las del centro no cuentan, una reutilizada sin ángulo no avisa, y un examen ya corregido no se mira', () => {
+  assert.equal(avisos(examenConClave([...tres, { origen: 'centro' }, { origen: 'examen anterior' }]), 'examen-sin-angulos').length, 0);
+  assert.equal(avisos(examenConClave([{}, {}, {}], { intentos: 1 }), 'examen-sin-angulos').length, 0);
+});
+
+test('definicion-de-mas: dos de definición, aviso; una sola, no', () => {
+  const a = avisos(examenConClave([...tres, { angulo: 'definicion' }, { angulo: 'definicion' }]), 'definicion-de-mas');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /2 preguntas de definición \(4, 5\)/);
+  assert.equal(avisos(examenConClave([...tres, { angulo: 'definicion' }]), 'definicion-de-mas').length, 0);
+});
+
+const NOTA_ALFA = '---\ntipo: concepto\nalias: []\nrequiere: []\n---\n# Alfa\n\n## El ejemplo\n\n'
+  + 'El colchón financiero es el dinero que guardas para cubrir los gastos de varios meses sin ingresos.\n';
+
+test('pregunta-calcada: el enunciado copia 8 palabras seguidas de la nota (sin importar mayúsculas ni tildes), aviso', () => {
+  const calcada = { angulo: 'definicion', enunciado: '¿Cómo se llama el DINERO que guardas para cubrir los gastos de varios meses?' };
+  const a = avisos(examenConClave([...tres, calcada], { nota: NOTA_ALFA }), 'pregunta-calcada');
+  assert.equal(a.length, 1);
+  assert.match(a[0].detalle, /pregunta 4 copia de la nota alfa «el dinero que guardas para cubrir los gastos…»/);
+});
+
+test('pregunta-calcada: el mismo concepto contado con otro caso no avisa, ni una del centro aunque sea literal', () => {
+  const nueva = { angulo: 'reconocer', enunciado: 'Lucía aparta cada mes una parte del sueldo por si se queda sin trabajo. ¿Qué está formando?' };
+  const centro = { origen: 'centro', enunciado: 'El dinero que guardas para cubrir los gastos de varios meses sin ingresos es…' };
+  assert.equal(avisos(examenConClave([...tres, nueva, centro], { nota: NOTA_ALFA }), 'pregunta-calcada').length, 0);
+});

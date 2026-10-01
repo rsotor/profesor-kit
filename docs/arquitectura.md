@@ -160,7 +160,10 @@ tabla) · `obsidian-oculta-ejercicios` (falta activar "Detectar todas las extens
 `sesion-incompleta` (falta "Cobertura", "Auditoría" o "Para pensarlo despacio") ·
 `flashcards-fuera-de-rango` · `requiere-vacio` (dificultad 3 sin prerrequisito declarado) ·
 `pregunta-doble` (≥2 signos `?` en el enunciado de una pregunta de examen — libre, hasta `✍️ **Tu respuesta:**`,
-o tipo test, hasta su primera opción `- [ ]`) · `falta-info-mal-usado` (`FALTA INFO` dentro de
+o tipo test, hasta su primera opción `- [ ]`) · `examen-sin-angulos`, `definicion-de-mas` y `pregunta-calcada`
+(#55, solo en un examen tipo test recién escrito, `intentos: 0`, y sin contar las preguntas del centro: cada
+pregunta nueva lleva `angulo` en la clave, al menos 3 distintos —2 en `lo-que-falta`—, como mucho una de
+definición, y ningún enunciado comparte 8 palabras seguidas con la nota de su concepto) · `falta-info-mal-usado` (`FALTA INFO` dentro de
 "## El error típico" de un concepto: eso no es material que el curso tuviera que entregar).
 
 **Propiedades no estándar (aviso)**: `propiedad-no-estandar` — el alumno escribió una propiedad conocida

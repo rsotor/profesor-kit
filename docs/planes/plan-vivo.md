@@ -12,21 +12,20 @@ Para abrir una sesión:
 ## En curso
 
 - **forma-de-trabajar** (plan en `~/Documents/workspace/initiatives/forma-de-trabajar/plan-phase-1.md`,
-  sección "profesor-kit"). Rama `forma-de-trabajar`. Hecho: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
-- **#58 y #59, para la próxima release** (rama `claude/epic-feynman-5sxy9o`). Sin subir `.kit/VERSION` ni
-  CHANGELOG todavía: se juntan con lo siguiente.
-  - **#58:** `preparar.js --lanzar` acepta la carpeta de la clase (solo lo que está directamente dentro y se puede
-    leer; lo demás se dice) y rutas escritas de cualquier forma (`estudio/inbox/…`, `inbox/…`, `\`, ruta entera).
-    `--ver` enseña qué entraría sin lanzar. Antes se aceptaba `../` fuera de inbox: ya no.
-  - **#59:** en el chat, nunca casillas. Si el adaptador trae `preguntar_con_opciones` (Claude Code:
-    `AskUserQuestion`), se usa; si no, «1b, 2a». Hasta 5 preguntas, en el chat; más es un examen, y el alumno
-    elige: en Obsidian de golpe, o en el chat por tandas sin corregir nada hasta el final (el profesor marca sus
-    casillas en la nota y corrige `examen.js`). Codex lleva `pendiente`: al probarlo con Codex (#45), confirmar si
-    tiene una herramienta así y poner su `herramienta` y `limites`.
-  - **Fuera:** examen entero en el chat (sigue siendo un fichero en Obsidian); subcarpetas dentro de la carpeta.
-  - **Cómo sabremos:** tests 20 y 21 de `preparar.test.js` y `resolverEntradas`; en un curso real con Claude
-    Code, el calentamiento sale con opciones para elegir y la respuesta llega; quien abrió la #59 lo confirma
-    con Codex.
+  sección "profesor-kit"). Hecho, ya en `main`: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
+- **#55, para la 0.28.0** (rama `claude/epic-feynman-5sxy9o`): `/examen` pregunta cada concepto desde ángulos
+  distintos. Seis ángulos fijos en la clave (`angulo`: reconocer, distinguir, predecir, detectar-error, transferir,
+  definicion); al menos 3 distintos por examen (2 en `lo-que-falta`), como mucho una de definición; la dificultad
+  es de profundidad (el final, más predecir, detectar-error y transferir). Avisos nuevos en `comprobar.js`, solo en
+  un examen recién escrito (`intentos: 0`) y sin contar las del centro: `examen-sin-angulos`, `definicion-de-mas`,
+  `pregunta-calcada` (8 palabras seguidas de la nota). La prueba real falla si el examen no cubre los ángulos. El
+  20 % de fórmulas pasa a cobertura si `config/profesor.md` dice que son de apoyo. "Exámenes de antes" pasa a
+  `.kit/guias/examenes-de-antes.md` (la skill estaba al límite de 18 KB).
+  - **Fuera:** el revisor independiente (#56); prerrequisitos fuera del temario que no puntúan (cambia
+    `examen.js`); otros formatos (#46); tocar los exámenes viejos de los cursos.
+  - **Cómo sabremos:** tests de los tres avisos en `revisor-pedagogico.test.js` y de `angulosDelExamen` en
+    `prueba-real.test.js`; la prueba real en verde con su reparto de ángulos; en el curso real, el siguiente examen
+    deja de ser "¿qué es X?".
 
 ## Siguiente: que no se repita la #54
 
@@ -51,12 +50,12 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 
 ## Issues abiertas por decidir
 
-- **#55** `/examen` por ángulos, no la definición literal. Recomendado para el alcance de la 0.28.0.
 - **#56** subagentes con roles: primero el revisor independiente de exámenes (verifica los ángulos de la #55);
   la preparación en paralelo después (~900.000 tokens por módulo). Encaja con K6 (base-kit).
 - **#39** se puede cerrar: H12 salió en la 0.26 y H09 lo sigue la #45. Cerrarla necesita el OK de Roberto.
 - **#46**, **#47**: peticiones sin cambios.
-- **#58**, **#59**: en curso (arriba).
+- **#59** abierta: falta que quien la abrió diga si su Codex tiene una herramienta de opciones (para quitar el
+  `pendiente` del adaptador).
 - De la #54 (cerrada), menor: `issue.js --enviar` sigue necesitando `gh`.
 
 ## Siguiente
@@ -74,6 +73,8 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 
 ## Hecho
 
+- **#58 y #59** fusionadas (#62), salen en la 0.28.0: `preparar.js --lanzar` con carpeta de inbox; en el chat,
+  opciones con la herramienta del asistente o «1b, 2a», y el examen largo se contesta como elija el alumno.
 - **0.27.0** fusionada (#53) y publicada (release `v0.27.0`, 2026-09-25).
 - **0.27.1** fusionada (#57) y publicada (release `v0.27.1`). Repo público presentable fusionado (#60); queda el
   vídeo y las capturas (`docs/capturas/LEEME.md`).
