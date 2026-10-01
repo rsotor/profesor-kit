@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Cuánto aguanta tu colchón? · 01-02-01</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 1.8rem; }
+  label { display: block; margin-top: .8rem; }
+  input[type=range] { width: 100%; }
+  .valor { font-weight: bold; }
+  .opciones label { margin-top: .4rem; }
+  button { margin-top: 1rem; padding: .5rem 1rem; font-size: 1rem; }
+  #explicacion { border-left: 4px solid gray; padding: .5rem 1rem; margin-top: .5rem; }
+</style>
+</head>
+<body>
+<h1>¿Cuánto aguanta tu colchón?</h1>
+<p>Concepto: <strong>colchón financiero</strong> (nota <em>colchon-financiero</em>, en la carpeta conceptos).</p>
+
+<h2>1 · Condiciones</h2>
+<p>Un mes flojo, con casos inventados. Mueve lo que quieras.</p>
+<label>Gastos de un mes normal: <span class="valor" id="v-gastos"></span>
+  <input type="range" id="gastos" min="800" max="1500" step="50" value="1000"></label>
+<label>Lo que facturas este mes flojo: <span class="valor" id="v-factura"></span>
+  <input type="range" id="factura" min="100" max="2000" step="50" value="400"></label>
+<label>Colchón guardado: <span class="valor" id="v-colchon"></span>
+  <input type="range" id="colchon" min="1000" max="9000" step="500" value="3000"></label>
+<button type="button" id="otro">Otro caso</button>
+
+<h2>2 · Reto</h2>
+<p>Si todos los meses fueran como este mes flojo, ¿cuánto aguanta el colchón? <em>(elige una; razona antes de calcular)</em></p>
+<div class="opciones">
+  <label><input type="radio" name="resp" value="gastos"> <span id="o-gastos"></span></label>
+  <label><input type="radio" name="resp" value="agujero"> <span id="o-agujero"></span></label>
+  <label><input type="radio" name="resp" value="sin-agujero"> No se toca el colchón: este mes no falta nada</label>
+</div>
+<button type="button" id="comprobar">Comprobar</button>
+
+<h2>3 · Explicación</h2>
+<div id="explicacion">Elige una respuesta y aquí verás por qué, con las cuentas del caso.</div>
+
+<script>
+(function () {
+  var ids = ['gastos', 'factura', 'colchon'];
+  var VACIA = 'Elige una respuesta y aquí verás por qué, con las cuentas del caso.';
+  var eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' });
+  var dec = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  // Misma lógica que usa el botón: la lee verificar-ejercicio.js.
+  window.verificar = function (caso) {
+    var agujero = caso.gastos - caso.factura;
+    return agujero > 0 ? 'agujero' : 'sin-agujero';
+  };
+
+  function caso() {
+    var c = {};
+    ids.forEach(function (id) { c[id] = Number(document.getElementById(id).value); });
+    return c;
+  }
+
+  function meses(a, b) { return dec.format(Math.floor(a / b * 10) / 10); }
+
+  function pintar() {
+    var c = caso();
+    var agujero = c.gastos - c.factura;
+    ids.forEach(function (id) { document.getElementById('v-' + id).textContent = eur.format(c[id]); });
+    document.getElementById('o-gastos').textContent =
+      'Colchón ÷ gastos del mes: ' + meses(c.colchon, c.gastos) + ' meses';
+    document.getElementById('o-agujero').textContent = agujero > 0
+      ? 'Colchón ÷ lo que te falta cada mes: ' + meses(c.colchon, agujero) + ' meses'
+      : 'Colchón ÷ lo que te falta cada mes: no te falta nada, no se puede dividir';
+  }
+
+  function reiniciar() {
+    var r = document.querySelector('input[name=resp]:checked');
+    if (r) r.checked = false;
+    pintar();
+    document.getElementById('explicacion').textContent = VACIA;
+  }
+
+  function explicar(c, elegida) {
+    var agujero = c.gastos - c.factura;
+    var correcta = window.verificar(c);
+    var txt = (elegida === correcta ? 'Correcto. ' : 'No. ') +
+      'Lo que te falta cada mes es gastos ' + eur.format(c.gastos) + ' − facturación ' + eur.format(c.factura) + ' = ' +
+      eur.format(Math.max(agujero, 0)) + '. ';
+    if (correcta === 'agujero') {
+      txt += 'El colchón se gasta a ritmo de lo que te falta, no de lo que gastas: ' + eur.format(c.colchon) + ' ÷ ' +
+        eur.format(agujero) + ' = ' + meses(c.colchon, agujero) + ' meses. ' +
+        'Dividir entre los gastos (' + meses(c.colchon, c.gastos) + ' meses) es el atajo que engaña: ' +
+        'ese número solo diría cuánto aguantas con facturación cero. ' +
+        'Cuanto más facturas, menor el agujero y más dura; si facturas tanto como gastas (' + eur.format(c.gastos) +
+        '), el agujero es 0 y el colchón no se toca.';
+    } else {
+      txt += 'Facturas lo mismo o más de lo que gastas, así que no hay agujero que tapar y el colchón no se gasta. ' +
+        'Dividir entre los gastos daría ' + meses(c.colchon, c.gastos) + ' meses, pero ese número solo vale con facturación cero. ' +
+        'El punto de cambio es facturar exactamente tus gastos (' + eur.format(c.gastos) + ').';
+    }
+    document.getElementById('explicacion').textContent = txt;
+  }
+
+  ids.forEach(function (id) {
+    document.getElementById(id).addEventListener('input', reiniciar);
+  });
+
+  document.getElementById('comprobar').addEventListener('click', function () {
+    var marcada = document.querySelector('input[name=resp]:checked');
+    if (!marcada) {
+      document.getElementById('explicacion').textContent = 'Elige una respuesta antes de comprobar.';
+      return;
+    }
+    explicar(caso(), marcada.value);
+  });
+
+  document.getElementById('otro').addEventListener('click', function () {
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      var min = Number(el.min), max = Number(el.max), step = Number(el.step);
+      var n = Math.floor((max - min) / step);
+      el.value = min + Math.floor(Math.random() * (n + 1)) * step;
+    });
+    reiniciar();
+  });
+
+  pintar();
+})();
+</script>
+</body>
+</html>

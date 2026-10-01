@@ -14,15 +14,11 @@ Estados: `⬜ sin evaluar` · `🟡 flojo` · `✅ sólido` · `🔴 falló dos 
 
 | Concepto | Teoría | Aplicación |
 |---|---|---|
-| [[funciones-del-dinero]] | 🟡 flojo · examen módulo 1, p.1: confunde la doble coincidencia de deseos con la falta de unidad de cuenta | ⬜ sin evaluar |
-| [[inflacion]] | ✅ sólido · examen módulo 1, p.2: razona que con más inflación se pierde más poder de compra | ⬜ sin evaluar |
-| [[liquidez]] | 🟡 flojo · test de corrección 01-examen-2026-10-01-correccion, p.3: describe la idea pero no da el nombre que se pedía (acierta p.2) | ⬜ sin evaluar |
-| [[presupuesto]] | 🟡 flojo · examen módulo 1, p.6: cree que presupuestar con el mejor mes no tiene riesgo (acierta p.7, la media) | ⬜ sin evaluar |
-| [[gastos-fijos-y-variables]] | 🟡 flojo · test de corrección 01-examen-2026-10-01-correccion, p.5: llama variable a un alquiler que se repite con la misma cifra (la subida anual por IPC no lo hace variable) | ⬜ sin evaluar |
-| [[tasa-de-ahorro]] | ✅ sólido · test de corrección 01-examen-2026-10-01-correccion, p.1: calcula 300 ÷ 1.500 = 20 por ciento de lo que cobra (antes, examen módulo 1, p.8) | ⬜ sin evaluar |
-| [[colchon-financiero]] | 🟡 flojo · test de corrección 01-examen-2026-10-01-correccion, p.6: en blanco, no dice cuántos meses de gastos recomienda el curso | ⬜ sin evaluar |
-| [[capital-y-tipo-de-interes]] | ⬜ sin evaluar | ⬜ sin evaluar |
-| [[interes-simple]] | ⬜ sin evaluar | ⬜ sin evaluar |
-| [[interes-compuesto]] | ⬜ sin evaluar | ⬜ sin evaluar |
-| [[capitalizacion]] | ⬜ sin evaluar | ⬜ sin evaluar |
-| [[regla-del-72]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[trueque]] | 🟡 flojo · examen del módulo 1, p.1: elige falta de unidad de cuenta en vez de doble coincidencia de deseos | ⬜ sin evaluar |
+| [[funciones-del-dinero]] | ✅ sólido · examen del módulo 1, p.3 y p.8: acierta las dos | ⬜ sin evaluar |
+| [[inflacion]] | ✅ sólido · examen del módulo 1, p.2: acierta | ⬜ sin evaluar |
+| [[liquidez]] | 🟡 flojo · examen del módulo 1, p.5: en blanco; test de corrección, p.2 y p.3: explica bien la idea, pero no da el nombre cuando se pedía | ⬜ sin evaluar |
+| [[presupuesto-personal]] | ✅ sólido · examen del módulo 1, p.7: acierta | ⬜ sin evaluar |
+| [[gasto-fijo-y-variable]] | 🟡 flojo · test de corrección, p.5: dice que el alquiler con subida anual por IPC es variable (antes ✅ en examen del módulo 1, p.9) | ⬜ sin evaluar |
+| [[tasa-de-ahorro]] | ✅ sólido · examen del módulo 1, p.4: acierta | ⬜ sin evaluar |
+| [[colchon-financiero]] | 🔴 falló dos veces · examen del módulo 1, p.6 y p.10: p.6 elige 2,5 meses (divide entre los gastos), p.10 en blanco | ⬜ sin evaluar |

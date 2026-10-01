@@ -31,9 +31,19 @@
 
 ## Conceptos que costaron
 
+- **colchon-financiero** — pidió otro ejemplo sin precisar qué parte no entendía. Se le dio uno con un mes
+  flojo (tamaño del colchón frente a meses que aguanta); falta saber si lo desbloqueó. — *duda en
+  conceptos/colchon-financiero.md, 2026-10-01*
+
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
+
+- **colchon-financiero** — en el examen del módulo 1 falla las dos preguntas del concepto: en la p.6 calcula
+  3.000 ÷ 1.200 = 2,5 meses (divide entre los gastos en vez de entre el agujero del mes flojo, 500 €) y la
+  p.10 la deja en blanco. Se apunta como hueco de cálculo y de qué cuenta como colchón; la p.10 en blanco no
+  prueba por sí sola qué no sabe (TODO: preguntarle si no supo o no llegó). — *examen
+  `examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-01.md`, p.6 y p.10*
 
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
@@ -43,7 +53,7 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-10-01 · sesión 01-01-01, respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-10-01 · respuesta del alumno en /dudas |
 
 ## Registro de dudas
 

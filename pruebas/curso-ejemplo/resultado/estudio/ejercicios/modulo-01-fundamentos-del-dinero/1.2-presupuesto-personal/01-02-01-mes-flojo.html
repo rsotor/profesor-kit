@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Un mes flojo · 01-02-01</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 1.8rem; }
+  label { display: block; margin-top: .8rem; }
+  input[type=range] { width: 100%; }
+  .valor { font-weight: bold; }
+  .opciones label { margin-top: .4rem; }
+  button { margin-top: 1rem; padding: .5rem 1rem; font-size: 1rem; }
+  #explicacion { border-left: 4px solid gray; padding: .5rem 1rem; margin-top: .5rem; }
+</style>
+</head>
+<body>
+<h1>Un mes flojo</h1>
+<p>Conceptos: <strong>presupuesto personal</strong>, <strong>tasa de ahorro</strong>, <strong>colchón financiero</strong>
+(notas <em>presupuesto-personal</em>, <em>tasa-de-ahorro</em> y <em>colchon-financiero</em>, en la carpeta conceptos).</p>
+
+<h2>1 · Condiciones</h2>
+<p>Mueve lo que quieras. Los casos son inventados.</p>
+<label>Ingresos del mes: <span class="valor" id="v-ingresos"></span>
+  <input type="range" id="ingresos" min="800" max="3000" step="50" value="1300"></label>
+<label>Gastos fijos: <span class="valor" id="v-fijos"></span>
+  <input type="range" id="fijos" min="400" max="1200" step="10" value="700"></label>
+<label>Gastos variables: <span class="valor" id="v-variables"></span>
+  <input type="range" id="variables" min="0" max="800" step="10" value="480"></label>
+<label>Colchón guardado: <span class="valor" id="v-colchon"></span>
+  <input type="range" id="colchon" min="0" max="10000" step="100" value="3000"></label>
+<button type="button" id="otro">Otro caso</button>
+
+<h2>2 · Reto</h2>
+<p>Con estas condiciones, ¿cómo cierra el mes? <em>(elige una; sin calcular antes, razona)</em></p>
+<div class="opciones">
+  <label><input type="radio" name="resp" value="positivo"> Sobra dinero: el ahorro del mes es positivo</label>
+  <label><input type="radio" name="resp" value="cero"> Justo: ni sobra ni falta</label>
+  <label><input type="radio" name="resp" value="negativo"> Falta dinero: el mes cierra en negativo</label>
+</div>
+<button type="button" id="comprobar">Comprobar</button>
+
+<h2>3 · Explicación</h2>
+<div id="explicacion">Elige una respuesta y aquí verás por qué, con las cuentas del caso.</div>
+
+<script>
+(function () {
+  var ids = ['ingresos', 'fijos', 'variables', 'colchon'];
+  var eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' });
+  var dec = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  // Misma lógica que usa el botón: la lee verificar-ejercicio.js.
+  window.verificar = function (caso) {
+    var gastos = caso.fijos + caso.variables;
+    var ahorro = caso.ingresos - gastos;
+    var respuesta = ahorro > 0 ? 'positivo' : (ahorro === 0 ? 'cero' : 'negativo');
+    return respuesta;
+  };
+
+  function caso() {
+    var c = {};
+    ids.forEach(function (id) { c[id] = Number(document.getElementById(id).value); });
+    return c;
+  }
+
+  function pintar() {
+    var c = caso();
+    ids.forEach(function (id) { document.getElementById('v-' + id).textContent = eur.format(c[id]); });
+  }
+
+  function explicar(c, elegida) {
+    var gastos = c.fijos + c.variables;
+    var ahorro = c.ingresos - gastos;
+    var tasa = (ahorro / c.ingresos) * 100;
+    var meses = gastos > 0 ? c.colchon / gastos : 0;
+    var correcta = window.verificar(c);
+    var txt = (elegida === correcta ? 'Correcto. ' : 'No: ') +
+      'ingresos ' + eur.format(c.ingresos) + ' − gastos ' + eur.format(gastos) + ' = ahorro ' + eur.format(ahorro) + '. ' +
+      'Tasa de ahorro: ' + dec.format(tasa) + ' por ciento de lo que ingresas. ';
+    if (correcta === 'negativo') {
+      txt += 'El mes falta dinero y se paga con el colchón: con ' + eur.format(c.colchon) + ' guardados, aguantas ' +
+        dec.format(Math.floor(c.colchon / (-ahorro) * 10) / 10) + ' meses así. ';
+    }
+    txt += 'Tu colchón cubre ' + dec.format(Math.floor(meses * 10) / 10) + ' meses de gastos (el objetivo para ingresos irregulares: 5-6). ';
+    txt += 'El punto de cambio es siempre el mismo: ingresos iguales a gastos (' + eur.format(gastos) + ').';
+    document.getElementById('explicacion').textContent = txt;
+  }
+
+  ids.forEach(function (id) {
+    document.getElementById(id).addEventListener('input', function () {
+      pintar();
+      document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué, con las cuentas del caso.';
+    });
+  });
+
+  document.getElementById('comprobar').addEventListener('click', function () {
+    var marcada = document.querySelector('input[name=resp]:checked');
+    if (!marcada) {
+      document.getElementById('explicacion').textContent = 'Elige una respuesta antes de comprobar.';
+      return;
+    }
+    explicar(caso(), marcada.value);
+  });
+
+  document.getElementById('otro').addEventListener('click', function () {
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      var min = Number(el.min), max = Number(el.max), step = Number(el.step);
+      var n = Math.floor((max - min) / step);
+      el.value = min + Math.floor(Math.random() * (n + 1)) * step;
+    });
+    var r = document.querySelector('input[name=resp]:checked');
+    if (r) r.checked = false;
+    pintar();
+    document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué, con las cuentas del caso.';
+  });
+
+  pintar();
+})();
+</script>
+</body>
+</html>

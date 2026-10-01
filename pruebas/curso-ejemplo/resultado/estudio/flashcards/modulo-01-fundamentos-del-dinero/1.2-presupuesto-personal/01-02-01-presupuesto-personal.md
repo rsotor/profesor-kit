@@ -1,26 +1,43 @@
 ---
 tipo: flashcards
-sesion: 01-02-01
+sesion: 01-02-01-presupuesto-personal
 ---
-# Flashcards · 01-02-01
+# Flashcards · 01-02-01-presupuesto-personal
 
-> Se responde mentalmente antes de desplegar.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Facturas 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué cifra de ingresos presupuestas?**
+**Todos los meses gastas algo en ocio. ¿Es un gasto fijo? (sí o no, con el porqué en una frase)**
+> [!success]- Respuesta
+> No, es variable: que gastes algo siempre no lo hace fijo; la cifra exacta la decides tú cada mes.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 1/10*
+
+**Facturas unos meses 2.400,00 € y otros 1.300,00 €. ¿Con qué cifra de ingresos presupuestas? (en una frase)**
 > [!success]- Respuesta
 > Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
 
-**Todos los meses gastas algo en ocio. ¿Es un gasto fijo?**
-> [!success]- Respuesta
-> No, es variable: la cifra exacta la decides tú cada mes. Que se repita no lo hace fijo.
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 1/10*
 
-**Ingresas 1.850,00 € y gastas 1.195,00 €. ¿Cuánto ahorras y qué tasa de ahorro es?**
+**Ahorras 400,00 € con 2.000,00 € de ingresos. ¿Cuál es tu tasa de ahorro? (una cifra)**
 > [!success]- Respuesta
-> 655,00 €. La tasa es 655 ÷ 1.850 × 100 ≈ 35,4: te quedan unos 35,40 € de cada 100,00 €.
+> 400,00 ÷ 2.000,00 × 100 = 20 por ciento: el ahorro se divide entre lo que ingresas.
 
-**¿Cuántos meses de gastos conviene tener de colchón si eres freelance, y por qué más que con nómina?**
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 1/10*
+
+**Tus gastos son 1.200,00 € al mes y quieres un colchón de 5 meses. ¿Cuánto es? (una cifra)**
 > [!success]- Respuesta
-> 5-6 meses, frente a 3: tus ingresos son irregulares y un mes flojo es más probable.
+> 5 × 1.200,00 = 6.000,00 €.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 1/10*
 
 ---
-Conceptos que cubren: [[presupuesto]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[gasto-fijo-y-variable]] · [[presupuesto-personal]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
