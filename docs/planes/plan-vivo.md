@@ -42,9 +42,11 @@ Para abrir una sesión:
     coste en el aviso; paralelo en asistentes sin `subagentes` (una a una, como hoy); el auditor del material
     (punto 3, aparcado: ver "Issues abiertas por decidir").
   - **Tras el diablo (2026-10-01, 5 objeciones, todas aceptadas):**
-    - **Cuota a mitad:** el coordinador guarda cada clase al terminarla; `estado.json` lleva el resultado por clase;
-      `--juntar` mezcla las terminadas y deja la fallida para relanzarla (hoy `descartarCopia` lo tira todo,
-      `preparar.js:96-104`).
+    - **Cuota a mitad:** cambiado al diseñar (2026-10-01): guardar por clase no funciona con subagentes escribiendo a
+      la vez (`guardar.js` comprueba el curso entero y vería las notas a medias de los otros). Queda: si falla, no
+      se borra nada (lo escrito sin guardar se guarda en la rama descartada; hoy `descartarCopia` lo tira,
+      `preparar.js:96-104`) y se relanza entera; si el fallo es de cuota, el profesor propone relanzarla otro día,
+      no prepararla en la conversación. Juntar solo las clases terminadas → Fuera.
     - **CLI:** `--clase <id> <ficheros…>` repetible; `sesionGuardada` por cada id; el commit de `--juntar` nombra
       todas las clases; el prompt deja de decir "son la misma clase".
     - **Fase 1** devuelve también qué aporta cada clase a cada concepto y de qué fichero; el dueño recibe todas las
@@ -55,10 +57,17 @@ Para abrir una sesión:
       (`prueba-real.js:634-672`) lanza 02-01 y 02-02 juntas.
     - **Auditor:** fuera del plan (aparcado).
   - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
-    subagente que falla deja las otras clases juntables, y el prompt del coordinador con las dos fases. Prueba real:
+    una preparación fallida conserva en su rama descartada lo que escribió, y el prompt del coordinador con las dos fases. Prueba real:
     02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,
     tasa de ahorro ampliada (01-02 y 02-02 en `visto_en`), una fila de `progreso` por concepto nuevo y `comprobar.js` sin errores. Gasta más: se pasa una vez,
     sobre el commit de la release.
+
+- **Prueba real más barata** (propuesta 2026-10-01, sin empezar): `prueba-real.js --solo "<paso>"` (restaura la copia
+  del paso anterior, ejecuta ese paso y para) y las copias de la última prueba entera guardadas en `pruebas-local/`.
+  Mientras se desarrolla, se paga solo el paso que cambia; la entera, solo antes de la release (sin cambios).
+  - **Fuera:** saltarse la prueba entera antes de una release; cambiar de modelo para abaratarla.
+  - **Cómo sabremos:** tras una prueba entera, `--solo "preparar.js --lanzar 02-01"` ejecuta solo ese paso sobre la
+    copia guardada y su resultado coincide con el de la prueba entera.
 
 ## Siguiente: que no se repita la #54
 

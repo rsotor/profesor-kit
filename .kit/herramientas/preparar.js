@@ -5,6 +5,7 @@
 // pantalla. Tres órdenes:
 //
 //   --lanzar <ficheros o carpeta de estudio/inbox/> --id <id de sesión>   (una sola preparación a la vez)
+//   --lanzar --clase <id> <ficheros o carpeta> --clase <id> <...>    (varias clases a la vez, con subagentes: #56)
 //   --lanzar <...> --ver                                          (qué material entraría, sin lanzar nada)
 //   --estado                                                    (en curso / terminada / fallida)
 //   --juntar <id>                                                (mezcla la copia con el curso principal)
@@ -80,6 +81,15 @@ function todasLasPreparaciones(raiz) {
 // su registro en `.preparacion/descartadas/` y, si llegó a guardar algo, su rama con otro nombre. Solo las últimas
 // CONSERVADAS de cada cosa, para no acumular basura.
 const CONSERVADAS = 3;
+
+// Lo que el asistente escribió y no llegó a guardar (se acabó la cuota o el tiempo a mitad): se guarda en su rama antes
+// de descartarla, para que no se pierda (#56). Sin identidad de git no se puede: se queda como estaba antes.
+function rescatarSinGuardar(dir, id) {
+  if (!fs.existsSync(dir) || !g.intentarGit(dir, ['status', '--porcelain']).salida.trim() || !g.tieneIdentidad(dir)) return;
+  g.intentarGit(dir, ['add', '-A']);
+  g.intentarGit(dir, ['commit', '-q', '--no-verify', '-m', `rescate: lo que la preparación ${id} dejó sin guardar`]);
+}
+
 function descartarCopia(raiz, id, { conservar = false } = {}) {
   const dir = dirDe(raiz, id);
   if (conservar) {
@@ -91,6 +101,7 @@ function descartarCopia(raiz, id, { conservar = false } = {}) {
     for (const viejo of fs.readdirSync(carpeta).filter(n => n.endsWith('.txt')).sort().reverse().slice(CONSERVADAS)) {
       fs.rmSync(path.join(carpeta, viejo), { force: true });
     }
+    rescatarSinGuardar(dir, id);
     let base = null;
     try { base = leerEstadoCrudo(dir).base; } catch { /* sin estado */ }
     const conTrabajo = base && g.intentarGit(raiz, ['rev-list', '--count', `${base}..${ramaDe(id)}`]).salida.trim() !== '0';
@@ -143,11 +154,29 @@ const PROMPT_SEGUNDO_PLANO = 'Trabajas en segundo plano, sin el alumno delante d
   + 'conservadora: déjala anotada como TODO en vez de preguntar. Al terminar, guarda. Lo demás, en '
   + '.kit/guias/segundo-plano.md ("Si trabajas en segundo plano").';
 
+const listaDeInbox = ficheros => ficheros.map(f => `estudio/inbox/${f}`).join(' y ');
+
 function construirPrompt(ficheros, id) {
-  const lista = ficheros.map(f => `estudio/inbox/${f}`).join(' y ');
-  return `${PROMPT_SEGUNDO_PLANO} He dejado los apuntes de la clase en ${lista}. Procésalos siguiendo la `
+  return `${PROMPT_SEGUNDO_PLANO} He dejado los apuntes de la clase en ${listaDeInbox(ficheros)}. Procésalos siguiendo la `
     + `skill /sesion (son la misma clase, con id ${id}).`;
 }
+
+// Varias clases en un solo lanzamiento (#56): este proceso coordina y cada clase la prepara un subagente, en dos
+// fases. Cómo, en .kit/guias/segundo-plano.md ("Varias clases a la vez").
+function construirPromptCoordinador(clases) {
+  const lista = clases.map(c => `la ${c.id}, en ${listaDeInbox(c.ficheros)}`).join('; ');
+  return `${PROMPT_SEGUNDO_PLANO} Hay ${clases.length} clases para preparar a la vez: ${lista}. Cada una es una sesión `
+    + 'distinta, con su id. Coordinas tú y cada clase la prepara un subagente, en dos fases: sigue '
+    + '.kit/guias/segundo-plano.md, apartado "Varias clases a la vez". Al terminar, guarda una sola vez.';
+}
+
+const promptDe = estado => (clasesDe(estado).length > 1 ? construirPromptCoordinador(clasesDe(estado)) : construirPrompt(estado.ficheros, estado.id));
+
+// Las clases de una preparación. Las de antes de la #56 no llevan `clases`: eran una sola, con el id de la preparación.
+const clasesDe = estado => (Array.isArray(estado.clases) && estado.clases.length ? estado.clases : [{ id: estado.id, ficheros: estado.ficheros }]);
+
+// El id de la preparación (su copia y su rama): el de la clase, o los de todas unidos con `_`.
+const idDePreparacion = clases => clases.map(c => c.id).join('_');
 
 // --- Qué material entra (issue #58) -----------------------------------------------------------------
 
@@ -202,29 +231,46 @@ function resolverEntradas(raiz, entradas) {
 
 // --- Lanzar ------------------------------------------------------------------------------------------
 
-function lanzar(raiz, { ficheros, id }) {
+// Una clase (`{ ficheros, id }`, como siempre) o varias (`{ clases: [{ id, ficheros }] }`, #56).
+function lanzar(raiz, { ficheros, id, clases }) {
   if (!g.esRepo(raiz)) return { lanzada: false, motivo: 'sin-repo' };
   const ajustes = v.leerAjustes(raiz);
   const adaptador = v.leerAdaptador(raiz, ajustes.llm);
   if (!adaptador || !Array.isArray(adaptador.segundo_plano) || !adaptador.segundo_plano.length) {
     return { lanzada: false, motivo: 'sin-segundo-plano' };
   }
-  if (!idValido(id)) return { lanzada: false, motivo: 'id-invalido' };
-  if (!ficheros || !ficheros.length) return { lanzada: false, motivo: 'sin-ficheros' };
-  const material = resolverEntradas(raiz, ficheros);
-  if (!material.ok) return { ...material, lanzada: false };
+  const pedidas = clases || [{ id, ficheros }];
+  if (!pedidas.length) return { lanzada: false, motivo: 'sin-ficheros' };
+  // Varias clases solo con subagentes: sin ellos, una a una, como siempre (Fuera del plan de la #56).
+  if (pedidas.length > 1 && !(adaptador.subagentes && adaptador.subagentes.herramienta)) return { lanzada: false, motivo: 'sin-subagentes' };
+  const resueltas = [];
+  const fuera = [];
+  for (const clase of pedidas) {
+    if (!idValido(clase.id)) return { lanzada: false, motivo: 'id-invalido', id: clase.id };
+    if (resueltas.some(c => c.id === clase.id)) return { lanzada: false, motivo: 'clase-repetida', id: clase.id };
+    if (!clase.ficheros || !clase.ficheros.length) return { lanzada: false, motivo: pedidas.length > 1 ? 'clase-sin-ficheros' : 'sin-ficheros', id: clase.id };
+    const material = resolverEntradas(raiz, clase.ficheros);
+    if (!material.ok) return { ...material, lanzada: false, id: clase.id };
+    const otra = resueltas.find(c => c.ficheros.some(f => material.ficheros.includes(f)));
+    if (otra) return { lanzada: false, motivo: 'fichero-en-dos-clases', fichero: otra.ficheros.find(f => material.ficheros.includes(f)), id: clase.id, otra: otra.id };
+    resueltas.push({ id: clase.id, ficheros: material.ficheros });
+    fuera.push(...material.fuera);
+  }
+  const todos = resueltas.flatMap(c => c.ficheros);
 
   const soltar = tomarCerrojo(raiz);
   if (!soltar) return { lanzada: false, motivo: 'lanzando' };
   try {
-    const r = lanzarConCerrojo(raiz, { ficheros: material.ficheros, id, adaptador });
-    return r.lanzada ? { ...r, ficheros: material.ficheros, fuera: material.fuera } : r;
+    const r = lanzarConCerrojo(raiz, { clases: resueltas, adaptador });
+    return r.lanzada ? { ...r, ficheros: todos, clases: resueltas, fuera } : r;
   } finally {
     soltar();
   }
 }
 
-function lanzarConCerrojo(raiz, { ficheros, id, adaptador }) {
+function lanzarConCerrojo(raiz, { clases, adaptador }) {
+  const id = idDePreparacion(clases);
+  const ficheros = clases.flatMap(c => c.ficheros);
   const [existente] = todasLasPreparaciones(raiz);
   if (existente) {
     if (existente.resultadoEnCaliente === 'terminada') return { lanzada: false, motivo: 'hay-terminada', id: existente.id };
@@ -260,7 +306,7 @@ function lanzarConCerrojo(raiz, { ficheros, id, adaptador }) {
   // Las skills no están en git (se ignoran): sin copiarlas, el asistente de la copia no encontraría /sesion.
   if (adaptador.skills) instalarSkills({ raiz: dir, destino: adaptador.skills });
 
-  escribirEstado(dir, { id, ficheros, entradas, base, pid: null, inicio: new Date().toISOString(), fin: null, resultado: 'en-curso', rama: ramaDe(id) });
+  escribirEstado(dir, { id, ficheros, clases, entradas, base, pid: null, inicio: new Date().toISOString(), fin: null, resultado: 'en-curso', rama: ramaDe(id) });
 
   const hijo = spawn(process.execPath, [__filename, '--trabajar', id], { cwd: raiz, detached: true, stdio: 'ignore' });
   hijo.unref();
@@ -294,7 +340,7 @@ function trabajar(raiz, id) {
     // El id exacto que entiende el asistente, tal cual (issue #39, H09): ni un proveedor por defecto ni minúsculas.
     const modelo = (adaptador.modelo_recomendado && adaptador.modelo_recomendado.id) || null;
     const plan = comoLanzar({ comando: adaptador.comando, segundoPlano: adaptador.segundo_plano, promptPorStdin: adaptador.prompt_por_stdin === true,
-      prompt: construirPrompt(estado.ficheros, id), modelo });
+      prompt: promptDe(estado), modelo });
     if (plan.error) throw new Error(plan.error);
     const limite = Number(process.env.PROFESOR_KIT_PREPARAR_LIMITE_MS) || LIMITE_MS;
     const r = lanzarAsistente(plan, dir, limite);
@@ -303,7 +349,11 @@ function trabajar(raiz, id) {
     let motivo = null;
     if ((r.error && r.error.code === 'ETIMEDOUT') || r.signal) motivo = `se paró al llegar al límite de tiempo (${Math.round(limite / 60000)} min)`;
     else if (r.error || r.status !== 0) motivo = 'el asistente terminó con un error';
-    else if (!sesionGuardada(dir, id, estado.base)) motivo = `el asistente terminó, pero no ha dejado la sesión ${id} guardada en la copia`;
+    else {
+      // Cada clase deja su sesión: con varias, una que falte basta para no darla por terminada (#56).
+      const faltan = clasesDe(estado).map(c => c.id).filter(c => !sesionGuardada(dir, c, estado.base));
+      if (faltan.length) motivo = `el asistente terminó, pero no ha dejado ${faltan.length > 1 ? 'las sesiones' : 'la sesión'} ${faltan.join(', ')} guardada${faltan.length > 1 ? 's' : ''} en la copia`;
+    }
     fs.writeFileSync(registro, `${salida}\n${motivo ? `\n[preparar.js] ${motivo}.\n` : ''}`);
     actualizarEstado(dir, { fin: new Date().toISOString(), resultado: motivo ? 'fallida' : 'terminada' });
   } catch (error) {
@@ -381,6 +431,13 @@ function temaDeSesion(raiz, id) {
   return id;
 }
 
+// "sesion(<id>): <tema>", y con varias clases, todas: "sesion(02-01, 02-02): <tema> · <tema>" (#56).
+function mensajeDeJuntar(raiz, estado) {
+  const ids = clasesDe(estado).map(c => c.id);
+  if (ids.length === 1) return `sesion(${ids[0]}): ${temaDeSesion(raiz, ids[0])} (preparada en segundo plano)`;
+  return `sesion(${ids.join(', ')}): ${ids.map(c => temaDeSesion(raiz, c)).join(' · ')} (preparadas en segundo plano)`;
+}
+
 function juntar(raiz, id) {
   const dir = dirDe(raiz, id);
   if (!fs.existsSync(path.join(dir, 'estado.json'))) return { juntado: false, motivo: 'no-existe' };
@@ -428,7 +485,7 @@ function juntar(raiz, id) {
     }
 
     const hoy = new Date().toISOString().slice(0, 10);
-    const mensaje = `sesion(${id}): ${temaDeSesion(raiz, id)} (preparada en segundo plano)`;
+    const mensaje = mensajeDeJuntar(raiz, estado);
     anotarEnDiario(raiz, mensaje, hoy);
     g.git(raiz, ['add', '-A']);
     g.git(raiz, ['commit', '-q', '-m', mensaje]);
@@ -442,7 +499,7 @@ function juntar(raiz, id) {
       const abortado = g.abortarMerge(raiz);
       return { juntado: false, motivo: 'error', detalle: `${error.message}${notaRescate(abortado)}` };
     }
-    return { juntado: true, mensaje: `sesion(${id}): ${temaDeSesion(raiz, id)} (preparada en segundo plano)`,
+    return { juntado: true, mensaje: mensajeDeJuntar(raiz, estado),
       aviso: `la mezcla se guardó, pero algo falló justo después (revísalo, y comprueba si la copia de preparación sigue sin borrar): ${error.message}` };
   }
 }
@@ -453,6 +510,10 @@ const EXPLICACION_LANZAR = {
   'sin-repo': 'la carpeta del curso no es la raíz de su propio repositorio git (no tiene uno, o está dentro de otro). Ejecuta node .kit/herramientas/diagnostico.js para ver cómo arreglarlo.',
   'sin-segundo-plano': 'tu asistente no puede trabajar en segundo plano: prepara la clase en primer plano.',
   'id-invalido': 'el id de la sesión solo puede llevar letras, números, puntos y guiones.',
+  'sin-subagentes': 'tu asistente no puede preparar varias clases a la vez (no tiene subagentes): lánzalas una a una.',
+  'clase-repetida': r => `la clase ${r.id} está dos veces.`,
+  'clase-sin-ficheros': r => `falta el material de la clase ${r.id}: --clase <id> <ficheros o carpeta de estudio/inbox/>.`,
+  'fichero-en-dos-clases': r => `${r.fichero} está en la clase ${r.otra} y en la ${r.id}: cada fichero, en una sola clase.`,
   'sin-ficheros': 'falta al menos un fichero o una carpeta de estudio/inbox/.',
   'inbox-entera': 'no se prepara inbox entera (mezclaría varias clases): indica los ficheros de la clase o su carpeta dentro de inbox.',
   'fuera-de-inbox': r => `${r.entrada} no está dentro de estudio/inbox/: solo se prepara material de ahí (las rutas son relativas a inbox, p. ej. clase-3/apuntes.pdf).`,
@@ -496,12 +557,26 @@ function cliEstado(raiz, json) {
   return 0;
 }
 
+// `--clase <id> <ficheros…>`, tantas veces como clases (#56). Sin `--clase`, la forma de siempre: `<ficheros…> --id <id>`.
+const OPCIONES_DE_LANZAR = ['--id', '--ver', '--clase'];
+function leerClases(args) {
+  const clases = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] !== '--clase') continue;
+    const clase = { id: args[i + 1] && !OPCIONES_DE_LANZAR.includes(args[i + 1]) ? args[i + 1] : null, ficheros: [] };
+    for (let j = i + (clase.id ? 2 : 1); j < args.length && !OPCIONES_DE_LANZAR.includes(args[j]); j++) clase.ficheros.push(args[j]);
+    clases.push(clase);
+  }
+  return clases;
+}
+
 function cliLanzar(raiz, args) {
+  if (args.includes('--clase')) return cliLanzarVarias(raiz, args);
   const iLanzar = args.indexOf('--lanzar');
   const iId = args.indexOf('--id');
   const id = iId >= 0 ? args[iId + 1] : null;
   const ficheros = [];
-  for (let i = iLanzar + 1; i < args.length; i++) { if (args[i] === '--id' || args[i] === '--ver') break; ficheros.push(args[i]); }
+  for (let i = iLanzar + 1; i < args.length; i++) { if (OPCIONES_DE_LANZAR.includes(args[i])) break; ficheros.push(args[i]); }
   const queEntra = (lista, fuera) => `${lista.map(f => `  ${f}`).join('\n')}${fuera.length ? `\nSe quedan fuera: ${listaFuera(fuera)}.` : ''}`;
   if (args.includes('--ver')) {
     if (!ficheros.length) { console.log(`No se ha mirado nada: ${EXPLICACION_LANZAR['sin-ficheros']}`); return 1; }
@@ -514,6 +589,30 @@ function cliLanzar(raiz, args) {
   if (!r.lanzada) { console.log(`No se ha lanzado: ${explicar(EXPLICACION_LANZAR, r)}`); return 1; }
   console.log(`Preparando la clase ${r.id} en segundo plano (rama ${r.rama}) con este material:\n${queEntra(r.ficheros, r.fuera)}\n`
     + 'Usa --estado para ver cómo va. Mientras, sigue .kit/guias/segundo-plano.md.');
+  return 0;
+}
+
+function cliLanzarVarias(raiz, args) {
+  const clases = leerClases(args);
+  const sinId = clases.find(c => !c.id);
+  if (sinId) { console.log(`No se ha lanzado: ${EXPLICACION_LANZAR['clase-sin-ficheros']({ id: '(sin id)' })}`); return 1; }
+  const queEntra = c => `  ${c.id}: ${c.ficheros.join(', ')}`;
+  if (args.includes('--ver')) {
+    const lineas = [];
+    const fuera = [];
+    for (const c of clases) {
+      const m = resolverEntradas(raiz, c.ficheros);
+      if (!m.ok) { console.log(`No vale (clase ${c.id}): ${explicar(EXPLICACION_LANZAR, m)}`); return 1; }
+      lineas.push(queEntra({ id: c.id, ficheros: m.ficheros }));
+      fuera.push(...m.fuera);
+    }
+    console.log(`Entraría este material, por clase:\n${lineas.join('\n')}${fuera.length ? `\nSe quedan fuera: ${listaFuera(fuera)}.` : ''}\nNo se ha lanzado nada.`);
+    return 0;
+  }
+  const r = lanzar(raiz, { clases });
+  if (!r.lanzada) { console.log(`No se ha lanzado: ${explicar(EXPLICACION_LANZAR, r)}`); return 1; }
+  console.log(`Preparando ${r.clases.length} clases a la vez en segundo plano (rama ${r.rama}):\n${r.clases.map(queEntra).join('\n')}`
+    + `${r.fuera.length ? `\nSe quedan fuera: ${listaFuera(r.fuera)}.` : ''}\n\nUsa --estado para ver cómo va; cuando termine, --juntar ${r.id}. Mientras, sigue .kit/guias/segundo-plano.md.`);
   return 0;
 }
 
@@ -535,7 +634,8 @@ function cli(args, raiz) {
   if (args.includes('--estado')) return cliEstado(raiz, args.includes('--json'));
   if (args.includes('--juntar')) return cliJuntar(raiz, args[args.indexOf('--juntar') + 1]);
   if (args.includes('--lanzar')) return cliLanzar(raiz, args);
-  console.error('Uso: node .kit/herramientas/preparar.js --lanzar <ficheros o carpeta, relativos a estudio/inbox/> --id <id> [--ver] | --estado | --juntar <id>');
+  console.error('Uso: node .kit/herramientas/preparar.js --lanzar <ficheros o carpeta, relativos a estudio/inbox/> --id <id> [--ver]'
+    + ' | --lanzar --clase <id> <ficheros o carpeta> --clase <id> <...> [--ver] | --estado | --juntar <id>');
   return 2;
 }
 
@@ -545,5 +645,5 @@ module.exports = {
   comoLanzar, lanzarAsistente, tomarCerrojo,
   juntarPorFilas,
   lanzar, trabajar, juntar, cli, todasLasPreparaciones, formatearEstado, ficheroResoluble, pidVivo, descartarCopia,
-  construirPrompt, dirDe, ramaDe, resolverEntradas,
+  construirPrompt, construirPromptCoordinador, dirDe, ramaDe, resolverEntradas, leerClases,
 };
