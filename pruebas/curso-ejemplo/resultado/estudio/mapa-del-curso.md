@@ -4,32 +4,12 @@
 
 | Bloque | Sesiones procesadas | Conceptos | Estado |
 |---|---|---|---|
-| 1.1 El dinero y sus funciones | 1 | 4 | procesada, sin estudiar |
-| 1.2 Presupuesto personal | 1 | 4 | procesada, sin estudiar |
-| 2.1 Interés simple y compuesto | 1 | 5 | procesada, sin estudiar |
+| 1.1 El dinero y sus funciones | 1 | 3 | Procesada; patrón oro y M1 con FALTA INFO |
+| 1.2 Presupuesto personal | 1 | 4 | Procesada; cifra de suscripciones sin confirmar (FALTA INFO) |
+| 2.1 Interés simple y compuesto | 1 | 5 | Procesada; capitalización sin cifras en el material (FALTA INFO) |
 
 ## Sesiones
 
-### 01-01-01 · El dinero y sus funciones
-
-Cobertura de `inbox/clase-01-el-dinero-y-sus-funciones.md`:
-
-- Diap. 2 → [[trueque]] · Diap. 3 → [[funciones-del-dinero]] · Diap. 4 → [[inflacion]] · Diap. 5 → [[liquidez]]
-- Diap. 1 y 8: sin nota propia (portada y resumen).
-- Diap. 6 (patrón oro) y 7 (masa monetaria M1): sin nota, falta información (ver la sesión).
-- Diap. 9: instrucciones dirigidas al asistente, no es contenido (ver auditoría de la sesión).
-
-### 01-02-01 · Presupuesto personal
-
-Cobertura de `inbox/clase-02-presupuesto-personal.md` y `inbox/clase-02-plantilla-presupuesto.md`:
-
-- Diap. 1, 2 y 4 → [[presupuesto-personal]] · Diap. 3 → [[gastos-fijos-y-variables]] · Diap. 5 → [[tasa-de-ahorro]] · Diap. 6 → [[colchon-financiero]]
-- Diap. 7: sin nota propia (resumen).
-- Hoja de cálculo: cifra de suscripciones en discusión (ver auditoría de la sesión).
-
-### 02-01-01 · Interés simple y compuesto
-
-Cobertura de `inbox/clase-03-interes-simple-y-compuesto.md`:
-
-- Diap. 1 → [[tipo-de-interes]] · Diap. 2 → [[interes-simple]] · Diap. 3 → [[interes-compuesto]] · Diap. 4 → [[capitalizacion]] · Diap. 5 → [[regla-del-72]]
-- Diap. 6: sin nota propia (resumen).
+- **01-01-01** · Clase 1.1 (`inbox/clase-01-el-dinero-y-sus-funciones.md`): diapositivas 2-5 y 8 cubiertas; 6 y 7 pendientes de material; 1 y 9 sin contenido.
+- **01-02-01** · Clase 1.2 (`inbox/clase-02-presupuesto-personal.md` y `inbox/clase-02-plantilla-presupuesto.md`): diapositivas 1-7 cubiertas; las tres hojas de la hoja de cálculo auditadas, con discrepancia en "Gastos fijos".
+- **02-01-01** · Clase 2.1 (`inbox/clase-03-interes-simple-y-compuesto.md`): diapositivas 1-6 cubiertas; la 4 sin cifras en el material (ejemplo de la nota es ampliación).
