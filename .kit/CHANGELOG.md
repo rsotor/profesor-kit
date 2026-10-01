@@ -13,6 +13,21 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.28.0
+- **Exámenes que miden si lo entiendes, no si lo recuerdas.** Tu profesor ya no pregunta "¿qué es X?" copiando
+  tus apuntes. Cada concepto sale desde ángulos distintos: reconocerlo en un caso nuevo sin que te lo nombren,
+  distinguirlo del que se le parece, predecir qué pasa si algo cambia, encontrar el fallo en un razonamiento o
+  aplicarlo a otro caso. Como mucho una pregunta de definición por examen. Y el examen final aprieta en
+  profundidad, no solo en cifras más feas.
+- **Tú eliges cómo contestar un examen.** En Obsidian, de golpe, marcando las casillas, o en el chat, por tandas,
+  sin saber nada de ninguna respuesta hasta el final. La nota sale igual de las dos formas.
+- **Preguntas rápidas en el chat que de verdad llegan.** Para unas pocas preguntas, tu profesor te deja elegir la
+  respuesta y enviarla si tu asistente lo permite (Claude Code sí); si no, te pide la respuesta en una línea
+  («1b, 2a»). Ya no salen casillas en el chat que, aunque las marques, tu profesor no ve.
+- **Preparar una clase entera de una vez.** Si dejas los apuntes de una clase en una carpeta dentro de inbox,
+  tu profesor la prepara entera: antes te enseña qué ficheros entran y cuáles no (un audio sin transcribir, por
+  ejemplo), y espera tu sí.
+
 ## 0.27.1
 Un arreglo para quien empezó su curso antes de la 0.26.
 - **Tu progreso recupera sus pruebas.** Si tu tabla de progreso tenía la columna "Última prueba", al actualizar

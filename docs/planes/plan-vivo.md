@@ -13,22 +13,10 @@ Para abrir una sesión:
 
 - **forma-de-trabajar** (plan en `~/Documents/workspace/initiatives/forma-de-trabajar/plan-phase-1.md`,
   sección "profesor-kit"). Hecho, ya en `main`: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
-- **#55, para la 0.28.0** (rama `claude/epic-feynman-5sxy9o`): `/examen` pregunta cada concepto desde ángulos
-  distintos. Seis ángulos fijos en la clave (`angulo`: reconocer, distinguir, predecir, detectar-error, transferir,
-  definicion); al menos 3 distintos por examen (2 en `lo-que-falta`), como mucho una de definición; la dificultad
-  es de profundidad (el final, más predecir, detectar-error y transferir). Avisos nuevos en `comprobar.js`, solo en
-  un examen recién escrito (`intentos: 0`) y sin contar las del centro: `examen-sin-angulos`, `definicion-de-mas`,
-  `pregunta-calcada` (8 palabras seguidas de la nota). La prueba real falla si el examen no cubre los ángulos. El
-  20 % de fórmulas pasa a cobertura si `config/profesor.md` dice que son de apoyo. "Exámenes de antes" pasa a
-  `.kit/guias/examenes-de-antes.md` (la skill estaba al límite de 18 KB).
-  - **Y, de paso, que la prueba real no se haga sobre una copia atrasada** (2026-10-01, dos veces): `cambio-grande.js`
-    exige que el commit que dice el resumen incluya el último cambio de skills, `AGENTS.md` o plantillas, y
-    `prueba-real.js` trae la rama y no lanza nada si la copia va por detrás o se ha separado (`pruebas/lib/rama.js`).
-  - **Fuera:** el revisor independiente (#56); prerrequisitos fuera del temario que no puntúan (cambia
-    `examen.js`); otros formatos (#46); tocar los exámenes viejos de los cursos.
-  - **Cómo sabremos:** tests de los tres avisos en `revisor-pedagogico.test.js` y de `angulosDelExamen` en
-    `prueba-real.test.js`; la prueba real en verde con su reparto de ángulos; en el curso real, el siguiente examen
-    deja de ser "¿qué es X?".
+- **0.28.0 en publicación** (rama `claude/epic-feynman-5sxy9o`): #58, #59 y #55, ya en `main`. Sube `.kit/VERSION` y el
+  CHANGELOG. Antes de mezclar: prueba real entera sobre el commit de la release (`.claude/rules/desarrollo.md`).
+  Al salir la release: comprobar que existe (`release.yml`) y cerrar la #55 cuando se vea un examen con ángulos en
+  el curso real.
 
 ## Siguiente: que no se repita la #54
 
@@ -70,12 +58,14 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    proxy local (`http://…@127.0.0.1:PORT/git/<owner>/<repo>`), y trabajar en una rama `claude/…`. Lo prueba Roberto.
 3. **Codex en el Mac (#45, abierta):** `codex login` y los pasos del comentario de la #45 (9 supuestos). Y el
    `pendiente` de `preguntar_con_opciones` (#59).
-4. **0.28.0:** plan con calendario (E2 + E9) y examen acumulativo (E7).
+4. **0.29.0:** plan con calendario (E2 + E9) y examen acumulativo (E7), o el revisor independiente (#56).
    - **Fuera:** TODO: decidir con Roberto al abrir el plan.
    - **Cómo sabremos:** TODO: decidir con Roberto al abrir el plan.
 
 ## Hecho
 
+- **#55** fusionada (#63): `/examen` por ángulos; la CI comprueba el commit que probó la prueba real y
+  `prueba-real.js` no arranca sobre una copia atrasada. Sale en la 0.28.0.
 - **#58 y #59** fusionadas (#62), salen en la 0.28.0: `preparar.js --lanzar` con carpeta de inbox; en el chat,
   opciones con la herramienta del asistente o «1b, 2a», y el examen largo se contesta como elija el alumno.
 - **0.27.0** fusionada (#53) y publicada (release `v0.27.0`, 2026-09-25).

@@ -14,7 +14,7 @@ body:
     attributes:
       label: Versión del kit
       description: Lo que dice `.kit/VERSION`, o pregúntaselo a tu profesor.
-      placeholder: "0.27.1"
+      placeholder: "0.28.0"
     validations: { required: true }
   - type: dropdown
     id: sistema
