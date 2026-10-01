@@ -24,6 +24,7 @@
     "-"
   ],
   "prompt_por_stdin": true,
+  "subagentes": {"pendiente": "issue #56: comprobar si Codex puede lanzar un subagente con su propio contexto; si puede, aquí va su herramienta. Mientras, revisa el segundo plano"},
   "preguntar_con_opciones": {
     "pendiente": "issue #59: comprobar si Codex tiene una herramienta para que el alumno elija entre opciones y las envíe; si la tiene, aquí van herramienta y limites"
   },

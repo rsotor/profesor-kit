@@ -405,6 +405,10 @@ function pasoExamenGenerar(ctx, examenModulo) {
   const angulos = p.angulosDelExamen(ctx.destino, fichero);
   ok = ok && angulos.ok;
   detalle += ` · ${angulos.detalle}`;
+  // #56: llega revisado a ciegas por alguien sin el contexto de quien lo escribió.
+  const revision = p.revisionDelExamen(ctx.destino, fichero, ctx.adaptador);
+  ok = ok && revision.ok;
+  detalle += ` · ${revision.detalle}`;
   // Con una referencia del centro de por medio, el examen tiene que traer alguna de sus preguntas, literal
   // y marcada, sin pasar de la mitad, con la respuesta de la clave coincidiendo con la del centro.
   if (ctx.referenciaCentro) {
@@ -469,7 +473,9 @@ function pasoExamenSegundoGenerar(ctx, examenModulo) {
   if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
   const v = p.verificarReutilizacionFalladas(ctx.destino, { unidad: examenModulo.prefijo, ficheroAnterior: ctx.ficheroExamen });
   if (v.ficheroNuevo) ctx.ficheroExamenSegundo = v.ficheroNuevo;
-  return { ok: v.ok, detalle: v.detalle, salidaLlm: v.ok ? undefined : r.salida };
+  const revision = v.ficheroNuevo ? p.revisionDelExamen(ctx.destino, v.ficheroNuevo, ctx.adaptador) : { ok: true, detalle: '' };
+  const ok = v.ok && revision.ok;
+  return { ok, detalle: `${v.detalle}${revision.detalle ? ` · ${revision.detalle}` : ''}`, salidaLlm: ok ? undefined : r.salida };
 }
 
 // La corrección, medida (issue #39, H08): un test fijo con las respuestas ya escritas y, para cada una, el veredicto

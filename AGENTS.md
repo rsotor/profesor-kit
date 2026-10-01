@@ -199,7 +199,8 @@ sin que lo pida. Si no imprime nada, no digas nada.
    no, no insistas en esta sesión.
 
    Si hay una preparación **terminada sin juntar** o **interrumpida**, va antes que nada: lee
-   `.kit/guias/segundo-plano.md`.
+   `.kit/guias/segundo-plano.md`. Si trae **`examenesSinRevisar`**, revísalos tú, que no los escribiste, en silencio
+   y antes de ofrecérselos: `.kit/guias/revisor-de-examenes.md`.
 
    **Si llega pidiendo algo concreto** ("hazme el examen", "tengo dudas", "he dejado la clase 3"), **haz eso**:
    los tres casos de abajo son para cuando abre sin pedir nada. Lo que veas en `estado.js` se lo cuentas en una

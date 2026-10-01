@@ -152,10 +152,16 @@ const CLAVE_TEST = {
   ],
 };
 
+// La revisión independiente ya resuelta (#56): un revisor que contesta lo mismo que la clave. Sin ella, un examen nuevo
+// no se corrige (tests propios más abajo).
+const revisionDe = clave => JSON.stringify({ revisor: 'subagente', fecha: '2026-10-01',
+  preguntas: clave.preguntas.map((p, i) => ({ numero: i + 1, respuesta: p.correctas, seguridad: 'alta', problemas: [] })) });
+
 function cursoTest(extra = {}) {
   return cursoTemporal({
     'estudio/examenes/m1/01-examen.md': EXAMEN_TEST,
     'config/claves/m1/01-examen.json': JSON.stringify(CLAVE_TEST),
+    'config/revisiones/m1/01-examen.json': revisionDe(CLAVE_TEST),
     'estudio/sesiones/m1/01-01-01-dinero.md': '---\ntipo: sesion\nestudiada: false\n---\n# Dinero\n',
     ...extra,
   });
@@ -303,4 +309,84 @@ test('notaTest: se trunca a un decimal, nunca se redondea hacia arriba (un 69,5 
   assert.equal(notaTest({ aciertos: 2, fallos: 1, total: 3, restaFallo: 0.25 }), 5.8);
   assert.equal(notaTest({ aciertos: 0, fallos: 5, total: 5, restaFallo: 1 }), 0, 'nunca por debajo de 0');
   assert.equal(notaTest({ aciertos: 3, fallos: 0, total: 3, restaFallo: 0 }), 10);
+});
+
+// --- La revisión independiente (#56): sin ella, un examen nuevo no se corrige ------------------------------------
+
+const { examenesSinRevisar, estadoRevision } = require('../lib/examenes');
+const { revisarEnSegundoPlano, revisarTrabajar } = require('../examen');
+const REL = 'estudio/examenes/m1/01-examen.md';
+const conRevision = revision => cursoTest({ 'config/revisiones/m1/01-examen.json': revision === null ? undefined : JSON.stringify(revision) });
+const revisor = (respuestas, extra = {}) => ({ revisor: 'subagente', fecha: '2026-10-01',
+  preguntas: respuestas.map((respuesta, i) => ({ numero: i + 1, respuesta, seguridad: 'alta', problemas: [], ...(extra[i + 1] || {}) })) });
+
+test('revisión: sin ella, un examen nuevo no se corrige y no se toca; con --sin-revision sí, y el intento queda marcado', () => {
+  const raiz = cursoTemporal({ 'estudio/examenes/m1/01-examen.md': EXAMEN_TEST, 'config/claves/m1/01-examen.json': JSON.stringify(CLAVE_TEST) });
+  const antes = leer(raiz, 'examenes/m1/01-examen.md');
+  assert.throws(() => corregir(raiz, REL), /no tiene la revisión independiente resuelta \(no tiene revisión\)/);
+  assert.equal(leer(raiz, 'examenes/m1/01-examen.md'), antes);
+  corregir(raiz, REL, { sinRevision: true });
+  assert.match(leer(raiz, 'examenes/m1/01-examen.md'), /Corregido sin revisión independiente/);
+});
+
+test('revisión: el revisor contesta otra cosa que la clave, o señala un problema → pendiente hasta que se resuelve', () => {
+  const discrepa = revisor([['b'], ['a', 'c'], ['b']]);
+  assert.throws(() => corregir(conRevision(discrepa), REL), /p\.3: el revisor contesta b y la clave dice a/);
+  const problema = revisor([['b'], ['a', 'c'], ['a']], { 1: { problemas: ['se acierta sin saber: la b es la única larga'] } });
+  assert.throws(() => corregir(conRevision(problema), REL), /p\.1: se acierta sin saber/);
+  const resuelta = revisor([['b'], ['a', 'c'], ['b']], { 3: { resolucion: 'la pregunta era ambigua: reescrita' } });
+  assert.equal(corregir(conRevision(resuelta), REL).intento, 1);
+});
+
+test('revisión: un "revisor" que no es de los tres, o una pregunta sin contestar, no vale', () => {
+  const r = estadoRevision(conRevision({ ...revisor([['b'], ['a', 'c']]), revisor: 'yo mismo' }), 'examenes/m1/01-examen.md');
+  assert.equal(r.resuelta, false);
+  assert.deepEqual(r.pendientes.map(x => x.motivo), ['"revisor" tiene que ser subagente, segundo-plano, otra-sesion', 'el revisor no la ha contestado']);
+});
+
+test('revisión: un examen ya corregido antes (intentos ≥ 1) se vuelve a corregir sin ella; examenesSinRevisar solo trae los nuevos', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/m1/01-examen.md': EXAMEN_TEST.replace('nota:', 'nota: 5\nintentos: 1'),
+    'config/claves/m1/01-examen.json': JSON.stringify(CLAVE_TEST),
+    'estudio/examenes/m1/02-examen.md': EXAMEN_TEST,
+    'config/claves/m1/02-examen.json': JSON.stringify(CLAVE_TEST),
+  });
+  assert.equal(corregir(raiz, REL).intento, 1, 'antes de la 0.29 no había revisiones: no se bloquea lo que ya se corrigió');
+  assert.deepEqual(examenesSinRevisar(raiz).map(e => e.rel), ['examenes/m1/02-examen.md']);
+});
+
+test('cli --revision: dice qué falta, pregunta a pregunta; resuelta, que se puede ofrecer', t => {
+  const lineas = [];
+  t.mock.method(console, 'log', (...a) => lineas.push(a.join(' ')));
+  assert.equal(cli(['--revision', REL], conRevision(revisor([['b'], ['a', 'c'], ['b']]))), 1);
+  assert.match(lineas.join('\n'), /p\.3: el revisor contesta b y la clave dice a/);
+  assert.equal(cli(['--revision', REL], cursoTest()), 0);
+  assert.match(lineas.join('\n'), /Revisión resuelta \(revisor: subagente\)/);
+});
+
+test('revisarEnSegundoPlano: sin segundo_plano en el adaptador no lanza nada y dice quién lo revisará', () => {
+  const raiz = cursoTest({ 'config/adaptador-llm.json': JSON.stringify({ id: 'claude-code', comando: 'x', skills: '.claude/skills', permisos: { fichero: 'x', formato: 'x' } }) });
+  const r = revisarEnSegundoPlano(raiz, REL);
+  assert.equal(r.lanzada, false);
+  assert.match(r.motivo, /lo revisará el profesor de la sesión siguiente/);
+});
+
+test('revisarTrabajar: lanza el asistente del adaptador con el prompt del revisor, y la revisión que deja cuenta', () => {
+  const raiz = cursoTemporal({ 'estudio/examenes/m1/01-examen.md': EXAMEN_TEST, 'config/claves/m1/01-examen.json': JSON.stringify(CLAVE_TEST) });
+  // Un revisor de mentira: lee el prompt de stdin, comprueba que pide no abrir la clave, y escribe su revisión.
+  const script = path.join(raiz, 'revisor-de-mentira.js');
+  fs.writeFileSync(script, `const fs = require('node:fs'); const prompt = fs.readFileSync(0, 'utf8');
+if (!/No abras config\\/claves/.test(prompt)) process.exit(3);
+const destino = /Tu revisión va en (\\S+), con/.exec(prompt)[1];
+fs.mkdirSync(require('node:path').dirname(destino), { recursive: true });
+fs.writeFileSync(destino, ${JSON.stringify(JSON.stringify(revisor([['b'], ['a', 'c'], ['a']])).replace('subagente', 'segundo-plano'))});`);
+  fs.writeFileSync(path.join(raiz, 'config', 'adaptador-llm.json'), JSON.stringify({
+    id: 'claude-code', comando: process.execPath, skills: '.claude/skills', permisos: { fichero: 'x', formato: 'x' },
+    segundo_plano: [script], prompt_por_stdin: true,
+  }));
+  const r = revisarTrabajar(raiz, 'examenes/m1/01-examen.md');
+  assert.equal(r.ok, true);
+  const e = estadoRevision(raiz, 'examenes/m1/01-examen.md');
+  assert.equal(e.resuelta, true);
+  assert.equal(e.revisor, 'segundo-plano');
 });

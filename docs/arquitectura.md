@@ -131,7 +131,10 @@ enlace a `.html` que no existe).
 **Navegación del curso (aviso, no bloquean)**: `huerfano` (concepto que ninguna nota enlaza) ·
 `alias-repetido` · `posible-duplicado` (slugs sospechosamente parecidos) · `sin-unidad` (fichero suelto
 que `organizar.js` colocaría) · `orden-ambiguo` · `navegacion-rota` (pie con un marcador `%%` roto) ·
-`examen-sin-nota` · `ejercicio-suelto` (`.html` que ningún concepto declara).
+`examen-sin-nota` · `ejercicio-suelto` (`.html` que ningún concepto declara) · `examen-sin-revisar` (#56: un examen tipo test, `intentos: 0`,
+sin su revisión independiente resuelta en `config/revisiones/`; solo para el profesor, que no se lo ofrece al alumno
+hasta resolverla. `examen.js --corregir` no corrige la primera vez sin ella, salvo con `--sin-revision`, que marca el
+intento; ver `.kit/guias/revisor-de-examenes.md`).
 
 **Secretos (error)**: `secreto` — un fichero de secretos sin ignorar (`.env`, `.pem`, `.key`) o un patrón
 de token/clave conocido (`lib/secretos.js#PATRONES`) en cualquier línea de un fichero candidato a `git`.

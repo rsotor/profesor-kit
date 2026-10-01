@@ -450,6 +450,35 @@ test('angulosDelExamen (#55): sin ángulos, o con dos de definición, falla y di
   assert.match(dos.detalle, /2 preguntas de definición/);
 });
 
+function ponerRevision(destino, revisor, respuestas) {
+  const f = path.join(destino, 'config', 'revisiones', '01-examen-2026-10-02.json');
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, JSON.stringify({ revisor, fecha: '2026-10-02', preguntas: respuestas.map((r, i) => ({ numero: i + 1, respuesta: [r], seguridad: 'alta', problemas: [] })) }));
+}
+const CON_SUBAGENTES = { subagentes: { herramienta: 'Agent' } };
+
+test('revisionDelExamen (#56): con subagentes, tiene que estar resuelta y hecha por un subagente', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  assert.match(p.revisionDelExamen(destino, ficheroExamen, CON_SUBAGENTES).detalle, /no está resuelta: no tiene revisión/);
+  ponerRevision(destino, 'subagente', ['b', 'b', 'a', 'b', 'b']);
+  const discrepa = p.revisionDelExamen(destino, ficheroExamen, CON_SUBAGENTES);
+  assert.equal(discrepa.ok, false);
+  assert.match(discrepa.detalle, /p\.3: el revisor contesta a y la clave dice b/);
+  ponerRevision(destino, 'otra-sesion', ['b', 'b', 'b', 'b', 'b']);
+  assert.match(p.revisionDelExamen(destino, ficheroExamen, CON_SUBAGENTES).detalle, /la hizo "otra-sesion" y el asistente tiene subagentes/);
+  ponerRevision(destino, 'subagente', ['b', 'b', 'b', 'b', 'b']);
+  assert.equal(p.revisionDelExamen(destino, ficheroExamen, CON_SUBAGENTES).ok, true);
+});
+
+test('revisionDelExamen (#56): sin subagentes, no falla: informa de cómo está (va al segundo plano o a la sesión siguiente)', () => {
+  const destino = temporal('examen-test-');
+  const ficheroExamen = examenTestConClave(destino);
+  const r = p.revisionDelExamen(destino, ficheroExamen, { segundo_plano: ['x'] });
+  assert.equal(r.ok, true);
+  assert.match(r.detalle, /revisión pendiente, sin subagentes/);
+});
+
 // --- Reutilizar preguntas literales del centro (decisión del mantenedor, 2026-09-24) --------------------
 
 const REFERENCIA_FIXTURE = fs.readFileSync(

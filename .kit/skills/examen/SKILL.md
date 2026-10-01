@@ -181,6 +181,12 @@ falló>, p.<n>"`; sin ninguna, es nueva.
 **En el final**, la clave lleva además `"escalones"`: el array completo de `tipos.final.escalones` tal como
 estaba, para que la escalera siga coherente si luego cambia la configuración.
 
+### Antes de ofrecérselo: la revisión
+
+**Ningún examen nuevo llega al alumno sin revisar.** Lo resuelve a ciegas alguien sin tu contexto (un subagente, un
+proceso en segundo plano o el profesor de la sesión siguiente, nunca tú en esta sesión), y lo que salga se arregla
+antes de ofrecérselo. Cómo, en `.kit/guias/revisor-de-examenes.md`. No le hables al alumno de la revisión.
+
 ### Cómo lo contesta: lo elige él
 
 Con el examen y la clave escritos, pregúntale cómo quiere contestarlo (si dice "siempre así", va a
@@ -197,7 +203,7 @@ Con el examen y la clave escritos, pregúntale cómo quiere contestarlo (si dice
 ## 5. Corregir
 
 Cuando el alumno diga "he terminado el examen" (o "corrígelo"), sus casillas ya están marcadas en la propia
-nota. Ejecuta:
+nota. Ejecuta (la primera vez no corrige sin la revisión resuelta: la guía de la revisión dice qué hacer):
 
     node .kit/herramientas/examen.js --corregir <ruta del examen>
 
