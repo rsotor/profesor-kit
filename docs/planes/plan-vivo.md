@@ -25,6 +25,41 @@ Para abrir una sesión:
     antes de contestarse (`pasos.js#revisionDelExamen`); un examen sin revisión sale en `estado.js` y en
     `comprobar.js` (`examen-sin-revisar`) y `--corregir` se niega.
 
+- **#56, puntos 2 y 3: preparar en paralelo y auditor del material** (rama `claude/issue-56-puntos-2-3-a8aaf8`).
+  Decidido con Roberto (2026-10-01):
+  - **Dónde:** un solo `preparar.js --lanzar` con varias clases; el proceso en segundo plano coordina y lanza los
+    subagentes. Sin `segundo_plano`, coordina el profesor desde la conversación. Probado: `claude -p` con los
+    argumentos del adaptador lanza un subagente que escribe; Codex solo sin `--ephemeral` (openai/codex#41474),
+    ya quitado del adaptador y de la prueba real.
+  - **Reparto en dos fases:** 1) cada subagente lee sus clases y devuelve conceptos (nombre + definición en una
+    frase); 2) el coordinador cruza con `candidatos.js`, fija slugs y un dueño por nota, y los subagentes escriben.
+    Los ficheros compartidos (`_index`, `progreso`, `mapa-del-curso`, `README`, `config/alumno.md`) solo los
+    escribe el coordinador; `comprobar.js` y `guardar.js`, solo él y al final.
+  - **Cuándo:** desde 2 clases nuevas, el profesor pregunta antes (validación del alumno: con poca cuota, dos
+    clases a la vez pueden fundírsela). Coste en genérico, sin cifras: «a la vez, más rápido pero gasta varias veces
+    más cuota; una detrás de otra, más lento y gasta menos; si te queda poca cuota, mejor una a una». Con 1, como hoy.
+  - **Fuera:** dudas y conversación con subagentes; varias preparaciones a la vez (el cerrojo se queda); cifras de
+    coste en el aviso; paralelo en asistentes sin `subagentes` (una a una, como hoy); el auditor del material
+    (punto 3, aparcado: ver "Issues abiertas por decidir").
+  - **Tras el diablo (2026-10-01, 5 objeciones, todas aceptadas):**
+    - **Cuota a mitad:** el coordinador guarda cada clase al terminarla; `estado.json` lleva el resultado por clase;
+      `--juntar` mezcla las terminadas y deja la fallida para relanzarla (hoy `descartarCopia` lo tira todo,
+      `preparar.js:96-104`).
+    - **CLI:** `--clase <id> <ficheros…>` repetible; `sesionGuardada` por cada id; el commit de `--juntar` nombra
+      todas las clases; el prompt deja de decir "son la misma clase".
+    - **Fase 1** devuelve también qué aporta cada clase a cada concepto y de qué fichero; el dueño recibe todas las
+      fuentes e ids (`visto_en`, `bloques:`, `## Historial`).
+    - **Prueba real:** el módulo 1 (01-01, 01-02) y su examen, como hoy, en primer plano. Clase nueva 02-02
+      ("ahorro a largo plazo") en `pruebas/curso-ejemplo/`, que reutiliza a propósito interés compuesto (de 02-01:
+      dos subagentes, un concepto) y tasa de ahorro (de 01-02: amplía una nota existente). El paso de segundo plano
+      (`prueba-real.js:634-672`) lanza 02-01 y 02-02 juntas.
+    - **Auditor:** fuera del plan (aparcado).
+  - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
+    subagente que falla deja las otras clases juntables, y el prompt del coordinador con las dos fases. Prueba real:
+    02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,
+    tasa de ahorro ampliada (01-02 y 02-02 en `visto_en`), una fila de `progreso` por concepto nuevo y `comprobar.js` sin errores. Gasta más: se pasa una vez,
+    sobre el commit de la release.
+
 ## Siguiente: que no se repita la #54
 
 Por qué no la cazó ninguna prueba: la columna `Última prueba` nunca estuvo en el kit (ni skills, ni plantillas,
@@ -51,6 +86,12 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 
 - **#56** subagentes con roles: el revisor independiente, en curso (arriba); la preparación en paralelo después
   (~900.000 tokens por módulo). Encaja con K6 (base-kit).
+- **#56, punto 3 (auditor del material), aparcado** (2026-10-01): el paso 1b de `/sesion` ya caza la discrepancia
+  del curso de ejemplo y no hay ningún caso en que fallara. **Se reabre** con un caso real en que una cifra o fórmula
+  de una hoja esté mal y la `## Auditoría del material` de esa sesión no lo diga. Datos que hacen falta: fichero y
+  hoja/celda; cifra mala y la buena; qué dice (o calla) la auditoría; quién lo descubrió y cuándo. Diseño ya
+  pensado: lo lanza el coordinador o el profesor (un subagente no lanza otro), marca de origen como el revisor de
+  exámenes, y la prueba real exige las cifras.
 - **#46**, **#47**: peticiones sin cambios.
 - **#59** abierta: falta que quien la abrió diga si su Codex tiene una herramienta de opciones (para quitar el
   `pendiente` del adaptador).
