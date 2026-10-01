@@ -98,7 +98,9 @@ function descartarCopia(raiz, id, { conservar = false } = {}) {
     fs.mkdirSync(carpeta, { recursive: true });
     const registro = path.join(dir, 'registro.txt');
     if (fs.existsSync(registro)) fs.copyFileSync(registro, path.join(carpeta, `${id}-${marca}.txt`));
-    for (const viejo of fs.readdirSync(carpeta).filter(n => n.endsWith('.txt')).sort().reverse().slice(CONSERVADAS)) {
+    // Las últimas por fecha, no por nombre: el nombre empieza por el id, y una clase de id bajo se borraría al momento.
+    const porFecha = n => fs.statSync(path.join(carpeta, n)).mtimeMs;
+    for (const viejo of fs.readdirSync(carpeta).filter(n => n.endsWith('.txt')).sort((a, b) => porFecha(b) - porFecha(a)).slice(CONSERVADAS)) {
       fs.rmSync(path.join(carpeta, viejo), { force: true });
     }
     rescatarSinGuardar(dir, id);
@@ -106,7 +108,7 @@ function descartarCopia(raiz, id, { conservar = false } = {}) {
     try { base = leerEstadoCrudo(dir).base; } catch { /* sin estado */ }
     const conTrabajo = base && g.intentarGit(raiz, ['rev-list', '--count', `${base}..${ramaDe(id)}`]).salida.trim() !== '0';
     if (conTrabajo) g.intentarGit(raiz, ['branch', '-m', ramaDe(id), `preparacion-descartada/${id}-${marca}`]);
-    const guardadas = g.intentarGit(raiz, ['for-each-ref', '--sort=-refname', '--format=%(refname:short)', 'refs/heads/preparacion-descartada/']);
+    const guardadas = g.intentarGit(raiz, ['for-each-ref', '--sort=-committerdate', '--format=%(refname:short)', 'refs/heads/preparacion-descartada/']);
     for (const rama of (guardadas.ok ? guardadas.salida.split(/\r?\n/).filter(Boolean) : []).slice(CONSERVADAS)) g.intentarGit(raiz, ['branch', '-D', rama]);
   }
   g.intentarGit(raiz, ['worktree', 'remove', '--force', dir]);

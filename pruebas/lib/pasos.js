@@ -630,23 +630,42 @@ function comprobarTrampa(destino, { id, concepto, progresoAntes = null }) {
 
 // HTML de repaso generados en estudio/repasos/.
 // #56: un concepto que sale en varias clases (preparadas a la vez o no) queda en UNA sola nota, con todas esas sesiones
-// en `visto_en`, y con una sola fila en progreso.md. Se busca por el título (`# <titulo>`), no por el slug: el slug lo
-// decide el coordinador.
+// en `visto_en`, y con una sola fila en progreso.md. Se busca por el título (`# <titulo>`) o un alias, no por el slug:
+// el slug lo decide el coordinador. Y no vale que otra nota de esas clases lleve el nombre dentro del suyo ("Interés
+// compuesto a largo plazo"): eso es el duplicado que se quiere cazar, con otro título.
 function conceptoCompartido(destino, { titulo, sesiones }) {
   const dir = path.join(destino, 'estudio', 'conceptos');
-  const normal = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-  const notas = recorrerMd(dir).filter(f => !path.basename(f).startsWith('_')).filter(f => {
-    const m = /^#\s+(.+)$/m.exec(fs.readFileSync(f, 'utf8'));
-    return m && normal(m[1]) === normal(titulo);
+  const normal = t => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/["'`]/g, '').trim();
+  const lista = (texto, campo) => {
+    const enLinea = new RegExp(`^${campo}:[ \\t]*\\[(.*)\\][ \\t]*$`, 'm').exec(texto);
+    if (enLinea) return enLinea[1].split(',').map(normal).filter(Boolean);
+    const enBloque = new RegExp(`^${campo}:[ \\t]*\\r?\\n((?:[ \\t]*-.*\\r?\\n?)+)`, 'm').exec(texto);
+    return enBloque ? enBloque[1].split(/\r?\n/).map(l => normal(l.replace(/^\s*-\s*/, ''))).filter(Boolean) : [];
+  };
+  const buscado = normal(titulo);
+  const notas = recorrerMd(dir).filter(f => !path.basename(f).startsWith('_')).map(f => {
+    const texto = fs.readFileSync(f, 'utf8');
+    const m = /^#\s+(.+)$/m.exec(texto);
+    const nombres = [m ? normal(m[1]) : '', ...lista(texto, 'alias')].filter(Boolean);
+    const visto = lista(texto, 'visto_en').map(v => v.replace(/^\[\[|\]\]$/g, ''));
+    return { f, nombres, visto };
   });
-  if (notas.length !== 1) return { ok: false, detalle: `"${titulo}": ${notas.length} notas (${notas.map(f => path.basename(f)).join(', ') || 'ninguna'}), tiene que haber una` };
-  const texto = fs.readFileSync(notas[0], 'utf8');
-  const visto = (/^visto_en:\s*\[([^\]]*)\]/m.exec(texto) || [, ''])[1];
-  const faltan = sesiones.filter(id => !visto.split(',').some(v => v.trim().replace(/^["']|["']$/g, '').startsWith(`${id}-`) || v.trim() === id));
-  if (faltan.length) return { ok: false, detalle: `"${titulo}" (${path.basename(notas[0])}): visto_en no tiene ${faltan.join(', ')}` };
-  const slug = path.basename(notas[0], '.md');
+  const esSuya = n => n.nombres.includes(buscado);
+  const deEsasClases = n => n.visto.some(v => sesiones.some(id => v === id || v.startsWith(`${id}-`)));
+  const iguales = notas.filter(esSuya);
+  const parecidas = notas.filter(n => !esSuya(n) && deEsasClases(n) && n.nombres.some(x => x.includes(buscado)));
+  const todas = [...iguales, ...parecidas];
+  if (iguales.length !== 1 || parecidas.length) {
+    return { ok: false, detalle: `"${titulo}": ${todas.length} notas (${todas.map(n => path.basename(n.f)).join(', ') || 'ninguna'}), tiene que haber una` };
+  }
+  const [nota] = iguales;
+  const faltan = sesiones.filter(id => !nota.visto.some(v => v === id || v.startsWith(`${id}-`)));
+  if (faltan.length) return { ok: false, detalle: `"${titulo}" (${path.basename(nota.f)}): visto_en no tiene ${faltan.join(', ')}` };
+  const slug = path.basename(nota.f, '.md');
   const progreso = path.join(destino, 'estudio', 'progreso.md');
-  const filas = fs.existsSync(progreso) ? fs.readFileSync(progreso, 'utf8').split(/\r?\n/).filter(l => l.startsWith('|') && l.includes(`[[${slug}`)).length : 0;
+  const filas = fs.existsSync(progreso)
+    ? fs.readFileSync(progreso, 'utf8').split(/\r?\n/).filter(l => l.startsWith('|') && (l.includes(`[[${slug}]]`) || l.includes(`[[${slug}|`) || l.includes(`[[${slug}\\|`))).length
+    : 0;
   if (filas !== 1) return { ok: false, detalle: `"${titulo}" (${slug}): ${filas} filas en progreso.md, tiene que haber una` };
   return { ok: true, detalle: `"${titulo}": una nota (${slug}), vista en ${sesiones.join(' y ')}, una fila en progreso` };
 }

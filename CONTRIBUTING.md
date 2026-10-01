@@ -124,10 +124,12 @@ juntarla. El `RESUMEN.md` que deja marca los pasos de antes como "de la ejecuci�
 salga bien, **no cuenta como prueba real completa para el PR** (`cambio-grande.js` lo rechaza): hace falta una
 `npm run prueba-real` entera y seguida.
 
-**Mientras desarrollas, paga solo el paso que cambia.** Cuando una prueba entera sale bien, sus copias no se borran:
-se guardan en `pruebas-local/prueba-real-pasos-<asistente>/` (ignorado por git). `npm run prueba-real -- --solo
+**Mientras desarrollas, paga solo el paso que cambia.** Las copias de una prueba entera no se borran, aunque falle algún
+paso: se guardan en `pruebas-local/prueba-real-pasos-<asistente>/` (ignorado por git), en lugar de las anteriores. `npm run prueba-real -- --solo
 "<paso>"` restaura la copia del paso anterior, le pone el motor de tu copia de trabajo y el inbox del curso de ejemplo
-(lo que estás cambiando), ejecuta ese paso y para. `--desde` también refresca el motor y el inbox al restaurar. El
+(lo que estás cambiando), ejecuta ese paso y para. El de lanzar la preparación en segundo plano arrastra el de juntarla
+y el de los conceptos compartidos, que es donde se ve si salió bien. Solo restaura una copia que sea de ese mismo paso:
+si la lista de pasos ha cambiado desde la última prueba entera, lo dice y hace falta otra. `--desde` también refresca el motor y el inbox al restaurar. El
 resultado de `--solo` va a `pruebas-local/solo-<asistente>/`, no pisa el del repo, y tampoco cuenta como prueba
 completa. La prueba entera, antes de cada release, no cambia.
 

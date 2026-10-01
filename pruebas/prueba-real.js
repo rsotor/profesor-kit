@@ -29,6 +29,7 @@ const p = require('./lib/pasos');
 const { comprobarRama } = require('./lib/rama');
 
 const RAIZ_KIT = path.resolve(__dirname, '..');
+const LIMITE_PREPARACION_MS = 90 * 60 * 1000;   // el LIMITE_MS de .kit/herramientas/preparar.js
 const EJEMPLO = path.join(__dirname, 'curso-ejemplo');
 const RESULTADO = path.join(EJEMPLO, 'resultado');
 const LIMITE_POR_DEFECTO_MS = 20 * 60 * 1000;   // 20 min por llamada al asistente: una clase densa puede tardar
@@ -66,11 +67,14 @@ const copiasGuardadasDe = asistente => path.join(COPIAS_GUARDADAS, `${PREFIJO_CO
 // La carpeta prueba-real-pasos-* más reciente de `bases` (por defecto, el temporal del sistema —donde se queda la de
 // una prueba que falló— y pruebas-local/, donde se guarda la de la última prueba entera): lo que usan --desde y --solo
 // cuando no se les da --copias. Sin ninguna, null (quien llama decide cómo avisar).
-function carpetaCopiasMasReciente(bases = [os.tmpdir(), COPIAS_GUARDADAS]) {
+// Con `necesaria` (el nombre de la copia que se va a restaurar), solo cuentan las que la tienen: una ejecución --desde
+// que falla deja en el temporal copias parciales, más recientes que las buenas.
+function carpetaCopiasMasReciente(bases = [os.tmpdir(), COPIAS_GUARDADAS], necesaria = null) {
   const candidatas = [];
   for (const base of [].concat(bases)) {
     try { candidatas.push(...fs.readdirSync(base).filter(n => n.startsWith(PREFIJO_COPIAS)).map(n => path.join(base, n))); } catch { /* no existe */ }
   }
+  if (necesaria) candidatas.splice(0, candidatas.length, ...candidatas.filter(c => fs.existsSync(path.join(c, necesaria))));
   if (!candidatas.length) return null;
   candidatas.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
   return candidatas[0];
@@ -89,10 +93,14 @@ function refrescarCursoRestaurado({ trabajo, datosCurso, destino }) {
   return true;
 }
 
-function carpetaDelPasoNumero(copiasDir, numero) {
-  const prefijo = `${String(numero).padStart(2, '0')}-`;
-  const encontrada = fs.readdirSync(copiasDir).find(n => n.startsWith(prefijo));
-  return encontrada ? path.join(copiasDir, encontrada) : null;
+// El nombre de la carpeta de la copia tras el paso número `numero` (1-based) llamado `paso`: "<NN>-<paso>".
+const carpetaDeCopia = (numero, paso) => `${String(numero).padStart(2, '0')}-${paso.replace(/[^\w.-]+/g, '-').replace(/^-|-$/g, '')}`;
+
+// La copia tras el paso `numero`, solo si es la de ese paso: con otra lista de pasos (copias de antes de cambiar la
+// prueba), la misma posición es otro paso, y restaurarla daría un resultado falso sin avisar.
+function carpetaDelPasoNumero(copiasDir, numero, paso) {
+  const esperada = path.join(copiasDir, carpetaDeCopia(numero, paso));
+  return fs.existsSync(esperada) ? esperada : null;
 }
 
 // Restaura, en la MISMA ruta que tenía (el `.git` de una preparación en segundo plano con worktree lleva
@@ -106,8 +114,11 @@ function restaurarPasoAnterior(copiasDir, nombresPasos, desde) {
   if (!copiasDir || !fs.existsSync(copiasDir)) {
     throw new SinCopiasError(`No hay ninguna copia que restaurar${copiasDir ? ` en ${copiasDir}` : ''}: usa --copias <carpeta>.`);
   }
-  const carpeta = carpetaDelPasoNumero(copiasDir, indiceDesde);
-  if (!carpeta) throw new SinCopiasError(`No se encontró en ${copiasDir} la copia del paso anterior a "${desde}".`);
+  const carpeta = carpetaDelPasoNumero(copiasDir, indiceDesde, nombresPasos[indiceDesde - 1]);
+  if (!carpeta) {
+    throw new SinCopiasError(`No se encontró en ${copiasDir} la copia del paso anterior a "${desde}" (${carpetaDeCopia(indiceDesde, nombresPasos[indiceDesde - 1])}):`
+      + ' o es de una prueba con otra lista de pasos, o esa prueba no llegó hasta ahí. Hace falta una prueba entera.');
+  }
   const estado = JSON.parse(fs.readFileSync(path.join(carpeta, 'estado.json'), 'utf8'));
   // estado.destino sale de un fichero: solo se sustituye si es una carpeta de prueba del kit en el temporal.
   const tmp = fs.realpathSync(require('node:os').tmpdir());
@@ -215,10 +226,12 @@ let pasosFallidos = true;   // hasta que ejecutar() llegue al final sin fallos, 
 function guardarCopiaDelPaso(ctx, pasos) {
   if (!copiasPorPaso) return;
   const n = String(pasos.length).padStart(2, '0');
-  const nombre = pasos[pasos.length - 1].paso.replace(/[^\w.-]+/g, '-').replace(/^-|-$/g, '');
-  const dir = path.join(copiasPorPaso, `${n}-${nombre}`);
+  const dir = path.join(copiasPorPaso, carpetaDeCopia(n, pasos[pasos.length - 1].paso));
   try {
-    fs.cpSync(ctx.destino, path.join(dir, 'curso'), { recursive: true });
+    // Sin las skills instaladas (en el curso y en cada copia de preparación): las regenera instalar-skills.js al
+    // restaurar o al relanzar, y son la mayor parte del tamaño de cada copia.
+    const esSkills = src => /[\\/]\.(claude|agents)[\\/]skills$/.test(src);
+    fs.cpSync(ctx.destino, path.join(dir, 'curso'), { recursive: true, filter: src => !esSkills(src) });
     const estado = { destino: ctx.destino, pasos, commit: ctx.commit, ficheroExamen: ctx.ficheroExamen, ficheroExamenSegundo: ctx.ficheroExamenSegundo,
       contestacion: ctx.contestacion, correccion: ctx.correccion, referenciaCentro: ctx.referenciaCentro };
     fs.writeFileSync(path.join(dir, 'estado.json'), JSON.stringify(estado, null, 2));
@@ -301,7 +314,9 @@ function pasoJuntarPreparacion(ctx, clase) {
   const reparada = ctx.preparacionReparada;
   const nota = reparada ? `${reparada.motivo}: ${reparada.relanzada ? 'se relanzó antes de juntar' : `no se pudo relanzar (${reparada.detalleRelanzar})`}. ` : '';
   if (reparada && !reparada.relanzada) return { ok: false, detalle: `${nota}no se puede juntar sin la preparación en marcha` };
-  const limite = Date.now() + ctx.limiteMs;
+  // Lo que puede tardar una preparación (su propio límite en preparar.js), no una sola llamada al asistente: con varias
+  // clases y dos fases, o relanzada tras restaurar, pasa de sobra de ctx.limiteMs.
+  const limite = Date.now() + Math.max(ctx.limiteMs || 0, LIMITE_PREPARACION_MS);
   let estado;
   for (;;) {
     const r = preparar(ctx, '--estado', '--json');
@@ -322,6 +337,15 @@ function pasoJuntarPreparacion(ctx, clase) {
 // paso de juntar tenga que esperarla. Una preparación de verdad fallida (el asistente terminó, pero mal) no
 // se toca aquí: eso lo dice --juntar, no se reintenta en silencio (nunca se inventa un resultado).
 // `preparar`/`relanzar` son inyectables para poder probar la detección sin un curso ni un git de verdad.
+function pararPreparaciones(destino) {
+  for (const id of idsDePreparacion(destino)) {
+    const estado = estadoCrudoDePreparacion(destino, id);
+    if (!estado || estado.resultado !== 'en-curso' || !estado.pid) continue;
+    // `--trabajar` se lanza `detached`: es jefe de su grupo de procesos, y matando el grupo cae también el asistente.
+    try { process.kill(process.platform === 'win32' ? estado.pid : -estado.pid, 'SIGKILL'); } catch { /* ya no estaba */ }
+  }
+}
+
 function idsDePreparacion(destino) {
   const base = path.join(destino, '.preparacion');
   if (!fs.existsSync(base)) return [];
@@ -655,6 +679,18 @@ function copiarSinExtras(origen, destino) {
 // ese examen en segundo plano (en paralelo con dudas, ejercicio y el examen), juntada al final. Como datos,
 // se puede saltar a mitad (`--desde`) sin repetir los pasos anteriores. `ctx` se lee al ejecutar cada
 // función, no al construir la lista: da igual que se rellene (destino, lanzador...) después de esto.
+const PASO_LANZAR = 'preparar.js --lanzar';
+const PASO_JUNTAR = 'preparar.js --juntar';
+const PASO_COMPARTIDOS = 'conceptos compartidos entre clases';
+
+// Lo que ejecuta --solo: ese paso; si es el de lanzar en segundo plano, también juntar y los conceptos compartidos (lo
+// que prueba de verdad una preparación); si es el de juntar, también los compartidos.
+function pasosDeSolo(definicion, indice) {
+  const nombre = definicion[indice].nombre;
+  const extra = nombre.startsWith(PASO_LANZAR) ? [PASO_JUNTAR, PASO_COMPARTIDOS] : nombre.startsWith(PASO_JUNTAR) ? [PASO_COMPARTIDOS] : [];
+  return [definicion[indice], ...definicion.filter(d => extra.some(e => d.nombre.startsWith(e)))];
+}
+
 function construirDefinicionDePasos(ctx, clases) {
   const prefijoExamen = clases.examen_modulo.prefijo;
   const clasesModuloDelExamen = clases.clases.filter(c => c.id.startsWith(prefijoExamen));
@@ -685,7 +721,7 @@ function construirDefinicionDePasos(ctx, clases) {
       });
     }
   }
-  if (claseEnSegundoPlano) lista.push({ nombre: `preparar.js --lanzar ${nombreEnSegundoPlano}`, fn: () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano) });
+  if (claseEnSegundoPlano) lista.push({ nombre: `${PASO_LANZAR} ${nombreEnSegundoPlano}`, fn: () => pasoPrepararEnSegundoPlano(ctx, claseEnSegundoPlano) });
   lista.push({ nombre: '/dudas', fn: () => pasoDudas(ctx) });
   lista.push({ nombre: '/ejercicio', fn: () => pasoEjercicio(ctx) });
   lista.push({ nombre: '/examen (referencia del centro)', fn: () => pasoExamenReferencia(ctx) });
@@ -695,10 +731,10 @@ function construirDefinicionDePasos(ctx, clases) {
   lista.push({ nombre: '/examen (progreso con prueba)', fn: () => pasoProgresoConPrueba(ctx) });
   lista.push({ nombre: '/examen (otra vez, reutiliza falladas)', fn: () => pasoExamenSegundoGenerar(ctx, clases.examen_modulo) });
   lista.push({ nombre: '/examen (corrección con veredictos esperados)', fn: () => pasoCorreccionOraculo(ctx) });
-  if (claseEnSegundoPlano) lista.push({ nombre: `preparar.js --juntar ${nombreEnSegundoPlano}`, fn: () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano) });
+  if (claseEnSegundoPlano) lista.push({ nombre: `${PASO_JUNTAR} ${nombreEnSegundoPlano}`, fn: () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano) });
   if (compartidos.length) {
     lista.push({
-      nombre: 'conceptos compartidos entre clases',
+      nombre: PASO_COMPARTIDOS,
       fn: () => {
         if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
         const rs = compartidos.map(c => p.conceptoCompartido(ctx.destino, c));
@@ -761,9 +797,12 @@ function ejecutar({
 
     // Si venimos de restaurar y la clase en segundo plano se quedó a medias, se repara antes de que el
     // paso de juntar tenga que esperar algo que nunca va a terminar (se anota en su propio detalle).
-    if (desde && claseEnSegundoPlano) ctx.preparacionReparada = repararPreparacionSiHaceFalta(ctx, claseEnSegundoPlano);
+    // Con --solo, solo si el paso es el de juntar: en cualquier otro, relanzaría la preparación más cara para tirarla al
+    // acabar el único paso.
+    const aEjecutar = solo ? pasosDeSolo(definicionDePasos, indiceDesde) : definicionDePasos.slice(indiceDesde);
+    const tocaJuntar = aEjecutar.some(d => d.nombre.startsWith(PASO_JUNTAR));
+    if (desde && claseEnSegundoPlano && (!solo || tocaJuntar)) ctx.preparacionReparada = repararPreparacionSiHaceFalta(ctx, claseEnSegundoPlano);
 
-    const aEjecutar = solo ? definicionDePasos.slice(indiceDesde, indiceDesde + 1) : definicionDePasos.slice(indiceDesde);
     const pasos = ejecutarListaDePasos(aEjecutar, pasosAnteriores, ps => guardarCopiaDelPaso(ctx, ps));
 
     const informe = comprobarJson(destino);
@@ -791,16 +830,21 @@ function ejecutar({
     fs.writeFileSync(path.join(resultadoDir, 'RESUMEN.md'), resumen);
 
     pasosFallidos = pasos.some(x => x.ok === false);
-    // Las copias de una prueba entera que sale bien no se tiran: son el punto de partida de --solo y --desde.
-    if (!pasosFallidos && !desde && copiasPorPaso) {
+    // Las copias de una prueba entera no se tiran, aunque algún paso falle (con un LLM, lo normal): son el punto de
+    // partida de --solo y --desde, y sustituyen a las anteriores. Las de los pasos que no llegaron, no estarán.
+    if (!desde && copiasPorPaso) {
       const guardadas = copiasGuardadasDe(llm);
       borrar(guardadas);
       fs.mkdirSync(COPIAS_GUARDADAS, { recursive: true });
-      try { fs.renameSync(copiasPorPaso, guardadas); } catch { fs.cpSync(copiasPorPaso, guardadas, { recursive: true }); }
-      console.log(`Copias de cada paso guardadas en ${path.relative(RAIZ_KIT, guardadas)}/ (para --solo y --desde).`);
+      try { fs.renameSync(copiasPorPaso, guardadas); } catch { fs.cpSync(copiasPorPaso, guardadas, { recursive: true }); borrar(copiasPorPaso); }
+      copiasPorPaso = null;
+      console.log(`Copias de cada paso guardadas en ${path.relative(RAIZ_KIT, guardadas)}/ (commit ${ctx.commit || '?'}, para --solo y --desde).`);
     }
     return { pasos, informe, motor, resultadoDir };
   } finally {
+    // Ninguna preparación en segundo plano sigue gastando cuota cuando la prueba acaba (con --solo, el paso de lanzar
+    // acaba en cuanto lanza): ni sobre un curso que se borra, ni pisando el de la prueba siguiente, que va a la misma ruta.
+    pararPreparaciones(destino);
     if (!pasosFallidos) {
       borrar(destino);
       if (copiasPorPaso) borrar(copiasPorPaso);
@@ -821,7 +865,7 @@ function validarDesde(desde, sinLlm, copiasArg) {
   const indiceDesde = nombresValidos.indexOf(desde);
   if (indiceDesde < 0) return { ok: false, mensaje: `Paso desconocido: "${desde}". Pasos válidos:\n${nombresValidos.map(n => `  - ${n}`).join('\n')}` };
   if (indiceDesde === 0) return { ok: true, copiasDir: null };   // el primer paso: nada que restaurar, es una ejecución normal
-  const copiasDir = copiasArg || carpetaCopiasMasReciente();
+  const copiasDir = copiasArg || carpetaCopiasMasReciente(undefined, carpetaDeCopia(indiceDesde, nombresValidos[indiceDesde - 1]));
   if (!copiasDir || !fs.existsSync(copiasDir)) {
     return {
       ok: false,
@@ -896,4 +940,5 @@ module.exports = {
   argsClaude, entornoDeAlumno, leerSalidaClaude, lineaDePaso, invocarAsistente,
   construirDefinicionDePasos, nombresDePasos, ejecutarListaDePasos, restaurarPasoAnterior, carpetaCopiasMasReciente,
   repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError, refrescarCursoRestaurado,
+  pasosDeSolo, carpetaDeCopia,
 };

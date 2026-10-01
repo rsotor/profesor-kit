@@ -12,6 +12,7 @@ const {
   ejecutar, cli, markdownResumen, agruparPorRegla, modeloRecomendado,
   construirDefinicionDePasos, nombresDePasos, ejecutarListaDePasos, restaurarPasoAnterior, carpetaCopiasMasReciente,
   repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError, refrescarCursoRestaurado,
+  pasosDeSolo, carpetaDeCopia,
 } = require('../../../pruebas/prueba-real');
 const { montarCurso, git: gitDe } = require('../../../pruebas/lib/montaje');
 const p = require('../../../pruebas/lib/pasos');
@@ -1242,5 +1243,50 @@ test('conceptoCompartido: una nota con todas las sesiones en visto_en y una fila
   fs.rmSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-2.md'));
   fs.appendFileSync(path.join(destino, 'estudio', 'progreso.md'), '| [[interes-compuesto]] | ⬜ |\n');
   assert.match(p.conceptoCompartido(destino, caso).detalle, /2 filas en progreso/);
+});
+
+// --- Tras la ronda completa del diablo (2026-10-01) -------------------------------------------------------------
+
+test('pasosDeSolo: el de lanzar arrastra juntar y compartidos; el de juntar, compartidos; otro, solo él', () => {
+  const clases = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'clases.json'), 'utf8'));
+  const { lista } = construirDefinicionDePasos({ sinLlm: true }, clases);
+  const nombres = i => pasosDeSolo(lista, i).map(d => d.nombre);
+  const indice = n => lista.findIndex(d => d.nombre === n);
+  assert.deepEqual(nombres(indice('preparar.js --lanzar 02-01, 02-02')),
+    ['preparar.js --lanzar 02-01, 02-02', 'preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases']);
+  assert.deepEqual(nombres(indice('preparar.js --juntar 02-01, 02-02')), ['preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases']);
+  assert.deepEqual(nombres(indice('/dudas')), ['/dudas']);
+});
+
+test('restaurarPasoAnterior: una copia en esa posición pero de otro paso (otra lista de pasos) no se restaura', () => {
+  const copiasDir = temporal('copias-');
+  escribir(copiasDir, { '01-viejo/curso/marca.txt': 'A', '01-viejo/estado.json': JSON.stringify({ destino: '/tmp/x', pasos: [] }) });
+  assert.throws(() => restaurarPasoAnterior(copiasDir, ['a', 'b'], 'b'), err => err instanceof SinCopiasError && /otra lista de pasos/.test(err.message));
+  assert.equal(carpetaDeCopia(3, 'preparar.js --lanzar 02-01, 02-02'), '03-preparar.js---lanzar-02-01-02-02');
+});
+
+test('carpetaCopiasMasReciente con la copia necesaria: salta las más recientes que no la tienen', () => {
+  const base = temporal('copias-base-');
+  const completa = path.join(base, 'prueba-real-pasos-completa');
+  fs.mkdirSync(path.join(completa, '02-b'), { recursive: true });
+  const antes = new Date(Date.now() - 60000);
+  fs.utimesSync(completa, antes, antes);
+  fs.mkdirSync(path.join(base, 'prueba-real-pasos-parcial', '05-e'), { recursive: true });
+  assert.equal(carpetaCopiasMasReciente(base, '02-b'), completa);
+  assert.equal(carpetaCopiasMasReciente(base, '09-z'), null);
+});
+
+test('conceptoCompartido: visto_en en bloque y alias valen; otra nota de esas clases con el nombre dentro es un duplicado; filas exactas', () => {
+  const destino = temporal('compartido-2-');
+  escribir(destino, {
+    'estudio/conceptos/capitalizacion-compuesta.md': '---\ntipo: concepto\nalias: [Interés compuesto]\nvisto_en:\n  - 02-01-01-interes\n  - 02-02-01-ahorro\n---\n# Capitalización compuesta\n',
+    'estudio/progreso.md': '| [[capitalizacion-compuesta]] | ⬜ |\n| [[capitalizacion-compuesta-anual]] | ⬜ |\n',
+  });
+  const caso = { titulo: 'Interés compuesto', sesiones: ['02-01', '02-02'] };
+  assert.equal(p.conceptoCompartido(destino, caso).ok, true, p.conceptoCompartido(destino, caso).detalle);
+
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-a-largo-plazo.md'),
+    '---\ntipo: concepto\nvisto_en: [02-02-01-ahorro]\n---\n# Interés compuesto a largo plazo\n');
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /2 notas/);
 });
 

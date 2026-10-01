@@ -59,7 +59,12 @@ Para abrir una sesión:
   - **Diablo corto sobre `segundo-plano.md` (2026-10-01, 4 objeciones, todas aplicadas):** el subagente no se cree
     coordinador ni guarda; devuelve secciones fijas (`_index`, `progreso`, `mapa-del-curso`, notas ajenas, unidad
     nueva); el cierre añade `estructura.json` y `organizar.js`; si un subagente falla, no se guarda nada; la cuota se
-    reconoce en las líneas del registro que enseña `--estado`. Falta la ronda completa antes de cerrar.
+    reconoce en las líneas del registro que enseña `--estado`.
+  - **Diablo completo sobre toda la rama (2026-10-01, 5 objeciones, todas aplicadas):** `--solo` del lanzar arrastra
+    juntar y compartidos, no relanza preparaciones en otros pasos y, al acabar la prueba, se para toda preparación en
+    curso; juntar espera el límite de una preparación (90 min); las descartadas se conservan por fecha, no por nombre;
+    una copia solo se restaura si es de ese paso; `conceptoCompartido` busca también por alias, caza la nota duplicada
+    con el nombre dentro y cuenta filas exactas; las copias no llevan las skills y se guardan aunque falle algún paso.
   - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
     una preparación fallida conserva en su rama descartada lo que escribió, y el prompt del coordinador con las dos fases. Prueba real:
     02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,
@@ -70,8 +75,8 @@ Para abrir una sesión:
   del paso anterior, ejecuta ese paso y para) y las copias de la última prueba entera guardadas en `pruebas-local/`.
   Mientras se desarrolla, se paga solo el paso que cambia; la entera, solo antes de la release (sin cambios).
   - **Fuera:** saltarse la prueba entera antes de una release; cambiar de modelo para abaratarla.
-  - **Cómo sabremos:** tras una prueba entera, `--solo "preparar.js --lanzar 02-01, 02-02"` ejecuta solo ese paso sobre la
-    copia guardada y su resultado coincide con el de la prueba entera.
+  - **Cómo sabremos:** tras una prueba entera, `--solo "preparar.js --lanzar 02-01, 02-02"` ejecuta lanzar, juntar y
+    compartidos sobre la copia guardada, sin ningún otro paso, y su resultado coincide con el de la prueba entera.
 
 ## Siguiente: que no se repita la #54
 

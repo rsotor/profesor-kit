@@ -618,6 +618,10 @@ test('24. #56: si una de las clases no deja su sesión, la preparación queda fa
 });
 
 test('25. #56: cuota acabada a mitad: lo escrito sin guardar no se pierde al descartar, queda en la rama descartada', () => {
+  // Tres descartadas viejas cuyo nombre ordena después del de y1_y2: si se conservaran por nombre, la de y1_y2 se
+  // borraría en el acto (ronda del diablo, 2026-10-01). Se conservan las tres más recientes por fecha.
+  const viejo = ejecutar('git', ['commit-tree', 'HEAD^{tree}', '-m', 'descartada vieja'], curso, { GIT_COMMITTER_DATE: '2001-01-01T00:00:00Z', GIT_AUTHOR_DATE: '2001-01-01T00:00:00Z' }).salida;
+  for (const n of ['zz1', 'zz2', 'zz3']) git(['branch', '-f', `preparacion-descartada/${n}-2001`, viejo]);
   escribirAdaptador('y1,y2', { subagentes: true });
   assert.equal(lanzarVarias(['y1', 'y2'], { PROFESOR_KIT_ASISTENTE_DE_MENTIRA_SIN_GUARDAR: '1' }).codigo, 0);   // descarta x1_x2
   assert.equal(esperarTerminada('y1_y2').resultado, 'fallida');
