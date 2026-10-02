@@ -10,11 +10,13 @@
    vez (puede llevar varias clases, abajo). Las
    rutas son relativas a `estudio/inbox/`. Si la clase es una carpeta, antes `--lanzar <carpeta> --ver` y enséñale qué
    entra y qué se queda fuera (audio sin transcribir, subcarpetas): solo se lanza con su sí.
-   **Con 2 clases nuevas o más**, si tu adaptador trae `subagentes`, pregúntale antes cómo las quiere: "son N clases:
-   ¿las preparo a la vez (más rápido, pero gasta varias veces más cuota) o una detrás de otra (más lento y gasta
-   menos)? Si te queda poca cuota, mejor una a una". A la vez: `--lanzar --clase <id> <ficheros o carpeta> --clase
-   <id> <...>` (con `--ver` antes, igual). Una a una: lanzas la primera y, al juntarla, la siguiente. Sin
-   `subagentes`, una a una, sin preguntar.
+   **Con 2 clases nuevas o más, una detrás de otra:** lanzas la primera y, al juntarla, la siguiente. Prepararlas a
+   la vez gasta mucha cuota: no se lo ofrezcas. **Solo si él lo pide expresamente** ("prepáralas todas a la vez") y
+   tu adaptador trae `subagentes`, avísale antes en una frase y espera su sí: "Prepararlas a la vez gasta bastante más
+   cuota de tu asistente que de una en una, y con un plan básico puedes quedarte sin cuota hasta que se renueve.
+   ¿Seguro que las quieres a la vez?". Con su sí: `--lanzar --clase <id> <ficheros o carpeta> --clase <id> <...>` (con
+   `--ver` antes, igual). Si dice que no o duda, una detrás de otra. Sin `subagentes`, dile que tu asistente no
+   puede prepararlas a la vez, y una detrás de otra.
 3. Sigue con él (calentamiento, repaso, dudas, examen), y no lo dejes parado mientras se prepara: sigue según
    cómo va — si acierta, "lo estás haciendo genial, ¿quieres un par de preguntas más, un poco más difíciles?";
    si falla algo, "¿repasamos eso mientras termino?". Así hasta que la clase esté lista o prefiera parar.
