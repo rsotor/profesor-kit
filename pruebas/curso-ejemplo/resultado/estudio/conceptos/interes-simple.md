@@ -1,49 +1,49 @@
 ---
 tipo: concepto
-bloques: ["2.1 Interés simple y compuesto"]
+bloques: [modulo-2]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [capital, tipo-de-interes]
-alias: []
+alias: [interés simple]
 tags: [interes]
 ejercicio: 02-01-01-simple-frente-a-compuesto
 ---
 # Interés simple
 
-> **En una frase:** Con interés simple, los intereses se calculan siempre sobre el capital inicial, periodo a periodo, y no se reinvierten.
+> **En una frase:** con interés simple, los intereses se calculan siempre sobre el capital inicial, periodo a periodo, y no se reinvierten.
 
 ## El problema
 
-Quieres saber cuánto te darán por un dinero prestado o depositado. La forma más sencilla: cada año cobras lo mismo, porque los intereses se calculan siempre sobre lo que pusiste al principio.
+Quieres saber cuánto te dará un dinero prestado o depositado. La versión más sencilla: cada año cobras lo mismo, porque los intereses se calculan siempre sobre el capital de partida y nunca se suman a él.
 
 ## El ejemplo
 
-1.000,00 € a un interés simple del 5% anual, durante 3 años.
+1.000,00 € a interés simple del 5 % anual, durante 3 años.
 
-- Cada año: 1.000,00 € × 0,05 = 50,00 €
-- En 3 años: 50,00 € × 3 = **150,00 €**
-- Capital final: 1.000,00 € + 150,00 € = **1.150,00 €**
+Cada año: 1.000,00 × 0,05 = 50,00 €. En 3 años: 3 × 50,00 € = **150,00 €** de intereses.
+
+Capital final: 1.000,00 € + 150,00 € = **1.150,00 €**.
 
 ## La fórmula
 
 $$ I = C \cdot i \cdot t \qquad C_f = C + I $$
 
-`C` es el capital inicial, `i` el tipo en tanto por uno (5% anual = 0,05) y `t` el tiempo, en el mismo periodo que `i` (si `i` es anual, `t` en años). Los intereses crecen en línea recta.
+`C` es el [[capital]] inicial, `i` el [[tipo-de-interes]] en tanto por uno (5 % anual = 0,05) y `t` el tiempo **en el mismo periodo que `i`** (si `i` es anual, `t` en años). `I` son los intereses y `Cf` el capital final.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Usar `t` en meses con un tipo anual (o al revés). Con 5% anual y 18 meses, `t` vale 1,5 años, no 18.
+> Poner el tiempo en un periodo distinto al del tipo: 5 % anual con 18 meses, escribiendo t = 18. Si `i` es anual, 18 meses son t = 1,5.
 
 ## Practícalo
 
-→ **[Simple frente a compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-frente-a-compuesto.md)**
+→ **[Simple frente a compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-frente-a-compuesto.html)**
 
-Desde el lado del simple: alarga los años y mira cómo el simple sigue en línea recta mientras el compuesto lo adelanta, incluso con un tipo menor.
+Mueve los años: el simple suma lo mismo cada año (una línea recta). Mira cuánto se separa de él el compuesto.
 
 ## Relacionados
 
-- [[interes-compuesto]] — el mismo capital, pero reinvirtiendo los intereses
+- [[interes-compuesto]] — el mismo ejemplo reinvirtiendo los intereses
 - [[capital]] · [[tipo-de-interes]] — sus dos ingredientes
 
 ## Historial

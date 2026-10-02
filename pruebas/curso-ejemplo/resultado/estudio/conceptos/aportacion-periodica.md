@@ -1,68 +1,67 @@
 ---
 tipo: concepto
-bloques: ["2.2 Ahorro a largo plazo"]
+bloques: [modulo-2]
 visto_en: [02-02-01-ahorro-a-largo-plazo]
 dificultad: 2
 requiere: [tasa-de-ahorro, interes-compuesto]
-alias: []
+alias: [aportaciones periódicas, aportación regular]
 tags: [ahorro, interes]
-ejercicio: 02-02-01-empezar-antes-o-aportar-mas
+ejercicio: 02-02-01-horizonte-y-aportacion
 ---
 # Aportación periódica
 
-> **En una frase:** Una aportación periódica es una cantidad fija que se añade a los ahorros cada cierto tiempo (cada mes, cada año), en vez de ahorrar de golpe una sola vez.
+> **En una frase:** una aportación periódica es una cantidad fija que se añade a los ahorros cada cierto tiempo (cada mes, cada año), en vez de ahorrar de golpe una sola vez.
 
 ## El problema
 
-Casi nadie tiene un montón de dinero para ahorrar de una vez. Lo normal es apartar un poco cada mes. Y entonces hace falta saber cuánto llegará a ser ese goteo con los años, sobre todo si el dinero genera intereses.
+Casi nadie tiene un montón de dinero para ahorrar de una vez. Lo que sí se puede es apartar una cantidad pequeña y regular. La pregunta es cuánto acaba siendo eso a la larga, y qué pasa si además ese dinero gana interés.
 
 ## El ejemplo
 
-Con unos ingresos de 2.000,00 € al mes y una tasa de ahorro de 10 (10 € de cada 100 € ingresados), ahorras 200,00 € al mes: **2.400,00 € al año**. Esa cifra, repetida con el mismo importe y el mismo periodo, es la aportación periódica.
+Con 2.400,00 € al año de aportación (la [[tasa-de-ahorro]] hecha cifra: 200,00 € al mes × 12), ingresados al final de cada año, al 5 % anual de [[interes-compuesto]], durante 3 años:
 
-Ahora la pones al **final de cada año** a un interés de 5 % anual compuesto, durante 3 años:
+| Año | Cuenta | Total |
+|---|---|---|
+| 1 | 2.400,00 | **2.400,00 €** |
+| 2 | 2.400,00 × 1,05 + 2.400,00 | **4.920,00 €** |
+| 3 | 4.920,00 × 1,05 + 2.400,00 | **7.566,00 €** |
 
-| Año | Cuenta |
-|---|---|
-| 1 | 2.400,00 € |
-| 2 | 2.400,00 € × 1,05 + 2.400,00 € = 4.920,00 € |
-| 3 | 4.920,00 € × 1,05 + 2.400,00 € = **7.566,00 €** |
+Has aportado 3 × 2.400,00 € = 7.200,00 €. Los otros **366,00 €** son intereses: cada aportación genera intereses desde que entra, y esos intereses generan más.
 
-Has aportado 7.200,00 € (3 × 2.400,00 €); los otros **366,00 €** son intereses. La primera aportación genera intereses dos años, la segunda uno, la tercera ninguno (entra al final).
+Lo importante es que sea regular: el mismo importe, con el mismo periodo.
 
 ## La fórmula
 
-$$ S_n = S_{n-1} \cdot (1 + i) + A $$
+El curso solo da el cálculo año a año de arriba, no una fórmula.
 
-$A$ es la aportación de cada periodo, $i$ el tipo de interés de **ese mismo periodo** (anual si aportas cada año) y $S_n$ lo acumulado tras $n$ periodos. Cada año: lo que había crece con el interés y se suma la aportación nueva.
+> [!info] Ampliación fuera de los apuntes
+> Hacer la cuenta año a año a 30 años es largo; hay un atajo, que da lo mismo que el cálculo año a año (comprobado con el ejemplo de 3 años: 7.566,00 €). Con $A$ la aportación al final de cada año, $i$ el interés anual en tanto por uno y $n$ los años:
+>
+> $$ \text{total} = A \times \frac{(1+i)^n - 1}{i} $$
+>
+> Con 2.400,00 € al año, $i = 0{,}05$ anual y $n = 3$: 2.400,00 × 3,1525 = **7.566,00 €**. Supone que cada aportación entra al final del año.
 
 ## El error típico
 
-Dos, y los dos piden el periodo:
-
 > [!info] Ampliación fuera de los apuntes
-> Mezclar periodos: aportar cada mes y usar un tipo de interés anual sin convertirlo. La aportación y el interés tienen que hablar del mismo periodo. En esta nota todo es anual, aportaciones incluidas, que van al final de cada año; si la aportación cae al principio, la cifra sube un poco.
-
-> [!info] Ampliación fuera de los apuntes
-> Contar la tasa de ahorro como si fuera un interés: la tasa de ahorro (10 de cada 100 € ingresados) dice cuánto apartas; el interés (5 % anual) dice cuánto crece lo apartado. Ver [[tasa-de-ahorro]].
+> Creer que el total es lo aportado más el interés de un solo año. Cada aportación lleva un número distinto de años ganando intereses: la del año 1 gana dos años, la del año 3 no gana ninguno. Por eso los 366,00 € no salen de 7.200,00 € × 5 % anual.
 
 ## Practícalo
 
-→ **[Empezar antes o aportar más](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-empezar-antes-o-aportar-mas.html)**
+→ **[Horizonte y aportación](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-horizonte-y-aportacion.md)**
 
-Compara dos planes y mueve la aportación anual: aportar el doble no siempre compensa haber empezado diez años después.
+Compara qué pasa con el total al mover los años y la aportación a la vez, aportando en conjunto lo mismo.
 
 ## Visto desde tus ingresos irregulares
 
 > [!info] Ampliación fuera de los apuntes
-> Una aportación "fija" cuesta lo mismo en un mes de 2.400,00 € que en uno de 1.300,00 €, y en el mes flojo puede hacerla imposible. Si la cifra regular que eliges es la que cabe en tus meses flojos, la puedes mantener siempre; la de un mes bueno te obligará a saltarte meses. **TODO:** el material no dice cómo adaptar la aportación a ingresos irregulares (aportar una cifra mínima fija y el resto cuando se pueda, o un porcentaje de lo facturado): decidir con el alumno.
+> Una aportación "fija" choca con meses de 1.300,00 € de facturación. El curso no dice qué hacer. **TODO:** preguntar si se debe calcular la aportación con el [[ingreso-medio]] y pagarla de forma regular desde el [[colchon-financiero]] ya cubierto, o aportar solo los meses buenos.
 
 ## Relacionados
 
-- [[tasa-de-ahorro]] — de donde sale el importe que se aporta
-- [[interes-compuesto]] — lo que hace crecer cada aportación (clase 2.1)
-- [[horizonte-temporal]] — cuántos periodos se repite la aportación
-- [[colchon-financiero]] — el primer destino de lo que se aparta, antes de ahorrar a largo plazo
+- [[tasa-de-ahorro]] — de ahí sale la cifra que se aporta
+- [[interes-compuesto]] — lo que hace crecer cada aportación (nota de la clase 2.1)
+- [[horizonte-temporal]] — cuántos años se aporta
 
 ## Historial
 

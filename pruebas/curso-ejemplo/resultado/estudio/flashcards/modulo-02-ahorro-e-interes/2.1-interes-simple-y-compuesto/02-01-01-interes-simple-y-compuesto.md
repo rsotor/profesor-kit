@@ -4,23 +4,24 @@ sesion: 02-01-01-interes-simple-y-compuesto
 ---
 # Flashcards · 02-01-01-interes-simple-y-compuesto
 
-> Se responde mentalmente antes de desplegar.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Alguien te ofrece "un cinco por ciento" por tu dinero. ¿Qué falta para saber qué te ofrece? (en una frase)**
+**Con 1.000,00 € al 5 % anual durante 3 años, ¿cuál acaba con más dinero, el interés simple o el compuesto, y por qué?**
 > [!success]- Respuesta
-> El periodo: no es lo mismo un 5% anual que un 5% mensual. Un tanto por ciento sin periodo no dice nada.
+> El compuesto: 1.157,63 € frente a 1.150,00 €. Porque los intereses de cada año se suman al capital y generan intereses ellos también.
 
-**¿Sobre qué capital se calculan los intereses con interés simple y sobre cuál con compuesto? (en una frase cada uno)**
+**Alguien te dice "te doy un cinco por ciento". ¿Qué falta para poder comparar esa oferta con otra?**
 > [!success]- Respuesta
-> Simple: siempre sobre el capital inicial. Compuesto: sobre el capital más los intereses ya ganados (interés sobre interés).
+> El periodo: no es lo mismo un 5 % anual que un 5 % mensual. Una tasa sin periodo no dice nada.
 
-**El mismo tipo anual se capitaliza cada mes en vez de una vez al año. ¿El resultado a un año es mayor, igual o menor? (una palabra y el porqué en una frase)**
+**El mismo tipo anual se capitaliza una vez al año o cada mes. ¿Cuál da algo más al cabo de un año?**
 > [!success]- Respuesta
-> Mayor: cada mes se aplica una doceava parte del tipo, pero sobre un capital que ya ha crecido.
+> Cada mes: cada mes se aplica una doceava parte del tipo, pero ya sobre el capital crecido. Cuanto más frecuente la capitalización, más rápido crece.
 
-**Al 8% anual compuesto, ¿en cuántos años se dobla aproximadamente un capital? (una cifra)**
+**Con un tipo de 8 % anual y la regla del 72, ¿en cuántos años se dobla un capital, aproximadamente?**
 > [!success]- Respuesta
-> 72 ÷ 8 = 9 años, aproximadamente. Es una aproximación: no sirve para interés simple.
+> 72 ÷ 8 = 9 años, aproximadamente. Es una aproximación a interés compuesto, no el resultado exacto.
 
 ---
-Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[capitalizacion]] · [[regla-del-72]]
+Conceptos que cubren: [[interes-simple]] · [[interes-compuesto]] · [[tipo-de-interes]] · [[capitalizacion]] · [[regla-del-72]]

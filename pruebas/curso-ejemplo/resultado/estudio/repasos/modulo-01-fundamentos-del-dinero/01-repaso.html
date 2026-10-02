@@ -5,238 +5,450 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Repaso · Módulo 1 · Fundamentos del dinero</title>
 <style>
-  :root { --fondo:#f7f7f4; --tarjeta:#fff; --texto:#1f2933; --suave:#5b6670; --linea:#d9dcd6; --acento:#1d6f5c; --aviso:#b45309; --lente:#eef4fb; }
-  * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--fondo); color:var(--texto); line-height:1.5; }
-  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
-  h1 { font-size: 1.7rem; margin: 0 0 4px; }
-  h2 { font-size: 1.25rem; margin: 40px 0 12px; border-bottom: 2px solid var(--linea); padding-bottom: 6px; }
-  h3 { font-size: 1.05rem; margin: 0 0 6px; }
-  .sub { color: var(--suave); margin: 0 0 8px; }
-  .card { background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 10px; padding: 14px 16px; margin: 12px 0; }
-  .card.dificil { border-left: 6px solid var(--aviso); padding: 20px 22px; margin: 18px 0; }
-  .etiqueta { display:inline-block; font-size:.75rem; background:#fdf0dc; color:var(--aviso); border-radius: 999px; padding: 1px 10px; margin-left: 6px; vertical-align: middle; }
-  .bloque { font-size:.8rem; color: var(--suave); }
-  .frase { font-weight: 600; }
-  .formula { font-family: ui-monospace, Menlo, Consolas, monospace; background:#f1f3ef; border-radius:6px; padding:6px 10px; margin: 8px 0; display:block; }
-  .error { color: #8a2c2c; font-size: .95rem; }
-  table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: .95rem; }
-  th, td { border: 1px solid var(--linea); padding: 6px 10px; text-align: left; }
-  th { background: #eef0ea; }
-  svg { width: 100%; height: auto; background: var(--tarjeta); border:1px solid var(--linea); border-radius:10px; }
-  svg .nodo rect { fill:#e6f2ee; stroke: var(--acento); stroke-width: 1.5; }
-  svg .nodo.dificil rect { fill:#fdf0dc; stroke: var(--aviso); stroke-width: 2.5; }
-  svg .nodo text { font-size: 13px; text-anchor: middle; fill: var(--texto); }
-  svg .col text { font-size: 12px; fill: var(--suave); text-anchor: middle; }
-  svg line { stroke: #6b7780; stroke-width: 1.5; marker-end: url(#flecha); }
-  .leyenda { font-size:.85rem; color: var(--suave); }
-  .cartas { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-  .flash { background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 10px; min-height: 150px; padding: 14px; cursor: pointer; text-align: left; font: inherit; color: inherit; width: 100%; }
-  .flash:hover, .flash:focus-visible { border-color: var(--acento); outline: none; }
-  .flash .cara { display: block; }
-  .flash .dorso { display: none; color: var(--acento); font-weight: 500; }
-  .flash.vuelta .cara { display: none; }
-  .flash.vuelta .dorso { display: block; }
-  .flash .pista { display:block; margin-top:10px; font-size:.78rem; color: var(--suave); }
-  .lente { background: var(--lente); border: 1px solid #c8d9ee; border-radius: 10px; padding: 14px 16px; margin: 12px 0; }
-  .pendiente { background:#fff7e8; border:1px solid #f0d9a8; border-radius:10px; padding:10px 14px; margin:10px 0; font-size:.95rem; }
-  ul.simple { margin: 6px 0; padding-left: 20px; }
+  :root {
+    color-scheme: light dark;
+    --borde: #8884;
+    --suave: #8881;
+    --acento: #2a6fdb;
+    --flojo: #d98e04;
+  }
+  body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 1rem auto 4rem; padding: 0 1rem; line-height: 1.55; }
+  h1 { margin-bottom: 0.2rem; }
+  h2 { margin-top: 2.5rem; border-bottom: 2px solid var(--borde); padding-bottom: 0.2rem; }
+  nav a { margin-right: 0.8rem; }
+  .sub { color: gray; margin-top: 0; }
+  .tarjeta { border: 1px solid var(--borde); border-radius: 10px; padding: 0.8rem 1.1rem; margin: 1rem 0; background: var(--suave); }
+  .tarjeta.flojo { border-left: 6px solid var(--flojo); padding: 1.1rem 1.3rem; margin: 1.6rem 0; }
+  .tarjeta h3 { margin: 0 0 0.4rem; }
+  .etiqueta { font-size: 0.75rem; border: 1px solid var(--flojo); color: var(--flojo); border-radius: 99px; padding: 0 0.5rem; margin-left: 0.4rem; vertical-align: middle; }
+  .formula { font-family: ui-monospace, Menlo, monospace; background: var(--suave); border-radius: 6px; padding: 0.4rem 0.7rem; display: block; margin: 0.4rem 0; }
+  table { border-collapse: collapse; margin: 0.5rem 0; }
+  td, th { border: 1px solid var(--borde); padding: 0.25rem 0.6rem; text-align: left; }
+  .error { border-left: 4px solid #c0392b; padding-left: 0.7rem; margin: 0.5rem 0; }
+  .lente { border-left: 4px solid var(--acento); padding-left: 0.7rem; margin: 0.8rem 0; }
+  .nota { font-size: 0.9rem; color: gray; }
+  svg text { fill: currentColor; font-size: 13px; font-family: system-ui, sans-serif; }
+  svg .caja { fill: var(--suave); stroke: var(--borde); stroke-width: 1.5; }
+  svg .caja.flojo { stroke: var(--flojo); stroke-width: 3; }
+  svg .flecha { stroke: currentColor; stroke-width: 1.5; fill: none; opacity: 0.7; }
+  .cartas { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; }
+  .carta { font: inherit; text-align: left; cursor: pointer; border: 1px solid var(--borde); border-radius: 10px; padding: 0.9rem 1rem; min-height: 9rem; background: var(--suave); color: inherit; }
+  .carta .resp { display: none; margin-top: 0.7rem; padding-top: 0.6rem; border-top: 1px dashed var(--borde); }
+  .carta.vuelta .resp { display: block; }
+  .carta.vuelta { border-color: var(--acento); }
+  .carta small { color: gray; display: block; margin-bottom: 0.3rem; }
+  iframe { width: 100%; height: 36rem; border: 1px solid var(--borde); border-radius: 10px; }
+  details.ej { margin: 1rem 0; }
+  details.ej summary { cursor: pointer; font-weight: 600; }
 </style>
 </head>
 <body>
-<main>
 
 <h1>Repaso · Módulo 1 · Fundamentos del dinero</h1>
-<p class="sub">7 conceptos · 2 sesiones (1.1 y 1.2) · 8 flashcards · 2 ejercicios. Lo que más te costó, arriba y con más aire.</p>
+<p class="sub">8 conceptos · 8 flashcards · 2 ejercicios. Generado de las notas del curso; si algo está mal aquí, se arregla en la nota.</p>
+<nav>
+  <a href="#mapa">Mapa</a><a href="#conceptos">Conceptos</a><a href="#formulario">Formulario</a><a href="#flashcards">Flashcards</a><a href="#ejercicios">Ejercicios</a><a href="#lente">Tus ingresos irregulares</a><a href="#pendiente">Pendiente</a>
+</nav>
 
-<h2>1. Mapa del módulo</h2>
-<p class="leyenda">Una flecha va de lo que hay que saber antes a lo que depende de ello. En naranja, lo que más te cuesta.</p>
-<svg viewBox="0 0 860 400" role="img" aria-label="Mapa de dependencias entre los conceptos del módulo 1">
+<h2 id="mapa">1 · Mapa del módulo</h2>
+<p class="nota">Una flecha va de lo que hay que saber antes a lo que depende de ello (<code>requiere:</code>). Borde naranja = lo que salió flojo en el examen del módulo.</p>
+<svg viewBox="0 0 860 570" width="100%" role="img" aria-label="Mapa de dependencias entre los conceptos del módulo 1">
   <defs>
-    <marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#6b7780"/>
+    <marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity="0.7"/>
     </marker>
   </defs>
-  <g class="col">
-    <text x="150" y="22">1.1 El dinero y sus funciones</text>
-    <text x="650" y="22">1.2 Presupuesto personal</text>
-  </g>
-  <!-- flechas (se dibujan antes que los nodos) -->
-  <line x1="150" y1="92" x2="150" y2="168"/>   <!-- funciones → inflación -->
-  <line x1="190" y1="92" x2="420" y2="182"/>   <!-- funciones → liquidez (via) -->
-  <line x1="215" y1="75" x2="545" y2="75"/>    <!-- funciones → presupuesto -->
-  <line x1="650" y1="92" x2="650" y2="168"/>   <!-- presupuesto → gastos -->
-  <line x1="700" y1="92" x2="790" y2="168"/>   <!-- presupuesto → tasa -->
-  <line x1="650" y1="212" x2="560" y2="318"/>  <!-- gastos → colchón -->
-  <line x1="300" y1="212" x2="490" y2="326"/>  <!-- liquidez → colchón -->
-  <g class="nodo">
-    <rect x="70" y="52" width="160" height="40" rx="8"/><text x="150" y="77">funciones del dinero</text>
-  </g>
-  <g class="nodo">
-    <rect x="70" y="170" width="160" height="40" rx="8"/><text x="150" y="195">inflación</text>
-  </g>
-  <g class="nodo dificil">
-    <rect x="300" y="170" width="160" height="40" rx="8"/><text x="380" y="195">liquidez</text>
-  </g>
-  <g class="nodo">
-    <rect x="570" y="52" width="160" height="40" rx="8"/><text x="650" y="77">presupuesto personal</text>
-  </g>
-  <g class="nodo">
-    <rect x="570" y="170" width="160" height="40" rx="8"/><text x="650" y="195">gastos fijos y variables</text>
-  </g>
-  <g class="nodo">
-    <rect x="720" y="170" width="120" height="40" rx="8"/><text x="780" y="195">tasa de ahorro</text>
-  </g>
-  <g class="nodo">
-    <rect x="400" y="320" width="220" height="44" rx="8"/><text x="510" y="347">colchón financiero</text>
-  </g>
+  <!-- flechas -->
+  <path class="flecha" marker-end="url(#punta)" d="M170,170 L240,40"/>
+  <path class="flecha" marker-end="url(#punta)" d="M170,170 L240,170"/>
+  <path class="flecha" marker-end="url(#punta)" d="M170,170 L240,320"/>
+  <path class="flecha" marker-end="url(#punta)" d="M390,320 L460,240"/>
+  <path class="flecha" marker-end="url(#punta)" d="M390,320 L460,320"/>
+  <path class="flecha" marker-end="url(#punta)" d="M390,320 L460,400"/>
+  <path class="flecha" marker-end="url(#punta)" d="M390,170 L680,170"/>
+  <path class="flecha" marker-end="url(#punta)" d="M610,240 L690,190"/>
+  <path class="flecha" marker-end="url(#punta)" d="M315,340 C315,540 755,540 755,190"/>
+  <!-- cajas -->
+  <rect class="caja flojo" x="20" y="150" width="150" height="40" rx="8"/><text x="95" y="175" text-anchor="middle">Funciones del dinero</text>
+  <rect class="caja" x="240" y="20" width="150" height="40" rx="8"/><text x="315" y="45" text-anchor="middle">Inflación</text>
+  <rect class="caja" x="240" y="150" width="150" height="40" rx="8"/><text x="315" y="175" text-anchor="middle">Liquidez</text>
+  <rect class="caja flojo" x="240" y="300" width="150" height="40" rx="8"/><text x="315" y="325" text-anchor="middle">Presupuesto</text>
+  <rect class="caja flojo" x="460" y="220" width="150" height="40" rx="8"/><text x="535" y="245" text-anchor="middle">Gastos fijos y variables</text>
+  <rect class="caja" x="460" y="300" width="150" height="40" rx="8"/><text x="535" y="325" text-anchor="middle">Ingreso medio</text>
+  <rect class="caja" x="460" y="380" width="150" height="40" rx="8"/><text x="535" y="405" text-anchor="middle">Tasa de ahorro</text>
+  <rect class="caja flojo" x="680" y="150" width="150" height="40" rx="8"/><text x="755" y="175" text-anchor="middle">Colchón financiero</text>
 </svg>
-<p class="leyenda">El colchón junta dos cosas: la <strong>liquidez</strong> (1.1) y los <strong>gastos</strong> (1.2).</p>
 
-<h2>2. Concepto por concepto</h2>
+<h2 id="conceptos">2 · Concepto por concepto</h2>
+<p class="nota">Primero los que salieron flojos en el examen del módulo 1 (más aire), después el resto. Ejemplos con las cifras de las clases (suscripciones a 25,00 €: ver Pendiente).</p>
 
-<div class="card dificil">
-  <div class="bloque">1.1 El dinero y sus funciones</div>
-  <h3>Liquidez <span class="etiqueta">te cuesta</span></h3>
-  <p class="frase">Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.</p>
-  <p>Si mañana necesitas 50,00 €:</p>
+<div class="tarjeta flojo" id="funciones-del-dinero">
+  <h3>Funciones del dinero <span class="etiqueta">flojo en el examen</span></h3>
+  <p><b>El dinero sirve para tres cosas a la vez:</b> pagar cualquier cosa (medio de cambio), ponerle precio a todo con la misma vara (unidad de cuenta) y guardar valor para más adelante (depósito de valor).</p>
+  <p><b>El problema que resuelve:</b> en el trueque, cada uno tenía que querer justo lo que el otro ofrecía, y en ese momento (la «doble coincidencia de deseos»).</p>
+  <p><b>Ejemplo:</b> un pescador vende una caja de pescado por 40,00 €.</p>
   <table>
-    <tr><th>Lo que tienes</th><th>Cuánto tardas en gastarlo</th><th>Liquidez</th></tr>
-    <tr><td>50,00 € en la cartera</td><td>Al instante</td><td>Total</td></tr>
-    <tr><td>Un piso</td><td>Meses, para venderlo bien</td><td>Muy baja</td></tr>
+    <tr><th>Función</th><th>Qué resuelve del trueque</th></tr>
+    <tr><td>Medio de cambio</td><td>Que el vendedor tenga que querer justo lo que ofreces</td></tr>
+    <tr><td>Unidad de cuenta</td><td>Comparar precios (café 1,50 € · corte de pelo 12,00 €) sin equivalencias</td></tr>
+    <tr><td>Depósito de valor</td><td>Poder esperar entre vender y comprar</td></tr>
   </table>
-  <p>La cartera resuelve; el piso no, aunque valga muchísimo más.</p>
-  <p class="error"><strong>Error típico:</strong> confundir "vale mucho" con "es líquido". Liquidez y valor son cosas distintas.</p>
+  <div class="error"><b>Error típico:</b> mezclar las tres funciones. Una puede fallar sin que fallen las otras: con inflación alta el dinero sigue sirviendo para pagar y poner precios, pero falla como depósito de valor.</div>
 </div>
 
-<div class="card">
-  <div class="bloque">1.1 El dinero y sus funciones</div>
-  <h3>Funciones del dinero</h3>
-  <p class="frase">El dinero resuelve el problema del trueque con tres funciones a la vez.</p>
+<div class="tarjeta flojo" id="presupuesto">
+  <h3>Presupuesto <span class="etiqueta">flojo en el examen</span></h3>
+  <p><b>Apuntar lo que entra y lo que sale cada mes, para saber cuánto te queda.</b> Sin apuntar, a final de mes no sabes dónde se ha ido el dinero.</p>
+  <p><b>Ejemplo:</b> ingresos del mes 1.850,00 €.</p>
   <table>
-    <tr><th>Función</th><th>Qué hace</th><th>Pescador (caja a 40,00 €)</th></tr>
-    <tr><td>Medio de cambio</td><td>Se acepta a cambio de cualquier cosa</td><td>Cobra en dinero, no en gallinas</td></tr>
-    <tr><td>Unidad de cuenta</td><td>Pone precio a todo con la misma vara</td><td>Sabe que la caja vale 40,00 €</td></tr>
-    <tr><td>Depósito de valor</td><td>Se guarda hoy y se usa después</td><td>Guarda parte para el mes sin pesca</td></tr>
+    <tr><th>Gasto</th><th>Cifra</th></tr>
+    <tr><td>Alquiler</td><td>650,00 €</td></tr>
+    <tr><td>Seguro</td><td>40,00 €</td></tr>
+    <tr><td>Suscripciones</td><td>25,00 €</td></tr>
+    <tr><td>Comida</td><td>300,00 €</td></tr>
+    <tr><td>Transporte</td><td>60,00 €</td></tr>
+    <tr><td>Ocio</td><td>120,00 €</td></tr>
+    <tr><td><b>Total gastos</b></td><td><b>1.195,00 €</b></td></tr>
   </table>
-  <p class="error"><strong>Error típico:</strong> confundir unidad de cuenta (medir) con medio de cambio (pagar).</p>
-</div>
-
-<div class="card">
-  <div class="bloque">1.1 El dinero y sus funciones</div>
-  <h3>Inflación</h3>
-  <p class="frase">La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.</p>
-  <p>Con una inflación del 3 % anual: una cesta de 100,00 € hoy cuesta 103,00 € dentro de un año. Tus 100,00 € guardados compran lo que hoy compran 97,09 €.</p>
-  <span class="formula">compra real = dinero hoy ÷ (1 + inflación del periodo)</span>
-  <p class="error"><strong>Error típico:</strong> llamar inflación a que suba el precio de una sola cosa (los tomates por una mala cosecha).</p>
-</div>
-
-<div class="card">
-  <div class="bloque">1.2 Presupuesto personal</div>
-  <h3>Presupuesto personal</h3>
-  <p class="frase">Apuntar lo que entra y lo que sale cada mes para saber cuánto te queda.</p>
-  <p>Ingresos 1.850,00 € − gastos 1.195,00 € = <strong>655,00 €</strong> de ahorro del mes.</p>
+  <p>Ahorro del mes: 1.850,00 € − 1.195,00 € = <b>655,00 €</b>.</p>
   <span class="formula">ahorro del mes = ingresos del mes − gastos del mes</span>
-  <p class="error"><strong>Error típico:</strong> presupuestar con el mejor mes. Con ingresos irregulares se usa la media de los últimos 6-12 meses.</p>
+  <div class="error"><b>Error típico:</b> presupuestar con lo que <i>crees</i> que gastas en vez de con lo que apuntas. Los gastos pequeños y repetidos (suscripciones, cafés) son los que se olvidan.</div>
 </div>
 
-<div class="card">
-  <div class="bloque">1.2 Presupuesto personal</div>
-  <h3>Gastos fijos y variables</h3>
-  <p class="frase">Fijos: se repiten cada mes con casi la misma cifra y no dependen de ti. Variables: los decides tú.</p>
+<div class="tarjeta flojo" id="gastos-fijos-y-variables">
+  <h3>Gastos fijos y variables <span class="etiqueta">flojo en el examen</span></h3>
+  <p><b>Fijo:</b> se repite cada mes con (casi) la misma cifra sin que decidas nada. <b>Variable:</b> la cifra la decides tú cada mes.</p>
   <table>
-    <tr><th>Fijos</th><th>Variables</th></tr>
-    <tr><td>Alquiler 650,00 € · Seguro 40,00 € · Suscripciones 25,00 €</td><td>Comida 300,00 € · Transporte 60,00 € · Ocio 120,00 €</td></tr>
-    <tr><td><strong>715,00 €</strong></td><td><strong>480,00 €</strong></td></tr>
+    <tr><th>Gasto</th><th>Tipo</th><th>Cifra</th></tr>
+    <tr><td>Alquiler</td><td>Fijo</td><td>650,00 €</td></tr>
+    <tr><td>Seguro</td><td>Fijo</td><td>40,00 €</td></tr>
+    <tr><td>Suscripciones</td><td>Fijo</td><td>25,00 €</td></tr>
+    <tr><td>Comida</td><td>Variable</td><td>300,00 €</td></tr>
+    <tr><td>Transporte</td><td>Variable</td><td>60,00 €</td></tr>
+    <tr><td>Ocio</td><td>Variable</td><td>120,00 €</td></tr>
   </table>
-  <p class="error"><strong>Error típico:</strong> meter el ocio en fijos "porque todos los meses gasto algo".</p>
-  <div class="pendiente">⚠️ <strong>FALTA INFO:</strong> las suscripciones son 25,00 € en las diapositivas y 52,00 € en la hoja de cálculo de la clase. Aquí van las cifras de las diapositivas hasta que se aclare.</div>
+  <p>Fijos: <b>715,00 €</b> · Variables: <b>480,00 €</b> · Total: <b>1.195,00 €</b>.</p>
+  <div class="error"><b>Error típico:</b> meter el ocio en «fijos» porque «todos los meses gasto algo». Que gastes algo siempre no lo hace fijo: lo que define «variable» es que la cifra la decides tú.</div>
 </div>
 
-<div class="card">
-  <div class="bloque">1.2 Presupuesto personal</div>
+<div class="tarjeta flojo" id="colchon-financiero">
+  <h3>Colchón financiero <span class="etiqueta">flojo en el examen</span></h3>
+  <p><b>Dinero líquido guardado aparte para cubrir tus gastos si un mes facturas poco o llega un imprevisto, medido en meses de gastos cubiertos.</b> Es el primer objetivo, antes de ahorrar para otra cosa.</p>
+  <p><b>Ejemplo:</b> gastos del mes 1.195,00 €.</p>
+  <table>
+    <tr><th>Objetivo</th><th>Cuenta</th><th>Colchón</th></tr>
+    <tr><td>3 meses (nómina fija)</td><td>1.195,00 € × 3</td><td><b>3.585,00 €</b></td></tr>
+    <tr><td>5 meses (freelance, mínimo)</td><td>1.195,00 € × 5</td><td><b>5.975,00 €</b></td></tr>
+    <tr><td>6 meses (freelance, máximo)</td><td>1.195,00 € × 6</td><td><b>7.170,00 €</b></td></tr>
+  </table>
+  <span class="formula">colchón = gastos del mes × meses a cubrir</span>
+  <p>Otro caso: gastas 900,00 € al mes y apuntas a 5 meses → 900,00 € × 5 = <b>4.500,00 €</b>. Un mes sin ingresos: sacas 900,00 € y te quedan 3.600,00 € (4 meses más).</p>
+  <div class="error"><b>Error típico:</b> contar como colchón dinero que no es líquido (un piso, una inversión que no puedes retirar sin perder). Si no lo puedes gastar esta semana, no cuenta.</div>
+</div>
+
+<div class="tarjeta" id="inflacion">
+  <h3>Inflación</h3>
+  <p><b>La subida general y sostenida de los precios:</b> con el mismo dinero, mañana se compra menos que hoy. Hace fallar el depósito de valor.</p>
+  <p><b>Ejemplo:</b> con una inflación del 3 % anual, 100,00 € de hoy valen en compra real unos 97,00 € el año que viene; la cesta que cuesta 100,00 € pasa a costar unos 103,00 €.</p>
+  <div class="error"><b>Error típico:</b> confundir «sube el precio de una cosa» con inflación. Inflación es que sube el nivel general, casi todo a la vez.</div>
+</div>
+
+<div class="tarjeta" id="liquidez">
+  <h3>Liquidez</h3>
+  <p><b>Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.</b></p>
+  <table>
+    <tr><th>Qué tienes</th><th>Liquidez</th><th>Por qué</th></tr>
+    <tr><td>200,00 € en la cartera</td><td>Total</td><td>Se gastan al instante</td></tr>
+    <tr><td>Un piso</td><td>Muy baja</td><td>Venderlo bien lleva meses</td></tr>
+  </table>
+  <div class="error"><b>Error típico:</b> pensar que «valer mucho» es «ser líquido». Un piso vale mucho y es poco líquido.</div>
+</div>
+
+<div class="tarjeta" id="ingreso-medio">
+  <h3>Ingreso medio</h3>
+  <p><b>Cuando tus ingresos cambian de un mes a otro, presupuestas con la media de los últimos 6-12 meses, no con el del mejor mes.</b></p>
+  <p><b>Ejemplo</b> (con solo dos meses para poder seguirlo): 2.400,00 € y 1.300,00 € → (2.400,00 € + 1.300,00 €) ÷ 2 = <b>1.850,00 €</b>. Si presupuestaras con 2.400,00 € y gastaras 1.195,00 €, creerías ahorrar 1.205,00 €: en el mes flojo ese ahorro no existe.</p>
+  <span class="formula">ingreso medio = suma de lo ingresado ÷ número de meses</span>
+  <div class="error"><b>Error típico:</b> contar solo los meses buenos, o los dos últimos, porque «ahora me va bien».</div>
+</div>
+
+<div class="tarjeta" id="tasa-de-ahorro">
   <h3>Tasa de ahorro</h3>
-  <p class="frase">Qué parte de lo que ingresas te queda al acabar el mes: sirve para comparar meses o personas.</p>
-  <p>655,00 € ÷ 1.850,00 € × 100 ≈ 35,4: unos 35,40 € de cada 100,00 € ingresados.</p>
+  <p><b>La parte de lo que ingresas que te queda</b>; permite comparar a dos personas con sueldos distintos.</p>
+  <p><b>Ejemplo:</b> 655,00 € ÷ 1.850,00 € × 100 ≈ <b>35,4 % mensual</b>. Otra persona que ingresa 6.000,00 € y ahorra 1.200,00 € ahorra más euros, pero su tasa es <b>20,0 % mensual</b>: ahorra proporcionalmente menos.</p>
   <span class="formula">tasa de ahorro = ahorro del mes ÷ ingresos del mes × 100</span>
-  <p class="error"><strong>Error típico:</strong> confundirla con un tipo de interés. La tasa de ahorro mide lo que apartas tú; el interés es lo que te paga un banco.</p>
+  <div class="error"><b>Error típico:</b> confundirla con un interés. Un 35,4 % mensual de ahorro es la parte de tus ingresos que guardas, no lo que crece tu dinero (eso es el interés, módulo 2).</div>
 </div>
 
-<div class="card">
-  <div class="bloque">1.2 Presupuesto personal</div>
-  <h3>Colchón financiero</h3>
-  <p class="frase">Dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco; se mide en meses de gastos.</p>
-  <p>Con 1.195,00 € de gastos al mes, 3 meses: 1.195,00 € × 3 = <strong>3.585,00 €</strong>. Con ingresos irregulares, 5-6 meses: entre 5.975,00 € y 7.170,00 €.</p>
-  <span class="formula">colchón = gastos mensuales × meses a cubrir</span>
-  <p class="error"><strong>Error típico:</strong> calcularlo con lo que ingresas en vez de con lo que gastas, o tenerlo en algo que tarda meses en venderse.</p>
-</div>
-
-<h2>3. Formulario del módulo</h2>
+<h2 id="formulario">3 · Formulario del módulo</h2>
 <table>
-  <tr><th>Concepto</th><th>Fórmula o definición</th></tr>
-  <tr><td>Inflación</td><td><code>compra real = dinero hoy ÷ (1 + inflación del periodo)</code> · con 100,00 € y 3 % anual: 97,09 €</td></tr>
-  <tr><td>Presupuesto personal</td><td><code>ahorro del mes = ingresos del mes − gastos del mes</code></td></tr>
-  <tr><td>Tasa de ahorro</td><td><code>ahorro del mes ÷ ingresos del mes × 100</code> (por cada 100 € ingresados)</td></tr>
-  <tr><td>Colchón financiero</td><td><code>gastos mensuales × meses a cubrir</code></td></tr>
-  <tr><td>Funciones del dinero</td><td>Medio de cambio · unidad de cuenta · depósito de valor</td></tr>
-  <tr><td>Liquidez</td><td>Lo rápido que algo se convierte en dinero para gastarlo ya, sin perder valor</td></tr>
-  <tr><td>Gastos fijos y variables</td><td>Fijos: misma cifra cada mes. Variables: los decides tú</td></tr>
+  <tr><th>Concepto</th><th>Fórmula</th></tr>
+  <tr><td>Presupuesto</td><td><code>ahorro del mes = ingresos del mes − gastos del mes</code></td></tr>
+  <tr><td>Ingreso medio</td><td><code>ingreso medio = suma de lo ingresado ÷ número de meses</code></td></tr>
+  <tr><td>Tasa de ahorro</td><td><code>tasa de ahorro = ahorro del mes ÷ ingresos del mes × 100</code> (% mensual)</td></tr>
+  <tr><td>Colchón financiero</td><td><code>colchón = gastos del mes × meses a cubrir</code></td></tr>
 </table>
+<p>Sin fórmula (se sabe la frase): funciones del dinero (medio de cambio · unidad de cuenta · depósito de valor) · inflación (subida general y sostenida de precios) · liquidez (lo rápido que algo se vuelve dinero sin perder valor) · gastos fijos y variables (fijo = misma cifra sin decidir tú; variable = la decides tú).</p>
 
-<h2>4. Flashcards</h2>
-<p class="leyenda">Piensa la respuesta y haz clic para voltear la tarjeta. Otro clic, y vuelve la pregunta.</p>
-<div class="cartas" id="cartas"></div>
+<h2 id="flashcards">4 · Flashcards</h2>
+<p class="nota">Responde mentalmente y haz clic para voltear. Otro clic la vuelve a tapar.</p>
+<div class="cartas">
+  <button type="button" class="carta"><small>1.1 · Funciones del dinero</small>Un cliente te paga 40,00 € por una caja de pescado aunque no quiere pescado a cambio de nada. ¿Qué función del dinero estás viendo? ¿Qué problema del trueque evita?<span class="resp">Medio de cambio. Evita la doble coincidencia de deseos: el vendedor no tiene que querer justo lo que tú ofreces.</span></button>
+  <button type="button" class="carta"><small>1.1 · Funciones del dinero</small>Un café a 1,50 € y un corte de pelo a 12,00 €: ¿qué función permite compararlos directamente?<span class="resp">Unidad de cuenta: todo se mide con la misma vara.</span></button>
+  <button type="button" class="carta"><small>1.1 · Inflación</small>Los precios de casi todo suben a la vez. ¿Qué función del dinero falla y cómo se llama el fenómeno?<span class="resp">Falla el depósito de valor. Es la inflación.</span></button>
+  <button type="button" class="carta"><small>1.1 · Liquidez</small>Un piso vale mucho y el dinero de la cartera vale poco. ¿Cuál es más líquido y por qué?<span class="resp">El dinero de la cartera: se gasta al instante. El piso es poco líquido porque venderlo bien lleva meses.</span></button>
+  <button type="button" class="carta"><small>1.2 · Gastos fijos y variables</small>Gastas 120,00 € en ocio todos los meses. ¿Es un gasto fijo o variable? ¿Por qué?<span class="resp">Variable. Que lo gastes siempre no lo hace fijo: la cifra la decides tú cada mes.</span></button>
+  <button type="button" class="carta"><small>1.2 · Ingreso medio</small>Facturas 2.400,00 € un mes y 1.300,00 € el siguiente. ¿Con qué cifra de ingresos haces el presupuesto?<span class="resp">Con la media de los últimos 6-12 meses, no con la del mejor mes.</span></button>
+  <button type="button" class="carta"><small>1.2 · Tasa de ahorro</small>Ahorras 400,00 € y otra persona ahorra 600,00 €. ¿Puedes decir quién ahorra mejor? ¿Qué te falta?<span class="resp">No. Falta lo que ingresa cada uno: la tasa de ahorro (ahorro ÷ ingresos) es lo que se compara.</span></button>
+  <button type="button" class="carta"><small>1.2 · Colchón financiero</small>Gastas 1.195,00 € al mes y eres freelance. ¿Cuánto colchón financiero te pones como objetivo?<span class="resp">5-6 meses de gastos, de 5.975,00 € a 7.170,00 €. Con nómina fija bastarían 3 meses.</span></button>
+</div>
 
-<h2>5. Ejercicios del módulo</h2>
-<p class="leyenda">Están en markdown: se hacen en Obsidian, no aquí.</p>
-<ul class="simple">
-  <li><a href="../../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-mes-flojo.md">Tu presupuesto en un mes flojo</a> (tasa de ahorro y gastos fijos y variables)</li>
-  <li><a href="../../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-racha-de-meses-flojos.md">¿Te alcanza el colchón en una racha?</a> (colchón financiero y liquidez)</li>
+<h2 id="ejercicios">5 · Ejercicios</h2>
+<p class="nota">Interactivos: cambia las condiciones y contesta el reto antes de comprobar.</p>
+
+<details class="ej" open>
+  <summary>Colchón y tasa de ahorro</summary>
+  <iframe title="Colchón y tasa de ahorro" sandbox="allow-scripts" srcdoc="<!DOCTYPE html>
+<html lang=&quot;es&quot;>
+<head>
+<meta charset=&quot;utf-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;>
+<title>Colchón y tasa de ahorro</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1rem auto; padding: 0 1rem; line-height: 1.5; }
+  fieldset { margin: 1rem 0; padding: 0.75rem 1rem; }
+  label { display: block; margin: 0.5rem 0; }
+  input[type=number] { width: 8rem; font: inherit; }
+  button { font: inherit; padding: 0.4rem 0.9rem; margin: 0.25rem 0.25rem 0 0; }
+  #explicacion { border-left: 4px solid gray; padding: 0.25rem 1rem; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<h1>Colchón y tasa de ahorro</h1>
+<p>Conceptos: <a href=&quot;../../../conceptos/tasa-de-ahorro.md&quot;>tasa-de-ahorro</a> · <a href=&quot;../../../conceptos/colchon-financiero.md&quot;>colchon-financiero</a> · sesión 01-02-01.</p>
+
+<fieldset>
+  <legend>1 · Condiciones (cámbialas)</legend>
+  <label>Ingresos del mes (€) <input type=&quot;number&quot; id=&quot;ingresos&quot; min=&quot;0&quot; step=&quot;10&quot; value=&quot;1300&quot;></label>
+  <label>Gastos fijos (€) <input type=&quot;number&quot; id=&quot;fijos&quot; min=&quot;0&quot; step=&quot;10&quot; value=&quot;715&quot;></label>
+  <label>Gastos variables (€) <input type=&quot;number&quot; id=&quot;variables&quot; min=&quot;0&quot; step=&quot;10&quot; value=&quot;480&quot;></label>
+  <label>Colchón que tienes ahorrado (€) <input type=&quot;number&quot; id=&quot;colchon&quot; min=&quot;0&quot; step=&quot;100&quot; value=&quot;3000&quot;></label>
+  <button type=&quot;button&quot; id=&quot;otro&quot;>Otro caso</button>
+</fieldset>
+
+<fieldset>
+  <legend>2 · Reto</legend>
+  <p>Con estas condiciones, antes de ver ningún cálculo: ¿cómo acaba el mes?</p>
+  <label><input type=&quot;radio&quot; name=&quot;resp&quot; value=&quot;ahorras&quot;> Ahorro algo (ingresos mayores que gastos)</label>
+  <label><input type=&quot;radio&quot; name=&quot;resp&quot; value=&quot;cero&quot;> Quedo justo a cero</label>
+  <label><input type=&quot;radio&quot; name=&quot;resp&quot; value=&quot;deficit&quot;> Gasto más de lo que entra</label>
+  <button type=&quot;button&quot; id=&quot;comprobar&quot;>Comprobar</button>
+</fieldset>
+
+<div id=&quot;explicacion&quot;>
+  <h2>3 · Explicación</h2>
+  <p id=&quot;texto&quot;>Elige una respuesta y aquí verás por qué, con el ahorro, la tasa de ahorro y los meses que cubre tu colchón.</p>
+</div>
+
+<script>
+function redondea(x) { return Math.round(x * 100) / 100; }
+function euros(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+
+// Misma lógica que usa el botón: la lee también verificar-ejercicio.js
+function calcular(c) {
+  var gastos = redondea(c.fijos + c.variables);
+  var ahorro = redondea(c.ingresos - gastos);
+  var veredicto = ahorro > 0 ? 'ahorras' : (ahorro < 0 ? 'deficit' : 'cero');
+  var tasa = c.ingresos > 0 ? Math.round(ahorro / c.ingresos * 1000) / 10 : 0;
+  var meses = gastos > 0 ? Math.round(c.colchon / gastos * 10) / 10 : 0;
+  return { gastos: gastos, ahorro: ahorro, veredicto: veredicto, tasa: tasa, meses: meses };
+}
+window.verificar = function (caso) { return calcular(caso).veredicto; };
+
+function leer() {
+  var v = function (id) { return Math.max(0, Number(document.getElementById(id).value) || 0); };
+  return { ingresos: v('ingresos'), fijos: v('fijos'), variables: v('variables'), colchon: v('colchon') };
+}
+function aleatorio(min, max, paso) { return min + Math.floor(Math.random() * ((max - min) / paso + 1)) * paso; }
+
+document.getElementById('otro').addEventListener('click', function () {
+  document.getElementById('ingresos').value = aleatorio(900, 2600, 50);
+  document.getElementById('fijos').value = aleatorio(400, 900, 5);
+  document.getElementById('variables').value = aleatorio(200, 900, 5);
+  document.getElementById('colchon').value = aleatorio(0, 8000, 100);
+  document.querySelectorAll('input[name=resp]').forEach(function (r) { r.checked = false; });
+  document.getElementById('texto').textContent = 'Elige una respuesta y aquí verás por qué, con el ahorro, la tasa de ahorro y los meses que cubre tu colchón.';
+});
+
+document.getElementById('comprobar').addEventListener('click', function () {
+  var sel = document.querySelector('input[name=resp]:checked');
+  var t = document.getElementById('texto');
+  if (!sel) { t.textContent = 'Elige primero una respuesta.'; return; }
+  var c = leer(), r = calcular(c);
+  var nombres = { ahorras: 'ahorras', cero: 'quedas a cero', deficit: 'gastas más de lo que entra' };
+  var texto = (sel.value === r.veredicto ? 'Correcto. ' : 'No: ') + 'Este mes ' + nombres[r.veredicto] + '. ';
+  texto += 'Ahorro = ' + euros(c.ingresos) + ' − ' + euros(r.gastos) + ' = ' + euros(r.ahorro) + '. ';
+  texto += 'Tasa de ahorro: ' + String(r.tasa).replace('.', ',') + ' % mensual. ';
+  if (r.gastos > 0) {
+    texto += 'Tu colchón de ' + euros(c.colchon) + ' cubre ' + String(r.meses).replace('.', ',') + ' meses de gastos; ';
+    texto += 'como freelance, el objetivo es 5-6 meses (' + euros(r.gastos * 5) + ' a ' + euros(r.gastos * 6) + '). ';
+  }
+  texto += 'La tasa cambia de signo justo donde ingresos y gastos se igualan: prueba a subir los ingresos hasta ese punto.';
+  t.textContent = texto;
+});
+</script>
+</body>
+</html>
+"></iframe>
+  <p class="nota">Versión en nota: <a href="../../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-y-tasa-de-ahorro.md">colchon-y-tasa-de-ahorro (.md)</a></p>
+</details>
+
+<details class="ej" open>
+  <summary>Qué dinero cuenta como colchón</summary>
+  <iframe title="Qué dinero cuenta como colchón" sandbox="allow-scripts" srcdoc="<!DOCTYPE html>
+<html lang=&quot;es&quot;>
+<head>
+<meta charset=&quot;utf-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;>
+<title>Qué dinero cuenta como colchón</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1rem auto; padding: 0 1rem; line-height: 1.5; }
+  fieldset { margin: 1rem 0; padding: 0.75rem 1rem; }
+  label { display: block; margin: 0.5rem 0; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: 0.4rem 0.9rem; margin: 0.25rem 0.25rem 0 0; }
+  #explicacion { border-left: 4px solid gray; padding: 0.25rem 1rem; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<h1>Qué dinero cuenta como colchón</h1>
+<p>Concepto: <a href=&quot;../../../conceptos/colchon-financiero.md&quot;>colchon-financiero</a> · sesión 01-02-01.</p>
+
+<fieldset>
+  <legend>1 · Condiciones (cámbialas)</legend>
+  <label>Gastos del mes: <b id=&quot;v-gastos&quot;></b>
+    <input type=&quot;range&quot; id=&quot;gastos&quot; min=&quot;600&quot; max=&quot;2000&quot; step=&quot;50&quot; value=&quot;1200&quot;></label>
+  <label>Dinero líquido (cuenta y efectivo): <b id=&quot;v-liquido&quot;></b>
+    <input type=&quot;range&quot; id=&quot;liquido&quot; min=&quot;0&quot; max=&quot;12000&quot; step=&quot;250&quot; value=&quot;4000&quot;></label>
+  <label>Dinero no líquido (inversión que no puedes retirar sin perder, un piso…): <b id=&quot;v-noliquido&quot;></b>
+    <input type=&quot;range&quot; id=&quot;noliquido&quot; min=&quot;0&quot; max=&quot;30000&quot; step=&quot;1000&quot; value=&quot;8000&quot;></label>
+  <label>Meses a cubrir (objetivo): <b id=&quot;v-objetivo&quot;></b>
+    <input type=&quot;range&quot; id=&quot;objetivo&quot; min=&quot;3&quot; max=&quot;6&quot; step=&quot;1&quot; value=&quot;5&quot;></label>
+  <button type=&quot;button&quot; id=&quot;otro&quot;>Otro caso</button>
+</fieldset>
+
+<fieldset>
+  <legend>2 · Reto</legend>
+  <p>Con estas condiciones, antes de ver ningún cálculo: ¿tu colchón llega al objetivo?</p>
+  <label><input type=&quot;radio&quot; name=&quot;resp&quot; value=&quot;llega&quot;> Sí, llega</label>
+  <label><input type=&quot;radio&quot; name=&quot;resp&quot; value=&quot;no-llega&quot;> No, se queda corto</label>
+  <button type=&quot;button&quot; id=&quot;comprobar&quot;>Comprobar</button>
+</fieldset>
+
+<div id=&quot;explicacion&quot;>
+  <h2>3 · Explicación</h2>
+  <p id=&quot;texto&quot;>Elige una respuesta y aquí verás por qué, con lo que necesitas, lo que cuenta de verdad y los meses que aguantas.</p>
+</div>
+
+<script>
+function euros(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+function coma(x) { return String(x).replace('.', ','); }
+var TEXTO_INICIAL = 'Elige una respuesta y aquí verás por qué, con lo que necesitas, lo que cuenta de verdad y los meses que aguantas.';
+
+// Misma lógica que usa el botón: la lee también verificar-ejercicio.js.
+// Solo el dinero líquido cuenta como colchón; llegar justo al objetivo cuenta como llegar.
+function calcular(c) {
+  var necesario = c.gastos * c.objetivo;
+  var veredicto = c.liquido >= necesario ? 'llega' : 'no-llega';
+  var meses = c.gastos > 0 ? Math.floor(c.liquido / c.gastos * 10) / 10 : 0;
+  var mesesSiContaraTodo = c.gastos > 0 ? Math.floor((c.liquido + c.noliquido) / c.gastos * 10) / 10 : 0;
+  var engana = veredicto === 'no-llega' && c.liquido + c.noliquido >= necesario;
+  return { necesario: necesario, veredicto: veredicto, meses: meses, mesesSiContaraTodo: mesesSiContaraTodo, engana: engana };
+}
+window.verificar = function (caso) { return calcular(caso).veredicto; };
+
+var IDS = ['gastos', 'liquido', 'noliquido', 'objetivo'];
+function leer() {
+  var c = {};
+  IDS.forEach(function (id) { c[id] = Number(document.getElementById(id).value) || 0; });
+  return c;
+}
+function pintar() {
+  var c = leer();
+  document.getElementById('v-gastos').textContent = euros(c.gastos);
+  document.getElementById('v-liquido').textContent = euros(c.liquido);
+  document.getElementById('v-noliquido').textContent = euros(c.noliquido);
+  document.getElementById('v-objetivo').textContent = c.objetivo + ' meses';
+}
+function reiniciar() {
+  document.querySelectorAll('input[name=resp]').forEach(function (r) { r.checked = false; });
+  document.getElementById('texto').textContent = TEXTO_INICIAL;
+}
+function aleatorio(min, max, paso) { return min + Math.floor(Math.random() * ((max - min) / paso + 1)) * paso; }
+
+IDS.forEach(function (id) {
+  document.getElementById(id).addEventListener('input', function () { pintar(); reiniciar(); });
+});
+
+document.getElementById('otro').addEventListener('click', function () {
+  document.getElementById('gastos').value = aleatorio(600, 2000, 50);
+  document.getElementById('liquido').value = aleatorio(0, 12000, 250);
+  document.getElementById('noliquido').value = aleatorio(0, 30000, 1000);
+  document.getElementById('objetivo').value = aleatorio(3, 6, 1);
+  pintar();
+  reiniciar();
+});
+
+document.getElementById('comprobar').addEventListener('click', function () {
+  var sel = document.querySelector('input[name=resp]:checked');
+  var t = document.getElementById('texto');
+  if (!sel) { t.textContent = 'Elige primero una respuesta.'; return; }
+  var c = leer(), r = calcular(c);
+  var texto = (sel.value === r.veredicto ? 'Correcto. ' : 'No: ');
+  texto += r.veredicto === 'llega' ? 'Tu colchón llega al objetivo. ' : 'Tu colchón se queda corto. ';
+  texto += 'Necesitas ' + euros(c.gastos) + ' × ' + c.objetivo + ' = ' + euros(r.necesario) + ' de dinero líquido. ';
+  texto += 'Tienes ' + euros(c.liquido) + ' líquidos, que cubren ' + coma(r.meses) + ' meses. ';
+  if (c.noliquido > 0) {
+    texto += 'Los ' + euros(c.noliquido) + ' no líquidos no cuentan: no los puedes gastar esta semana. ';
+  }
+  if (r.engana) {
+    texto += 'Cuidado con la trampa: sumando todo saldrían ' + coma(r.mesesSiContaraTodo) + ' meses y parecería que llegas, pero ese dinero no sirve para pagar un mes flojo. ';
+  }
+  if (r.veredicto === 'no-llega') {
+    texto += 'Te faltan ' + euros(r.necesario - c.liquido) + ' líquidos. ';
+  }
+  texto += 'Prueba a mover el dinero no líquido: no cambia nada; el veredicto solo se invierte con los gastos, los meses o el dinero líquido.';
+  t.textContent = texto;
+});
+
+pintar();
+</script>
+</body>
+</html>
+"></iframe>
+  <p class="nota">Versión en nota: <a href="../../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-que-dinero-cuenta-como-colchon.md">que-dinero-cuenta-como-colchon (.md)</a></p>
+</details>
+
+<h2 id="lente">6 · Visto desde tus ingresos irregulares</h2>
+<p class="nota">Lectura añadida (lente del profesor). No decide qué se explica ni puntúa nada.</p>
+<div class="lente"><b>Presupuesto.</b> La columna de ingresos no es una cifra fija: cambia cada mes. Se hace con el ingreso medio, no con tu mejor mes; los gastos siguen llegando aunque factures poco, de ahí que importe separar fijos y variables.</div>
+<div class="lente"><b>Tasa de ahorro.</b> Cambia cada mes porque cambian los ingresos. Una tasa de un solo mes engaña: un mes de 2.400,00 € da una tasa alta y uno de 1.300,00 € puede darla negativa. Se mira calculada con el ingreso medio.</div>
+<div class="lente"><b>Colchón financiero.</b> Con ingresos irregulares conviene apuntar a 5-6 meses en vez de 3: un mes flojo no es un imprevisto raro, es algo que te va a pasar. Convierte un mes de 1.300,00 € en un susto pequeño en vez de en una deuda.</div>
+<div class="lente"><b>Inflación.</b> Con 3 % anual, un colchón de 5.975,00 € parado un año compra lo que hoy compraría unos 5.800,97 €: pierde unos 174,03 € de poder de compra. Es el precio de tenerlo líquido, y aun así compensa frente a no tener colchón.</div>
+<div class="lente"><b>Liquidez.</b> Un mes flojo hay que pagarlo con algo que se pueda gastar ya: de 3.585,00 € guardados en algo que tardas meses en vender, hoy no puedes usar ni uno.</div>
+
+<h2 id="pendiente">Pendiente del material</h2>
+<ul>
+  <li>⚠️ <b>FALTA INFO:</b> ¿las suscripciones son 25,00 € (diapositiva) o 52,00 € (hoja de cálculo)? Esta página usa 25,00 €; si son 52,00 €, cambian los totales de presupuesto, gastos y colchón.</li>
+  <li>⚠️ <b>FALTA INFO:</b> el patrón oro (clase 1.1, diapositiva 6) y la masa monetaria M1 (diapositiva 7): el material no trae contenido. No están en este repaso.</li>
 </ul>
 
-<h2>6. Visto desde tus ingresos irregulares</h2>
-<div class="lente">
-  <ul class="simple">
-    <li><strong>Presupuesto:</strong> tu cifra de ingresos es una media (6-12 meses), no tu mejor mes. El ejemplo de 1.850,00 € sale de solo dos meses; para el tuyo hacen falta más.</li>
-    <li><strong>Tasa de ahorro:</strong> con 1.195,00 € de gastos, un mes de 2.400,00 € deja 1.205,00 € y uno de 1.300,00 € deja 105,00 €. Un solo mes engaña.</li>
-    <li><strong>Colchón y liquidez:</strong> apunta a 5-6 meses de gastos, y que sea la parte más líquida de tu dinero: tiene que estar disponible justo cuando no entra nada.</li>
-  </ul>
-</div>
-
-</main>
 <script>
-(function () {
-  var tarjetas = [
-    ["¿Cuáles son las tres funciones del dinero? (los tres nombres)", "Medio de cambio, unidad de cuenta y depósito de valor."],
-    ["Un pescador sabe que una caja de pescado vale 40,00 € sin pensar a cuántas gallinas equivale. ¿Qué función usa? (el nombre)", "Unidad de cuenta: pone precio a todo con la misma vara de medir."],
-    ["El precio de los tomates sube por una mala cosecha. ¿Es inflación? (sí o no, y por qué en una frase)", "No. Sube una sola cosa. La inflación es la subida general y sostenida de los precios, de casi todo a la vez."],
-    ["¿Qué es más líquido, 50,00 € en la cartera o un piso, y por qué? (en una frase)", "Los 50,00 €: se gastan al instante. Un piso, aunque valga más, tarda meses en venderse bien."],
-    ["Facturas unos meses 2.400,00 € y otros 1.300,00 €. ¿Con qué ingreso presupuestas y por qué? (en una frase)", "Con la media de los últimos 6-12 meses, no con el mejor mes: así el presupuesto aguanta también los meses flojos."],
-    ["Todos los meses gastas algo en ocio. ¿Es un gasto fijo o variable? (una palabra y el porqué en una frase)", "Variable: que gastes algo siempre no lo hace fijo; la cifra exacta la decides tú cada mes."],
-    ["Ingresos de 1.850,00 € y ahorro de 655,00 €. ¿Cuál es la tasa de ahorro? (una cifra, por cada 100 €)", "655,00 € ÷ 1.850,00 € × 100 ≈ 35,4: unos 35,40 € de cada 100,00 € ingresados."],
-    ["¿Por qué un freelance apunta a un colchón de 5-6 meses y no de 3? (en una frase)", "Porque sus ingresos son irregulares: puede haber varios meses flojos seguidos, y el colchón es lo que cubre los gastos mientras tanto."]
-  ];
-  var cont = document.getElementById("cartas");
-  tarjetas.forEach(function (t, i) {
-    var b = document.createElement("button");
-    b.type = "button";
-    b.className = "flash";
-    var cara = document.createElement("span");
-    cara.className = "cara";
-    cara.textContent = t[0];
-    var dorso = document.createElement("span");
-    dorso.className = "dorso";
-    dorso.textContent = t[1];
-    var pista = document.createElement("span");
-    pista.className = "pista";
-    pista.textContent = "Tarjeta " + (i + 1) + " de " + tarjetas.length + " · clic para voltear";
-    b.appendChild(cara);
-    b.appendChild(dorso);
-    b.appendChild(pista);
-    b.addEventListener("click", function () { b.classList.toggle("vuelta"); });
-    cont.appendChild(b);
-  });
-})();
+document.querySelectorAll('.carta').forEach(function (c) {
+  c.addEventListener('click', function () { c.classList.toggle('vuelta'); });
+});
 </script>
 </body>
 </html>
