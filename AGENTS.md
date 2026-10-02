@@ -251,7 +251,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Para guardar | `node .kit/herramientas/guardar.js "<mensaje>"` |
 | Antes de algo de varios pasos | `node .kit/herramientas/guardar.js --empezar "<qué>"` |
 | Para que el alumno acepte los permisos una vez (con su sí) | `node .kit/herramientas/permisos.js --ver` · `--aplicar` · `--quitar` |
-| Para leer un Word, PowerPoint o Excel del material | `node .kit/herramientas/leer.js <fichero>` (`--parte N` si es largo) |
+| Para leer un Word, PowerPoint o Excel del material, o varios ficheros de una vez | `node .kit/herramientas/leer.js <ficheros>` (`--parte N` si es largo) |
 | Para traer lo guardado desde otro sitio (el Mac, la nube) | `node .kit/herramientas/guardar.js --traer` |
 | Para apuntar una duda en el registro de `config/alumno.md` | `node .kit/herramientas/dudas.js <concepto> --prueba "<fichero>"` |
 | Antes de crear una nota, ¿ya existe con otro nombre? | `node .kit/herramientas/candidatos.js "<nombre> — <definición>"` |
