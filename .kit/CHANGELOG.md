@@ -13,6 +13,23 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.29.0
+- **Cada examen lo revisa alguien antes de llegarte.** Quien escribe un examen no ve sus propios fallos: antes de
+  ofrecértelo, lo resuelve a ciegas otro ayudante, sin la clave ni tus notas. Si una pregunta se acierta sin saber,
+  admite dos respuestas o la clave está mal, se arregla antes de que lo veas. No tienes que hacer nada: solo notarás
+  que, a veces, el examen tarda un poco más en estar listo.
+- **Varias clases preparadas a la vez.** Si dejas el material de dos clases o más y tu asistente lo permite (Claude
+  Code y Codex sí), tu profesor puede prepararlas todas a la vez, mucho más rápido. Antes te pregunta: a la vez
+  gasta varias veces más cuota, y si te queda poca es mejor una detrás de otra. Lo que sale en varias clases queda
+  en una sola nota.
+- **Si se acaba la cuota a mitad de preparar una clase,** no se pierde lo que llegó a escribirse, y tu profesor te
+  propone relanzarla cuando se renueve, en vez de intentarlo en la conversación sin cuota.
+- **Arreglo: una nota cambiada desde dos sitios ya no se atasca.** Si un examen cambiaba una nota mientras se
+  preparaba una clase que la ampliaba, juntarlas fallaba aunque no hubiera nada contradictorio. Ahora se juntan los
+  dos cambios, y solo se para si de verdad chocan.
+- **Al actualizar, si de golpe salen muchos avisos nuevos, tu profesor te lo dice** y te cuenta qué hacer, en vez
+  de dejarte con una lista que crece sin explicación.
+
 ## 0.28.0
 - **Exámenes que miden si lo entiendes, no si lo recuerdas.** Tu profesor ya no pregunta "¿qué es X?" copiando
   tus apuntes. Cada concepto sale desde ángulos distintos: reconocerlo en un caso nuevo sin que te lo nombren,
