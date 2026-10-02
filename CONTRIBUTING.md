@@ -149,6 +149,27 @@ público; en un repo privado del plan gratuito GitHub deja crearla pero **no la 
 tests no los pasa: hasta el 2026-10-01 lo hacía, porque el CI no probaba en Mac y sus minutos costaban; en un
 repo público los dos motivos desaparecen, y pasarlos también en local solo hacía esperar en cada push.
 
+## Issues que resuelve Claude
+
+De noche, Claude trabaja los issues que Roberto le pasa (plan en `docs/planes/plan-vivo.md`, «mantenimiento
+nocturno»). Abrir un issue **no** lo pone en marcha: solo lo hace la etiqueta `claude:go`, puesta por Roberto, o
+un issue abierto por él. Las etiquetas dicen en qué punto está cada uno:
+
+| Etiqueta | La pone | Qué significa |
+|---|---|---|
+| `feedback` · `instalación` · `mejora` | La plantilla | El tipo de issue. Sin una de ellas, no entra en la cola: hay que abrirlo con una plantilla |
+| `claude:go` | Roberto | Entra en la cola de la noche |
+| `t:s` · `t:m` · `t:l` | Claude al clasificar, o Roberto | Tamaño: un arreglo rápido, un desarrollo medio, algo grande |
+| `p:alta` · `p:baja` | Claude al clasificar, o Roberto | Prioridad dentro de su tipo (sin etiqueta: normal) |
+| `claude:propuesta` | Claude | Algo grande: la propuesta está en un comentario y espera a Roberto |
+| `claude:aprobado` | Roberto | Propuesta aprobada: Claude la implementa; el PR lo mergea Roberto |
+| `claude:bloqueado` | Claude | Le falta información: la pregunta está en el issue y sigue cuando se responde |
+
+Orden de cada noche: lo que Roberto desbloqueó (aprobado o respondido), luego `feedback` e `instalación`, luego
+`mejora`; dentro de cada grupo, por prioridad y del más antiguo al más nuevo. Lo pequeño y lo medio se mergea solo
+si pasa las reglas del plan; lo grande, nunca. **Para parar todo** (por ejemplo, con la cuota semanal al límite):
+variable del repo `CLAUDE_NOCTURNO` en `off` (*Settings → Secrets and variables → Actions → Variables*).
+
 ## Documentación viva: quién es la fuente de verdad de qué
 
 | Para quién | Fuente viva | Quién la mantiene |

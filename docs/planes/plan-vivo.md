@@ -59,11 +59,13 @@ por release (`actualizar.js`, nunca `main`): un merge automático no llega a nin
    `gh variable set CLAUDE_NOCTURNO --body off`. Claude con la suscripción (`claude setup-token`, el secreto lo pone
    Roberto), `anthropics/claude-code-action` fijada por sha, límite de turnos y timeout por job. Los PRs se crean y
    se mergean con la GitHub App `rsotor-bot` (firma como bot; contents, PRs e issues en escritura, workflows sin
-   acceso; secretos `BOT_APP_ID` y `BOT_PRIVATE_KEY`, ya puestos el 2026-10-02), con un token temporal por
+   acceso; secreto `BOT_PRIVATE_KEY` y variable `BOT_CLIENT_ID`; `actions/create-github-app-token` ya no admite bien el App
+   ID), comprobado con el workflow `bot`, con un token temporal por
    ejecución (`actions/create-github-app-token`). Nunca con `GITHUB_TOKEN`: lo que este crea no dispara
    `tests.yml` y `tests-ok` no llegaría a correr.
 2. **Dependabot sin Claude.** Patch y minor con `tests-ok` en verde → auto-merge (`dependabot/fetch-metadata` +
-   `gh pr merge --auto`). Major o que toque `.github/workflows/` → se queda abierto. `--auto` solo espera checks
+   `gh pr merge --auto`, con `GITHUB_TOKEN`: un workflow de Dependabot no ve los secretos del repo y su merge no
+   tiene que disparar nada). Solo npm; las Actions (tocan `.github/workflows/`) y los major se quedan abiertos. `--auto` solo espera checks
    donde `main` tiene checks obligatorios; en los repos sin proteger, un job comprueba `gh pr checks` en verde y
    después mergea.
 3. **Issues: etiquetas** (documentadas en `CONTRIBUTING.md` y en la descripción de cada etiqueta en GitHub):
