@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple contra compuesto</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 1.5rem; }
+  label { display: block; margin: 0.8rem 0 0.2rem; }
+  input[type=range] { width: 100%; }
+  .valor { font-weight: bold; }
+  .opciones button { display: block; width: 100%; text-align: left; margin: 0.4rem 0; padding: 0.6rem; font: inherit; cursor: pointer; }
+  #explicacion { border-left: 4px solid gray; padding: 0.5rem 1rem; margin-top: 0.5rem; }
+  .bien { border-color: seagreen !important; }
+  .mal { border-color: crimson !important; }
+</style>
+</head>
+<body>
+<h1>Simple contra compuesto</h1>
+<p>Conceptos: <a href="../../../conceptos/interes-simple.md">interes-simple</a> ·
+<a href="../../../conceptos/interes-compuesto.md">interes-compuesto</a></p>
+
+<h2>1. Condiciones</h2>
+<p>Dos depósitos de <span class="valor">1.000,00 €</span> cada uno, sin tocarlos hasta el final. Uno paga
+interés simple y el otro, compuesto. Mueve los tipos y el tiempo.</p>
+
+<label for="tasaS">Tipo del depósito simple: <span class="valor" id="v-tasaS"></span></label>
+<input type="range" id="tasaS" min="3" max="12" step="1" value="8">
+
+<label for="tasaC">Tipo del depósito compuesto: <span class="valor" id="v-tasaC"></span></label>
+<input type="range" id="tasaC" min="3" max="12" step="1" value="5">
+
+<label for="anios">Tiempo: <span class="valor" id="v-anios"></span></label>
+<input type="range" id="anios" min="1" max="40" step="1" value="10">
+
+<h2>2. Reto</h2>
+<p>Con estas condiciones, ¿cuál de los dos depósitos tiene más dinero al final? Elige antes de mirar nada más.</p>
+<div class="opciones" id="opciones">
+  <button data-r="simple">El de interés simple.</button>
+  <button data-r="compuesto">El de interés compuesto.</button>
+  <button data-r="igual">Los dos igual (al céntimo).</button>
+</div>
+
+<h2>3. Explicación</h2>
+<div id="explicacion">Elige una respuesta y aquí verás el cálculo y por qué.</div>
+
+<script>
+var CAPITAL = 1000;
+
+function eur(n) {
+  return n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+
+// Capital final en céntimos, para comparar sin diferencias de decimales.
+function finalSimple(c) { return Math.round(CAPITAL * (1 + (c.tasaS / 100) * c.anios) * 100); }
+function finalCompuesto(c) { return Math.round(CAPITAL * Math.pow(1 + c.tasaC / 100, c.anios) * 100); }
+
+// Misma lógica que usa el botón: devuelve la respuesta correcta para un caso.
+window.verificar = function (caso) {
+  var s = finalSimple(caso);
+  var k = finalCompuesto(caso);
+  if (s > k) return 'simple';
+  if (k > s) return 'compuesto';
+  return 'igual';
+};
+
+function leer() {
+  return {
+    tasaS: Number(document.getElementById('tasaS').value),
+    tasaC: Number(document.getElementById('tasaC').value),
+    anios: Number(document.getElementById('anios').value)
+  };
+}
+
+function pintarValores() {
+  var c = leer();
+  document.getElementById('v-tasaS').textContent = c.tasaS + ' % anual';
+  document.getElementById('v-tasaC').textContent = c.tasaC + ' % anual';
+  document.getElementById('v-anios').textContent = c.anios + (c.anios === 1 ? ' año' : ' años');
+}
+
+function explicar(c, correcta, elegida) {
+  var s = finalSimple(c) / 100;
+  var k = finalCompuesto(c) / 100;
+  var texto = 'Simple: 1.000,00 × (1 + ' + (c.tasaS / 100).toLocaleString('es-ES') + ' × ' + c.anios + ') = ' + eur(s)
+    + '. Compuesto: 1.000,00 × (1 + ' + (c.tasaC / 100).toLocaleString('es-ES') + ')^' + c.anios + ' = ' + eur(k) + '. ';
+  if (c.tasaS === c.tasaC && c.anios > 1) {
+    texto += 'Con el mismo tipo anual, el compuesto gana siempre que pasa más de un año.';
+  } else if (correcta === 'compuesto' && c.tasaS > c.tasaC) {
+    texto += 'Aunque su tipo anual es menor, el compuesto ya ha adelantado al simple: el tiempo juega a su favor.';
+  } else if (correcta === 'simple' && c.tasaS > c.tasaC) {
+    texto += 'Con un tipo anual más alto, el simple aún va por delante; alarga el tiempo y mira cuándo le adelanta el compuesto.';
+  } else if (correcta === 'simple') {
+    texto += 'Su tipo anual es mayor o igual y el compuesto no ha tenido tiempo de compensarlo.';
+  } else if (correcta === 'igual') {
+    texto += 'En el primer año los dos pagan lo mismo si el tipo anual es igual: aún no hay intereses sobre intereses.';
+  } else {
+    texto += 'El compuesto va por delante.';
+  }
+  var ok = elegida === correcta;
+  var el = document.getElementById('explicacion');
+  el.className = ok ? 'bien' : 'mal';
+  el.textContent = (ok ? 'Correcto. ' : 'No era esa. ') + texto;
+}
+
+document.querySelectorAll('input[type=range]').forEach(function (i) {
+  i.addEventListener('input', function () {
+    pintarValores();
+    var el = document.getElementById('explicacion');
+    el.className = '';
+    el.textContent = 'Elige una respuesta y aquí verás el cálculo y por qué.';
+  });
+});
+
+document.querySelectorAll('#opciones button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var c = leer();
+    explicar(c, window.verificar(c), b.getAttribute('data-r'));
+  });
+});
+
+pintarValores();
+</script>
+</body>
+</html>

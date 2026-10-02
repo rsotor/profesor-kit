@@ -25,10 +25,10 @@ const CODEX_JSON = JSON.parse(fs.readFileSync(path.join(RAIZ, '.kit', 'adaptador
 
 // --- 1. Claude: argsTarea/argsSondeo, byte a byte como antes de moverlos a lib/asistentes/ ------------------
 
-test('claude-code.argsTarea: mismos argumentos que argsClaude de siempre; el prompt va en los argumentos, no en la entrada', () => {
+test('claude-code.argsTarea: sin la configuración personal de quien lanza la prueba; el prompt va en los argumentos, no en la entrada', () => {
   const cwd = temporal('kit-asistente-claude-');
   const { args, entrada } = claudeCode.argsTarea({ prompt: 'hola', modelo: 'sonnet', cwd });
-  assert.deepEqual(args, ['-p', 'hola', '--model', 'sonnet', '--permission-mode', 'acceptEdits', '--permission-prompts', 'none', '--output-format', 'json']);
+  assert.deepEqual(args, ['-p', 'hola', '--model', 'sonnet', '--permission-mode', 'acceptEdits', '--permission-prompts', 'none', '--output-format', 'json', '--setting-sources', 'project,local', '--strict-mcp-config']);
   assert.equal(entrada, undefined);
 });
 

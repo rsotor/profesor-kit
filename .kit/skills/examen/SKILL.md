@@ -264,8 +264,8 @@ plataforma…), en cualquier momento del curso — no hace falta esperar a `/con
    `origen: "centro"` (apartado 4).
 4. **Como mucho la mitad del examen** sale de la referencia; el resto son preguntas nuevas del mismo estilo
    (apartado 3, paso 3). Que no se convierta en memorizar el test del centro.
-5. **Su respuesta correcta sale de la clave del propio ejemplo**, si la trae (como el fixture de prueba, con
-   la clave de soluciones al final). Si no la trae, la decides tú, contrastando con las notas del curso, y
+5. **Su respuesta correcta sale de la clave del propio ejemplo**, si la trae (por ejemplo, una clave de
+   soluciones al final). Si no la trae, la decides tú, contrastando con las notas del curso, y
    se lo dices al alumno.
 6. **Rota**: en una versión nueva o un escalón nuevo, prioriza las que no han salido (`centroUsadas`, §3
    paso 1; no leas las claves a mano).

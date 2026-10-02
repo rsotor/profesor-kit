@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El mes flojo y el colchón</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 1.5rem; }
+  label { display: block; margin: 0.8rem 0 0.2rem; }
+  input[type=range] { width: 100%; }
+  .valor { font-weight: bold; }
+  .opciones button { display: block; width: 100%; text-align: left; margin: 0.4rem 0; padding: 0.6rem; font: inherit; cursor: pointer; }
+  #explicacion { border-left: 4px solid gray; padding: 0.5rem 1rem; margin-top: 0.5rem; }
+  .bien { border-color: seagreen !important; }
+  .mal { border-color: crimson !important; }
+</style>
+</head>
+<body>
+<h1>El mes flojo y el colchón</h1>
+<p>Conceptos: <a href="../../../conceptos/presupuesto-personal.md">presupuesto-personal</a> ·
+<a href="../../../conceptos/tasa-de-ahorro.md">tasa-de-ahorro</a> ·
+<a href="../../../conceptos/colchon-financiero.md">colchon-financiero</a></p>
+
+<h2>1. Condiciones</h2>
+<p>Gastos fijos del mes: <span class="valor">715,00 €</span> (no se pueden recortar). Mueve lo demás.</p>
+
+<label for="ingreso">Ingresos del mes: <span class="valor" id="v-ingreso"></span></label>
+<input type="range" id="ingreso" min="800" max="3000" step="50" value="1300">
+
+<label for="variables">Gastos variables del mes: <span class="valor" id="v-variables"></span></label>
+<input type="range" id="variables" min="200" max="600" step="20" value="480">
+
+<label for="colchon">Colchón líquido ahorrado: <span class="valor" id="v-colchon"></span></label>
+<input type="range" id="colchon" min="0" max="8000" step="250" value="3500">
+
+<h2>2. Reto</h2>
+<p>Con estas condiciones, ¿qué pasa este mes? Elige antes de mirar nada más.</p>
+<div class="opciones" id="opciones">
+  <button data-r="ahorra">Sobra dinero: el ahorro del mes es positivo.</button>
+  <button data-r="cero">Justo a cero: no ahorro, pero tampoco toco el colchón.</button>
+  <button data-r="deficit-aguanta">Faltan euros y el colchón aguanta 6 meses o más seguidos así.</button>
+  <button data-r="deficit-corto">Faltan euros y el colchón aguanta menos de 6 meses seguidos así.</button>
+</div>
+
+<h2>3. Explicación</h2>
+<div id="explicacion">Elige una respuesta y aquí verás el cálculo y por qué.</div>
+
+<script>
+var FIJOS = 715;
+
+function eur(n) {
+  return n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+
+// Misma lógica que usa el botón: devuelve la respuesta correcta para un caso.
+window.verificar = function (caso) {
+  var ahorro = caso.ingreso - FIJOS - caso.variables;
+  if (ahorro > 0) return 'ahorra';
+  if (ahorro === 0) return 'cero';
+  var deficit = -ahorro;
+  return caso.colchon >= 6 * deficit ? 'deficit-aguanta' : 'deficit-corto';
+};
+
+function leer() {
+  return {
+    ingreso: Number(document.getElementById('ingreso').value),
+    variables: Number(document.getElementById('variables').value),
+    colchon: Number(document.getElementById('colchon').value)
+  };
+}
+
+function pintarValores() {
+  var c = leer();
+  document.getElementById('v-ingreso').textContent = eur(c.ingreso);
+  document.getElementById('v-variables').textContent = eur(c.variables);
+  document.getElementById('v-colchon').textContent = eur(c.colchon);
+}
+
+function explicar(c, correcta, elegida) {
+  var ahorro = c.ingreso - FIJOS - c.variables;
+  var texto = 'Ahorro del mes = ' + eur(c.ingreso) + ' − ' + eur(FIJOS) + ' − ' + eur(c.variables) + ' = ' + eur(ahorro) + '. ';
+  if (ahorro > 0) {
+    var tasa = (ahorro / c.ingreso * 100).toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    texto += 'Tasa de ahorro ≈ ' + tasa + ' (por cada cien). El colchón ni se toca.';
+  } else if (ahorro === 0) {
+    texto += 'Ni ahorras ni gastas de más: el colchón se queda como está, pero no crece.';
+  } else {
+    var deficit = -ahorro;
+    var meses = c.colchon / deficit;
+    texto += 'Te faltan ' + eur(deficit) + ' cada mes. Con un colchón de ' + eur(c.colchon) + ' aguantas '
+      + meses.toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+      + ' meses seguidos así (objetivo para un freelance: 6 meses o más).';
+  }
+  var ok = elegida === correcta;
+  var el = document.getElementById('explicacion');
+  el.className = ok ? 'bien' : 'mal';
+  el.textContent = (ok ? 'Correcto. ' : 'No era esa. ') + texto;
+}
+
+document.querySelectorAll('input[type=range]').forEach(function (i) {
+  i.addEventListener('input', function () {
+    pintarValores();
+    var el = document.getElementById('explicacion');
+    el.className = '';
+    el.textContent = 'Elige una respuesta y aquí verás el cálculo y por qué.';
+  });
+});
+
+document.querySelectorAll('#opciones button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var c = leer();
+    explicar(c, window.verificar(c), b.getAttribute('data-r'));
+  });
+});
+
+pintarValores();
+</script>
+</body>
+</html>

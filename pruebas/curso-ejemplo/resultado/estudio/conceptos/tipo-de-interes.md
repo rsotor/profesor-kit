@@ -1,43 +1,51 @@
 ---
 tipo: concepto
-bloques: [modulo-2]
-visto_en: [02-01-01-interes-simple-y-compuesto]
+bloques: [modulo-02]
+visto_en: [02-01-01]
 dificultad: 2
 requiere: [capital]
-alias: [tipo de interés, tasa de interés]
-tags: [interes]
+alias: [tasa de interés, interés (tipo)]
+tags: [interes, ahorro]
 ---
 # Tipo de interés
 
-> **En una frase:** el tipo de interés es el precio del dinero: cuánto se paga (o se cobra) por tenerlo prestado durante un tiempo, en tanto por ciento y siempre con su periodo.
+> **En una frase:** El tipo de interés es el precio del dinero: cuánto se paga (o se cobra) por tenerlo prestado durante un tiempo, siempre en tanto por ciento y con su periodo.
 
 ## El problema
 
-Dos ofertas dicen "un cinco por ciento". Una es 5 % anual y la otra 5 % mensual: la segunda es muchísimo más cara (o más rentable). Un tanto por ciento sin periodo no se puede comparar con nada.
+Un tanto por ciento suelto no dice nada: no es lo mismo un 5 % anual que un 5 % mensual. Sin el periodo, dos
+personas pueden creer que hablan de lo mismo y estar a mucha distancia.
 
 ## El ejemplo
 
-Sobre un [[capital]] de 1.000,00 €:
+Con un capital de 1.000,00 €:
 
-| Tipo | Intereses en un periodo |
+| Tipo | Intereses al cabo de un periodo |
 |---|---|
 | 5 % anual | 50,00 € al cabo de un año |
 | 5 % mensual | 50,00 € al cabo de un mes |
 
-Misma cifra, pero la segunda se repite cada mes. Por eso en este curso **toda tasa dice su periodo**.
+Misma cifra, otro periodo: el segundo, al cabo de un año, daría unas doce veces más de intereses (sin
+reinvertir). Por eso este curso **siempre** dice el periodo: "5 % anual", nunca "el 5".
+
+## La fórmula
+
+$$ i = \frac{\text{intereses de un periodo}}{C} $$
+
+`i` es el tipo en tanto por uno (5 % anual = 0,05) y `C` el capital. Se usa así en [[interes-simple]] y en
+[[interes-compuesto]].
 
 ## El error típico
 
-> [!info] Ampliación fuera de los apuntes
-> Mezclar periodos al calcular: usar un tipo anual con el tiempo en meses (por ejemplo, 5 % anual con t = 6). El tiempo y el tipo tienen que ir en el mismo periodo.
+Comparar dos tipos sin mirar el periodo, o aplicar un tipo anual a un tiempo en meses sin pasarlo a años. El
+tiempo siempre se mide en el mismo periodo que el tipo.
 
 ## Relacionados
 
-- [[capital]] — el dinero sobre el que se aplica el tipo
-- [[interes-simple]] — cómo se usa el tipo sin reinvertir
-- [[interes-compuesto]] — cómo se usa el tipo reinvirtiendo
-- [[capitalizacion]] — cada cuánto se aplica
+- [[capital]] — la cantidad sobre la que se aplica el tipo
+- [[interes-simple]] · [[interes-compuesto]] — las dos formas de aplicarlo en el tiempo
+- [[inflacion]] — un tipo solo gana poder de compra si supera la subida de precios
 
 ## Historial
 
-- **02-01-01-interes-simple-y-compuesto** · primera vez
+- **02-01-01** · primera vez
