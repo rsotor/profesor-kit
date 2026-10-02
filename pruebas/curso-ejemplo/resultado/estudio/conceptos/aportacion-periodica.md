@@ -1,68 +1,71 @@
 ---
 tipo: concepto
-bloques: [modulo-2]
-visto_en: [02-02-01-ahorro-a-largo-plazo]
+bloques: [modulo-02]
+visto_en: [02-02-01]
 dificultad: 2
 requiere: [tasa-de-ahorro, interes-compuesto]
-alias: [aportaciones periódicas, aportación regular]
+alias: [aportación periódica, aportaciones periódicas]
 tags: [ahorro, interes]
-ejercicio: 02-02-01-horizonte-y-aportacion
 ---
 # Aportación periódica
 
-> **En una frase:** una aportación periódica es una cantidad fija que se añade a los ahorros cada cierto tiempo (cada mes, cada año), en vez de ahorrar de golpe una sola vez.
+> **En una frase:** Una aportación periódica es una cantidad fija que se añade a los ahorros cada cierto tiempo (cada mes, cada año), en vez de ahorrar de golpe una sola vez.
 
 ## El problema
 
-Casi nadie tiene un montón de dinero para ahorrar de una vez. Lo que sí se puede es apartar una cantidad pequeña y regular. La pregunta es cuánto acaba siendo eso a la larga, y qué pasa si además ese dinero gana interés.
+Casi nadie tiene 7.200,00 € de golpe para ahorrar. Lo normal es apartar una cantidad pequeña cada mes o cada
+año. La pregunta es qué pasa con ese dinero cuando cada aportación llega en un momento distinto.
 
 ## El ejemplo
 
-Con 2.400,00 € al año de aportación (la [[tasa-de-ahorro]] hecha cifra: 200,00 € al mes × 12), ingresados al final de cada año, al 5 % anual de [[interes-compuesto]], durante 3 años:
+Aportas 2.400,00 € al final de cada año (una tasa de ahorro de 10 sobre 2.000,00 € al mes da 200,00 € al mes,
+2.400,00 € al año), y el dinero crece al 5 % anual compuesto:
 
-| Año | Cuenta | Total |
-|---|---|---|
-| 1 | 2.400,00 | **2.400,00 €** |
-| 2 | 2.400,00 × 1,05 + 2.400,00 | **4.920,00 €** |
-| 3 | 4.920,00 × 1,05 + 2.400,00 | **7.566,00 €** |
+- Año 1: 2.400,00 €
+- Año 2: 2.400,00 × 1,05 + 2.400,00 = **4.920,00 €**
+- Año 3: 4.920,00 × 1,05 + 2.400,00 = **7.566,00 €**
 
-Has aportado 3 × 2.400,00 € = 7.200,00 €. Los otros **366,00 €** son intereses: cada aportación genera intereses desde que entra, y esos intereses generan más.
+Has aportado 3 × 2.400,00 = 7.200,00 €. Los otros **366,00 €** son intereses: la primera aportación trabajó
+dos años, la segunda uno, y la tercera ninguno.
 
-Lo importante es que sea regular: el mismo importe, con el mismo periodo.
+> [!info] Ampliación fuera de los apuntes
+> El material no dice si la aportación entra al principio o al final del año. Este cálculo supone **al final**
+> (la última aportación aún no ha generado interés). Si entrara al principio, saldría más.
 
 ## La fórmula
 
-El curso solo da el cálculo año a año de arriba, no una fórmula.
+$$ saldo_{n} = saldo_{n-1} \times (1 + i) + a $$
 
-> [!info] Ampliación fuera de los apuntes
-> Hacer la cuenta año a año a 30 años es largo; hay un atajo, que da lo mismo que el cálculo año a año (comprobado con el ejemplo de 3 años: 7.566,00 €). Con $A$ la aportación al final de cada año, $i$ el interés anual en tanto por uno y $n$ los años:
->
-> $$ \text{total} = A \times \frac{(1+i)^n - 1}{i} $$
->
-> Con 2.400,00 € al año, $i = 0{,}05$ anual y $n = 3$: 2.400,00 × 3,1525 = **7.566,00 €**. Supone que cada aportación entra al final del año.
+- $saldo_{n}$: lo que tienes al final del año $n$, en €.
+- $i$: el tipo de interés anual en tanto por uno (5 % anual = 0,05).
+- $a$: la aportación de cada año, en €.
+
+Primero crece lo que ya tenías; después entra la aportación nueva.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que el total es lo aportado más el interés de un solo año. Cada aportación lleva un número distinto de años ganando intereses: la del año 1 gana dos años, la del año 3 no gana ninguno. Por eso los 366,00 € no salen de 7.200,00 € × 5 % anual.
-
-## Practícalo
-
-→ **[Horizonte y aportación](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-horizonte-y-aportacion.md)**
-
-Compara qué pasa con el total al mover los años y la aportación a la vez, aportando en conjunto lo mismo.
+> Creer que lo que has aportado es lo que tienes. Con interés compuesto el saldo es mayor que la suma de las
+> aportaciones (7.566,00 € frente a 7.200,00 €), y la diferencia crece cada año.
 
 ## Visto desde tus ingresos irregulares
 
 > [!info] Ampliación fuera de los apuntes
-> Una aportación "fija" choca con meses de 1.300,00 € de facturación. El curso no dice qué hacer. **TODO:** preguntar si se debe calcular la aportación con el [[ingreso-medio]] y pagarla de forma regular desde el [[colchon-financiero]] ya cubierto, o aportar solo los meses buenos.
+> La aportación periódica pide un importe fijo, y tus ingresos no lo son. Fija la aportación fija sobre tu
+> ingreso medio y no sobre el mejor mes: en un mes de 1.300,00 € con gastos de 1.195,00 € solo te sobran
+> 105,00 €, y una aportación de 200,00 € ese mes saldría del colchón (95,00 €). Lo que sobre en los meses buenos
+> puede ir como aportación extra.
 
 ## Relacionados
 
-- [[tasa-de-ahorro]] — de ahí sale la cifra que se aporta
-- [[interes-compuesto]] — lo que hace crecer cada aportación (nota de la clase 2.1)
-- [[horizonte-temporal]] — cuántos años se aporta
+- [[tasa-de-ahorro]] — de ella sale el importe que se aporta
+- [[interes-compuesto]] — hace que cada aportación genere intereses sobre los intereses
+- [[capital]] — cada aportación se suma al capital ahorrado
+- [[tipo-de-interes]] — el tanto anual al que crece el saldo
+- [[capitalizacion]] — el momento en que los intereses se suman al saldo
+- [[horizonte-temporal]] — cuántos años dura la aportación
+- [[presupuesto-personal]] — de donde sale lo que se aparta
 
 ## Historial
 
-- **02-02-01-ahorro-a-largo-plazo** · primera vez
+- **02-02-01** · primera vez

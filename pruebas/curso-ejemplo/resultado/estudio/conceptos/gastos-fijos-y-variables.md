@@ -1,19 +1,20 @@
 ---
 tipo: concepto
-bloques: [modulo-1]
-visto_en: [01-02-01-presupuesto-personal]
+bloques: [modulo-01]
+visto_en: [01-02-01]
 dificultad: 2
-requiere: [presupuesto]
-alias: [gastos fijos, gastos variables, gasto fijo, gasto variable]
-tags: [presupuesto]
+requiere: [presupuesto-personal]
+alias: [gastos fijos, gastos variables]
+tags: [presupuesto, gastos]
 ---
 # Gastos fijos y variables
 
-> **En una frase:** un gasto es fijo si se repite cada mes con (casi) la misma cifra sin que decidas nada, y variable si la cifra la decides tú cada mes.
+> **En una frase:** Un gasto es fijo si se repite cada mes con casi la misma cifra, y variable si la cifra la decides tú ese mes.
 
 ## El problema
 
-Con un solo montón de gastos no se ve cuáles puedes recortar un mes flojo y cuáles te llegan igual.
+Si todos los gastos van en una sola bolsa, no ves cuáles puedes tocar. Recortar el alquiler en mitad de
+mes no es una opción; recortar el ocio, sí.
 
 ## El ejemplo
 
@@ -26,17 +27,25 @@ Con un solo montón de gastos no se ve cuáles puedes recortar un mes flojo y cu
 | Transporte | Variable | 60,00 € |
 | Ocio | Variable | 120,00 € |
 
-Total fijos: **715,00 €**. Total variables: **480,00 €**. Total: **1.195,00 €**.
+Fijos: 650,00 + 40,00 + 25,00 = **715,00 €**. Variables: 300,00 + 60,00 + 120,00 = **480,00 €**. Total gastos:
+**1.195,00 €**. Cada tipo se suma por separado.
 
 ## El error típico
 
-Meter el ocio en «fijos» porque «todos los meses gasto algo en ocio». Que gastes algo siempre no lo hace fijo: la cifra exacta la decides tú cada mes, y eso es lo que define «variable».
+Meter el ocio en "fijos" porque "todos los meses gasto algo". Que gastes algo siempre no lo hace fijo: la
+cifra exacta la decides tú cada mes, y eso es justo lo que define "variable".
+
+## Visto desde tus ingresos irregulares
+
+> [!info] Ampliación fuera de los apuntes
+> En un mes flojo solo se pueden recortar los variables: los 715,00 € de fijos hay que pagarlos igual. Por
+> eso conviene saber cuánto suman antes de que llegue ese mes.
 
 ## Relacionados
 
-- [[presupuesto]] — los dos totales suman el gasto del mes
-- [[colchon-financiero]] — se calcula con los gastos del mes; los fijos son los que no se pueden recortar
+- [[presupuesto-personal]] — los gastos son la columna de salida del presupuesto
+- [[tasa-de-ahorro]] — al recortar variables sube el ahorro y, con él, la tasa
 
 ## Historial
 
-- **01-02-01-presupuesto-personal** · primera vez
+- **01-02-01** · primera vez

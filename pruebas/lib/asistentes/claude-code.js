@@ -9,8 +9,11 @@ const preparar = require('../../../.kit/herramientas/preparar');
 
 // La salida en JSON trae qué se denegó (permission_denials): sin eso, un paso que se quedó sin hacer por un
 // permiso solo se podía adivinar (prueba real del 2026-09-24).
+// Sin la configuración de usuario de quien lanza la prueba (su CLAUDE.md global, sus skills, plugins y conectores):
+// un alumno no la tiene, y medido el 2026-10-02 eran 9,2 K de los 36 K tokens que viajan en cada llamada.
+const SIN_CONFIG_PERSONAL = ['--setting-sources', 'project,local', '--strict-mcp-config'];
 function argsClaude({ prompt, modelo, permitidas }) {
-  const args = ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none', '--output-format', 'json'];
+  const args = ['-p', prompt, '--model', modelo, '--permission-mode', 'acceptEdits', '--permission-prompts', 'none', '--output-format', 'json', ...SIN_CONFIG_PERSONAL];
   return permitidas.length ? [...args, '--allowedTools', ...permitidas] : args;
 }
 

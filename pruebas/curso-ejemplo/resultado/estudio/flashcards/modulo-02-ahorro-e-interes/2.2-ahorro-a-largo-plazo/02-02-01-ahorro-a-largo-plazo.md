@@ -1,26 +1,26 @@
 ---
 tipo: flashcards
-sesion: 02-02-01-ahorro-a-largo-plazo
+sesion: 02-02-01
 ---
-# Flashcards · 02-02-01-ahorro-a-largo-plazo
+# Flashcards · 02-02-01
 
 > Se responde mentalmente antes de desplegar.
 
-**Ingresas 2.000,00 € al mes y tu tasa de ahorro es del 10 % mensual. ¿Cuánto ahorras al año?**
+**Ingresas 2.000,00 € al mes y tu tasa de ahorro es 10 (por cada cien). ¿Cuánto es al año?**
 > [!success]- Respuesta
-> 200,00 € al mes, 2.400,00 € al año. Esa cifra es la base de la aportación periódica.
+> 2.000,00 × 0,10 = 200,00 €/mes, y 200,00 × 12 = 2.400,00 €/año: esa es tu aportación periódica.
 
-**Aportas 2.400,00 € al final de cada año al 5 % anual compuesto. ¿Cuánto tienes tras 3 años, y cuánto son intereses?**
+**Aportas 2.400,00 € al final de cada año al 5 % anual compuesto. ¿Cuánto tienes al final del año 2?**
 > [!success]- Respuesta
-> 7.566,00 €. Has aportado 7.200,00 €, así que 366,00 € son intereses.
+> 2.400,00 × 1,05 + 2.400,00 = 4.920,00 €. Primero crece lo que ya tenías; después entra la aportación nueva.
 
-**¿Qué es una aportación periódica y qué la hace "periódica"?**
+**Tras 3 años aportando 2.400,00 € al año al 5 % anual compuesto tienes 7.566,00 €. ¿Cuánto son intereses?**
 > [!success]- Respuesta
-> Una cantidad fija que se añade cada cierto tiempo (mes, año), en vez de ahorrar de golpe. Lo que la define es que el importe y el periodo se repiten.
+> 366,00 €: 7.566,00 − 7.200,00 aportados. Lo aportado no es lo que tienes.
 
-**Misma aportación de 2.400,00 € al año al 5 % anual: ¿por qué 30 años no dan solo 10 veces lo de 3 años?**
+**Ahorras 2.400,00 € al año al 5 % anual compuesto, durante 30 años en vez de 3. ¿Qué cambia más: lo aportado o el saldo?**
 > [!success]- Respuesta
-> Porque con interés compuesto los intereses generan intereses: 72.000,00 € aportados se convierten en ≈ 159.453,23 €, y el horizonte temporal es lo que más pesa.
+> El saldo. Aportas 10 veces más (72.000,00 €), pero el saldo (≈ 159.453,23 €) es unas 20 veces mayor: el horizonte temporal pesa más que lo aportado.
 
 ---
 Conceptos que cubren: [[tasa-de-ahorro]] · [[aportacion-periodica]] · [[horizonte-temporal]]

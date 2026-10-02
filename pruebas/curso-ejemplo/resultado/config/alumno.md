@@ -31,6 +31,14 @@
 
 ## Conceptos que costaron
 
+- **funciones-del-dinero:** en el examen del módulo 1 confunde el problema del trueque (doble coincidencia de
+  deseos) con la falta de unidad de cuenta; en cambio reconoce bien el depósito de valor. — *examen del módulo 1, p.1 y p.8*
+- **presupuesto-personal:** al calcular el ahorro de un mes flojo (1.400 − 1.195) responde −205 € en vez de 205 €,
+  es decir, invierte la resta; sí detecta el error de presupuestar con el mejor mes. — *examen del módulo 1, p.6 y p.7*
+- **tasa-de-ahorro y colchon-financiero:** dejó en blanco la comparación de tasas (p.5) y el colchón con gastos
+  más altos (p.10). Son dos preguntas sin responder, no dos errores demostrados: no sabemos si no las entiende o
+  si le faltó tiempo; conviene repreguntar. — *examen del módulo 1, p.5 y p.10*
+
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
@@ -43,11 +51,10 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-10-02 · 01-01-01-el-dinero-y-sus-funciones, respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-10-02 · 01-01-01-el-dinero-y-sus-funciones.md, en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-10-02 · conceptos/colchon-financiero.md, 2026-10-02 |
-| 01-01-01-el-dinero-y-sus-funciones | 1 | 2026-10-02 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-10-02 |
+| colchon-financiero | 1 | 2026-10-02 · conceptos/colchon-financiero.md |

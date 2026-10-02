@@ -1,42 +1,26 @@
 ---
 tipo: flashcards
-sesion: 01-01-01-el-dinero-y-sus-funciones
+sesion: 01-01-01
 ---
-# Flashcards · 01-01-01-el-dinero-y-sus-funciones
+# Flashcards · 01-01-01
 
 > Se responde mentalmente antes de desplegar.
 
-**Un cliente te paga 40,00 € por una caja de pescado aunque no quiere pescado a cambio de nada. ¿Qué función del dinero estás viendo? ¿Qué problema del trueque evita?**
+**Un freelance cobra 300,00 € y guarda 100,00 € para un mes flojo. ¿Qué función del dinero usa al guardarlos?**
 > [!success]- Respuesta
-> Medio de cambio. Evita la doble coincidencia de deseos: el vendedor no tiene que querer justo lo que tú ofreces.
+> Depósito de valor. Cobrar los 300,00 € es medio de cambio.
 
-- [ ] ✅ la sabía
-- [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 2/10*
-
-**Un café a 1,50 € y un corte de pelo a 12,00 €: ¿qué función permite compararlos directamente?**
+**El café cuesta 1,50 € y el corte de pelo 12,00 €. ¿Qué función permite comparar ambos precios directamente?**
 > [!success]- Respuesta
-> Unidad de cuenta: todo se mide con la misma vara.
+> Unidad de cuenta: la misma vara de medir para todo.
 
-- [ ] ✅ la sabía
-- [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 2/10*
-
-**Los precios de casi todo suben a la vez. ¿Qué función del dinero falla y cómo se llama el fenómeno?**
+**El aceite sube de precio porque hubo mala cosecha. ¿Es inflación? ¿Por qué?**
 > [!success]- Respuesta
-> Falla el depósito de valor. Es la inflación.
+> No. Es la subida de una cosa concreta. Inflación es que suba el nivel general de precios, de casi todo a la vez.
 
-- [ ] ✅ la sabía
-- [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 2/10*
-
-**Un piso vale mucho y el dinero de la cartera vale poco. ¿Cuál es más líquido y por qué?**
+**¿Quién es más líquido: 200,00 € en la cartera o un piso? ¿Por qué?**
 > [!success]- Respuesta
-> El dinero de la cartera: se gasta al instante. El piso es poco líquido porque venderlo bien lleva meses.
-
-- [ ] ✅ la sabía
-- [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 2/10*
+> Los 200,00 €: se gastan al instante. Vender un piso bien lleva meses.
 
 ---
 Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]
