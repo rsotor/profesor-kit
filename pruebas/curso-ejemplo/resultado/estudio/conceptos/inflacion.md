@@ -1,6 +1,6 @@
 ---
 tipo: concepto
-bloques: [1.1]
+bloques: ["1.1 El dinero y sus funciones"]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
@@ -9,39 +9,45 @@ tags: [dinero, precios]
 ---
 # Inflación
 
-> **En una frase:** la inflación es la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** La inflación es la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-Guardas dinero para usarlo más adelante (depósito de valor), pero si los precios suben, ese dinero compra cada vez menos.
+Guardar dinero (depósito de valor) solo funciona si el dinero conserva su valor. Si los precios de casi todo suben a la vez, los mismos euros compran cada vez menos.
 
 ## El ejemplo
 
-Los precios suben una media de 3 % anual. Hoy tienes 100,00 € guardados en un cajón.
+Con una inflación del 3 % anual, los precios suben, de media, ese tanto cada año.
 
-- Dentro de un año, los mismos productos cuestan un 3 % anual más (la inflación anual).
-- Tus 100,00 € siguen siendo 100,00 €, pero compran lo que hoy se compraría con unos **97,09 €** (100,00 € ÷ 1,03).
-- El material de clase lo redondea a "unos 97 €".
+- Hoy: **100,00 €** compran una cesta de la compra.
+- Dentro de un año, esa misma cesta cuesta **103,00 €**.
+- Tus 100,00 € guardados en un cajón ya no llegan: en compra real valen **unos 97,00 €** de los de hoy.
+
+El dinero sigue ahí, pero compra menos.
 
 ## La fórmula
 
-$$ \text{poder de compra} = \frac{\text{dinero}}{1 + i} $$
+> [!info] Ampliación fuera de los apuntes
+> Los apuntes redondean a 97,00 €. El cálculo exacto divide entre el aumento de precios:
 
-$i$ es la inflación del periodo (aquí, 0,03 anual). El resultado es lo que ese dinero valdrá en compra real al final del periodo.
+$$ P_1 = \frac{P_0}{1 + i} $$
+
+$P_0$ es lo que tienes hoy, $i$ es la inflación del periodo (en tanto por uno: 0,03 para el 3 % anual) y $P_1$ es lo que ese dinero compra al cabo del periodo. Con 100,00 € y $i = 0{,}03$ sale **97,09 €**.
 
 ## El error típico
 
-Confundir que **suba el precio de una cosa** (por moda o escasez de esa cosa) con **inflación** (sube el nivel general de precios, casi todo a la vez).
+Confundir "sube el precio de una cosa" con "inflación". Un precio puede subir por moda o por escasez de esa cosa en concreto; la inflación es que sube el nivel general de precios, de casi todo a la vez.
 
 ## Visto desde tus ingresos irregulares
 
-Si guardas dinero para los meses flojos, la inflación come parte de ese colchón mientras esperas. Cuanto más tiempo lo tengas parado, más pierde.
+> [!info] Ampliación fuera de los apuntes
+> Un colchón para los meses flojos que se guarda en efectivo pierde poder de compra cada año que pasa. No hace falta que lo muevas hoy: basta con saber que ese dinero parado no está quieto en valor. Cómo y dónde guardarlo se verá en el módulo 2.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la inflación debilita el depósito de valor
-- [[liquidez]] — guardar muy líquido es cómodo, pero no protege de la inflación
+- [[funciones-del-dinero]] — la inflación rompe la función de depósito de valor
+- [[liquidez]] — guardar dinero líquido y quieto es lo que más sufre la inflación
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

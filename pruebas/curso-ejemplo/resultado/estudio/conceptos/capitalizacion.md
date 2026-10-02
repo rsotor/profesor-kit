@@ -1,39 +1,41 @@
 ---
 tipo: concepto
-bloques: [2.1]
+bloques: ["2.1 Interés simple y compuesto"]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [interes-compuesto]
-alias: [frecuencia de capitalización]
+alias: []
 tags: [interes]
 ---
 # Capitalización
 
-> **En una frase:** la capitalización es cada cuánto se suman los intereses al capital; cuanto más a menudo, más rápido crece el dinero.
-
-Repaso de lo previo: en el [[interes-compuesto]] los intereses se suman al capital y generan intereses (`C_f = C · (1 + i)^n`).
+> **En una frase:** La capitalización es cada cuánto se suman los intereses al capital dentro del año (mensual, trimestral, anual): cuanto más frecuente, más rápido crece.
 
 ## El problema
 
-Un tipo anual no siempre se aplica una vez al año. Puede aplicarse cada mes o cada trimestre. ¿Da lo mismo?
+Un tipo anual no siempre se aplica de golpe una vez al año. Si se aplica por trozos (cada mes), los intereses de enero ya generan intereses en febrero.
 
 ## El ejemplo
 
-Según la clase: con capitalización mensual se aplica cada mes una doceava parte del tipo anual, **pero sobre el capital ya crecido**, y el resultado a un año es algo mayor que aplicar el tipo anual una sola vez.
+Con capitalización mensual, cada mes se aplica una doceava parte del tipo anual, pero **sobre el capital ya crecido**. El resultado a un año es algo mayor que aplicar el tipo anual una sola vez.
 
 > [!info] Ampliación fuera de los apuntes
-> Con las cifras de siempre (1.000,00 € a un 5 % anual, 1 año): capitalizado una vez al año, 1.000,00 € × 1,05 = **1.050,00 €**. Capitalizado cada mes, 1.000,00 € × (1 + 0,05 ÷ 12)¹² ≈ **1.051,16 €**. La diferencia es de 1,16 €: pequeña, pero siempre a favor de la capitalización más frecuente.
+> Cálculo propio, no de la clase: 1.000,00 € al 5% anual.
+> - Capitalización anual: 1.000,00 € × 1,05 = **1.050,00 €**
+> - Capitalización mensual: cada mes se aplica 0,05 ÷ 12 ≈ 0,4167% mensual, y 1.000,00 € × (1 + 0,05 ÷ 12)¹² ≈ **1.051,16 €**
+>
+> 1,16 € más al año con el mismo 5% anual.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que "5 % anual capitalizado mensualmente" es lo mismo que 5 % anual capitalizado una vez: el segundo se aplica sobre el capital de partida todo el año y el primero va reinvirtiendo cada mes.
+> Creer que mensual es "más tipo". El tipo anual sigue siendo el mismo (5% anual): lo único que cambia es cuántas veces se suman los intereses al capital, y por eso sale algo más.
 
 ## Relacionados
 
-- [[interes-compuesto]] — del que es una variante: cuántos periodos `n` hay en un año
-- [[tipo-de-interes]] — hay que decir siempre el periodo del tipo
+- [[interes-compuesto]] — la capitalización es lo que da el "interés sobre interés"
+- [[tipo-de-interes]] — el tipo anual del que se parte
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez

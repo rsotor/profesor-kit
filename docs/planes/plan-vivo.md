@@ -80,7 +80,9 @@ Para abrir una sesión:
     `CONTRIBUTING.md`): rojo solo lo que estaría mal lo hiciera como lo hiciera; las decisiones del modelo, observación.
     Revisadas con ese criterio las comprobaciones de la prueba real: `visto_en`, las palabras de la auditoría de la
     trampa, la marca "del centro", qué falladas vuelven, el repaso regenerado y la propiedad escrita a su manera pasan
-    a observación o se relajan a lo que fija la skill. Falta la prueba entera en verde para el PR.
+    a observación o se relajan a lo que fija la skill.
+  - **Prueba real entera con Claude (2026-10-02, 207705c): 16/16**, corrección 6/6, 0 permisos denegados. Lista para el
+    PR. Codex en macOS, parcial (arriba).
   - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
     una preparación fallida conserva en su rama descartada lo que escribió, y el prompt del coordinador con las dos fases. Prueba real:
     02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,

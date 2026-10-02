@@ -4,38 +4,44 @@
 > **estudiada** arriba de su nota; aquí se verá la próxima vez que trabajes con tu profesor.
 
 🔁 Para repasar:
-- [[01-01-01-el-dinero-y-sus-funciones|Clase 1.1 El dinero y sus funciones]]
-- [[01-02-01-presupuesto-personal|Clase 1.2 Presupuesto personal]]
+- [[01-01-01-el-dinero-y-sus-funciones|1.1 El dinero y sus funciones]]
+- [[01-02-01-presupuesto-personal|1.2 Presupuesto personal]]
 
-👉 Sigue por aquí: [[02-01-01-interes-simple-y-compuesto|Clase 2.1 Interés simple y compuesto]]
+👉 Sigue por aquí: [[02-01-01-interes-simple-y-compuesto|2.1 Interés simple y compuesto]]
 
 🗂️ Flashcards para repasar:
-- Hasta el 3/10 · 8 tarjetas: [[flashcards/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones|Clase 1.1 El dinero y sus funciones]] (4) · [[flashcards/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal|Clase 1.2 Presupuesto personal]] (4)
+- Hasta el 4/10 · 8 tarjetas: [[flashcards/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones|1.1 El dinero y sus funciones]] (4) · [[flashcards/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal|1.2 Presupuesto personal]] (4)
 
-Estudiadas 2 de 3 · Pendientes abiertos: 11 → [[pendientes]]
+Estudiadas 2 de 4 · Pendientes abiertos: 11 → [[pendientes]]
 
-🏁 Módulo 1 · Fundamentos del dinero superado el 2026-10-01 con un 6,0
+🏁 Módulo 1 · Fundamentos del dinero superado el 2026-10-02 con un 6,0
 
-## Módulo 1 · Fundamentos del dinero · 2/2 estudiadas · 3/7 conceptos dominados · 📝 6,0 (2026-10-01)
+## Módulo 1 · Fundamentos del dinero · 2/2 estudiadas · 3/7 conceptos dominados · 📝 6,0 (2026-10-02)
 
 ### 1.1 El dinero y sus funciones · 1/1 estudiadas
 
 | Sesión | Estudiada (tú) | Profesor |
 |---|---|---|
-| [[01-01-01-el-dinero-y-sus-funciones\|Clase 1.1 El dinero y sus funciones]] | ✅ | 🔁 repasar |
+| [[01-01-01-el-dinero-y-sus-funciones\|1.1 El dinero y sus funciones]] | ✅ | 🔁 repasar |
 
 ### 1.2 Presupuesto personal · 1/1 estudiadas
 
 | Sesión | Estudiada (tú) | Profesor |
 |---|---|---|
-| [[01-02-01-presupuesto-personal\|Clase 1.2 Presupuesto personal]] | ✅ | 🔁 repasar |
+| [[01-02-01-presupuesto-personal\|1.2 Presupuesto personal]] | ✅ | 🔁 repasar |
 
-## Módulo 2 · Ahorro e interés · 0/1 estudiadas · 0/5 conceptos dominados · sin examen de módulo
+## Módulo 2 · Ahorro e interés · 0/2 estudiadas · 1/9 conceptos dominados · sin examen de módulo
 
 ### 2.1 Interés simple y compuesto · 0/1 estudiadas
 
 | Sesión | Estudiada (tú) | Profesor |
 |---|---|---|
-| [[02-01-01-interes-simple-y-compuesto\|Clase 2.1 Interés simple y compuesto]] | ⬜ |  |
+| [[02-01-01-interes-simple-y-compuesto\|2.1 Interés simple y compuesto]] | ⬜ |  |
+
+### 2.2 Ahorro a largo plazo · 0/1 estudiadas
+
+| Sesión | Estudiada (tú) | Profesor |
+|---|---|---|
+| [[02-02-01-ahorro-a-largo-plazo\|2.2 Ahorro a largo plazo]] | ⬜ | 📝 faltan 3 |
 
 Otras hojas: [[mi-perfil]] · [[mapa-del-curso]] · [[progreso]] · [[formulario]] · [[test-inicial]] · [[como-usar-tu-profesor]]
