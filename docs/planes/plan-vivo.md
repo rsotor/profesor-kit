@@ -70,6 +70,11 @@ Para abrir una sesión:
     paralelo. Arreglo: `lib/mezcla.js` junta las notas de concepto por cabecera (campo a campo) y cuerpo (a tres
     bandas). Y el curso de una prueba con fallos ya no se borra al salir. `--solo` del lanzar, sobre 6820b75: 3/3
     (juntada sin choque; interés compuesto y tasa de ahorro, una nota cada uno con las dos sesiones y una fila).
+  - **Prueba real con Codex en macOS (2026-10-02, 9006a4b, primera vez en Mac):** parcial, se da por buena en lo de la
+    #56 (decisión de Roberto: la cuota de Codex no da para otra entera). Bien: las dos clases del módulo 1, la trampa,
+    `/dudas`, `/ejercicio`, lanzar y juntar 02-01 + 02-02 y los conceptos compartidos. Sin probar por cuota de Codex
+    agotada: examen (generar, corregir, oráculo) y repaso. Encontrado: Codex añadía `referencia` y `notas` a
+    `config/examenes.json`; `/examen` ya dice que ahí no va nada más (la ambigüedad era de la skill).
   - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
     una preparación fallida conserva en su rama descartada lo que escribió, y el prompt del coordinador con las dos fases. Prueba real:
     02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,
