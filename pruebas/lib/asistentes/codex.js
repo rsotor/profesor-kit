@@ -39,9 +39,14 @@ function argsComunes({ adaptador, sandbox, modelo, cwd, approvalPolicy = 'never'
   return args;
 }
 
-// Escribe en el curso (workspace-write); el prompt siempre por stdin, nunca como argumento.
+// Escribe en el curso con revisión automática; el prompt siempre por stdin, nunca como argumento. En la primera
+// prueba real con Codex 0.159.3 (#45), workspace-write + approval_policy=never dejó los comandos sin una regla
+// explícita bloqueados (incluso Get-Content). `--approve-for-me` conserva workspace-write y resuelve esas
+// solicitudes sin dejar esperando al alumno. Las reglas del curso se mantienen: solo se ignoran en los sondeos.
 function argsTarea({ prompt, modelo, cwd, adaptador }) {
-  return { args: argsComunes({ adaptador, sandbox: 'workspace-write', modelo, cwd }), entrada: prompt };
+  const args = argsComunes({ adaptador, sandbox: null, modelo, cwd, approvalPolicy: null });
+  args.push('--approve-for-me');
+  return { args, entrada: prompt };
 }
 
 // disparadores.js trabaja sobre una copia temporal que borra al terminar. También necesita `workspace-write`:
