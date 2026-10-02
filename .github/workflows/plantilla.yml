@@ -1,0 +1,26 @@
+name: plantilla
+# Un issue sin etiqueta de plantilla (feedback, instalación, mejora) no entra en la cola nocturna: se le pide al
+# autor que use una. Sin LLM: solo mira las etiquetas que pone la plantilla al abrir el issue.
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  comprobar:
+    if: >
+      !endsWith(github.event.issue.user.login, '[bot]') &&
+      !contains(github.event.issue.labels.*.name, 'feedback') &&
+      !contains(github.event.issue.labels.*.name, 'instalación') &&
+      !contains(github.event.issue.labels.*.name, 'mejora')
+    runs-on: ubuntu-latest
+    steps:
+      - run: >
+          gh issue comment "$ISSUE" -R "$GITHUB_REPOSITORY" --body
+          "Gracias por abrirlo. Para poder trabajarlo, ¿lo puedes abrir de nuevo con una de las plantillas
+          (*New issue* → elegir tipo)? Así llega con los datos que hacen falta y con su etiqueta."
+        env:
+          ISSUE: ${{ github.event.issue.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

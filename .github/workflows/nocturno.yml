@@ -1,0 +1,125 @@
+name: nocturno
+# Mantenimiento nocturno (plan vivo, «mantenimiento nocturno»; etiquetas en CONTRIBUTING.md, «Issues que resuelve
+# Claude»). Tres pasos:
+#   cola      → sin LLM: qué issues tocan esta noche y con cuántos puntos (.github/cola-nocturna.js).
+#   trabajar  → Claude, uno a uno. Solo edita ficheros y deja resultado-issue.json: no tiene `gh` ni red, así que
+#               no puede publicar nada. Lo publica el paso siguiente, sin LLM, como el bot.
+#   informe   → sin LLM: actualiza el issue fijado «Informe de mantenimiento».
+# Fase 1: nada se mergea solo; los PRs los revisa y mergea Roberto.
+# Para pararlo todo: variable del repo CLAUDE_NOCTURNO distinta de `on`. Cada job de Claude la mira al arrancar.
+on:
+  schedule:
+    - cron: '0 1 * * *'   # 03:00 en Madrid en verano, 02:00 en invierno
+  workflow_dispatch:
+
+concurrency:
+  group: nocturno
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  cola:
+    runs-on: ubuntu-latest
+    outputs:
+      elegidos: ${{ steps.cola.outputs.elegidos }}
+      noche: ${{ steps.cola.outputs.noche }}
+    steps:
+      - if: vars.CLAUDE_NOCTURNO != 'on'
+        run: echo "CLAUDE_NOCTURNO vale '${{ vars.CLAUDE_NOCTURNO }}', así que esta noche no se trabaja ningún issue."
+      - if: vars.CLAUDE_NOCTURNO == 'on'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - if: vars.CLAUDE_NOCTURNO == 'on'
+        id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.BOT_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+      - if: vars.CLAUDE_NOCTURNO == 'on'
+        id: cola
+        run: |
+          noche=$(node .github/cola-nocturna.js --cola --tope "${TOPE:-6}")
+          echo "$noche"
+          echo "noche=$noche" >> "$GITHUB_OUTPUT"
+          echo "elegidos=$(echo "$noche" | jq -c .elegidos)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          TOPE: ${{ vars.CLAUDE_TOPE_PUNTOS }}
+
+  trabajar:
+    needs: cola
+    if: needs.cola.outputs.elegidos != '' && needs.cola.outputs.elegidos != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.cola.outputs.elegidos) }}
+    steps:
+      - if: vars.CLAUDE_NOCTURNO != 'on'
+        run: |
+          echo "Interruptor apagado durante la noche; el issue ${{ matrix.numero }} se queda para otra."
+          exit 1
+      - id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.BOT_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+      # Con el token del bot: el push de la rama y el PR salen a su nombre y disparan `tests`.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ steps.token.outputs.token }}
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - run: npm ci
+      - name: Identidad del bot y contexto del issue
+        run: |
+          id=$(gh api "users/${SLUG}[bot]" --jq .id)
+          git config user.name "${SLUG}[bot]"
+          git config user.email "${id}+${SLUG}[bot]@users.noreply.github.com"
+          printf 'contexto-issue.md\nresultado-issue.json\n' >> .git/info/exclude
+          node .github/cola-nocturna.js --contexto "${{ matrix.numero }}" contexto-issue.md
+          { echo 'texto<<FIN_DEL_PROMPT'; sed "s/MODO/${{ matrix.modo }}/" .github/claude/issue.md; echo 'FIN_DEL_PROMPT'; } >> "$GITHUB_OUTPUT"
+        id: prompt
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          SLUG: ${{ steps.token.outputs.app-slug }}
+      - uses: anthropics/claude-code-action@97c53473391bff1901034d4b454b5bac7ab7a029 # v1.0.239
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.token.outputs.token }}
+          prompt: ${{ steps.prompt.outputs.texto }}
+          claude_args: >-
+            --model sonnet --max-turns 80
+            --allowedTools "Read,Edit,Write,Glob,Grep,Bash(npm test:*),Bash(npm run lint:*),Bash(node --test:*),Bash(node .kit/herramientas/comprobar.js:*),Bash(git diff:*),Bash(git status:*)"
+            --disallowedTools "Bash(gh:*),Bash(curl:*),Bash(git push:*),Bash(git commit:*),WebFetch,WebSearch"
+      - name: Publicar lo que decidió Claude
+        if: always() && vars.CLAUDE_NOCTURNO == 'on'
+        run: node .github/cola-nocturna.js --aplicar "${{ matrix.numero }}" resultado-issue.json "${{ matrix.modo }}"
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+
+  informe:
+    needs: [cola, trabajar]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.BOT_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+      - run: |
+          printf '%s' "$NOCHE" > noche.json
+          node .github/cola-nocturna.js --informe noche.json
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          NOCHE: ${{ needs.cola.outputs.noche }}
+          CLAUDE_NOCTURNO: ${{ vars.CLAUDE_NOCTURNO }}
