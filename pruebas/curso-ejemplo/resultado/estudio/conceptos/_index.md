@@ -17,19 +17,20 @@ slug | definición en una frase | bloques | dif | alias: sinónimos, nombre en o
 ## Conceptos
 
 ```
-funciones-del-dinero | El dinero resuelve el problema del trueque con tres funciones a la vez: medio de cambio, unidad de cuenta y depósito de valor. | 1.1 | 2 | alias:
-inflacion | La inflación es la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy. | 1.1 | 2 | alias:
-liquidez | La liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas. | 1.1 | 2 | alias:
-presupuesto-personal | Un presupuesto es apuntar lo que entra (ingresos) y lo que sale (gastos) cada mes para saber cuánto te queda. | 1.2 | 2 | alias:
-gastos-fijos-y-variables | Los gastos fijos se repiten cada mes con casi la misma cifra y no dependen de lo que decidas; los variables cambian según lo que decidas gastar. | 1.2 | 2 | alias:
-tasa-de-ahorro | La tasa de ahorro dice qué parte de lo que ingresas te queda al acabar el mes, para poder comparar meses o personas con ingresos distintos. | 1.2, 2.2 | 2 | alias:
-colchon-financiero | El colchón financiero es dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o llega un imprevisto, y se mide en meses de gastos cubiertos. | 1.2 | 2 | alias:
-capital | El capital es la cantidad de dinero de la que se parte: lo que se presta, se deposita o se invierte. | 2.1 | 1 | alias:
-tipo-de-interes | El tipo de interés es el precio del dinero: cuánto se paga (o se cobra) por tenerlo prestado durante un tiempo, en tanto por ciento y siempre con su periodo. | 2.1 | 2 | alias:
-interes-simple | Con interés simple, los intereses se calculan siempre sobre el capital inicial, periodo a periodo, y no se reinvierten. | 2.1 | 2 | alias:
-interes-compuesto | Con interés compuesto, los intereses de cada periodo se suman al capital y, a partir de ahí, generan intereses ellos también ("interés sobre interés"). | 2.1, 2.2 | 3 | alias:
-capitalizacion | La capitalización es cada cuánto se suman los intereses al capital dentro del año (mensual, trimestral, anual): cuanto más frecuente, más rápido crece. | 2.1 | 2 | alias:
-regla-del-72 | La regla del 72 es una aproximación para saber, a ojo, cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual. | 2.1 | 2 | alias:
-aportacion-periodica | Una aportación periódica es una cantidad fija que se añade a los ahorros cada cierto tiempo (cada mes, cada año), en vez de ahorrar de golpe una sola vez. | 2.2 | 2 | alias:
-horizonte-temporal | El horizonte temporal es el tiempo que el dinero va a estar ahorrado antes de usarlo; con interés compuesto, es lo que más pesa en cuánto crece. | 2.2 | 2 | alias:
+funciones-del-dinero | el dinero sirve para tres cosas a la vez: pagar cualquier cosa (medio de cambio), ponerle precio a todo con la misma vara (unidad de cuenta) y guardar valor para más adelante (depósito de valor). | modulo-1 | 2 | alias: funciones del dinero, medio de cambio, unidad de cuenta, depósito de valor
+inflacion | la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy. | modulo-1 | 2 | alias:
+liquidez | lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas. | modulo-1 | 1 | alias:
+presupuesto | un presupuesto es apuntar lo que entra y lo que sale cada mes, para saber cuánto te queda. | modulo-1 | 1 | alias: presupuesto personal
+ingreso-medio | cuando tus ingresos cambian de un mes a otro, presupuestas con la media de los últimos 6-12 meses, no con el del mejor mes. | modulo-1 | 2 | alias: ingreso medio, ingresos irregulares
+gastos-fijos-y-variables | un gasto es fijo si se repite cada mes con (casi) la misma cifra sin que decidas nada, y variable si la cifra la decides tú cada mes. | modulo-1 | 2 | alias: gastos fijos, gastos variables, gasto fijo, gasto variable
+tasa-de-ahorro | la tasa de ahorro es la parte de lo que ingresas que te queda, lo que permite comparar a dos personas con sueldos distintos. | modulo-1, modulo-2 | 2 | alias: tasa de ahorro
+colchon-financiero | el colchón financiero es dinero líquido guardado aparte para cubrir tus gastos si un mes facturas poco o llega un imprevisto, y se mide en meses de gastos cubiertos. | modulo-1 | 2 | alias: colchón financiero, fondo de emergencia
+capital | el capital es la cantidad de dinero de la que se parte: lo que se presta, se deposita o se invierte. | modulo-2 | 1 | alias: capital inicial
+tipo-de-interes | el tipo de interés es el precio del dinero: cuánto se paga (o se cobra) por tenerlo prestado durante un tiempo, en tanto por ciento y siempre con su periodo. | modulo-2 | 2 | alias: tipo de interés, tasa de interés
+interes-simple | con interés simple, los intereses se calculan siempre sobre el capital inicial, periodo a periodo, y no se reinvierten. | modulo-2 | 2 | alias: interés simple
+interes-compuesto | con interés compuesto, los intereses de cada periodo se suman al capital y a partir de ahí generan intereses ellos también ("interés sobre interés"). | modulo-2 | 3 | alias: interés compuesto, interés sobre interés
+capitalizacion | la capitalización es cada cuánto se suman los intereses al capital (cada año, trimestre o mes): cuanto más frecuente, más rápido crece. | modulo-2 | 2 | alias: capitalización, frecuencia de capitalización
+regla-del-72 | la regla del 72 estima a ojo cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual. | modulo-2 | 2 | alias: regla del 72
+aportacion-periodica | una aportación periódica es una cantidad fija que se añade a los ahorros cada cierto tiempo (cada mes, cada año), en vez de ahorrar de golpe una sola vez. | modulo-2 | 2 | alias: aportaciones periódicas, aportación regular
+horizonte-temporal | el horizonte temporal es el tiempo que el dinero va a estar ahorrado antes de usarlo, y con interés compuesto es lo que más pesa en cuánto acaba habiendo. | modulo-2 | 2 | alias: horizonte, plazo del ahorro
 ```

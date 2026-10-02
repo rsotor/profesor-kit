@@ -1,56 +1,64 @@
 ---
 tipo: concepto
-bloques: ["1.2 Presupuesto personal"]
+bloques: [modulo-1]
 visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
-requiere: [liquidez, gastos-fijos-y-variables]
-alias: []
-tags: [ahorro, presupuesto]
-ejercicio: 01-02-01-racha-de-meses-flojos
+requiere: [presupuesto, liquidez, gastos-fijos-y-variables]
+alias: [colchón financiero, fondo de emergencia]
+tags: [presupuesto, ahorro]
+ejercicio: 01-02-01-colchon-y-tasa-de-ahorro
 ---
 # Colchón financiero
 
-> **En una frase:** El colchón financiero es dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o llega un imprevisto, y se mide en meses de gastos cubiertos.
+> **En una frase:** el colchón financiero es dinero líquido guardado aparte para cubrir tus gastos si un mes facturas poco o llega un imprevisto, y se mide en meses de gastos cubiertos.
 
 ## El problema
 
-Un mes sin ingresos o un imprevisto (una avería, una factura) te obliga a endeudarte o a malvender algo si no tienes nada apartado.
+Un mes flojo o un imprevisto hay que pagarlo hoy. Sin dinero a mano, tiras de deuda o vendes algo con prisa. Por eso es el primer objetivo, antes de ahorrar para otra cosa.
 
 ## El ejemplo
 
-Gastos mensuales del ejemplo: 1.195,00 €.
+Gastos del mes: 1.195,00 € (ver [[presupuesto]]).
 
-| Meses cubiertos | Colchón |
-|---|---|
-| 3 meses | 1.195,00 € × 3 = **3.585,00 €** |
+| Objetivo | Cuenta | Colchón |
+|---|---|---|
+| 3 meses (nómina fija) | 1.195,00 € × 3 | **3.585,00 €** |
+| 5 meses (freelance, mínimo) | 1.195,00 € × 5 | **5.975,00 €** |
+| 6 meses (freelance, máximo) | 1.195,00 € × 6 | **7.170,00 €** |
 
-La clase lo propone como primer objetivo, antes de ahorrar para otra cosa.
+Tiene que ser [[liquidez]]: dinero que puedas gastar ya, sin perder valor por las prisas.
 
 ## La fórmula
 
-$$ \text{colchón} = \text{gastos mensuales} \times \text{meses a cubrir} $$
+$$ \text{colchón} = \text{gastos del mes} \times \text{meses a cubrir} $$
 
-Cuánto dinero necesitas para aguantar esos meses sin ingresar nada.
+Lo que gastas al mes, multiplicado por los meses que quieres aguantar sin ingresos.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Calcularlo con los ingresos en vez de con los gastos. El colchón cubre lo que **tienes que pagar**, no lo que ganas; y tiene que estar líquido (ver [[liquidez]]), no en algo que tarde meses en venderse.
-
-## Visto desde tus ingresos irregulares
-
-> [!info] Ampliación fuera de los apuntes
-> La clase dice que con ingresos irregulares conviene apuntar más alto: **5-6 meses** en vez de 3. Con los gastos del ejemplo serían entre 5.975,00 € (5 meses) y 7.170,00 € (6 meses).
+> Contar como colchón dinero que no es líquido (un piso, una inversión que no puedes retirar sin perder). Si no lo puedes gastar esta semana, no cuenta.
 
 ## Practícalo
 
-[[ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-racha-de-meses-flojos|¿Te alcanza el colchón en una racha?]] — mueve qué parte del colchón es líquida y si lo que sube es el gasto o la facturación, y mira cuándo cambia el veredicto.
+→ **[Colchón y tasa de ahorro](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-y-tasa-de-ahorro.html)**
+
+Cambia los gastos y los meses objetivo: el colchón necesario sube igual que ellos, y los meses que cubre tu colchón actual bajan.
+
+→ **[Qué dinero cuenta como colchón](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-que-dinero-cuenta-como-colchon.html)**
+
+Mueve el dinero no líquido: el veredicto no cambia. Solo se invierte con los gastos, los meses a cubrir o el dinero líquido.
+
+## Visto desde tus ingresos irregulares
+
+Con ingresos irregulares conviene apuntar más alto que con nómina fija: **5-6 meses en vez de 3**. La razón es que un mes flojo no es un imprevisto raro sino algo que te va a pasar. El colchón es lo que convierte un mes de 1.300,00 € en un susto pequeño en vez de en una deuda.
 
 ## Relacionados
 
-- [[liquidez]] — el colchón tiene que poder gastarse ya
-- [[gastos-fijos-y-variables]] — la base para medir "meses de gastos"
-- [[tasa-de-ahorro]] — lo que se aparta cada mes para llenarlo
+- [[liquidez]] — el colchón tiene que ser dinero líquido
+- [[presupuesto]] — de ahí salen los gastos del mes
+- [[gastos-fijos-y-variables]] — los fijos son los que siguen llegando un mes flojo
+- [[ingreso-medio]] — lo que cubre la diferencia cuando un mes queda por debajo de la media
 
 ## Historial
 
@@ -59,18 +67,10 @@ Cuánto dinero necesitas para aguantar esos meses sin ingresar nada.
 > [!question]- Duda · 2026-10-02
 > no entiendo bien esta parte, ¿me lo explicas con otro ejemplo?
 >
-> **Respuesta:** (Ampliación fuera de los apuntes: ejemplo inventado por el profesor, no es de la clase. No decías qué parte exactamente, así que va el cálculo entero con otra cifra.)
+> **Respuesta:** otro caso, con otras cifras. Eres freelance y gastas **900,00 €** al mes. Apuntas a 5 meses:
 >
-> Una diseñadora freelance gasta **900,00 €** al mes (alquiler 500,00 €, comida 250,00 €, resto 150,00 €). Esto es lo que factura en tres meses:
+> 900,00 € × 5 = **4.500,00 €** en una cuenta aparte, que puedas gastar ya.
 >
-> | Mes | Factura | Gastos | Diferencia |
-> |---|---|---|---|
-> | Enero | 1.800,00 € | 900,00 € | +900,00 € |
-> | Febrero | 400,00 € | 900,00 € | −500,00 € |
-> | Marzo | 0,00 € | 900,00 € | −900,00 € |
+> Llega un mes en que no factura ningún cliente: sacas 900,00 € para pagar el mes y te quedan **3.600,00 €**, que aún cubren 4 meses. Un mes sin ingresos deja de ser una urgencia y pasa a ser un gasto previsto.
 >
-> Febrero y marzo no llegan a cubrir los gastos: faltan 500,00 € + 900,00 € = **1.400,00 €**. Ese hueco sale del colchón, no de una deuda.
->
-> Para aguantar 5 meses así: 900,00 € × 5 = **4.500,00 €**. La fórmula es la misma de arriba; solo cambia el gasto mensual y los meses que eliges cubrir.
->
-> Lo que se mide son los **gastos** (900,00 €), no lo que factura en enero (1.800,00 €).
+> **TODO:** el marcador estaba al final de la nota y no dice a qué parte se refiere. Este ejemplo vale para la idea entera (fórmula, meses a cubrir); si la duda era sobre otra parte (la liquidez, el rango de 5-6 meses, el error típico), dime cuál y la amplío.

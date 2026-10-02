@@ -12,11 +12,11 @@
 🗂️ Flashcards para repasar:
 - Hasta el 4/10 · 8 tarjetas: [[flashcards/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones|1.1 El dinero y sus funciones]] (4) · [[flashcards/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal|1.2 Presupuesto personal]] (4)
 
-Estudiadas 2 de 4 · Pendientes abiertos: 11 → [[pendientes]]
+Estudiadas 2 de 4 · Pendientes abiertos: 14 → [[pendientes]]
 
 🏁 Módulo 1 · Fundamentos del dinero superado el 2026-10-02 con un 6,0
 
-## Módulo 1 · Fundamentos del dinero · 2/2 estudiadas · 3/7 conceptos dominados · 📝 6,0 (2026-10-02)
+## Módulo 1 · Fundamentos del dinero · 2/2 estudiadas · 4/8 conceptos dominados · 📝 6,0 (2026-10-02)
 
 ### 1.1 El dinero y sus funciones · 1/1 estudiadas
 

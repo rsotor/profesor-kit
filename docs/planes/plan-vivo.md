@@ -224,6 +224,9 @@ a los demás repos.
    `pendiente` de `preguntar_con_opciones` (#59).
 4. **El profesor escribe con `>>` aunque `AGENTS.md` lo prohíbe** (tres pruebas reales seguidas). Hecho en la rama de
    la #56: `/sesion` y `/ejercicio` lo dicen donde se añaden filas. Se mide en "Permisos denegados" del RESUMEN.
+   - 2026-10-02, prueba real de la 0.29.0 (88ada91): 1 denegado en `/examen (corregir)`,
+     `rm estudio/progreso.md.tmp && git status --short` (fichero temporal propio, borrado con shell y encadenado). Misma
+     familia; no tumbó el paso.
 5. **0.29.0:** el revisor independiente (#56, en curso) y, después, plan con calendario (E2 + E9) y examen acumulativo (E7).
    - **Fuera:** TODO: decidir con Roberto al abrir el plan.
    - **Cómo sabremos:** TODO: decidir con Roberto al abrir el plan.

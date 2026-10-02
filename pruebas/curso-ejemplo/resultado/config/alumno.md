@@ -35,8 +35,6 @@
 
 ## Errores repetidos
 
-- **liquidez**: dos preguntas sin acertar en el mismo examen, las dos dejadas en blanco (p.5, piso con mucho valor y poca liquidez; p.10, dónde tener el colchón). No hay respuesta marcada, así que no se sabe si confunde valor con liquidez o no llegó a contestarlas. — *examen del módulo 1 (01-examen-2026-10-02.md), p.5 y p.10*
-
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
 
@@ -45,11 +43,11 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-10-02 · 01-01-01-el-dinero-y-sus-funciones, en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-10-02 · 01-01-01-el-dinero-y-sus-funciones, respuesta del alumno en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-10-02 · conceptos/colchon-financiero.md, duda de 2026-10-02 |
-| funciones-del-dinero | 1 | 2026-10-02 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, duda de 2026-10-02 |
+| colchon-financiero | 1 | 2026-10-02 · conceptos/colchon-financiero.md, 2026-10-02 |
+| 01-01-01-el-dinero-y-sus-funciones | 1 | 2026-10-02 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-10-02 |
