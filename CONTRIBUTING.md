@@ -185,7 +185,9 @@ un issue abierto por él. Las etiquetas dicen en qué punto está cada uno:
 Orden de cada noche: lo que Roberto desbloqueó (aprobado o respondido), luego `feedback` e `instalación`, luego
 `mejora`; dentro de cada grupo, por prioridad y del más antiguo al más nuevo. Lo pequeño y lo medio se mergea solo
 si pasa las reglas del plan; lo grande, nunca. **Para parar todo** (por ejemplo, con la cuota semanal al límite):
-variable del repo `CLAUDE_NOCTURNO` en `off` (*Settings → Secrets and variables → Actions → Variables*).
+variable del repo `CLAUDE_NOCTURNO` en `off` (*Settings → Secrets and variables → Actions → Variables*). El
+presupuesto de puntos por noche es la variable `CLAUDE_TOPE_PUNTOS` (6 si no existe). Cada mañana, el issue fijado
+«Informe de mantenimiento» resume qué se hizo y qué espera a Roberto.
 
 ## Documentación viva: quién es la fuente de verdad de qué
 
