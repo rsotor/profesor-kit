@@ -214,11 +214,11 @@ function ejecutarAsistente({ lanzador, adaptador, frase, destino, modelo, detect
     let resto = '';
     let stderr = '';
     let hecho = false;
-    const terminar = resultado => {
-      if (hecho) return;
-      hecho = true;
-      clearTimeout(reloj);
-      hijo.kill('SIGTERM');
+    let volcado = false;
+    const finalizar = resultado => {
+      if (volcado) return;
+      volcado = true;
+      clearTimeout(esperaCierre);
       if (volcarDir) {
         const etiqueta = etiquetaVolcado || frase;
         volcar(volcarDir, etiqueta, [...lineas, resto].join('\n'));
@@ -226,11 +226,23 @@ function ejecutarAsistente({ lanzador, adaptador, frase, destino, modelo, detect
       }
       resolve(resultado);
     };
+    let esperaCierre;
+    // Al decidir se corta el proceso, pero el volcado y la resolución esperan a 'close': así ya se ha leído todo
+    // su stderr. Si 'close' no llega (un nieto con los pipes abiertos), se vuelca igualmente tras un margen.
+    const terminar = (resultado, { sinEsperar = false } = {}) => {
+      if (hecho) return;
+      hecho = true;
+      clearTimeout(reloj);
+      hijo.kill('SIGTERM');
+      if (sinEsperar) { finalizar(resultado); return; }
+      hijo.once('close', () => finalizar(resultado));
+      esperaCierre = setTimeout(() => finalizar(resultado), 2000);
+    };
     const reloj = setTimeout(() => terminar(sinDecidir('tiempo agotado')), LIMITE_MS);
     // Si el proceso no llega ni a arrancar (comando no encontrado, sin permiso de ejecución...), spawn no
     // lanza: emite 'error' de forma asíncrona. Sin este handler, la promesa nunca se resolvía (se quedaba
     // esperando hasta LIMITE_MS sin motivo real).
-    hijo.on('error', e => terminar(sinDecidir(`no arrancó: ${e.message}`)));
+    hijo.on('error', e => terminar(sinDecidir(`no arrancó: ${e.message}`), { sinEsperar: true }));
     if (conEntrada) {
       // Si el proceso muere justo al arrancar, escribir en su stdin ya cerrado tira un 'error' (EPIPE) que,
       // sin escucharlo, tumba el proceso entero (Node exige que todo 'error' tenga un listener).
@@ -248,7 +260,7 @@ function ejecutarAsistente({ lanzador, adaptador, frase, destino, modelo, detect
     hijo.stderr.on('data', trozo => { stderr += trozo; });
     hijo.on('close', codigo => {
       const d = detectar([...lineas, resto]);
-      terminar(d.decidido ? d : sinDecidir(`terminó (código ${codigo}) sin decidir`));
+      terminar(d.decidido ? d : sinDecidir(`terminó (código ${codigo}) sin decidir`), { sinEsperar: true });
     });
   });
 }
