@@ -186,8 +186,10 @@ Orden de cada noche: lo que Roberto desbloqueó (aprobado o respondido), luego `
 `mejora`; dentro de cada grupo, por prioridad y del más antiguo al más nuevo. Lo pequeño y lo medio se mergea solo
 si pasa las reglas del plan; lo grande, nunca. **Para parar todo** (por ejemplo, con la cuota semanal al límite):
 variable del repo `CLAUDE_NOCTURNO` en `off` (*Settings → Secrets and variables → Actions → Variables*). El
-presupuesto de puntos por noche es la variable `CLAUDE_TOPE_PUNTOS` (6 si no existe). Cada mañana, el issue fijado
-«Informe de mantenimiento» resume qué se hizo y qué espera a Roberto.
+presupuesto de puntos por noche es la variable `CLAUDE_TOPE_PUNTOS` (6 si no existe). El informe es un issue fijado
+por mes («Informe de mantenimiento 2026-10»): arriba, lo que espera a Roberto (se rehace también al cerrarse un PR
+del bot o cambiar una etiqueta); debajo, una línea por noche. Si algo le espera, el bot le menciona en un único
+comentario (borra el anterior), que es lo que le llega por email.
 
 ## Documentación viva: quién es la fuente de verdad de qué
 

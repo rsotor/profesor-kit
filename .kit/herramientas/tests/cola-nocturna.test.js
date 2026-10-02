@@ -96,25 +96,41 @@ test('prohibidos: nada de .github/ en un PR nocturno', () => {
   assert.deepEqual(prohibidos(['README.md']), []);
 });
 
-const { informe } = require('../../../.github/cola-nocturna');
+const { informe, lineaNoche, historialDe, anotarNoche, tituloDelMes } = require('../../../.github/cola-nocturna');
 
-test('informe: lo que espera a Roberto arriba, y la noche con sus puntos', () => {
+test('informe: lo que espera a Roberto arriba y el historial del mes debajo', () => {
   const txt = informe({
-    fecha: '2026-10-03 06:00 UTC', interruptor: 'on',
-    noche: { elegidos: [{ numero: 7, modo: 'implementar', puntos: 1 }], gastado: 1, tope: 6, sinSitio: [9] },
-    propuestas: [{ numero: 3, titulo: 'Grande' }], bloqueados: [], prs: [{ numero: 80, titulo: 'arreglo: x' }],
+    fecha: '2026-10-03 06:00 UTC', interruptor: 'on', propuestas: [{ numero: 3, titulo: 'Grande' }], bloqueados: [],
+    prs: [{ numero: 80, titulo: 'arreglo: x' }], historial: ['- 10-03: #7 implementar (1 pt) · 1/6'],
   });
-  assert.ok(txt.indexOf('Esperan tu decisión') < txt.indexOf('Esta noche'));
+  assert.ok(txt.indexOf('Esperan tu decisión') < txt.indexOf('Historial del mes'));
   assert.match(txt, /#3 Grande/);
   assert.match(txt, /#80 arreglo: x/);
-  assert.match(txt, /Puntos: 1 de 6/);
-  assert.match(txt, /Sin sitio esta noche: #9/);
+  assert.match(txt, /\*\*on\*\*/);
+  assert.deepEqual(historialDe(txt), ['- 10-03: #7 implementar (1 pt) · 1/6']);
 });
 
-test('informe: sin noche (interruptor apagado) lo dice', () => {
-  const txt = informe({ fecha: 'f', interruptor: 'off', noche: null, propuestas: [], bloqueados: [], prs: [] });
-  assert.match(txt, /No corrió/);
-  assert.match(txt, /\*\*off\*\*/);
+test('lineaNoche: lo hecho, los puntos y lo que no cupo; o que no corrió', () => {
+  const noche = { elegidos: [{ numero: 7, modo: 'implementar', puntos: 1 }], gastado: 1, tope: 6, sinSitio: [9] };
+  assert.equal(lineaNoche('10-03', noche), '- 10-03: #7 implementar (1 pt) · 1/6 · sin sitio: #9');
+  assert.equal(lineaNoche('10-04', { elegidos: [], gastado: 0, tope: 6, sinSitio: [] }), '- 10-04: cola vacía · 0/6');
+  assert.match(lineaNoche('10-05', null), /no corrió/);
+});
+
+test('anotarNoche: la más reciente arriba; una segunda pasada el mismo día sustituye a la primera', () => {
+  const h = anotarNoche(['- 10-02: cola vacía · 0/6'], '- 10-03: cola vacía · 0/6');
+  assert.deepEqual(h, ['- 10-03: cola vacía · 0/6', '- 10-02: cola vacía · 0/6']);
+  assert.deepEqual(anotarNoche(h, '- 10-03: #1 implementar (1 pt) · 1/6'), ['- 10-03: #1 implementar (1 pt) · 1/6', '- 10-02: cola vacía · 0/6']);
+});
+
+test('historialDe: sin informe previo o sin la sección, vacío', () => {
+  assert.deepEqual(historialDe(undefined), []);
+  assert.deepEqual(historialDe('Otro texto\n- suelto'), []);
+});
+
+test('tituloDelMes: un informe por mes', () => {
+  assert.equal(tituloDelMes('2026-10-31T23:59:00Z'), 'Informe de mantenimiento 2026-10');
+  assert.equal(tituloDelMes('2026-11-01T01:00:00Z'), 'Informe de mantenimiento 2026-11');
 });
 
 const { avisoDeLaManana } = require('../../../.github/cola-nocturna');

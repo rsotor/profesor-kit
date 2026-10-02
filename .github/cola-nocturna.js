@@ -6,6 +6,7 @@
 //
 //   node .github/cola-nocturna.js --cola [--tope 6]        # JSON con los issues de esta noche (para la matriz)
 //   node .github/cola-nocturna.js --contexto <n> <fichero>  # escribe el contexto del issue n
+//   node .github/cola-nocturna.js --informe [noche.json] [--sin-aviso]  # actualiza el informe fijado
 //
 // Necesita `gh` con GH_TOKEN y GITHUB_REPOSITORY (los pone el workflow `nocturno`).
 const fs = require('node:fs');
@@ -100,30 +101,52 @@ function validarResultado(r) {
 const PROHIBIDO_EN_PR = /^\.github\//;
 const prohibidos = ficheros => ficheros.filter(f => PROHIBIDO_EN_PR.test(f));
 
-// Pura: el cuerpo del issue «Informe de mantenimiento». `noche` = la salida de cola() (null si no corrió).
+// El informe: un issue fijado por mes («Informe de mantenimiento 2026-10»). Arriba, lo que espera a Roberto (se
+// rehace siempre); debajo, una línea por noche, la más reciente primero. Al cambiar de mes se cierra el anterior:
+// en un año quedan doce issues pequeños, no uno que crece sin fin.
 const TITULO_INFORME = 'Informe de mantenimiento';
-function informe({ fecha, interruptor, noche, propuestas, bloqueados, prs }) {
+const HISTORIAL = '## Historial del mes';
+const tituloDelMes = fechaIso => `${TITULO_INFORME} ${fechaIso.slice(0, 7)}`;
+
+// Pura: la línea de una noche. `noche` = la salida de cola(); null = no corrió (interruptor apagado o fallo).
+function lineaNoche(dia, noche) {
+  if (!noche) return `- ${dia}: no corrió (interruptor apagado o fallo antes de elegir)`;
+  const hechos = noche.elegidos.length ? noche.elegidos.map(e => `#${e.numero} ${e.modo} (${e.puntos} pt)`).join(', ') : 'cola vacía';
+  const sinSitio = noche.sinSitio.length ? ` · sin sitio: ${noche.sinSitio.map(x => `#${x}`).join(', ')}` : '';
+  return `- ${dia}: ${hechos} · ${noche.gastado}/${noche.tope}${sinSitio}`;
+}
+
+// Pura: las líneas del historial de un informe ya escrito.
+function historialDe(cuerpo) {
+  const i = (cuerpo || '').indexOf(HISTORIAL);
+  if (i < 0) return [];
+  return cuerpo.slice(i + HISTORIAL.length).split('\n').filter(l => l.startsWith('- '));
+}
+
+// Pura: añade la noche arriba del historial; si ya había una línea de ese día (una pasada a mano), la sustituye.
+function anotarNoche(historial, linea) {
+  const dia = linea.slice(2, linea.indexOf(':'));
+  return [linea, ...historial.filter(l => !l.startsWith(`- ${dia}:`))];
+}
+
+// Pura: el cuerpo del informe.
+function informe({ fecha, interruptor, propuestas, bloqueados, prs, historial }) {
   const enlaces = xs => (xs.length ? xs.map(x => `- #${x.numero} ${x.titulo}`).join('\n') : '- Nada');
   const l = [`Actualizado: ${fecha}. Interruptor \`CLAUDE_NOCTURNO\`: **${interruptor}**.`, ''];
   l.push('## Esperan tu decisión', '', '**Propuestas** (`claude:propuesta`: aprueba con `claude:aprobado`)', '', enlaces(propuestas), '',
     '**Preguntas** (`claude:bloqueado`: responde en el issue)', '', enlaces(bloqueados), '',
     '**PRs del bot para revisar**', '', enlaces(prs), '');
-  l.push('## Esta noche', '');
-  if (!noche) l.push('No corrió (interruptor apagado o fallo antes de elegir).');
-  else {
-    l.push(`Puntos: ${noche.gastado} de ${noche.tope}.`, '');
-    l.push(...(noche.elegidos.length ? noche.elegidos.map(e => `- #${e.numero}: ${e.modo} (${e.puntos} pt)`) : ['- Ningún issue en la cola']));
-    if (noche.sinSitio.length) l.push('', `Sin sitio esta noche: ${noche.sinSitio.map(x => `#${x}`).join(', ')}.`);
-  }
+  l.push(HISTORIAL, '', ...(historial.length ? historial : ['- Todavía ninguna noche este mes']));
   return l.join('\n') + '\n';
 }
 
 // Pura: el comentario que avisa a Roberto por email. null los días en que nada le espera.
+const AVISO = `@${DUENO} Te esperan:`;
 function avisoDeLaManana({ propuestas, bloqueados, prs }) {
   const partes = [[propuestas.length, 'propuesta', 'propuestas'], [bloqueados.length, 'pregunta', 'preguntas'], [prs.length, 'PR para revisar', 'PRs para revisar']]
     .filter(([n]) => n > 0).map(([n, uno, varios]) => `${n} ${n === 1 ? uno : varios}`);
   if (!partes.length) return null;
-  return `@${DUENO} Te esperan: ${partes.join(', ')}. El detalle, arriba en el informe.`;
+  return `${AVISO} ${partes.join(', ')}. El detalle, arriba en el informe.`;
 }
 
 // --- Lo que habla con GitHub ---------------------------------------------------------------------------------
@@ -176,34 +199,52 @@ function cli(args, entorno = process.env) {
     return 0;
   }
   if (args[0] === '--aplicar' && args[1] && args[2]) return aplicar(repo, Number(args[1]), args[2], args[3]);
-  if (args[0] === '--informe') {
-    const ruta = args[1];
-    const noche = ruta && fs.existsSync(ruta) ? JSON.parse(fs.readFileSync(ruta, 'utf8') || 'null') : null;
-    const conEtiqueta = e => gh(['issue', 'list', '-R', repo, '--state', 'open', '--label', e, '--json', 'number,title'])
-      .map(x => ({ numero: x.number, titulo: x.title }));
-    const prs = gh(['pr', 'list', '-R', repo, '--state', 'open', '--json', 'number,title,headRefName'])
-      .filter(p => p.headRefName.startsWith('claude/issue-')).map(x => ({ numero: x.number, titulo: x.title }));
-    const pendiente = { propuestas: conEtiqueta('claude:propuesta'), bloqueados: conEtiqueta('claude:bloqueado'), prs };
-    const cuerpo = informe({
-      fecha: new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC', interruptor: entorno.CLAUDE_NOCTURNO || 'sin definir',
-      noche, ...pendiente,
-    });
-    const existente = gh(['issue', 'list', '-R', repo, '--state', 'open', '--search', `"${TITULO_INFORME}" in:title`, '--json', 'number,title'])
-      .find(x => x.title === TITULO_INFORME);
-    let num = existente && String(existente.number);
-    if (num) spawnSync('gh', ['issue', 'edit', num, '-R', repo, '--body', cuerpo], { stdio: 'inherit' });
-    else {
-      const r = spawnSync('gh', ['issue', 'create', '-R', repo, '--title', TITULO_INFORME, '--body', cuerpo], { encoding: 'utf8' });
-      num = (r.stdout.match(/\/issues\/(\d+)/) || [])[1];
-      if (num) spawnSync('gh', ['issue', 'pin', num, '-R', repo], { stdio: 'inherit' });
-    }
-    // Editar el informe no manda email; este comentario sí, y solo cuando algo espera a Roberto.
-    const aviso = avisoDeLaManana(pendiente);
-    if (num && aviso) spawnSync('gh', ['issue', 'comment', num, '-R', repo, '--body', aviso], { stdio: 'inherit' });
-    return 0;
-  }
-  console.error('Uso: cola-nocturna.js --cola [--tope N] | --contexto <n> <fichero> | --aplicar <n> <resultado.json> <modo>');
+  if (args[0] === '--informe') return rehacerInforme(repo, args, entorno);
+  console.error('Uso: cola-nocturna.js --cola [--tope N] | --contexto <n> <fichero> | --aplicar <n> <resultado.json> <modo> | --informe [noche.json] [--sin-aviso]');
   return 2;
+}
+
+// Rehace el informe del mes. Con `--sin-aviso` (fuera de la noche) no anota noche ni avisa.
+function rehacerInforme(repo, args, entorno) {
+  const deNoche = !args.includes('--sin-aviso');
+  const ruta = args[1] && !args[1].startsWith('--') ? args[1] : null;
+  const noche = ruta && fs.existsSync(ruta) ? JSON.parse(fs.readFileSync(ruta, 'utf8') || 'null') : null;
+  const ahora = new Date().toISOString();
+  const titulo = tituloDelMes(ahora);
+  const conEtiqueta = e => gh(['issue', 'list', '-R', repo, '--state', 'open', '--label', e, '--json', 'number,title'])
+    .map(x => ({ numero: x.number, titulo: x.title }));
+  const prs = gh(['pr', 'list', '-R', repo, '--state', 'open', '--json', 'number,title,headRefName'])
+    .filter(p => p.headRefName.startsWith('claude/issue-')).map(x => ({ numero: x.number, titulo: x.title }));
+  const pendiente = { propuestas: conEtiqueta('claude:propuesta'), bloqueados: conEtiqueta('claude:bloqueado'), prs };
+
+  const abiertos = gh(['issue', 'list', '-R', repo, '--state', 'open', '--search', `"${TITULO_INFORME}" in:title`, '--json', 'number,title,body'])
+    .filter(x => x.title.startsWith(TITULO_INFORME));
+  const actual = abiertos.find(x => x.title === titulo);
+  for (const viejo of abiertos.filter(x => x !== actual)) {   // el del mes pasado (o el primero, sin mes)
+    spawnSync('gh', ['issue', 'unpin', String(viejo.number), '-R', repo], { stdio: 'inherit' });
+    spawnSync('gh', ['issue', 'close', String(viejo.number), '-R', repo, '--comment', `Cerrado: sigue en «${titulo}».`], { stdio: 'inherit' });
+  }
+  let historial = historialDe(actual && actual.body);
+  if (deNoche) historial = anotarNoche(historial, lineaNoche(ahora.slice(5, 10), noche));
+  const cuerpo = informe({
+    fecha: ahora.slice(0, 16).replace('T', ' ') + ' UTC', interruptor: entorno.CLAUDE_NOCTURNO || 'sin definir', ...pendiente, historial,
+  });
+  let num = actual && String(actual.number);
+  if (num) spawnSync('gh', ['issue', 'edit', num, '-R', repo, '--body', cuerpo], { stdio: 'inherit' });
+  else {
+    const r = spawnSync('gh', ['issue', 'create', '-R', repo, '--title', titulo, '--body', cuerpo], { encoding: 'utf8' });
+    num = (r.stdout.match(/\/issues\/(\d+)/) || [])[1];
+    if (num) spawnSync('gh', ['issue', 'pin', num, '-R', repo], { stdio: 'inherit' });
+  }
+  if (!num || !deNoche) return 0;
+  // Editar el informe no manda email; el aviso sí. Solo uno vivo: antes de escribirlo se borra el anterior.
+  const comentarios = gh(['api', '--paginate', '--slurp', `repos/${repo}/issues/${num}/comments`]).flat();
+  for (const c of comentarios.filter(c => esDelBot(c.user.login) && (c.body || '').startsWith(AVISO))) {
+    spawnSync('gh', ['api', '-X', 'DELETE', `repos/${repo}/issues/comments/${c.id}`], { stdio: 'inherit' });
+  }
+  const aviso = avisoDeLaManana(pendiente);
+  if (aviso) spawnSync('gh', ['issue', 'comment', num, '-R', repo, '--body', aviso], { stdio: 'inherit' });
+  return 0;
 }
 
 function git(args) {
@@ -257,4 +298,7 @@ function aplicar(repo, n, fichero, modo) {
 
 if (require.main === module) process.exitCode = cli(process.argv.slice(2));
 
-module.exports = { clasificar, cola, contexto, validarResultado, prohibidos, informe, avisoDeLaManana, cli, DUENO, TOPE_POR_DEFECTO };
+module.exports = {
+  clasificar, cola, contexto, validarResultado, prohibidos, informe, avisoDeLaManana, lineaNoche, historialDe, anotarNoche, tituloDelMes,
+  cli, DUENO, TOPE_POR_DEFECTO,
+};
