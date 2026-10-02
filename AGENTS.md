@@ -34,8 +34,8 @@ README.md                                              ← DATOS: la portada del
   concepto pertenece a varias unidades. Si el curso ya tiene sesiones y **no** tiene estructura, **propón una**
   al alumno (como en `/configurar`) y, con su sí, escríbela y ejecuta `node .kit/herramientas/organizar.js`.
 - **Lo escribe `guardar.js` en cada guardado: no lo edites ni lo cites como fuente de lo que sabe el alumno.**
-  `estudio/inicio.md` y el pie de cada sesión (el temario, qué ha estudiado —la casilla `estudiada`, que marca él—
-  y qué tiene probado: su puerta al curso cuando estudia sin ti) · `estudio/pendientes.md` (TODO, FALTA INFO y dudas
+  `estudio/inicio.md` y el pie de cada sesión (el temario, qué ha estudiado —la casilla `estudiada`, que marca él
+  o `examen.js` al aprobar el examen del módulo— y qué tiene probado: su puerta al curso cuando estudia sin ti) · `estudio/pendientes.md` (TODO, FALTA INFO y dudas
   abiertas) · `estudio/formulario.md` y `estudio/ejercicios/_index.md` (índices) · la sección Estado del `README.md` ·
   `estudio/auditoria-del-material.md` (las auditorías de todas las sesiones) · `estudio/mi-perfil.md` (lo que el
   alumno ve de sí mismo, sacado de `config/alumno.md` y `config/profesor.md`, y su evolución: si dice que algo

@@ -1,48 +1,43 @@
 ---
 tipo: concepto
-bloques: [modulo-2]
-visto_en: [02-01-01-interes-simple-y-compuesto]
+bloques: [modulo-02]
+visto_en: [02-01-01]
 dificultad: 2
 requiere: [interes-compuesto]
-alias: [capitalización, frecuencia de capitalización]
-tags: [interes]
+alias: [capitalización mensual]
+tags: [interes, ahorro]
 ---
 # Capitalización
 
-> **En una frase:** la capitalización es cada cuánto se suman los intereses al capital (cada año, trimestre o mes): cuanto más frecuente, más rápido crece.
+> **En una frase:** La capitalización es cada cuánto se suman los intereses al capital (cada año, mes o trimestre): cuanto más a menudo, más rápido crece.
 
 ## El problema
 
-Un interés anual no siempre se aplica de golpe una vez al año. Si se aplica cada mes, cada mes se usa una doceava parte del tipo anual, pero sobre el capital que ya ha crecido. Eso da algo más que aplicarlo una sola vez.
+Un tipo anual no siempre se aplica de golpe una vez al año. Si el banco lo reparte en doce meses, los
+intereses de enero ya generan intereses en febrero.
 
 ## El ejemplo
 
 > [!info] Ampliación fuera de los apuntes
-> Ejemplo inventado: la clase no trae cifras para la capitalización mensual.
-
-1.000,00 € durante 1 año, con un tipo de 12 % anual:
-
-- **Una vez al año:** 1.000,00 × 1,12 = **1.120,00 €**.
-- **Cada mes** (un 1 % mensual, la doceava parte): 1.000,00 × 1,01¹² ≈ **1.126,83 €**.
-
-Mismo tipo anual, 6,83 € más, solo por sumar los intereses al capital cada mes.
-
-## La fórmula
-
-$$ C_f = C \cdot \left(1 + \frac{i}{m}\right)^{m \cdot t} $$
-
-Es la del [[interes-compuesto]] con el tipo troceado: `m` es cuántas veces al año se capitaliza (12 si es mensual) y `t` los años. Esta forma general es ampliación mía; la clase solo cuenta la idea.
+> La diapositiva no trae cifras; este ejemplo es nuestro. 1.000,00 € al 5 % anual durante 1 año:
+>
+> - Capitalizado **una vez al año:** 1.000 × 1,05 = 1.050,00 €
+> - Capitalizado **cada mes** (una doceava parte del tipo anual, o sea 0,05 ÷ 12 cada mes, al capital ya crecido):
+>   1.000 × (1 + 0,05 ÷ 12)¹² = **1.051,16 €**
+>
+> Un año, el mismo 5 % anual: 1,16 € de más solo por capitalizar más a menudo.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que un 1 % mensual es lo mismo que 12 % anual al cabo de un año. Un 1 % mensual capitalizado da un poco más (126,83 € de intereses frente a 120,00 € sobre 1.000,00 €).
+> Creer que la capitalización mensual significa cobrar el tipo anual cada mes. Se aplica una doceava parte
+> del tipo anual cada mes, no el tipo entero.
 
 ## Relacionados
 
-- [[interes-compuesto]] — del que esto es un detalle: el periodo de capitalización
-- [[tipo-de-interes]] — hay que decir siempre su periodo
+- [[interes-compuesto]] — la capitalización es el "cada cuánto" del compuesto
+- [[tipo-de-interes]] — el tipo anual se reparte entre los periodos de capitalización
 
 ## Historial
 
-- **02-01-01-interes-simple-y-compuesto** · primera vez
+- **02-01-01** · primera vez

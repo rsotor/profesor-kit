@@ -41,7 +41,7 @@ Hazlas ahora, con él, antes de seguir con lo que estuvierais haciendo:
 2. **Pon `orden:`** en las sesiones que `node .kit/herramientas/comprobar.js` señale con `orden-ambiguo`.
 3. **Adapta los exámenes antiguos** al formato de frontmatter: `unidad:` (el prefijo de la unidad),
    `nota:` como número sobre 10 (nunca `2/10`), `fecha:`, `intentos:`, y un `✍️ **Tu respuesta:**` vacío bajo
-   cada pregunta (ver `.kit/skills/examen/SKILL.md`, sección "Exámenes de antes de esta versión"). Los
+   cada pregunta (ver `.kit/guias/examenes-de-antes.md`). Los
    exámenes nuevos ya nacen en tipo test: no hay que tocar nada.
 4. **`config/examenes.json`** lo crea solo la migración (con el `aprobado:` que tuviera `config/curso.md`,
    si tenía): compruébalo con el alumno en una frase y, si quiere otro reparto de preguntas o de aprobado por

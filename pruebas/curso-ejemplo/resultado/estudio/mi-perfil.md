@@ -24,7 +24,15 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 ## Lo que te cuesta
 
-*Todavía nada: se irá llenando con tus exámenes y tus dudas.*
+### Conceptos que te costaron
+
+- **funciones-del-dinero:** en el examen del módulo 1 confunde el problema del trueque (doble coincidencia de
+  deseos) con la falta de unidad de cuenta; en cambio reconoce bien el depósito de valor. — *examen del módulo 1, p.1 y p.8*
+- **presupuesto-personal:** al calcular el ahorro de un mes flojo (1.400 − 1.195) responde −205 € en vez de 205 €,
+  es decir, invierte la resta; sí detecta el error de presupuestar con el mejor mes. — *examen del módulo 1, p.6 y p.7*
+- **tasa-de-ahorro y colchon-financiero:** dejó en blanco la comparación de tasas (p.5) y el colchón con gastos
+  más altos (p.10). Son dos preguntas sin responder, no dos errores demostrados: no sabemos si no las entiende o
+  si le faltó tiempo; conviene repreguntar. — *examen del módulo 1, p.5 y p.10*
 
 ## Lo que te entró a la primera
 
@@ -44,13 +52,12 @@ Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces 
 
 | Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |
 |---|---|---|
-| modulo-1 | 4 · 4 · 0 · 0 | 0 · 0 · 0 · 8 |
-| modulo-2 | 0 · 0 · 0 · 8 | 0 · 0 · 0 · 8 |
+| modulo-01 | 2 · 5 · 0 · 0 | 0 · 0 · 0 · 7 |
+| modulo-02 | 0 · 0 · 0 · 8 | 0 · 0 · 0 · 8 |
 
 ### Donde más dudas
 
-- 01-01-01-el-dinero-y-sus-funciones: 1 duda (última: 2026-10-02 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-10-02)
-- colchon-financiero: 1 duda (última: 2026-10-02 · conceptos/colchon-financiero.md, 2026-10-02)
+- colchon-financiero: 1 duda (última: 2026-10-02 · conceptos/colchon-financiero.md)
 
 ## Cambios en cómo te explico
 

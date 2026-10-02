@@ -4,14 +4,14 @@
 
 | Bloque | Sesiones procesadas | Conceptos | Estado |
 |---|---|---|---|
-| Módulo 1 · 1.1 El dinero y sus funciones | [[01-01-01-el-dinero-y-sus-funciones]] | 3 | Procesada; faltan las diapositivas 6 (patrón oro) y 7 (M1) |
-| Módulo 1 · 1.2 Presupuesto personal | [[01-02-01-presupuesto-personal]] | 5 | Procesada; FALTA INFO: suscripciones 25,00 € (diapositiva) o 52,00 € (hoja) |
-| Módulo 2 · 2.1 Interés simple y compuesto | [[02-01-01-interes-simple-y-compuesto]] | 6 | Procesada; TODO: ejemplo de capitalización mensual inventado (el material no trae cifras) |
-| Módulo 2 · 2.2 Ahorro a largo plazo | [[02-02-01-ahorro-a-largo-plazo]] | 2 nuevos (+ tasa-de-ahorro ampliada) | Procesada; TODO: la afirmación de la diapositiva 5 no está demostrada en el material |
+| Módulo 1 · 1.1 El dinero y sus funciones | 01-01-01 | funciones-del-dinero, inflacion, liquidez | Procesada; faltan patrón oro y masa monetaria (FALTA INFO) |
+| Módulo 1 · 1.2 Presupuesto personal | 01-02-01 | presupuesto-personal, gastos-fijos-y-variables, tasa-de-ahorro, colchon-financiero | Procesada; cifra de Suscripciones sin confirmar (FALTA INFO) |
+| Módulo 2 · 2.1 Interés simple y compuesto | 02-01-01 | capital, tipo-de-interes, interes-simple, interes-compuesto, capitalizacion, regla-del-72 | Procesada; clase 2.1 cubierta entera (diapositivas 1-6); la diapositiva 4 no trae ejemplo numérico (el de la nota es ampliación) |
+| Módulo 2 · 2.2 Ahorro a largo plazo | 02-02-01 | tasa-de-ahorro (ampliada), aportacion-periodica, horizonte-temporal | Procesada; clase 2.2 cubierta entera (diapositivas 1-5); la afirmación "empezar antes pesa más" sin respaldo numérico (FALTA INFO); la unidad 2.2 no figura en el temario de config/curso.md (TODO) |
 
 ## Sesiones
 
-- **Clase 2.2** (diapositivas 1-5) → [[02-02-01-ahorro-a-largo-plazo]]. Todo cubierto: 1 → tasa-de-ahorro; 2 y 3 → aportacion-periodica; 4 → horizonte-temporal; 5 repite las anteriores.
-- **Clase 2.1** (diapositivas 1-6) → [[02-01-01-interes-simple-y-compuesto]]. Todo cubierto: 1 → capital y tipo-de-interes; 2 → interes-simple; 3 → interes-compuesto; 4 → capitalizacion (ejemplo inventado, sin cifras en el material); 5 → regla-del-72; 6 repite las anteriores.
-- **Clase 1.2** (diapositivas 1-7 y hoja de cálculo «plantilla de presupuesto») → [[01-02-01-presupuesto-personal]]. Todo cubierto; la hoja no cuadra con las diapositivas (ver Auditoría).
-- **Clase 1.1** (diapositivas 1-9) → [[01-01-01-el-dinero-y-sus-funciones]]. Las diapositivas 2-5 están cubiertas; la 6 y la 7 esperan material (FALTA INFO).
+- **01-01-01** · El dinero y sus funciones — clase 1.1 cubierta salvo las diapositivas 6 (patrón oro) y 7 (masa monetaria).
+- **01-02-01** · Presupuesto personal — clase 1.2 cubierta entera (diapositivas 1-7 y las tres hojas de la plantilla); la hoja de cálculo trae un total de fijos mal sumado (ver auditoría).
+- **02-01-01** · Interés simple y compuesto — clase 2.1 cubierta entera (diapositivas 1-6). El fichero se llama clase-03 pero su título interno es "Clase 2.1".
+- **02-02-01** · Ahorro a largo plazo — clase 2.2 cubierta entera (diapositivas 1-5). El fichero se llama clase-04 pero su título interno es "Clase 2.2".
