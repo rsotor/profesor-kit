@@ -25,6 +25,77 @@ Para abrir una sesión:
     antes de contestarse (`pasos.js#revisionDelExamen`); un examen sin revisión sale en `estado.js` y en
     `comprobar.js` (`examen-sin-revisar`) y `--corregir` se niega.
 
+- **#56, puntos 2 y 3: preparar en paralelo y auditor del material** (rama `claude/issue-56-puntos-2-3-a8aaf8`).
+  Decidido con Roberto (2026-10-01):
+  - **Dónde:** un solo `preparar.js --lanzar` con varias clases; el proceso en segundo plano coordina y lanza los
+    subagentes. Sin `segundo_plano`, coordina el profesor desde la conversación. Probado: `claude -p` con los
+    argumentos del adaptador lanza un subagente que escribe; Codex solo sin `--ephemeral` (openai/codex#41474),
+    ya quitado del adaptador y de la prueba real.
+  - **Reparto en dos fases:** 1) cada subagente lee sus clases y devuelve conceptos (nombre + definición en una
+    frase); 2) el coordinador cruza con `candidatos.js`, fija slugs y un dueño por nota, y los subagentes escriben.
+    Los ficheros compartidos (`_index`, `progreso`, `mapa-del-curso`, `README`, `config/alumno.md`) solo los
+    escribe el coordinador; `comprobar.js` y `guardar.js`, solo él y al final.
+  - **Cuándo:** desde 2 clases nuevas, el profesor pregunta antes (validación del alumno: con poca cuota, dos
+    clases a la vez pueden fundírsela). Coste en genérico, sin cifras: «a la vez, más rápido pero gasta varias veces
+    más cuota; una detrás de otra, más lento y gasta menos; si te queda poca cuota, mejor una a una». Con 1, como hoy.
+  - **Fuera:** dudas y conversación con subagentes; varias preparaciones a la vez (el cerrojo se queda); cifras de
+    coste en el aviso; paralelo en asistentes sin `subagentes` (una a una, como hoy); el auditor del material
+    (punto 3, aparcado: ver "Issues abiertas por decidir").
+  - **Tras el diablo (2026-10-01, 5 objeciones, todas aceptadas):**
+    - **Cuota a mitad:** cambiado al diseñar (2026-10-01): guardar por clase no funciona con subagentes escribiendo a
+      la vez (`guardar.js` comprueba el curso entero y vería las notas a medias de los otros). Queda: si falla, no
+      se borra nada (lo escrito sin guardar se guarda en la rama descartada; hoy `descartarCopia` lo tira,
+      `preparar.js:96-104`) y se relanza entera; si el fallo es de cuota, el profesor propone relanzarla otro día,
+      no prepararla en la conversación. Juntar solo las clases terminadas → Fuera.
+    - **CLI:** `--clase <id> <ficheros…>` repetible; `sesionGuardada` por cada id; el commit de `--juntar` nombra
+      todas las clases; el prompt deja de decir "son la misma clase".
+    - **Fase 1** devuelve también qué aporta cada clase a cada concepto y de qué fichero; el dueño recibe todas las
+      fuentes e ids (`visto_en`, `bloques:`, `## Historial`).
+    - **Prueba real:** el módulo 1 (01-01, 01-02) y su examen, como hoy, en primer plano. Clase nueva 02-02
+      ("ahorro a largo plazo") en `pruebas/curso-ejemplo/`, que reutiliza a propósito interés compuesto (de 02-01:
+      dos subagentes, un concepto) y tasa de ahorro (de 01-02: amplía una nota existente). El paso de segundo plano
+      (`prueba-real.js:634-672`) lanza 02-01 y 02-02 juntas.
+    - **Auditor:** fuera del plan (aparcado).
+  - **Diablo corto sobre `segundo-plano.md` (2026-10-01, 4 objeciones, todas aplicadas):** el subagente no se cree
+    coordinador ni guarda; devuelve secciones fijas (`_index`, `progreso`, `mapa-del-curso`, notas ajenas, unidad
+    nueva); el cierre añade `estructura.json` y `organizar.js`; si un subagente falla, no se guarda nada; la cuota se
+    reconoce en las líneas del registro que enseña `--estado`.
+  - **Diablo completo sobre toda la rama (2026-10-01, 5 objeciones, todas aplicadas):** `--solo` del lanzar arrastra
+    juntar y compartidos, no relanza preparaciones en otros pasos y, al acabar la prueba, se para toda preparación en
+    curso; juntar espera el límite de una preparación (90 min); las descartadas se conservan por fecha, no por nombre;
+    una copia solo se restaura si es de ese paso; `conceptoCompartido` busca también por alias, caza la nota duplicada
+    con el nombre dentro y cuenta filas exactas; las copias no llevan las skills y se guardan aunque falle algún paso.
+  - **Prueba real entera (2026-10-01, f2a6ac0): 14/16.** Falló `--juntar`: choque en `tasa-de-ahorro.md` (el examen
+    subió `dificultad` y la 02-02 amplió la nota: campos distintos en líneas contiguas). Bug del kit, no solo del
+    paralelo. Arreglo: `lib/mezcla.js` junta las notas de concepto por cabecera (campo a campo) y cuerpo (a tres
+    bandas). Y el curso de una prueba con fallos ya no se borra al salir. `--solo` del lanzar, sobre 6820b75: 3/3
+    (juntada sin choque; interés compuesto y tasa de ahorro, una nota cada uno con las dos sesiones y una fila).
+  - **Prueba real con Codex en macOS (2026-10-02, 9006a4b, primera vez en Mac):** parcial, se da por buena en lo de la
+    #56 (decisión de Roberto: la cuota de Codex no da para otra entera). Bien: las dos clases del módulo 1, la trampa,
+    `/dudas`, `/ejercicio`, lanzar y juntar 02-01 + 02-02 y los conceptos compartidos. Sin probar por cuota de Codex
+    agotada: examen (generar, corregir, oráculo) y repaso. Encontrado: Codex añadía `referencia` y `notas` a
+    `config/examenes.json`; `/examen` ya dice que ahí no va nada más (la ambigüedad era de la skill).
+  - **Prueba real entera con Claude (2026-10-02, 7e72469): 15/16.** Solo falló "conceptos compartidos": la 02-02
+    enlazó interés compuesto sin ampliarlo (decisión válida). Criterio nuevo (Roberto, 2026-10-02, en
+    `CONTRIBUTING.md`): rojo solo lo que estaría mal lo hiciera como lo hiciera; las decisiones del modelo, observación.
+    Revisadas con ese criterio las comprobaciones de la prueba real: `visto_en`, las palabras de la auditoría de la
+    trampa, la marca "del centro", qué falladas vuelven, el repaso regenerado y la propiedad escrita a su manera pasan
+    a observación o se relajan a lo que fija la skill.
+  - **Prueba real entera con Claude (2026-10-02, 207705c): 16/16**, corrección 6/6, 0 permisos denegados. Lista para el
+    PR. Codex en macOS, parcial (arriba).
+  - **Cómo sabremos:** tests de `preparar.js`: varias clases en un lanzamiento, sesión guardada por cada id, un
+    una preparación fallida conserva en su rama descartada lo que escribió, y el prompt del coordinador con las dos fases. Prueba real:
+    02-01 y 02-02 en un solo lanzamiento → interés compuesto en una sola nota con las dos sesiones en `visto_en`,
+    tasa de ahorro ampliada (01-02 y 02-02 en `visto_en`), una fila de `progreso` por concepto nuevo y `comprobar.js` sin errores. Gasta más: se pasa una vez,
+    sobre el commit de la release.
+
+- **Prueba real más barata** (hecho en la rama de la #56, 2026-10-01; falta probarla con una prueba entera de verdad): `prueba-real.js --solo "<paso>"` (restaura la copia
+  del paso anterior, ejecuta ese paso y para) y las copias de la última prueba entera guardadas en `pruebas-local/`.
+  Mientras se desarrolla, se paga solo el paso que cambia; la entera, solo antes de la release (sin cambios).
+  - **Fuera:** saltarse la prueba entera antes de una release; cambiar de modelo para abaratarla.
+  - **Cómo sabremos:** tras una prueba entera, `--solo "preparar.js --lanzar 02-01, 02-02"` ejecuta lanzar, juntar y
+    compartidos sobre la copia guardada, sin ningún otro paso, y su resultado coincide con el de la prueba entera.
+
 ## Siguiente: que no se repita la #54
 
 Por qué no la cazó ninguna prueba: la columna `Última prueba` nunca estuvo en el kit (ni skills, ni plantillas,
@@ -51,6 +122,20 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 
 - **#56** subagentes con roles: el revisor independiente, en curso (arriba); la preparación en paralelo después
   (~900.000 tokens por módulo). Encaja con K6 (base-kit).
+- **#56, punto 3 (auditor del material), aparcado** (2026-10-01): el paso 1b de `/sesion` ya caza la discrepancia
+  del curso de ejemplo y no hay ningún caso en que fallara. **Se reabre** con un caso real en que una cifra o fórmula
+  de una hoja esté mal y la `## Auditoría del material` de esa sesión no lo diga. Datos que hacen falta: fichero y
+  hoja/celda; cifra mala y la buena; qué dice (o calla) la auditoría; quién lo descubrió y cuándo. Diseño ya
+  pensado: lo lanza el coordinador o el profesor (un subagente no lanza otro), marca de origen como el revisor de
+  exámenes, y la prueba real exige las cifras.
+- **#68** (sarainieto, Codex en Windows, kit 0.27.1, 2026-10-01): el examen se escribe en `estudio/examenes/` pero la
+  clave no puede ir a `config/claves/` porque el asistente solo puede escribir en `estudio/`; `examen.js --corregir`
+  dice que falta la clave y no se registra nada. Pide detectarlo antes de crear un examen a medias y una forma soportada
+  de guardar la clave. Causa: lo lanzó desde Obsidian con Claudian, que trabaja desde `estudio/` (el atajo del kit
+  abre desde la raíz). Propuesta (rama aparte, tras cerrar la #56): `/examen` escribe primero la clave y, si no puede,
+  no crea el examen y ofrece `permisos.js --aplicar`; y probar nosotros si Claudian respeta esos permisos (con Claude
+  Code aquí; con Codex, en el Mac). Sin comentario en la issue: quien la abrió no sabría contestarlo (Roberto,
+  2026-10-01).
 - **#46**, **#47**: peticiones sin cambios.
 - **#59** abierta: falta que quien la abrió diga si su Codex tiene una herramienta de opciones (para quitar el
   `pendiente` del adaptador).

@@ -1,22 +1,32 @@
 ---
 tipo: ejercicio
 sesion: 02-01-01-interes-simple-y-compuesto
+conceptos: [interes-simple, interes-compuesto]
 ---
-# Simple frente a compuesto (versión a mano)
+# Simple frente a compuesto
 
-La versión interactiva está en `02-01-01-simple-frente-a-compuesto.html`. Esta es para hacerla en papel.
+Concepto: [[interes-simple]] · [[interes-compuesto]]
 
-Practica: [[interes-simple]] · [[interes-compuesto]]
+**Caso.** Tienes 1.000,00 € de capital y vas a compararlo en distintas condiciones. Piensa la respuesta antes de desplegar.
 
-**Caso.** 1.000,00 € a un 5 % anual, con intereses una vez al año.
+**Pregunta 1** *(una cifra, en €)*: con un 5% anual, ¿cuánto tienes al cabo de 1 año con interés simple y cuánto con compuesto?
 
-**Pregunta 1.** Con 10 años, la ventaja del compuesto sobre el simple (intereses extra), ¿supera la mitad de los intereses del simple? *(sí o no, y una línea de por qué)*
+> [!success]- Respuesta
+> Los dos dan **1.050,00 €**. En el primer periodo no hay intereses previos que reinvertir, así que simple y compuesto coinciden. La diferencia solo aparece desde el segundo año.
 
-**Pregunta 2.** Si en vez de 1.000,00 € fueran 20.000,00 €, con el mismo tipo y los mismos años, ¿cambia tu respuesta? *(sí o no, y una línea de por qué)*
+**Pregunta 2** *(dos cifras, en €)*: ahora a 30 años, con el mismo 5% anual. ¿Cuánto con simple y cuánto con compuesto?
 
-**Pregunta 3.** Con el mismo capital y tipo, ¿hacia cuántos años cambia la respuesta de la pregunta 1? *(una cifra aproximada, sin calculadora si puedes)*
+> [!success]- Respuesta
+> Simple: 1.000,00 € × (1 + 0,05 × 30) = **2.500,00 €**. Compuesto: 1.000,00 € × 1,05³⁰ ≈ **4.321,94 €**. Con el mismo tipo, cuanto más tiempo, más se separan.
 
-> [!success]- Respuestas y comprobación
-> 1. **No.** Simple: 1.000,00 € × 0,05 × 10 = 500,00 € de intereses. Compuesto: 1.000,00 € × (1,05¹⁰ − 1) ≈ 628,89 €. Ventaja ≈ 128,89 €, menos de la mitad de 500,00 € (250,00 €).
-> 2. **No cambia.** Todo escala con el capital, así que la proporción es la misma: lo que decide es el tipo y el tiempo.
-> 3. Hacia los **17 años** (a 16 años la ventaja aún queda por debajo; a 17 ya la supera). Cambiar el tipo o los años mueve el veredicto; cambiar el capital, no.
+**Pregunta 3** *(elige una opción y explica el porqué en 2-3 líneas)*: te ofrecen dos depósitos a 10 años. A: 6% anual con interés simple. B: 4% anual con interés compuesto. ¿Cuál te da más?
+
+> [!success]- Respuesta
+> Gana A: 1.000,00 € × (1 + 0,06 × 10) = **1.600,00 €** frente a 1.000,00 € × 1,04¹⁰ ≈ **1.480,24 €**. A 10 años, el tipo mayor aún pesa más que reinvertir.
+
+**Pregunta 4** *(elige una opción y explica el porqué en 2-3 líneas)*: los mismos dos depósitos, pero a 25 años. ¿Cuál te da más ahora?
+
+> [!success]- Respuesta
+> Gana B: A da 1.000,00 € × (1 + 0,06 × 25) = **2.500,00 €** y B da 1.000,00 € × 1,04²⁵ ≈ **2.665,84 €**. El veredicto se invierte: el compuesto con un tipo menor adelanta al simple con un tipo mayor. Con estas cifras el cambio ocurre en el año 21 (A: 2.260,00 €; B: 2.278,77 €; en el año 20, A todavía va por delante: 2.200,00 € frente a 2.191,12 €).
+>
+> Lo que descubres: no basta mirar el tipo; el tiempo decide cuál manda, y el compuesto acaba ganando si hay tiempo suficiente.

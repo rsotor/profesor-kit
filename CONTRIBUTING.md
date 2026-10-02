@@ -118,11 +118,28 @@ qué llegó de verdad. Con un asistente sin lanzador propio, el error lo dice: "
 curso (y de lo que necesitan los siguientes) en una carpeta temporal `prueba-real-pasos-XXXX/`; si algo falla,
 se queda ahí (con la ruta impresa) en vez de borrarse. `npm run prueba-real -- --desde "<paso>"` restaura la
 copia del paso anterior y sigue desde ahí hasta el final, con el mismo orden y sin repetir los que ya salieron
-bien (`--copias <carpeta>` para indicar cuál, si no es la más reciente del temporal). Si la clase en segundo
+bien (`--copias <carpeta>` para indicar cuál, si no es la más reciente). Si la clase en segundo
 plano se había quedado a medias (el proceso de la ejecución anterior ya no existe), se relanza sola antes de
 juntarla. El `RESUMEN.md` que deja marca los pasos de antes como "de la ejecución anterior" y, aunque todo
 salga bien, **no cuenta como prueba real completa para el PR** (`cambio-grande.js` lo rechaza): hace falta una
 `npm run prueba-real` entera y seguida.
+
+**Qué puede tumbar un paso.** Rojo, solo lo que estaría mal lo hiciera como lo hiciera un buen profesor: un
+duplicado, algo perdido al juntar, una clave o una nota que no cuadran, obedecer al material, errores de
+`comprobar.js`, incumplir una regla explícita de `AGENTS.md` o de una skill. Lo que es una decisión del modelo (ampliar
+o solo enlazar, cómo reparte, cómo lo redacta) nunca es rojo: como mucho, una observación en el detalle del paso. La
+pregunta, para cada comprobación nueva: ¿un buen profesor podría hacerlo de otra forma y estar bien? Si sí, no es rojo.
+
+**Mientras desarrollas, paga solo el paso que cambia.** Las copias de una prueba entera no se borran, aunque falle algún
+paso: se guardan en `pruebas-local/prueba-real-pasos-<asistente>/` (ignorado por git), en lugar de las anteriores. `npm run prueba-real -- --solo
+"<paso>"` restaura la copia del paso anterior, le pone el motor de tu copia de trabajo y el inbox del curso de ejemplo
+(lo que estás cambiando), ejecuta ese paso y para. El de lanzar la preparación en segundo plano arrastra el de juntarla
+y el de los conceptos compartidos, que es donde se ve si salió bien. Solo restaura una copia que sea de ese mismo paso:
+si la lista de pasos ha cambiado desde la última prueba entera, lo dice y hace falta otra. `--desde` también refresca el motor y el inbox al restaurar. El
+resultado de `--solo` va a `pruebas-local/solo-<asistente>/`, no pisa el del repo, y tampoco cuenta como prueba
+completa. La prueba entera, antes de cada release, no cambia.
+
+    npm run prueba-real -- --solo "/dudas"
 
 **Cuánto tarda y cuánto gasta.** Primera ejecución (2026-09-23, kit 0.21.0, Sonnet): **unos 49 minutos** en total.
 Cada clase, entre 10 y 12 minutos; dudas, ejercicio, examen y repaso, entre 1,5 y 5 minutos cada uno. Son unas

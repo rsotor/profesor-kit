@@ -77,13 +77,13 @@ test('codex.argsSondeo: revisa automáticamente los comandos sobre la copia temp
   assert.ok(!args.some(x => /danger|bypass|full-access/.test(x)), 'la copia temporal sigue dentro del sandbox');
 });
 
-test('codex.argsTarea/argsSondeo: sin el "-" final del prompt por stdin, con --ephemeral e --ignore-user-config', () => {
+test('codex.argsTarea/argsSondeo: sin el "-" final del prompt por stdin, sin --ephemeral y con --ignore-user-config', () => {
   const cwd = temporal('kit-asistente-codex-');
   const { args: argsTarea } = codex.argsTarea({ prompt: 'x', modelo: null, cwd, adaptador: CODEX_JSON });
   const { args: argsSondeo } = codex.argsSondeo({ prompt: 'x', modelo: null, cwd, adaptador: CODEX_JSON });
   for (const args of [argsTarea, argsSondeo]) {
     assert.ok(!args.includes('-'), 'el "-" (prompt por stdin) no es un argumento: el prompt va por stdin de verdad');
-    assert.ok(args.includes('--ephemeral'));
+    assert.ok(!args.includes('--ephemeral'), 'como el alumno: con --ephemeral no hay subagentes (openai/codex#41474)');
     assert.ok(args.includes('--ignore-user-config'));
   }
 });

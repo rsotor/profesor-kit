@@ -19,6 +19,11 @@ function carpetaTemporal() {
   TEMPORALES.push(dir);
   return dir;
 }
+// Para lo que se quiere dejar a mano al terminar (una prueba con pasos en rojo): deja de borrarse al salir.
+function conservar(dir) {
+  const i = TEMPORALES.indexOf(dir);
+  if (i >= 0) TEMPORALES.splice(i, 1);
+}
 function borrar(dir) {
   try { fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3 }); } catch { /* Windows: fichero abierto */ }
 }
@@ -98,4 +103,4 @@ function comprobarJson(destino) {
   return JSON.parse(r.stdout);
 }
 
-module.exports = { carpetaTemporal, borrar, ejecutarNodo, git, iniciarGit, copiar, copiarMotor, montarCurso, comprobarJson };
+module.exports = { carpetaTemporal, conservar, borrar, ejecutarNodo, git, iniciarGit, copiar, copiarMotor, montarCurso, comprobarJson };

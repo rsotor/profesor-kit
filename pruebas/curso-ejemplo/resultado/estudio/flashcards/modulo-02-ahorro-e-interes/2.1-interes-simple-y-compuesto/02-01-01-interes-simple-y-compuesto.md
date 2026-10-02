@@ -6,21 +6,21 @@ sesion: 02-01-01-interes-simple-y-compuesto
 
 > Se responde mentalmente antes de desplegar.
 
-**Te ofrecen "un cinco por ciento" por tu dinero. ¿Qué falta para saber si es buena oferta?**
+**Alguien te ofrece "un cinco por ciento" por tu dinero. ¿Qué falta para saber qué te ofrece? (en una frase)**
 > [!success]- Respuesta
-> El periodo: un 5 % anual y un 5 % mensual no tienen nada que ver.
+> El periodo: no es lo mismo un 5% anual que un 5% mensual. Un tanto por ciento sin periodo no dice nada.
 
-**1.000,00 € a un 5 % anual, 3 años. ¿Qué da más, simple o compuesto, y cuánto más?**
+**¿Sobre qué capital se calculan los intereses con interés simple y sobre cuál con compuesto? (en una frase cada uno)**
 > [!success]- Respuesta
-> El compuesto: 1.157,63 € frente a 1.150,00 €, 7,63 € más. Los intereses ya ganados generan intereses.
+> Simple: siempre sobre el capital inicial. Compuesto: sobre el capital más los intereses ya ganados (interés sobre interés).
 
-**¿Qué cambia entre un año y el siguiente, con interés compuesto, que no cambia con el simple?**
+**El mismo tipo anual se capitaliza cada mes en vez de una vez al año. ¿El resultado a un año es mayor, igual o menor? (una palabra y el porqué en una frase)**
 > [!success]- Respuesta
-> La base del cálculo: en el compuesto crece con los intereses acumulados; en el simple es siempre el capital inicial.
+> Mayor: cada mes se aplica una doceava parte del tipo, pero sobre un capital que ya ha crecido.
 
-**Al 6 % anual, ¿en cuántos años se dobla un capital, a ojo? ¿Es exacto?**
+**Al 8% anual compuesto, ¿en cuántos años se dobla aproximadamente un capital? (una cifra)**
 > [!success]- Respuesta
-> 72 ÷ 6 = 12 años; no es exacto, el cálculo con la fórmula da 11,9 años.
+> 72 ÷ 8 = 9 años, aproximadamente. Es una aproximación: no sirve para interés simple.
 
 ---
-Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[regla-del-72]]
+Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[capitalizacion]] · [[regla-del-72]]
