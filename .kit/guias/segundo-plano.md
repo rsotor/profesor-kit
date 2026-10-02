@@ -10,8 +10,9 @@
    vez (puede llevar varias clases, abajo). Las
    rutas son relativas a `estudio/inbox/`. Si la clase es una carpeta, antes `--lanzar <carpeta> --ver` y enséñale qué
    entra y qué se queda fuera (audio sin transcribir, subcarpetas): solo se lanza con su sí.
-   **Con 2 clases nuevas o más, una detrás de otra:** lanzas la primera y, al juntarla, la siguiente. Prepararlas a
-   la vez gasta mucha cuota: no se lo ofrezcas. **Solo si él lo pide expresamente** ("prepáralas todas a la vez") y
+   **Con 2 clases nuevas o más, una detrás de otra y en el orden del curso:** lanzas la primera y, al juntarla, la
+   siguiente. Díselo en una línea, por si prefiere empezar por otra: "hay 3 clases nuevas; empiezo por la 02-01 y
+   sigo en orden, salvo que quieras empezar por otra". Prepararlas a la vez gasta mucha cuota: no se lo ofrezcas. **Solo si él lo pide expresamente** ("prepáralas todas a la vez") y
    tu adaptador trae `subagentes`, avísale antes en una frase y espera su sí: "Prepararlas a la vez gasta bastante más
    cuota de tu asistente que de una en una, y con un plan básico puedes quedarte sin cuota hasta que se renueve.
    ¿Seguro que las quieres a la vez?". Con su sí: `--lanzar --clase <id> <ficheros o carpeta> --clase <id> <...>` (con
