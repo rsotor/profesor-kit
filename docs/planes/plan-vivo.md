@@ -118,6 +118,77 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    - **Fuera:** TODO: decidir con Roberto.
    - **Cómo sabremos:** TODO: decidir con Roberto.
 
+## Siguiente: mantenimiento nocturno con Claude
+
+Decidido con Roberto (2026-10-02). Que los issues y Dependabot avancen solos de noche, con la cuota de la
+suscripción y sin el Mac de Roberto, y que la prueba real deje de bloquear cada PR. Piloto: este repo; los demás
+(casi todos privados, sin proteger `main`) copian los ficheros cuando funcione aquí. Los cursos solo se actualizan
+por release (`actualizar.js`, nunca `main`): un merge automático no llega a ningún alumno hasta que Roberto publica.
+
+1. **Interruptor y cuota.** Variable del repo `CLAUDE_NOCTURNO`: todo workflow que use Claude la mira lo primero
+   y, con `off`, termina sin gastar. Se cambia desde el móvil (*Settings → Variables*) o con
+   `gh variable set CLAUDE_NOCTURNO --body off`. Claude con la suscripción (`claude setup-token`, el secreto lo pone
+   Roberto), `anthropics/claude-code-action` fijada por sha, límite de turnos y timeout por job. Los PRs se crean y
+   se mergean con la GitHub App `rsotor-bot` (firma como bot; contents, PRs e issues en escritura, workflows sin
+   acceso; secreto `BOT_PRIVATE_KEY` y variable `BOT_CLIENT_ID`; `actions/create-github-app-token` ya no admite bien el App
+   ID), comprobado con el workflow `bot`, con un token temporal por
+   ejecución (`actions/create-github-app-token`). Nunca con `GITHUB_TOKEN`: lo que este crea no dispara
+   `tests.yml` y `tests-ok` no llegaría a correr.
+2. **Dependabot sin Claude.** Patch y minor con `tests-ok` en verde → auto-merge (`dependabot/fetch-metadata` +
+   `gh pr merge --auto`, con `GITHUB_TOKEN`: un workflow de Dependabot no ve los secretos del repo y su merge no
+   tiene que disparar nada). Solo npm; las Actions (tocan `.github/workflows/`) y los major se quedan abiertos. `--auto` solo espera checks
+   donde `main` tiene checks obligatorios; en los repos sin proteger, un job comprueba `gh pr checks` en verde y
+   después mergea.
+3. **Issues: etiquetas** (documentadas en `CONTRIBUTING.md` y en la descripción de cada etiqueta en GitHub):
+
+   | Etiqueta | La pone | Qué pasa |
+   |---|---|---|
+   | `feedback` / `instalación` / `mejora` | La plantilla | Sin una de ellas, un script sin LLM pide usar la plantilla |
+   | `claude:go` | Roberto (o issue abierto por `rsotor`) | Entra en la cola. El workflow comprueba quién la puso. Claude lee el cuerpo del issue y solo los comentarios de `rsotor` |
+   | `t:s` / `t:m` / `t:l` | Claude al clasificar (solo con `claude:go`), o Roberto | Tamaño |
+   | `p:alta` / `p:baja` | Claude al clasificar (solo con `claude:go`), o Roberto | Prioridad dentro de su grupo |
+   | `claude:propuesta` | Claude | `t:l`: propuesta en un comentario con `@rsotor`; para |
+   | `claude:aprobado` | Roberto | Implementa la propuesta; el PR lo mergea Roberto |
+   | `claude:bloqueado` | Claude | Pregunta en el issue con `@rsotor`; sigue cuando Roberto responde |
+
+4. **Cola nocturna** (cron 03:00 Madrid, concurrencia 1). Presupuesto por noche en puntos: S = 1, M = 3,
+   propuesta L = 1, implementar L aprobada = 5, prueba real de un paso = 2; tope inicial 6, y la prueba cuenta
+   dentro del tope. Orden: lo que Roberto desbloqueó (aprobado o
+   respondido) → `feedback` e `instalación` por prioridad → `mejora`. Rama `claude/issue-<n>`, PR enlazado.
+   **Auto-merge** de S y M solo si: `tests-ok` en verde, prueba parcial en verde si toca skills, y diff por debajo
+   del umbral (TODO: fijar líneas y ficheros). **Nunca** si toca lo que se ejecuta en el equipo del alumno o decide
+   sus permisos: `.github/`, `.claude/`, `.kit/herramientas/`, `.kit/motor.json`, `AGENTS.md`, `package.json` y
+   lockfiles. Eso queda en PR para Roberto. Antes de la fase 3 (prueba parcial), tampoco `.kit/skills/` ni
+   `.kit/plantillas/`: `cambio-grande.js` exige la prueba entera.
+5. **Prueba real por partes** (se apoya en `--solo` y las copias de la rama de la #56):
+   - Por PR nocturno: según las rutas, solo el paso de la skill tocada (2 puntos); solo herramientas → ninguna.
+     Nunca una entera de noche por un PR: lo que toca `AGENTS.md` o `.kit/plantillas/` espera a la de la release.
+     `cambio-grande.js` acepta un resumen `--solo` del paso que toca (cambio de la fase 3).
+   - Las copias por paso de la última prueba entera se guardan en GitHub (artifact), no solo en `pruebas-local/`.
+     Si esa prueba es de hace más de N commits de skills (TODO: fijar N), toca una entera.
+   - Antes de cada release: entera y sobre el commit que se publica, como pide `.claude/rules/desarrollo.md`.
+     Corre en Actions, no en el Mac.
+6. **Release semiautomática.** Un workflow mantiene abierto el PR de versión (`.kit/VERSION` + notas de
+   `release-notas.js`). Solo se puede mergear con la prueba real entera en verde sobre ese commit; Roberto da el
+   clic. El PR lista aparte los commits auto-mergeados desde la última release, para que ese clic sea una revisión. Siguen valiendo «nunca dos releases el mismo día» y «los cambios se juntan».
+7. **Informe:** cada mañana, un issue fijado con lo mergeado, lo propuesto, lo bloqueado y los puntos gastados.
+
+Fases: 0) interruptor, etiquetas, documentación y Dependabot (sin Claude) · 1) cola de issues sin auto-merge,
+dos semanas · 2) auto-merge de S y M · 3) prueba real por partes en Actions · 4) release semiautomática · 5) copiar
+a los demás repos.
+
+- **Fuera:** los demás repos hasta la fase 5; releases sin el clic de Roberto; auto-merge de L; ejecutar Claude
+  sobre código de forks o issues de otros sin `claude:go`; medir la cuota restante (no hay forma con suscripción).
+- **Cómo sabremos:** con `CLAUDE_NOCTURNO=off` ningún job llama a Claude (se ve en el log); en la fase 1, la
+  clasificación (tamaño, prioridad, propuesta o no) coincide con la de Roberto en 9 de cada 10 issues; en la fase
+  2, dos semanas sin revertir un merge automático; un PR que toca solo `/examen` pasa con la prueba del paso del
+  examen, sin la entera; la primera release semiautomática sale sin lanzar nada en el Mac.
+- **Decisiones abiertas:** TODO: cuánta cuota gasta un punto (se mide la primera semana y se ajusta el
+  tope); TODO: umbral de diff y N de la prueba entera.
+- **Abogado del diablo:** ronda completa 2026-10-02, 5 objeciones, todas aplicadas (exclusiones del auto-merge,
+  orden de fases con `cambio-grande.js`, prueba real dentro del tope, token y `--auto` en GitHub, prueba entera en
+  cada release y clasificación solo con `claude:go`).
+
 ## Issues abiertas por decidir
 
 - **#56** subagentes con roles: el revisor independiente, en curso (arriba); la preparación en paralelo después
