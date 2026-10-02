@@ -118,6 +118,14 @@ function informe({ fecha, interruptor, noche, propuestas, bloqueados, prs }) {
   return l.join('\n') + '\n';
 }
 
+// Pura: el comentario que avisa a Roberto por email. null los días en que nada le espera.
+function avisoDeLaManana({ propuestas, bloqueados, prs }) {
+  const partes = [[propuestas.length, 'propuesta', 'propuestas'], [bloqueados.length, 'pregunta', 'preguntas'], [prs.length, 'PR para revisar', 'PRs para revisar']]
+    .filter(([n]) => n > 0).map(([n, uno, varios]) => `${n} ${n === 1 ? uno : varios}`);
+  if (!partes.length) return null;
+  return `@${DUENO} Te esperan: ${partes.join(', ')}. El detalle, arriba en el informe.`;
+}
+
 // --- Lo que habla con GitHub ---------------------------------------------------------------------------------
 function gh(args) {
   const r = spawnSync('gh', args, { encoding: 'utf8', maxBuffer: 50 * 1024 * 1024 });
@@ -175,18 +183,23 @@ function cli(args, entorno = process.env) {
       .map(x => ({ numero: x.number, titulo: x.title }));
     const prs = gh(['pr', 'list', '-R', repo, '--state', 'open', '--json', 'number,title,headRefName'])
       .filter(p => p.headRefName.startsWith('claude/issue-')).map(x => ({ numero: x.number, titulo: x.title }));
+    const pendiente = { propuestas: conEtiqueta('claude:propuesta'), bloqueados: conEtiqueta('claude:bloqueado'), prs };
     const cuerpo = informe({
       fecha: new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC', interruptor: entorno.CLAUDE_NOCTURNO || 'sin definir',
-      noche, propuestas: conEtiqueta('claude:propuesta'), bloqueados: conEtiqueta('claude:bloqueado'), prs,
+      noche, ...pendiente,
     });
     const existente = gh(['issue', 'list', '-R', repo, '--state', 'open', '--search', `"${TITULO_INFORME}" in:title`, '--json', 'number,title'])
       .find(x => x.title === TITULO_INFORME);
-    if (existente) spawnSync('gh', ['issue', 'edit', String(existente.number), '-R', repo, '--body', cuerpo], { stdio: 'inherit' });
+    let num = existente && String(existente.number);
+    if (num) spawnSync('gh', ['issue', 'edit', num, '-R', repo, '--body', cuerpo], { stdio: 'inherit' });
     else {
       const r = spawnSync('gh', ['issue', 'create', '-R', repo, '--title', TITULO_INFORME, '--body', cuerpo], { encoding: 'utf8' });
-      const num = (r.stdout.match(/\/issues\/(\d+)/) || [])[1];
+      num = (r.stdout.match(/\/issues\/(\d+)/) || [])[1];
       if (num) spawnSync('gh', ['issue', 'pin', num, '-R', repo], { stdio: 'inherit' });
     }
+    // Editar el informe no manda email; este comentario sí, y solo cuando algo espera a Roberto.
+    const aviso = avisoDeLaManana(pendiente);
+    if (num && aviso) spawnSync('gh', ['issue', 'comment', num, '-R', repo, '--body', aviso], { stdio: 'inherit' });
     return 0;
   }
   console.error('Uso: cola-nocturna.js --cola [--tope N] | --contexto <n> <fichero> | --aplicar <n> <resultado.json> <modo>');
@@ -244,4 +257,4 @@ function aplicar(repo, n, fichero, modo) {
 
 if (require.main === module) process.exitCode = cli(process.argv.slice(2));
 
-module.exports = { clasificar, cola, contexto, validarResultado, prohibidos, informe, cli, DUENO, TOPE_POR_DEFECTO };
+module.exports = { clasificar, cola, contexto, validarResultado, prohibidos, informe, avisoDeLaManana, cli, DUENO, TOPE_POR_DEFECTO };

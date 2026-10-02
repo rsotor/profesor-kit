@@ -116,3 +116,11 @@ test('informe: sin noche (interruptor apagado) lo dice', () => {
   assert.match(txt, /No corrió/);
   assert.match(txt, /\*\*off\*\*/);
 });
+
+const { avisoDeLaManana } = require('../../../.github/cola-nocturna');
+
+test('avisoDeLaManana: menciona a rsotor con lo que espera; nada si no hay nada', () => {
+  assert.equal(avisoDeLaManana({ propuestas: [], bloqueados: [], prs: [] }), null);
+  const txt = avisoDeLaManana({ propuestas: [{}], bloqueados: [], prs: [{}, {}] });
+  assert.equal(txt, '@rsotor Te esperan: 1 propuesta, 2 PRs para revisar. El detalle, arriba en el informe.');
+});
