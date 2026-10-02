@@ -12,7 +12,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { temporal } = require('./ayuda');
-const { ficheroResoluble, pidVivo, construirPrompt } = require('../preparar');
+const { ficheroResoluble, pidVivo, construirPrompt, construirPromptCoordinador, leerClases } = require('../preparar');
 
 const KIT = path.resolve(__dirname, '..', '..', '..');
 const SCRIPT_ASISTENTE = path.join(__dirname, 'asistente-de-mentira.js');
@@ -43,9 +43,10 @@ function esperarTerminada(id) {
 
 // El adaptador de un asistente que trabaja en segundo plano con asistente-de-mentira.js, con el id
 // grabado literal (el asistente de mentira no lee el prompt: el test ya sabe qué id le toca).
-function escribirAdaptador(idParaElAsistente) {
+function escribirAdaptador(idParaElAsistente, { subagentes = false } = {}) {
   const llm = JSON.parse(fs.readFileSync(path.join(curso, 'config', 'ajustes.json'), 'utf8')).llm || 'claude-code';
   const adaptador = { id: llm, comando: process.execPath, skills: '.claude/skills', permisos: { fichero: '.claude/settings.json', formato: 'x' } };
+  if (subagentes) adaptador.subagentes = { herramienta: 'Agent' };
   if (idParaElAsistente) adaptador.segundo_plano = [SCRIPT_ASISTENTE, idParaElAsistente, '{prompt}', '{modelo}'];
   fs.writeFileSync(path.join(curso, 'config', 'adaptador-llm.json'), JSON.stringify(adaptador, null, 2));
 }
@@ -550,4 +551,88 @@ test('resolverEntradas: rutas de muchas formas, sin repetir, y nunca fuera de in
     fs.symlinkSync(raiz, path.join(inbox, 'enlace'));
     assert.equal(resolverEntradas(raiz, ['enlace/fuera.md']).motivo, 'fuera-de-inbox', 'un enlace dentro de inbox que sale de ella no vale');
   }
+});
+
+// --- #56: varias clases a la vez, con subagentes -------------------------------------------------------------
+
+function lanzarVarias(ids, env = {}) {
+  const args = ids.flatMap(id => ['--clase', id, ...conFichero(id)]);
+  return ejecutar(process.execPath, [path.join(curso, '.kit', 'herramientas', 'preparar.js'), '--lanzar', ...args], curso, env);
+}
+
+test('leerClases: cada --clase con su id y sus ficheros, hasta la siguiente opción', () => {
+  assert.deepEqual(leerClases(['--lanzar', '--clase', '02-01', 'a.md', 'b.md', '--clase', '02-02', 'c/', '--ver']),
+    [{ id: '02-01', ficheros: ['a.md', 'b.md'] }, { id: '02-02', ficheros: ['c/'] }]);
+  assert.deepEqual(leerClases(['--lanzar', '--clase', '--clase', 'x', 'a.md']), [{ id: null, ficheros: [] }, { id: 'x', ficheros: ['a.md'] }]);
+});
+
+test('construirPromptCoordinador: segundo plano, cada clase con su id y sus ficheros, las dos fases y su guía', () => {
+  const prompt = construirPromptCoordinador([{ id: '02-01', ficheros: ['a.md'] }, { id: '02-02', ficheros: ['b.md', 'c.xlsx'] }]);
+  assert.match(prompt, /no preguntes nada/);
+  assert.match(prompt, /2 clases/);
+  assert.match(prompt, /la 02-01, en estudio\/inbox\/a\.md; la 02-02, en estudio\/inbox\/b\.md y estudio\/inbox\/c\.xlsx/);
+  assert.match(prompt, /subagente/);
+  assert.match(prompt, /dos fases/);
+  assert.match(prompt, /segundo-plano\.md, apartado "Varias clases a la vez"/);
+  assert.doesNotMatch(prompt, /son la misma clase/);
+});
+
+test('22. #56: varias clases se niegan sin subagentes, con una clase repetida, sin material o con un fichero en dos clases', () => {
+  const antes = git(['rev-parse', 'HEAD']).salida;
+  escribirAdaptador('v1,v2');
+  assert.match(lanzarVarias(['v1', 'v2']).salida, /no puede preparar varias clases a la vez/);
+  escribirAdaptador('v1,v2', { subagentes: true });
+  assert.match(lanzarVarias(['v1', 'v1']).salida, /la clase v1 está dos veces/);
+  assert.match(herramienta('preparar', '--lanzar', '--clase', 'v1', ...conFichero('v1'), '--clase', 'v2').salida, /falta el material de la clase v2/);
+  assert.match(herramienta('preparar', '--lanzar', '--clase', 'v1', 'v1.md', '--clase', 'v2', 'v1.md').salida, /v1\.md está en la clase v1 y en la v2/);
+  assert.deepEqual(preparaciones(), []);
+  assert.equal(git(['rev-parse', 'HEAD']).salida, antes, 'no se ha tocado git');
+});
+
+test('23. #56: dos clases en un lanzamiento: una copia, las dos sesiones, y --juntar las nombra a las dos', () => {
+  escribirAdaptador('w1,w2', { subagentes: true });
+  const ver = herramienta('preparar', '--lanzar', '--clase', 'w1', ...conFichero('w1'), '--clase', 'w2', ...conFichero('w2'), '--ver');
+  assert.match(ver.salida, /por clase:\n {2}w1: w1\.md\n {2}w2: w2\.md/);
+  assert.deepEqual(preparaciones(), [], '--ver no lanza nada');
+
+  const r = lanzarVarias(['w1', 'w2']);
+  assert.equal(r.codigo, 0, r.salida);
+  assert.match(r.salida, /Preparando 2 clases a la vez/);
+  const terminada = esperarTerminada('w1_w2');
+  assert.equal(terminada.resultado, 'terminada');
+  assert.deepEqual(terminada.clases, [{ id: 'w1', ficheros: ['w1.md'] }, { id: 'w2', ficheros: ['w2.md'] }]);
+  assert.deepEqual(terminada.ficheros, ['w1.md', 'w2.md'], 'ficheros, plano, como lo lee estado.js');
+
+  const j = herramienta('preparar', '--juntar', 'w1_w2');
+  assert.equal(j.codigo, 0, j.salida);
+  assert.match(git(['log', '-1', '--format=%s']).salida, /^sesion\(w1, w2\): Clase de mentira w1 · Clase de mentira w2 \(preparadas en segundo plano\)/);
+  assert.ok(existe('estudio/sesiones/w1-clase-de-mentira.md') && existe('estudio/sesiones/w2-clase-de-mentira.md'));
+});
+
+test('24. #56: si una de las clases no deja su sesión, la preparación queda fallida y el registro dice cuál', () => {
+  escribirAdaptador('x1,x2', { subagentes: true });
+  assert.equal(lanzarVarias(['x1', 'x2'], { PROFESOR_KIT_ASISTENTE_DE_MENTIRA_FALTA: 'x2' }).codigo, 0);
+  assert.equal(esperarTerminada('x1_x2').resultado, 'fallida');
+  assert.match(registroDe('x1_x2'), /no ha dejado la sesión x2 guardada/);
+  assert.doesNotMatch(registroDe('x1_x2'), /x1,/);
+});
+
+test('25. #56: cuota acabada a mitad: lo escrito sin guardar no se pierde al descartar, queda en la rama descartada', () => {
+  // Tres descartadas viejas cuyo nombre ordena después del de y1_y2: si se conservaran por nombre, la de y1_y2 se
+  // borraría en el acto (ronda del diablo, 2026-10-01). Se conservan las tres más recientes por fecha.
+  const viejo = ejecutar('git', ['commit-tree', 'HEAD^{tree}', '-m', 'descartada vieja'], curso, { GIT_COMMITTER_DATE: '2001-01-01T00:00:00Z', GIT_AUTHOR_DATE: '2001-01-01T00:00:00Z' }).salida;
+  for (const n of ['zz1', 'zz2', 'zz3']) git(['branch', '-f', `preparacion-descartada/${n}-2001`, viejo]);
+  escribirAdaptador('y1,y2', { subagentes: true });
+  assert.equal(lanzarVarias(['y1', 'y2'], { PROFESOR_KIT_ASISTENTE_DE_MENTIRA_SIN_GUARDAR: '1' }).codigo, 0);   // descarta x1_x2
+  assert.equal(esperarTerminada('y1_y2').resultado, 'fallida');
+
+  escribirAdaptador('z1');
+  assert.equal(lanzar('z1').codigo, 0);   // descarta y1_y2
+  const ramas = git(['for-each-ref', '--format=%(refname:short)', 'refs/heads/preparacion-descartada/']).salida.split('\n').filter(Boolean);
+  const rama = ramas.find(r => r.startsWith('preparacion-descartada/y1_y2-'));
+  assert.ok(rama, `la rama de y1_y2 se conserva (${ramas.join(', ')})`);
+  assert.match(git(['log', '-1', '--format=%s', rama]).salida, /^rescate: lo que la preparación y1_y2 dejó sin guardar/);
+  assert.match(git(['ls-tree', '-r', '--name-only', rama, '--', 'estudio/sesiones']).salida, /y2-clase-de-mentira\.md/);
+  esperarTerminada('z1');
+  assert.equal(herramienta('preparar', '--juntar', 'z1').codigo, 0);
 });

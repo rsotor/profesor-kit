@@ -1,45 +1,44 @@
 ---
 tipo: concepto
-bloques: [1.1]
+bloques: ["1.1 El dinero y sus funciones"]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
-dificultad: 2
+dificultad: 3
 requiere: [funciones-del-dinero]
 alias: []
 tags: [dinero, ahorro]
 ---
 # Liquidez
 
-> **En una frase:** la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** La liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor no basta: si lo necesitas hoy y lo tienes en algo que tarda meses en convertirse en dinero, no te sirve para pagar lo de hoy.
+A veces hay que pagar algo mañana. Tener patrimonio no sirve si no se puede convertir en dinero a tiempo, o solo se puede a costa de malvenderlo.
 
 ## El ejemplo
 
-| Lo que tienes | Cómo lo conviertes en dinero | Liquidez |
+| Lo que tienes | Cuánto tardas en gastarlo | Liquidez |
 |---|---|---|
-| 50,00 € en la cartera | Los gastas al instante | Total |
-| Un piso | Venderlo bien lleva meses | Muy baja |
+| 50,00 € en la cartera | Al instante | Total |
+| Un piso | Meses, para venderlo bien | Muy baja |
 
-Si mañana tienes que pagar 50,00 €, la cartera te sirve; el piso, no.
+Si mañana necesitas 50,00 €, la cartera resuelve. El piso no, aunque valga muchísimo más.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Pensar que "tener mucho valor" es lo mismo que "tener liquidez". Un piso vale mucho, pero no se puede gastar mañana, y si lo vendes con prisas, lo normal es malvenderlo.
+> Confundir "vale mucho" con "es líquido". Un piso vale más que lo que hay en la cartera, pero para pagar mañana sirve menos. Liquidez y valor son cosas distintas.
 
 ## Visto desde tus ingresos irregulares
 
-En un mes flojo necesitas dinero disponible ya, no valor atado a algo que tarda en venderse. Por eso cuánto de tu dinero está líquido importa para cubrir esos meses.
+> [!info] Ampliación fuera de los apuntes
+> La parte del dinero que cubre los meses flojos es la que más liquidez necesita: tiene que estar disponible justo cuando no entra nada. Los apuntes anuncian que en el módulo 2 se compara ahorrar (muy líquido) con invertir (a veces, menos líquido); ahí se retoma.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — liquidez es qué tan rápido algo hace de medio de cambio
-- [[inflacion]] — lo muy líquido (dinero parado) no se protege de ella
+- [[funciones-del-dinero]] — el dinero es el activo más líquido porque es el medio de cambio
+- [[inflacion]] — el dinero líquido y parado es el que más sufre la inflación
 
 ## Historial
 
-- **01-01-01** · primera vez
-
-> **TODO:** el módulo 2 compara ahorrar (muy líquido) con invertir (a veces menos líquido); ampliar esta nota cuando llegue esa clase.
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

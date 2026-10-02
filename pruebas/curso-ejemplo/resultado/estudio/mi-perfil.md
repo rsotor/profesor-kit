@@ -24,7 +24,9 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 ## Lo que te cuesta
 
-*Todavía nada: se irá llenando con tus exámenes y tus dudas.*
+### Errores que se repiten
+
+- **liquidez**: dos preguntas sin acertar en el mismo examen, las dos dejadas en blanco (p.5, piso con mucho valor y poca liquidez; p.10, dónde tener el colchón). No hay respuesta marcada, así que no se sabe si confunde valor con liquidez o no llegó a contestarlas. — *examen del módulo 1 (01-examen-2026-10-02.md), p.5 y p.10*
 
 ## Lo que te entró a la primera
 
@@ -36,7 +38,7 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 | Examen | Intentos | Último |
 |---|---|---|
-| [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-01\|Examen 01]] | 6,0 (2026-10-01) | ✅ aprobado |
+| [[examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-02\|Examen 01]] | 6,0 (2026-10-02) | ✅ aprobado |
 
 ### Conceptos, por bloque
 
@@ -44,13 +46,15 @@ Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces 
 
 | Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |
 |---|---|---|
-| Bloque 1.1 | 2 · 1 · 0 · 0 | 0 · 0 · 0 · 3 |
-| Bloque 1.2 | 1 · 3 · 0 · 0 | 0 · 0 · 0 · 4 |
-| Bloque 2.1 | 0 · 0 · 0 · 5 | 0 · 0 · 0 · 5 |
+| Bloque 1.1 El dinero y sus funciones | 1 · 1 · 1 · 0 | 0 · 0 · 0 · 3 |
+| Bloque 1.2 Presupuesto personal | 2 · 2 · 0 · 0 | 0 · 0 · 0 · 4 |
+| Bloque 2.1 Interés simple y compuesto | 0 · 0 · 0 · 6 | 0 · 0 · 0 · 6 |
+| Bloque 2.2 Ahorro a largo plazo | 0 · 0 · 0 · 2 | 0 · 0 · 0 · 2 |
 
 ### Donde más dudas
 
-- colchon-financiero: 1 duda (última: 2026-10-01 · conceptos/colchon-financiero.md, 2026-10-01)
+- colchon-financiero: 1 duda (última: 2026-10-02 · conceptos/colchon-financiero.md, duda de 2026-10-02)
+- funciones-del-dinero: 1 duda (última: 2026-10-02 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, duda de 2026-10-02)
 
 ## Cambios en cómo te explico
 

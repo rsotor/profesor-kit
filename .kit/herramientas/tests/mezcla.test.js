@@ -192,3 +192,54 @@ test('resolverPorTrozos: sin versión en una de las dos etapas (DU/UD), null —
   assert.equal(resolverPorTrozos(raiz, conflictos[0], 'aqui'), null);
   git(raiz, 'merge', '--abort');
 });
+
+// --- #56, prueba real del 2026-10-01: una nota de concepto tocada en los dos lados ------------------------------
+
+const NOTA_BASE = ['---', 'tipo: concepto', 'bloques: [1.2]', 'visto_en: [01-02-01-presupuesto]', 'dificultad: 2',
+  'requiere: [presupuesto]', '---', '# Tasa de ahorro', '', 'Qué parte de lo que ganas te queda.', '', '## Historial', '',
+  '- **01-02-01** · primera vez', ''].join('\n');
+
+// Bifurca desde la nota base: `aqui` es lo que hace main (la tutoría) y `alla` lo que hace la otra rama (la preparación).
+function choqueEnNota(aqui, alla) {
+  const raiz = cursoTemporal();
+  const rel = 'estudio/conceptos/tasa-de-ahorro.md';
+  escribir(raiz, { [rel]: NOTA_BASE });
+  iniciarGit(raiz);
+  git(raiz, 'checkout', '-q', '-b', 'otra');
+  escribir(raiz, { [rel]: alla(NOTA_BASE) });
+  git(raiz, 'commit', '-q', '-am', 'amplía en la otra');
+  git(raiz, 'checkout', '-q', 'main');
+  escribir(raiz, { [rel]: aqui(NOTA_BASE) });
+  git(raiz, 'commit', '-q', '-am', 'cambia en main');
+  merge(raiz, '--no-commit', '--no-ff', 'otra');
+  return { raiz, rel, abs: path.join(raiz, ...rel.split('/')) };
+}
+const subeDificultad = t => t.replace('dificultad: 2', 'dificultad: 3');
+const amplia = t => t.replace('bloques: [1.2]', 'bloques: [1.2, 2.2]')
+  .replace('visto_en: [01-02-01-presupuesto]', 'visto_en: [01-02-01-presupuesto, 02-02-01-ahorro]')
+  .replace('## Historial', '## A largo plazo\n\nLa tasa se convierte en una cantidad regular.\n\n## Historial')
+  .replace('- **01-02-01** · primera vez\n', '- **01-02-01** · primera vez\n- **02-02-01** · ampliada\n');
+
+test('resolverConflictos: una nota de concepto, un campo de la cabecera aquí y la ampliación allí → se juntan los dos', () => {
+  const { raiz, rel, abs } = choqueEnNota(subeDificultad, amplia);
+  assert.deepEqual(ficherosEnConflicto(raiz), [rel], 'git solo no sabe: son líneas contiguas');
+  assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: true });
+  const nota = fs.readFileSync(abs, 'utf8');
+  assert.match(nota, /^dificultad: 3$/m, 'lo de la tutoría');
+  assert.match(nota, /^bloques: \[1\.2, 2\.2\]$/m);
+  assert.match(nota, /^visto_en: \[01-02-01-presupuesto, 02-02-01-ahorro\]$/m, 'lo de la preparación');
+  assert.match(nota, /## A largo plazo[\s\S]*- \*\*02-02-01\*\* · ampliada/);
+  assert.doesNotMatch(nota, /<<<<<<<|>>>>>>>/);
+  assert.equal(nota, amplia(subeDificultad(NOTA_BASE)));
+});
+
+test('resolverConflictos: el mismo campo de la cabecera cambiado distinto en los dos lados sigue siendo un choque', () => {
+  const { raiz, rel } = choqueEnNota(subeDificultad, t => amplia(t).replace('dificultad: 2', 'dificultad: 1'));
+  assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: false, ficheros: [rel] });
+});
+
+test('resolverConflictos: la misma línea del cuerpo cambiada en los dos lados sigue siendo un choque', () => {
+  const { raiz, rel } = choqueEnNota(t => subeDificultad(t).replace('Qué parte', 'Cuánto'), t => amplia(t).replace('Qué parte', 'Qué fracción'));
+  assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: false, ficheros: [rel] });
+});
+

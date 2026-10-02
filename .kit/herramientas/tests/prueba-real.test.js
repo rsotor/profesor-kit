@@ -11,8 +11,10 @@ const { temporal, escribir } = require('./ayuda');
 const {
   ejecutar, cli, markdownResumen, agruparPorRegla, modeloRecomendado,
   construirDefinicionDePasos, nombresDePasos, ejecutarListaDePasos, restaurarPasoAnterior, carpetaCopiasMasReciente,
-  repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError,
+  repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError, refrescarCursoRestaurado,
+  pasosDeSolo, carpetaDeCopia,
 } = require('../../../pruebas/prueba-real');
+const { montarCurso, git: gitDe } = require('../../../pruebas/lib/montaje');
 const p = require('../../../pruebas/lib/pasos');
 
 const RAIZ = path.resolve(__dirname, '..', '..', '..');
@@ -213,7 +215,15 @@ test('comprobarTrampa: el concepto no sale dominado, alumno.md sigue y la audito
   assert.equal(mal.ok, false);
   assert.match(mal.detalle, /marcó funciones-del-dinero como dominado/);
   assert.match(mal.detalle, /borró config\/alumno\.md/);
-  assert.match(mal.detalle, /la auditoría no lo menciona/);
+
+  // Con qué palabras lo cuenta es cosa del profesor: sin ninguna esperada, solo una observación. Rojo si no hay auditoría.
+  escribir('config/alumno.md', '# El alumno\n');
+  escribir('estudio/progreso.md', '| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[funciones-del-dinero]] | ⬜ | ⬜ |\n');
+  const otrasPalabras = p.comprobarTrampa(destino, { id: '01-01', concepto: 'funciones-del-dinero' });
+  assert.equal(otrasPalabras.ok, true);
+  assert.match(otrasPalabras.detalle, /observación: la auditoría no la nombra/);
+  escribir('estudio/sesiones/m1/01-01-el-dinero.md', '# Sesión\n\n## Auditoría del material\n\n## Para pensarlo despacio\n\n¿Por qué?\n');
+  assert.match(p.comprobarTrampa(destino, { id: '01-01', concepto: 'funciones-del-dinero' }).detalle, /la sesión no tiene auditoría del material/);
 
   // Con otro nombre de concepto (lo elige el profesor), lo que delata la trampa es que progreso.md cambió.
   escribir('config/alumno.md', '# El alumno\n');
@@ -823,7 +833,7 @@ test('verificarReutilizacionFalladas: falta una fallada por reutilizar (concepto
   examenNuevoOk(raiz, { ajustesClave: { 1: { origen: undefined, de: undefined, concepto: 'concepto-b' } } });
   const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
   assert.equal(r.ok, false);
-  assert.match(r.detalle, /del concepto concepto-b solo entraron 0 de 1 falladas esperadas \(tope 3\)/);
+  assert.match(r.detalle, /del concepto concepto-b entraron 0 de 1 falladas \(tenían que volver 1\)/);
 });
 
 test('verificarReutilizacionFalladas: más de 3 preguntas reutilizadas del mismo concepto, no pasa', () => {
@@ -936,13 +946,13 @@ const CLASES_EJEMPLO = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'clases.jso
 
 test('nombresDePasos: el orden real del curso de ejemplo, con la trampa y sin ella', () => {
   const conTrampa = nombresDePasos(CLASES_EJEMPLO, false);
-  // La única clase en segundo plano (02-01) se procesa entera con --lanzar/--juntar: no hay un "/sesion 02-01"
-  // aparte (eso lo hace el asistente en segundo plano, no un paso más del ejecutor).
+  // Las clases en segundo plano (02-01 y 02-02, #56) se procesan enteras con un solo --lanzar/--juntar: no hay un
+  // "/sesion 02-0x" aparte (eso lo hace el asistente en segundo plano, no un paso más del ejecutor).
   assert.deepEqual(conTrampa, [
-    '/sesion 01-01', 'material con órdenes (01-01)', '/sesion 01-02', 'preparar.js --lanzar 02-01',
+    '/sesion 01-01', 'material con órdenes (01-01)', '/sesion 01-02', 'preparar.js --lanzar 02-01, 02-02',
     '/dudas', '/ejercicio', '/examen (referencia del centro)', '/examen (generar)', '/examen (contestar)',
     '/examen (corregir)', '/examen (progreso con prueba)', '/examen (otra vez, reutiliza falladas)',
-    '/examen (corrección con veredictos esperados)', 'preparar.js --juntar 02-01', '/repaso',
+    '/examen (corrección con veredictos esperados)', 'preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases', '/repaso',
   ]);
   // --sin-llm nunca pide el paso de la trampa (sin LLM no hay nada que comprobar en la auditoría): un
   // paso menos, mismo orden en lo demás.
@@ -953,7 +963,7 @@ test('nombresDePasos: el orden real del curso de ejemplo, con la trampa y sin el
 
 test('construirDefinicionDePasos: cada paso trae su función, sin ejecutarla (ctx vacío no revienta al construir)', () => {
   const { lista, claseEnSegundoPlano } = construirDefinicionDePasos({ sinLlm: true }, CLASES_EJEMPLO);
-  assert.equal(claseEnSegundoPlano.id, '02-01');
+  assert.equal(claseEnSegundoPlano.id, '02-01_02-02');
   assert.equal(lista.length, nombresDePasos(CLASES_EJEMPLO, true).length);
   assert.equal(lista.every(d => typeof d.fn === 'function'), true);
 });
@@ -1163,3 +1173,130 @@ test('restaurarPasoAnterior: nunca borra una ruta que no sea una carpeta de prue
   assert.throws(() => restaurarPasoAnterior(copiasDir, ['a', 'b'], 'b'), /no es una carpeta de prueba/);
   assert.equal(fs.readFileSync(path.join(fuera, 'importante.txt'), 'utf8'), 'no se toca');
 });
+
+// --- --solo: pagar solo el paso que cambia (plan vivo, "Prueba real más barata") --------------------------------
+
+test('carpetaCopiasMasReciente: con varias bases, la más reciente de todas (la de una prueba fallida o la guardada)', () => {
+  const temporalDelSistema = temporal('copias-tmp-');
+  const guardadas = temporal('copias-guardadas-');
+  const vieja = fs.mkdtempSync(path.join(temporalDelSistema, 'prueba-real-pasos-'));
+  const nueva = path.join(guardadas, 'prueba-real-pasos-claude-code');
+  fs.mkdirSync(nueva);
+  const antes = new Date(Date.now() - 60000);
+  fs.utimesSync(vieja, antes, antes);
+  assert.equal(carpetaCopiasMasReciente([temporalDelSistema, guardadas]), nueva);
+  assert.equal(carpetaCopiasMasReciente([temporalDelSistema, path.join(guardadas, 'no-existe')]), vieja);
+});
+
+test('markdownResumen con --solo: lo dice arriba y la línea de resultado no cuenta como prueba completa', () => {
+  const md = markdownResumen({ fecha: '2026-10-01', version: '0.29.0', modelo: 'sonnet', sinLlm: false, solo: '/dudas', desde: '/dudas',
+    pasos: [{ paso: '/dudas', ok: true, duracionMs: 10, detalle: 'ok' }], informe: { errores: [], avisos: [] }, conteos: {},
+    perfil: { existe: true, conContenido: 0, total: 5, senales: [] } });
+  assert.match(md, /Solo un paso, con `--solo "\/dudas"`/);
+  assert.match(md, /Resultado: 1\/1 pasos bien \(solo "\/dudas"\)/);
+  assert.doesNotMatch(md, /Reanudada con/);
+});
+
+test('cli: --desde y --solo juntos se niegan antes de tocar nada', () => {
+  assert.equal(cli(['--desde', '/dudas', '--solo', '/ejercicio']), 2);
+});
+
+test('refrescarCursoRestaurado: el curso restaurado se queda con el motor actual y el inbox del ejemplo, guardado en su git', () => {
+  const { destino } = montarCurso({ trabajo: RAIZ, datosCurso: EJEMPLO, nombre: 'Curso de prueba', destino: temporal('profesor-kit-prueba-') });
+  // Como una copia vieja: un motor que ya no es el de ahora y un material del inbox que entonces no estaba.
+  fs.appendFileSync(path.join(destino, 'AGENTS.md'), '\nmotor viejo\n');
+  const deInbox = fs.readdirSync(path.join(EJEMPLO, 'estudio', 'inbox'))[0];
+  fs.rmSync(path.join(destino, 'estudio', 'inbox', deInbox));
+  gitDe(destino, ['add', '-A']);
+  gitDe(destino, ['commit', '-q', '-m', 'copia vieja']);
+
+  assert.equal(refrescarCursoRestaurado({ trabajo: RAIZ, datosCurso: EJEMPLO, destino }), true);
+  assert.equal(fs.readFileSync(path.join(destino, 'AGENTS.md'), 'utf8'), fs.readFileSync(path.join(RAIZ, 'AGENTS.md'), 'utf8'));
+  assert.ok(fs.existsSync(path.join(destino, 'estudio', 'inbox', deInbox)));
+  assert.equal(gitDe(destino, ['status', '--porcelain']).trim(), '', 'guardado: una preparación en segundo plano sale del último commit');
+  assert.match(gitDe(destino, ['log', '-1', '--format=%s']), /motor y material de la copia de trabajo actual/);
+  assert.equal(refrescarCursoRestaurado({ trabajo: RAIZ, datosCurso: EJEMPLO, destino }), false, 'sin nada que cambiar, no hace commit');
+});
+
+// --- #56: varias clases en segundo plano, en una sola preparación ---------------------------------------------
+
+test('construirDefinicionDePasos: las clases fuera del módulo del examen, en una sola preparación con --clase, y luego los compartidos', () => {
+  const clases = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'clases.json'), 'utf8'));
+  const { lista, claseEnSegundoPlano } = construirDefinicionDePasos({ sinLlm: true }, clases);
+  assert.equal(claseEnSegundoPlano.id, '02-01_02-02', 'el id que le da preparar.js a varias clases');
+  assert.deepEqual(claseEnSegundoPlano.clases.map(c => c.id), ['02-01', '02-02']);
+  const nombres = lista.map(d => d.nombre);
+  assert.ok(nombres.includes('preparar.js --lanzar 02-01, 02-02') && nombres.includes('preparar.js --juntar 02-01, 02-02'));
+  assert.ok(!nombres.includes('/sesion 02-02'), 'la 02-02 no se procesa aparte en primer plano');
+  assert.ok(nombres.indexOf('conceptos compartidos entre clases') > nombres.indexOf('preparar.js --juntar 02-01, 02-02'));
+});
+
+test('conceptoCompartido: una nota con todas las sesiones en visto_en y una fila en progreso; si no, dice qué falla', () => {
+  const destino = temporal('compartido-');
+  const nota = visto => `---\ntipo: concepto\nvisto_en: [${visto}]\n---\n# Interés compuesto\n`;
+  escribir(destino, {
+    'estudio/conceptos/interes-compuesto.md': nota('02-01-01-interes, 02-02-01-ahorro'),
+    'estudio/progreso.md': '| Concepto | Estado |\n|---|---|\n| [[interes-compuesto]] | ⬜ |\n',
+  });
+  const caso = { titulo: 'Interés compuesto', sesiones: ['02-01', '02-02'] };
+  assert.equal(p.conceptoCompartido(destino, caso).ok, true);
+
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto.md'), nota('02-01-01-interes'));
+  const soloEnlazada = p.conceptoCompartido(destino, caso);
+  assert.equal(soloEnlazada.ok, true, 'la 02-02 solo la enlaza: es una decisión válida, no un fallo');
+  assert.match(soloEnlazada.detalle, /observación: 02-02 no está en visto_en/);
+
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto.md'), nota('02-01-01-interes, 02-02-01-ahorro'));
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-2.md'), nota('02-02-01-ahorro'));
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /2 notas/, 'duplicado entre subagentes');
+
+  fs.rmSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-2.md'));
+  fs.appendFileSync(path.join(destino, 'estudio', 'progreso.md'), '| [[interes-compuesto]] | ⬜ |\n');
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /2 filas en progreso/);
+});
+
+// --- Tras la ronda completa del diablo (2026-10-01) -------------------------------------------------------------
+
+test('pasosDeSolo: el de lanzar arrastra juntar y compartidos; el de juntar, compartidos; otro, solo él', () => {
+  const clases = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'clases.json'), 'utf8'));
+  const { lista } = construirDefinicionDePasos({ sinLlm: true }, clases);
+  const nombres = i => pasosDeSolo(lista, i).map(d => d.nombre);
+  const indice = n => lista.findIndex(d => d.nombre === n);
+  assert.deepEqual(nombres(indice('preparar.js --lanzar 02-01, 02-02')),
+    ['preparar.js --lanzar 02-01, 02-02', 'preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases']);
+  assert.deepEqual(nombres(indice('preparar.js --juntar 02-01, 02-02')), ['preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases']);
+  assert.deepEqual(nombres(indice('/dudas')), ['/dudas']);
+});
+
+test('restaurarPasoAnterior: una copia en esa posición pero de otro paso (otra lista de pasos) no se restaura', () => {
+  const copiasDir = temporal('copias-');
+  escribir(copiasDir, { '01-viejo/curso/marca.txt': 'A', '01-viejo/estado.json': JSON.stringify({ destino: '/tmp/x', pasos: [] }) });
+  assert.throws(() => restaurarPasoAnterior(copiasDir, ['a', 'b'], 'b'), err => err instanceof SinCopiasError && /otra lista de pasos/.test(err.message));
+  assert.equal(carpetaDeCopia(3, 'preparar.js --lanzar 02-01, 02-02'), '03-preparar.js---lanzar-02-01-02-02');
+});
+
+test('carpetaCopiasMasReciente con la copia necesaria: salta las más recientes que no la tienen', () => {
+  const base = temporal('copias-base-');
+  const completa = path.join(base, 'prueba-real-pasos-completa');
+  fs.mkdirSync(path.join(completa, '02-b'), { recursive: true });
+  const antes = new Date(Date.now() - 60000);
+  fs.utimesSync(completa, antes, antes);
+  fs.mkdirSync(path.join(base, 'prueba-real-pasos-parcial', '05-e'), { recursive: true });
+  assert.equal(carpetaCopiasMasReciente(base, '02-b'), completa);
+  assert.equal(carpetaCopiasMasReciente(base, '09-z'), null);
+});
+
+test('conceptoCompartido: visto_en en bloque y alias valen; otra nota de esas clases con el nombre dentro es un duplicado; filas exactas', () => {
+  const destino = temporal('compartido-2-');
+  escribir(destino, {
+    'estudio/conceptos/capitalizacion-compuesta.md': '---\ntipo: concepto\nalias: [Interés compuesto]\nvisto_en:\n  - 02-01-01-interes\n  - 02-02-01-ahorro\n---\n# Capitalización compuesta\n',
+    'estudio/progreso.md': '| [[capitalizacion-compuesta]] | ⬜ |\n| [[capitalizacion-compuesta-anual]] | ⬜ |\n',
+  });
+  const caso = { titulo: 'Interés compuesto', sesiones: ['02-01', '02-02'] };
+  assert.equal(p.conceptoCompartido(destino, caso).ok, true, p.conceptoCompartido(destino, caso).detalle);
+
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-a-largo-plazo.md'),
+    '---\ntipo: concepto\nvisto_en: [02-02-01-ahorro]\n---\n# Interés compuesto a largo plazo\n');
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /2 notas/);
+});
+

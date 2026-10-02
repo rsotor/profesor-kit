@@ -15,7 +15,6 @@
   "probado": "Windows · Codex CLI 0.159.3 · 2026-10-01",
   "segundo_plano": [
     "exec",
-    "--ephemeral",
     "--sandbox",
     "workspace-write",
     "-c",

@@ -26,6 +26,29 @@
         "clase-03-interes-simple-y-compuesto.md"
       ],
       "tema": "Interés simple y compuesto"
+    },
+    {
+      "id": "02-02",
+      "ficheros": [
+        "clase-04-ahorro-a-largo-plazo.md"
+      ],
+      "tema": "Ahorro a largo plazo (se prepara a la vez que la 02-01 y comparte con ella el interés compuesto, y con la 01-02 la tasa de ahorro: es a propósito, para probar el reparto entre subagentes, #56; su unidad 02-02 no está en estructura.json, también a propósito)",
+      "compartidos": [
+        {
+          "titulo": "Interés compuesto",
+          "sesiones": [
+            "02-01",
+            "02-02"
+          ]
+        },
+        {
+          "titulo": "Tasa de ahorro",
+          "sesiones": [
+            "01-02",
+            "02-02"
+          ]
+        }
+      ]
     }
   ],
   "examen_modulo": {

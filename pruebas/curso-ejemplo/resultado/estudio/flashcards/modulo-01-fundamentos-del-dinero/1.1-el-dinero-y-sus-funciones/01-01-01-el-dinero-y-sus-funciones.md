@@ -6,37 +6,37 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 
 > Se responde mentalmente antes de desplegar.
 
-**¿Qué problema del trueque resuelve el dinero como medio de cambio?**
+**¿Cuáles son las tres funciones del dinero? (los tres nombres)**
 > [!success]- Respuesta
-> La doble coincidencia de deseos: ya no hace falta que el otro quiera justo lo que tú ofreces.
+> Medio de cambio, unidad de cuenta y depósito de valor.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 1/10*
+*Caja 1 de 5 · te toca el 2/10*
 
-**Un café cuesta 1,50 € y un corte de pelo 12,00 €. ¿Qué función del dinero permite compararlos directamente?**
+**Un pescador sabe que una caja de pescado vale 40,00 € sin pensar a cuántas gallinas equivale. ¿Qué función usa? (el nombre)**
 > [!success]- Respuesta
-> La de unidad de cuenta: todo tiene precio con la misma vara de medir.
+> Unidad de cuenta: pone precio a todo con la misma vara de medir.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 1/10*
+*Caja 1 de 5 · te toca el 2/10*
 
-**Los precios del súper suben, pero el de los tomates sube solo porque hay escasez. ¿Es inflación?**
+**El precio de los tomates sube por una mala cosecha. ¿Es inflación? (sí o no, y por qué en una frase)**
 > [!success]- Respuesta
-> No. La inflación es la subida general y sostenida de los precios, casi de todo a la vez; lo de los tomates es una subida concreta.
+> No. Sube una sola cosa. La inflación es la subida general y sostenida de los precios, de casi todo a la vez.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 1/10*
+*Caja 1 de 5 · te toca el 2/10*
 
-**¿Qué función del dinero daña la inflación?**
+**¿Qué es más líquido, 50,00 € en la cartera o un piso, y por qué? (en una frase)**
 > [!success]- Respuesta
-> El depósito de valor: lo guardado compra menos con el tiempo.
+> Los 50,00 €: se gastan al instante. Un piso, aunque valga más, tarda meses en venderse bien.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 1/10*
+*Caja 1 de 5 · te toca el 2/10*
 
 ---
-Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]]
+Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]

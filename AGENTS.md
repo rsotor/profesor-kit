@@ -258,7 +258,7 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Si algo de la instalación no va (el atajo, GitHub, las skills…) | `node .kit/herramientas/diagnostico.js` |
 | Tras escribir o cambiar `config/estructura.json` | `node .kit/herramientas/organizar.js` |
 | Tras preparar el curso (paso 9) y tras actualizar un curso existente | `node .kit/herramientas/obsidian.js` |
-| Para preparar una clase en segundo plano (lanzar, ver cómo va, juntarla) | `node .kit/herramientas/preparar.js --lanzar <ficheros o carpeta de inbox> --id <id>` · `--estado` · `--juntar <id>` |
+| Para preparar una clase en segundo plano (lanzar, ver cómo va, juntarla) | `node .kit/herramientas/preparar.js --lanzar <ficheros o carpeta de inbox> --id <id>` (varias a la vez: `--lanzar --clase <id> <...> --clase <id> <...>`) · `--estado` · `--juntar <id>` |
 | Solo al instalar (ver `INSTALAR-AGENTE.md`) | `preparar-curso.js`, `instalar-skills.js`, `crear-atajo.js` (y `/configurar`, si falta el atajo) |
 
 **Guardar es parte del trabajo, no un extra al final.** Cada cosa terminada y comprobada se guarda en el

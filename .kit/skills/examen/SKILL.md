@@ -253,7 +253,8 @@ plataforma…), en cualquier momento del curso — no hace falta esperar a `/con
    fallos y cuánto, número de preguntas, tiempo y el aprobado, si lo dice. Ajusta el tipo que corresponda
    (normalmente `modulo`; crea o ajusta uno con nombre propio como `certificacion` si el ejemplo es del
    examen final o de la certificación). **Lo que el ejemplo no diga, no se inventa:** se queda el valor que
-   ya había, y se lo dices al alumno.
+   ya había, y se lo dices al alumno. En `config/examenes.json` no se añade nada más: ni notas ni la referencia
+   (cada tipo lleva solo `preguntas`, `aprobado` y `escalones`); la referencia se apunta en el examen (punto 7).
 2. **Reutiliza sus preguntas, literales**: el enunciado y las opciones entran sin reescribirlos (paso 2 del
    orden del apartado 3, después de lo que el alumno falló). Antes de componer un examen nuevo de esa
    unidad, comprueba si hay una referencia guardada y aplícala; si aún le quedan preguntas suyas sin salir,

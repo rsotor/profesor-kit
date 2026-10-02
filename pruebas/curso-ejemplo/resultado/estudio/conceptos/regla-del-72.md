@@ -1,6 +1,6 @@
 ---
 tipo: concepto
-bloques: [2.1]
+bloques: ["2.1 Interés simple y compuesto"]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [interes-compuesto]
@@ -9,35 +9,32 @@ tags: [interes]
 ---
 # Regla del 72
 
-> **En una frase:** la regla del 72 es un atajo para saber, a ojo, cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
-
-Repaso de lo previo: en el [[interes-compuesto]], `C_f = C · (1 + i)^n`; doblarse es llegar a 2 veces `C`.
+> **En una frase:** La regla del 72 es una aproximación para saber, a ojo, cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
 
 ## El problema
 
-Quieres saber si tu dinero se doblará en 5 años o en 20, sin calculadora ni logaritmos.
+Calcular cuándo se dobla un capital con la fórmula exacta pide calculadora. A veces solo quieres una idea rápida.
 
 ## El ejemplo
 
-Capital a un 6 % anual. Años para doblarse ≈ 72 ÷ 6 = **12 años**.
-
-El cálculo exacto con la fórmula da 11,9 años: la regla es una **aproximación**, no el resultado exacto.
+Al 6% anual: 72 ÷ 6 = **12 años**, aproximadamente. El cálculo exacto con la fórmula del [[interes-compuesto]] da 11,9 años: la regla es una aproximación, no el resultado exacto.
 
 ## La fórmula
 
-$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual}} $$
+$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número, sin el signo de tanto por ciento}} $$
 
-El tipo anual se pone como número, sin el signo de tanto por ciento (6, no 0,06).
+Se mete el tipo como número (6% anual → 6), no como 0,06.
 
 ## El error típico
 
-Tomarla como exacta, o usarla con interés simple. Solo vale para compuesto y da una cifra aproximada.
+> [!info] Ampliación fuera de los apuntes
+> Usarla con interés simple. Solo vale para compuesto: con simple, un capital se dobla en 100 ÷ 6 ≈ 16,7 años al 6% anual, no en 12.
 
 ## Relacionados
 
-- [[interes-compuesto]] — de donde sale: es la fórmula exacta, simplificada
-- [[tipo-de-interes]] — el divisor, siempre con su periodo (anual)
+- [[interes-compuesto]] — la fórmula exacta de la que esto es un atajo
+- [[tipo-de-interes]] — el tipo anual que se divide
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez

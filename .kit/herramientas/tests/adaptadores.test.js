@@ -96,9 +96,12 @@ test('el segundo plano de cada adaptador se puede lanzar en Windows aunque su co
   }
 });
 
+// Sin --ephemeral: con él, `codex exec` no puede lanzar subagentes ("no thread with id", openai/codex#41474), y el
+// segundo plano los necesita para preparar varias clases a la vez (#56). Se puede volver a poner cuando lo arreglen.
 test('el segundo plano de Codex va sin red: sandbox de escritura, sin búsqueda web y sin la configuración del usuario (issue #42)', () => {
   const a = Object.fromEntries(adaptadores).codex;
-  assert.deepEqual(a.segundo_plano.slice(0, 4), ['exec', '--ephemeral', '--sandbox', 'workspace-write']);
+  assert.deepEqual(a.segundo_plano.slice(0, 3), ['exec', '--sandbox', 'workspace-write']);
+  assert.ok(!a.segundo_plano.includes('--ephemeral'), 'con --ephemeral, codex exec no lanza subagentes (openai/codex#41474)');
   assert.ok(a.segundo_plano.includes('web_search=disabled') && a.segundo_plano.includes('--ignore-user-config'));
   assert.ok(!a.segundo_plano.some(x => /danger|bypass|full-access/.test(x)));
 });
