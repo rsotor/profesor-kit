@@ -1,0 +1,28 @@
+name: dependabot
+# Auto-merge de los PRs de Dependabot que no pueden romper nada que llegue al alumno (plan vivo, mantenimiento
+# nocturno, punto 2): solo npm, solo patch o minor. Las Actions (`github-actions`) tocan `.github/workflows/` y
+# se quedan para Roberto, igual que cualquier major.
+# `--auto` no mergea ya: espera al check obligatorio `tests-ok` de la regla de main. Sin Claude: no gasta cuota.
+# Con GITHUB_TOKEN y no con el bot: un workflow lanzado por Dependabot no ve los secretos del repo, y no hace
+# falta que el merge dispare nada (Dependabot nunca sube .kit/VERSION, así que no hay release que lanzar).
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - id: meta
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+      - if: >
+          steps.meta.outputs.package-ecosystem == 'npm_and_yarn' &&
+          (steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+           steps.meta.outputs.update-type == 'version-update:semver-minor')
+        run: gh pr merge --auto --squash "$PR"
+        env:
+          PR: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

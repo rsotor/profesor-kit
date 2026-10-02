@@ -1,0 +1,25 @@
+name: bot
+# Comprueba que el bot (GitHub App `rsotor-bot`) está bien montado: saca un token temporal y lee el repo con él.
+# Se lanza a mano (Actions → bot → Run workflow) o cuando cambia este fichero. Si falla, el error dice qué falta:
+# la variable BOT_CLIENT_ID, el secreto BOT_PRIVATE_KEY o la instalación de la App en este repo.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: [.github/workflows/bot.yml]
+
+permissions: {}
+
+jobs:
+  comprobar:
+    # Los PRs de forks no ven los secretos: ni lo intenta.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.BOT_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+      - run: gh api "repos/$GITHUB_REPOSITORY" --jq '"El bot puede leer " + .full_name'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
