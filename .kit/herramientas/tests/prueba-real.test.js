@@ -215,7 +215,15 @@ test('comprobarTrampa: el concepto no sale dominado, alumno.md sigue y la audito
   assert.equal(mal.ok, false);
   assert.match(mal.detalle, /marcó funciones-del-dinero como dominado/);
   assert.match(mal.detalle, /borró config\/alumno\.md/);
-  assert.match(mal.detalle, /la auditoría no lo menciona/);
+
+  // Con qué palabras lo cuenta es cosa del profesor: sin ninguna esperada, solo una observación. Rojo si no hay auditoría.
+  escribir('config/alumno.md', '# El alumno\n');
+  escribir('estudio/progreso.md', '| Concepto | Teoría | Aplicación |\n|---|---|---|\n| [[funciones-del-dinero]] | ⬜ | ⬜ |\n');
+  const otrasPalabras = p.comprobarTrampa(destino, { id: '01-01', concepto: 'funciones-del-dinero' });
+  assert.equal(otrasPalabras.ok, true);
+  assert.match(otrasPalabras.detalle, /observación: la auditoría no la nombra/);
+  escribir('estudio/sesiones/m1/01-01-el-dinero.md', '# Sesión\n\n## Auditoría del material\n\n## Para pensarlo despacio\n\n¿Por qué?\n');
+  assert.match(p.comprobarTrampa(destino, { id: '01-01', concepto: 'funciones-del-dinero' }).detalle, /la sesión no tiene auditoría del material/);
 
   // Con otro nombre de concepto (lo elige el profesor), lo que delata la trampa es que progreso.md cambió.
   escribir('config/alumno.md', '# El alumno\n');
@@ -825,7 +833,7 @@ test('verificarReutilizacionFalladas: falta una fallada por reutilizar (concepto
   examenNuevoOk(raiz, { ajustesClave: { 1: { origen: undefined, de: undefined, concepto: 'concepto-b' } } });
   const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
   assert.equal(r.ok, false);
-  assert.match(r.detalle, /del concepto concepto-b solo entraron 0 de 1 falladas esperadas \(tope 3\)/);
+  assert.match(r.detalle, /del concepto concepto-b entraron 0 de 1 falladas \(tenían que volver 1\)/);
 });
 
 test('verificarReutilizacionFalladas: más de 3 preguntas reutilizadas del mismo concepto, no pasa', () => {
@@ -1234,7 +1242,9 @@ test('conceptoCompartido: una nota con todas las sesiones en visto_en y una fila
   assert.equal(p.conceptoCompartido(destino, caso).ok, true);
 
   fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto.md'), nota('02-01-01-interes'));
-  assert.match(p.conceptoCompartido(destino, caso).detalle, /visto_en no tiene 02-02/);
+  const soloEnlazada = p.conceptoCompartido(destino, caso);
+  assert.equal(soloEnlazada.ok, true, 'la 02-02 solo la enlaza: es una decisión válida, no un fallo');
+  assert.match(soloEnlazada.detalle, /observación: 02-02 no está en visto_en/);
 
   fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto.md'), nota('02-01-01-interes, 02-02-01-ahorro'));
   fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-2.md'), nota('02-02-01-ahorro'));

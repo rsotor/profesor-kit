@@ -124,6 +124,12 @@ juntarla. El `RESUMEN.md` que deja marca los pasos de antes como "de la ejecuci�
 salga bien, **no cuenta como prueba real completa para el PR** (`cambio-grande.js` lo rechaza): hace falta una
 `npm run prueba-real` entera y seguida.
 
+**Qué puede tumbar un paso.** Rojo, solo lo que estaría mal lo hiciera como lo hiciera un buen profesor: un
+duplicado, algo perdido al juntar, una clave o una nota que no cuadran, obedecer al material, errores de
+`comprobar.js`, incumplir una regla explícita de `AGENTS.md` o de una skill. Lo que es una decisión del modelo (ampliar
+o solo enlazar, cómo reparte, cómo lo redacta) nunca es rojo: como mucho, una observación en el detalle del paso. La
+pregunta, para cada comprobación nueva: ¿un buen profesor podría hacerlo de otra forma y estar bien? Si sí, no es rojo.
+
 **Mientras desarrollas, paga solo el paso que cambia.** Las copias de una prueba entera no se borran, aunque falle algún
 paso: se guardan en `pruebas-local/prueba-real-pasos-<asistente>/` (ignorado por git), en lugar de las anteriores. `npm run prueba-real -- --solo
 "<paso>"` restaura la copia del paso anterior, le pone el motor de tu copia de trabajo y el inbox del curso de ejemplo

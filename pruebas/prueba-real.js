@@ -390,12 +390,15 @@ function pasoDudas(ctx) {
   const quedaAlguno = p.quedaMarcador(ctx.destino, marca);
   const despues = comprobarJson(ctx.destino);
   const sigueLaPropiedad = tocado.casillaNoEstandar && despues.avisos.some(a => a.regla === 'propiedad-no-estandar' && a.fichero === tocado.sesion);
-  const ok = !quedaAlguno && !sigueLaPropiedad;
+  // Rojo, una duda sin responder (regla 4 de AGENTS.md). La propiedad escrita a su manera puede quedarse si el profesor
+  // duda de qué quiso decir (cuando-escribe-a-su-manera.md): solo se dice.
+  const ok = !quedaAlguno;
+  const observacion = sigueLaPropiedad ? ' (observación: la propiedad no estándar sigue sin reescribir)' : '';
   return {
     ok,
     detalle: ok
-      ? `dudas resueltas antes: pendientes ${hayDudaPendienteAntes}/propiedad no estándar ${hayPropiedadAntes} → ahora sin marcadores ni propiedad no estándar`
-      : `sigue habiendo algo pendiente: marcador en ${quedaAlguno || 'ninguno'}, propiedad no estándar sin resolver: ${sigueLaPropiedad}`,
+      ? `dudas resueltas antes: pendientes ${hayDudaPendienteAntes}/propiedad no estándar ${hayPropiedadAntes} → ahora sin marcadores${sigueLaPropiedad ? '' : ' ni propiedad no estándar'}${observacion}`
+      : `sigue habiendo una duda sin responder, en ${quedaAlguno}${observacion}`,
     salidaLlm: r.salida,
   };
 }
@@ -550,12 +553,14 @@ function pasoCorreccionOraculo(ctx) {
 function pasoRepaso(ctx, examenModulo) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   const antes = new Set(p.repasosGenerados(ctx.destino));
+  const inicio = Date.now();
   const r = invocar(ctx, `Hazme un repaso visual del ${examenModulo.titulo.toLowerCase()}, siguiendo la skill /repaso. ${PROMPT_COMUN}`, 'repaso');
   if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
-  const despues = p.repasosGenerados(ctx.destino).filter(f => !antes.has(f));
+  // Nuevo, o el que ya había regenerado encima (/repaso: "si ya existe, se regenera encima").
+  const despues = p.repasosGenerados(ctx.destino).filter(f => !antes.has(f) || fs.statSync(f).mtimeMs >= inicio);
   return {
     ok: despues.length > 0,
-    detalle: despues.length ? `repaso generado: ${despues.map(f => path.relative(ctx.destino, f)).join(', ')}` : `${ctx.lanzador.nombre} terminó pero no hay ningún .html nuevo en estudio/repasos/`,
+    detalle: despues.length ? `repaso generado: ${despues.map(f => path.relative(ctx.destino, f)).join(', ')}` : `${ctx.lanzador.nombre} terminó pero no hay ningún .html nuevo ni regenerado en estudio/repasos/`,
     salidaLlm: r.salida,
   };
 }
