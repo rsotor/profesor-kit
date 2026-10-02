@@ -171,7 +171,8 @@ por release (`actualizar.js`, nunca `main`): un merge automático no llega a nin
 6. **Release semiautomática.** Un workflow mantiene abierto el PR de versión (`.kit/VERSION` + notas de
    `release-notas.js`). Solo se puede mergear con la prueba real entera en verde sobre ese commit; Roberto da el
    clic. El PR lista aparte los commits auto-mergeados desde la última release, para que ese clic sea una revisión. Siguen valiendo «nunca dos releases el mismo día» y «los cambios se juntan».
-7. **Informe:** cada mañana, un issue fijado con lo mergeado, lo propuesto, lo bloqueado y los puntos gastados.
+7. **Informe:** un issue fijado por mes (al cambiar de mes se cierra el anterior), con lo que espera a Roberto y una
+   línea por noche. Un único comentario vivo que menciona a `@rsotor` solo cuando algo le espera (el email).
 
 Fases: 0) interruptor, etiquetas, documentación y Dependabot (sin Claude) — **hecha** (2026-10-02, PR #71) · 1) cola de issues sin auto-merge,
 dos semanas — **en PR**: `.github/workflows/nocturno.yml` + `.github/cola-nocturna.js`; Claude no tiene `gh` ni red y deja `resultado-issue.json`, que publica un paso sin LLM · 2) auto-merge de S y M · 3) prueba real por partes en Actions · 4) release semiautomática · 5) copiar
