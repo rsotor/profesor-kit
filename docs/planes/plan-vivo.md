@@ -35,7 +35,10 @@ Para abrir una sesión:
     frase); 2) el coordinador cruza con `candidatos.js`, fija slugs y un dueño por nota, y los subagentes escriben.
     Los ficheros compartidos (`_index`, `progreso`, `mapa-del-curso`, `README`, `config/alumno.md`) solo los
     escribe el coordinador; `comprobar.js` y `guardar.js`, solo él y al final.
-  - **Cuándo:** desde 2 clases nuevas, el profesor pregunta antes (validación del alumno: con poca cuota, dos
+  - **Cambiado el 2026-10-02 (rama `aviso-varias-clases`, `d2ff86d`, sin PR todavía):** ya no se ofrece. Con 2 clases
+    o más, una detrás de otra; a la vez solo si el alumno lo pide, con aviso de cuota y su sí. Pendiente: línea en el
+    CHANGELOG de la próxima versión, y `AGENTS.md:261` (el comando `--clase` sigue en la tabla de Herramientas).
+  - **Cuándo (como salió en la 0.29.0):** desde 2 clases nuevas, el profesor pregunta antes (validación del alumno: con poca cuota, dos
     clases a la vez pueden fundírsela). Coste en genérico, sin cifras: «a la vez, más rápido pero gasta varias veces
     más cuota; una detrás de otra, más lento y gasta menos; si te queda poca cuota, mejor una a una». Con 1, como hoy.
   - **Fuera:** dudas y conversación con subagentes; varias preparaciones a la vez (el cerrojo se queda); cifras de
@@ -117,6 +120,177 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
 3. **El formato de `progreso.md` fijado en una plantilla**, para que el profesor no se invente columnas.
    - **Fuera:** TODO: decidir con Roberto.
    - **Cómo sabremos:** TODO: decidir con Roberto.
+
+## Siguiente: prueba real por piezas
+
+**Rumbo (Roberto, 2026-10-02, tarde): primero la raíz.** Mover la entera de sitio (al PR, a la noche) «mueve el
+polvo»: se gasta lo mismo. La prueba es cara porque cada interacción del producto es cara, y eso lo paga también el
+alumno. Orden: 1) abaratar cada interacción, empezando por un piloto en `/sesion` (darle al profesor de una vez lo
+que necesita al arrancar, en vez de lecturas sueltas), medido contra la línea base de abajo · 2) con ese dato, decidir
+la estructura de la prueba. Decidido ya: la release espera a una entera en verde (opción A) y con el clic de
+Roberto; un PR solo paga su pieza. **El diseño por piezas de más abajo queda en espera** hasta tener el piloto; sus
+5 objeciones siguen abiertas.
+
+**Siguiente paso: el piloto de `/sesion` (sin empezar; es también el arreglo de la #79).** Una herramienta del kit
+que entregue de una vez lo que `/sesion` necesita leer (configuración, plantillas, índice de conceptos, material de
+la clase), permitida en los permisos del curso, y que `/sesion` la use en vez de lecturas sueltas. Con la prueba
+aislada, el profesor ya intenta leer varios ficheros de una vez por la shell (7 permisos denegados en dos enteras,
+todos lecturas): la necesidad existe y el kit no le da una forma permitida.
+
+- **Fuera:** las demás skills, hasta ver el dato · recortar `AGENTS.md` · el coordinador de varias clases · cambiar
+  la estructura de la prueba real.
+- **Cómo sabremos:** `--solo "/sesion 01-01"` tres veces después del cambio, contra las dos enteras aisladas de hoy
+  (10 y 12 llamadas; 441 K y 551 K tokens). Vale si baja más que la variación entre ejecuciones iguales (±9 %) y
+  si, en una entera, los permisos denegados por lecturas con la shell pasan de 3–4 a 0. Si no, se descarta.
+- **Antes de implementar:** ronda corta del abogado del diablo sobre el diseño de la herramienta (TODO).
+- **PR #83** (abierto 2026-10-02): los tres arreglos de la auditoría de prompts del producto y la prueba aislada.
+
+**Línea base (medida en los logs, 2026-10-02).** Claude: `~/.claude/projects/*profesor-kit-prueba-<id>*`
+(`usage` de cada respuesta). Codex: `~/.codex/sessions/2026/10/02/` (`token_count` y `rate_limits`). Los guiones
+de medida no están en el repo todavía (TODO: `pruebas/coste.js`, en la rama del piloto).
+
+- **Claude (Sonnet), entera 16/16, `88ada91`:** 17,5 min · 162 llamadas · 9,5 M tokens de entrada (0,94 M escritos
+  en caché, 8,56 M leídos de caché) · 182 K de salida. Otras 4 enteras del 1 y 2 de octubre: 14–27 min, 130–217
+  llamadas, 7,6–13 M. No dura 1 h. El % de cuota no sale en los logs (TODO: `/cuota` antes y después).
+- **Contexto fijo por llamada («suelo»):** 36 K con Claude (29 K en subagentes), 19 K con Codex. Suelo × llamadas
+  = 61 % del total con Claude, 51 % con Codex. La prueba lanza `claude -p` con la configuración personal de Roberto
+  (su `CLAUDE.md` global, sus skills y conectores), que un alumno no tiene.
+- **De qué está hecho el suelo de 36 K con Claude** (medido 2026-10-02 con `claude -p` en una carpeta vacía, Sonnet,
+  una llamada por caso): Claude Code solo, 15,9 K (`--setting-sources project,local --strict-mcp-config`) · la
+  configuración personal de Roberto, 9,2 K (7,1 K de usuario + 2,1 K de conectores; tal cual son 25,1 K) · el kit
+  (`AGENTS.md`, listado de skills), ~11 K por diferencia. Un alumno sin configuración propia: ~27 K. Aislar la
+  prueba con esos dos flags (`pruebas/lib/asistentes/claude-code.js:13`) quitaría ~9 K × 162 llamadas ≈ 15 % del
+  total y la haría representativa.
+- **Comprobado con una entera aislada (rama `prueba-aislada`, `4b3bb2a`, 2026-10-02):** 16/16, corrección 6/6, 14 min ·
+  151 llamadas · 7,47 M de entrada (antes 9,5 M: −21 %, parte por menos llamadas, que varían solas) · suelo 27 K en
+  primer plano (antes 36 K); la preparación en segundo plano sigue en 36 K, porque la lanza el kit y no la prueba.
+  Cuota de Claude: la ventana de 5 h pasó del 2 % al 13 % y la semanal del 10 % al 11 %, **con esta conversación y
+  otra gastando a la vez**: una entera con Sonnet cuesta como mucho 11 puntos de ventana en el plan de Roberto.
+  Salieron 3 permisos denegados (antes 1): el profesor lanzó `node -e`, `sed -i` y un `cd … && for … cat`, justo lo
+  que `AGENTS.md` prohíbe. TODO: ver si la configuración personal los tapaba o es variación entre ejecuciones.
+- **PR #82** (`aviso-varias-clases`): mezclado el 2026-10-02 (`c675760`). No sube versión: falta su línea en el
+  CHANGELOG de la siguiente.
+- **Informe de toda la sesión, con el registro de pruebas:** `docs/auditoria/2026-10-02-coste-de-la-prueba-real.md`.
+- **Por paso, Claude** (llamadas · tokens · segundos): `/sesion 01-01` 10 · 527 K · 76 · `/sesion 01-02` 15 ·
+  1.044 K · 171 · `/dudas` 9 · 424 K · 49 · `/ejercicio` 11 · 591 K · 84 · referencia del centro 5 · 239 K · 19 ·
+  examen (generar + revisor) 18 · 1.212 K · 223 · corregir 12 · 634 K · 49 · examen otra vez (+ revisor) 18 ·
+  1.238 K · 171 · corrección fija 15 · 838 K · 72 · `/repaso` 10 · 652 K · 132 · preparar 02-01 y 02-02
+  (coordinador 19 + subagentes 20) 39 · 2.095 K · ~4 min.
+- **Codex (Plus), `62c67a4`, 12 de 16 pasos:** 18 min · 122 llamadas · 4,64 M · 98 % de la ventana de 5 h y ~16 %
+  de la semanal. `/sesion 01-01`: 9 llamadas · 314 K · 8 % de ventana. Coordinador de dos clases: 40 llamadas ·
+  1,83 M + 0,86 M de sus subagentes = 58 % del total (con Claude, el 22 %: el problema del coordinador es de Codex).
+
+**Lo que dice la documentación de Claude (consultada 2026-10-02; sin doc oficial para Codex):**
+
+- Memoria (`CLAUDE.md`/`AGENTS.md`): objetivo < 200 líneas; el nuestro tiene 310. Los `@imports` no ahorran (se
+  cargan al inicio); sí ahorra mover flujos concretos a skills o guías que se leen bajo demanda.
+  <https://code.claude.com/docs/en/memory>
+- Skills: `SKILL.md` < 500 líneas, el resto en ficheros de referencia a un nivel; mejor un script que se ejecuta y
+  devuelve todo (solo su salida gasta) que lecturas sueltas. Es el piloto de `/sesion`.
+  <https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices>
+- Evaluar: escenarios antes que la skill, al menos 3, y probar con Haiku, Sonnet y Opus (misma página).
+- Medir: `claude -p --output-format json` ya trae `usage` y `total_cost_usd` por ejecución, y la prueba real ya lo
+  lanza así: el coste por paso puede ir al `RESUMEN.md` sin guiones aparte. <https://code.claude.com/docs/en/headless>
+- Analizar sin ejecutar: `/doctor prompt-audit` busca contradicciones y referencias rotas entre `AGENTS.md`, reglas
+  y skills (una llamada). `/skill-doctor` solo da uso y coste de listado. `claude plugin eval` exige empaquetar las
+  skills como plugin: en espera. <https://code.claude.com/docs/en/plugin-evals>
+
+**Borrador del diseño por piezas (2026-10-02, mañana), en espera:** faltan las decisiones D1–D5 y aplicar la ronda
+del abogado del diablo. Sustituiría al punto 5 del mantenimiento nocturno y cambiaría la regla «prueba real entera
+antes de cada release» de `.claude/rules/desarrollo.md` (Roberto, 2026-10-02: «nos está matando en el desarrollo»).
+
+**Por qué.** La prueba real comprueba por código propiedades de lo que queda en disco (`pruebas/lib/pasos.js`); lo
+caro no es comprobar, es volver a generar el curso entero con el LLM para poder comprobarlo.
+
+- `cambio-grande.js` exige la entera en cada PR que toca `.kit/skills/`, `AGENTS.md` o `.kit/plantillas/`, y
+  `AGENTS.md` cambió en 6 de las 8 últimas releases (0.22.3 → 0.29.0).
+- Con Codex (plan Plus, 2026-10-02, `62c67a4`): la entera llegó al 98 % de la ventana de 5 h con 4 pasos por hacer,
+  y gasta un 16–20 % de la cuota semanal. No cabe en una ventana. Con Claude: TODO medir (Roberto: ~1 h).
+- Los PR automáticos del mantenimiento nocturno no pueden pagar una entera.
+
+**La idea.** Cada pieza de la prueba parte de un estado del curso guardado en el repo, no de lo que generó el paso
+anterior en esa misma ejecución. Se paga solo la pieza que el cambio toca.
+
+1. **Referencias en el repo.** El curso tal como queda tras cada paso (`config/` + `estudio/`, sin `.git`), en
+   `pruebas/curso-ejemplo/referencias/<paso>/`. Hoy esas copias existen, pero en `pruebas-local/` (ignorado por git)
+   y solo valen para `--solo` y `--desde`. Las genera una prueba entera («regenerar referencias»). Pasan por las
+   migraciones como el curso de un alumno (`prueba-actualizar`).
+2. **Piezas.** `prueba-real.js --pieza <nombre>`: restaura la referencia de entrada, ejecuta los pasos de la pieza
+   con el LLM y pasa las mismas comprobaciones de hoy. Propuesta inicial (TODO: contrastar con
+   `construirDefinicionDePasos`): `sesion` (01-01 + la trampa) · `sesion-siguiente` (01-02) · `segundo-plano`
+   (lanzar, juntar, conceptos compartidos) · `dudas` · `ejercicio` · `examen-generar` (referencia + generar) ·
+   `examen-corregir` (contestar, corregir, progreso con prueba) · `examen-otra-vez` · `correccion-fija` · `repaso`.
+3. **Mapa de dependencias**, como datos (`pruebas/piezas.json`): qué rutas invalidan qué piezas. `.kit/skills/<x>/`
+   → las piezas de `<x>`; cada plantilla y cada guía → las piezas que la usan; `AGENTS.md` → según D2.
+4. **`cambio-grande.js` por piezas.** Para cada pieza que el diff del PR invalida, el `RESUMEN.md` trae una línea
+   `pieza · modelo · commit · resultado` en verde, de un commit que incluye el último cambio de sus dependencias.
+   Las piezas que el PR no toca no se repiten.
+5. **Tres niveles** (la idea de Roberto del 90 / 75–90 / <75, sobre comprobaciones por código y no sobre un
+   porcentaje de parecido): todas las comprobaciones de la pieza pasan → vale · pasan, pero `comprobar.js` da más
+   avisos pedagógicos que la referencia → alerta en el PR, no bloquea, se valora una entera · falla → se repite la
+   pieza una vez; si vuelve a fallar, bloquea, y si no se explica, toca la entera.
+6. **Modelos** (D3): la pieza se ejecuta con dos modelos de los extremos del rango. Antes, línea base: todas las
+   piezas con Haiku sobre `main` sin cambios; la que Haiku no pasa hoy no se le exige (queda apuntada, no se «arregla»).
+7. **Codex: prueba corta**, con las piezas que dependen del asistente (`sesion`, `segundo-plano` con una clase,
+   `examen-generar`, `examen-corregir`). Obligatoria solo si el PR toca `.kit/adaptadores/`, `pruebas/lib/asistentes/`
+   o las guías de segundo plano y de cambio de asistente; el resto, entera periódica que no bloquea (TODO: cada
+   cuánto). La prueba para al primer límite de uso y el `RESUMEN.md` dice el motivo (hoy dice «código 1»).
+8. **La entera** deja de ser de cada release. Se lanza para regenerar las referencias (D4) y cuando una pieza falla
+   dos veces sin explicación. La release exige todas las piezas en verde contra sus dependencias actuales (prueba
+   acumulada entre PRs), no una ejecución entera ese día.
+
+**Fases.** 0) Medir, en una sola tanda y sin cambiar ninguna regla: tamaño de las referencias; cada pieza desde su
+referencia sobre `main` sin cambios, 3 veces con el modelo recomendado y 3 con Haiku → cuántas pasan (lo que varía
+solo) y qué cuesta cada una · 1) referencias al repo, `--pieza` y `piezas.json` · 2) `cambio-grande.js` por piezas,
+`RESUMEN.md` por pieza, y las reglas (`.claude/rules/desarrollo.md`, `CONTRIBUTING.md`, puntos 5 y 6 del
+mantenimiento nocturno) · 3) segundo modelo y nivel de alerta · 4) prueba corta de Codex y parada por límite de uso ·
+5) `AGENTS.md` (D2).
+
+- **Fuera:** un porcentaje de parecido con la referencia o un LLM que juzgue, como puerta (parecido no es correcto:
+  un examen con la clave mal sale casi igual; y el juez cuesta y también varía) · abaratar el coordinador de varias
+  clases (rama propia, midiendo antes y después; el aviso al alumno va en la rama `aviso-varias-clases`) · que corra
+  en Actions (fase 3 del mantenimiento nocturno, que se apoya en esto) · cambiar qué comprueba cada paso · pagar la
+  prueba de Codex por API.
+- **Cómo sabremos:**
+  - Un PR que solo toca `.kit/skills/examen/` pasa el CI con las piezas de examen y nada más (TODO tras la fase 0:
+    tiempo y cuota objetivo).
+  - **Fallo plantado:** se quita a propósito una regla de una skill (p. ej. las 4 opciones del examen) y su pieza
+    falla; lo mismo con una sección de `AGENTS.md` y las piezas que le tocan. Si no falla, el método no vale.
+  - Una pieza sin cambios pasa al menos 9 de cada 10 veces (medido en la fase 0); la que no, se arregla su
+    comprobación antes de usarla como puerta.
+  - Sale una release sin lanzar una entera ese día.
+  - La prueba corta de Codex queda por debajo de media ventana de 5 h (se lee en `rate_limits`, en `~/.codex/sessions`).
+  - En la siguiente regeneración de referencias (una entera), se cuenta cuántas piezas fallan estando en verde por
+    piezas: eso mide lo que este método deja pasar.
+- **Riesgos que se aceptan:** un fallo de interacción entre pasos se ve en la regeneración, no en el PR (no llega al
+  alumno si la regeneración va antes de la release que toque, D4); las referencias envejecen (las escribió un motor
+  anterior), que es justo como vive el curso de un alumno.
+- **Decisiones abiertas** (de una en una, con Roberto):
+  - **D1. Cuándo cambia una referencia.** Fija hasta la siguiente regeneración (recomendada: sin ruido en los diffs
+    ni choques entre PRs en paralelo, y la pieza siguiente no cambia de entrada sin haberse probado) · o se actualiza
+    cada vez que su pieza pasa (lo que propuso Roberto: «el siguiente paso parte de ahí»).
+  - **D2. `AGENTS.md`.** Mapa por secciones `##` → piezas, sin mover texto (recomendada: no cambia el producto) · o
+    mover a guías lo que es de un momento concreto. Solo «Cuando preguntas para medir» (38 de 310 líneas) es
+    claramente separable; «Al empezar cada sesión» corre en todas las piezas y moverla no quita dependencia.
+  - **D3. Modelos.** El recomendado del adaptador + Haiku tras la línea base (recomendada) · o Haiku + Opus siempre.
+  - **D4. Cuándo es obligatoria la entera.** TODO: cada N releases, o cuando cambie el formato de los datos (migración).
+  - **D5. Codex.** La prueba corta no bloquea la release salvo que el PR toque lo suyo (punto 7).
+- **Abogado del diablo:** ronda completa 2026-10-02, 5 objeciones, **sin aplicar todavía** (pendiente de que Roberto
+  decida si el plan se reduce). `@diablo` abierto: el plan no se cierra.
+  1. Las piezas no reproducen los fallos de interacción: el choque de `tasa-de-ahorro.md` del 2026-10-01 (examen en
+     primer plano mientras la 02-02 se preparaba) lo cazó la entera, y la pieza `segundo-plano` no lo vería. Las
+     referencias necesitan además `.git` y `estado.json`. Y el riesgo aceptado se apoya en D4, que es TODO.
+  2. El mapa miente por omisión: no cubre las herramientas que el LLM ejecuta dentro de cada pieza, los adaptadores,
+     `motor.json` ni el propio arnés. Arreglo: cerrado por defecto (ruta sin mapear → todas las piezas) y un test.
+  3. D2 mal recomendada: `AGENTS.md` se lee entero en cada llamada y sus secciones se citan entre sí. Arreglo:
+     `AGENTS.md` invalida todas las piezas; medir sobre los 6 diffs cuántos habrían tocado una sola.
+  4. La fase 0 no mide lo que decide: 3 ejecuciones no sostienen «9 de cada 10», reintentar tapa regresiones y el
+     fallo plantado solo prueba lo que el mapa ya conecta. Arreglo: revertir los arreglos de fallos conocidos
+     (`mezcla.js`, conceptos compartidos, `examenes.json` de Codex, #54) y ver si alguna pieza los caza; reintentar
+     solo fallos de infraestructura; una cifra de lo que se escapa que obligue a volver a la entera.
+  5. Hay una opción más barata que casi existe: `--solo` de lo tocado como puerta del PR y la entera solo en la
+     release (admitiendo `--desde` sobre el mismo commit). Referencias en el repo, dos modelos y quitar la entera de
+     la release, solo si la fase 0 lo justifica.
 
 ## Siguiente: mantenimiento nocturno con Claude
 
