@@ -442,6 +442,10 @@ observación y cómo se ve en rojo):
       01-02 y 0 de 6 en la 02-02 con todas las diapositivas cubiertas. Arreglado después («Diap. N», con test):
       sobre este resultado da 9/9, 10/10, 6/6 y 6/6. Sigue como observación.
     - 5 permisos denegados (`cat`, `sed -i`, `for … cat` en examen y repaso): lo que `AGENTS.md` prohíbe.
+  - **0.30.0 preparada (2026-10-03, noche):** entrada del CHANGELOG (texto aprobado por Roberto, con la oferta
+    «Si ya tenías tu curso» de crear los ejercicios que faltan) y `.kit/VERSION`. Recoge lo acumulado desde la
+    0.29.0: #82, #88, #89, #90, #92, la mezcla y el punto 6 de `/sesion`. Falta: la prueba entera sobre ese commit,
+    subir la rama y el PR («Closes #89, #90, #92»). Opcional, después: los dos pasos con Codex.
 - **Fuera:** un LLM juez que puntúe la explicación (la explicación mala pero bien formada no la ve nada: se dice así
   en el informe de la release) · un curso grande (más clases, índice lleno) · tocar el texto de las clases 01-01 y
   01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón ancho: la regla dice
