@@ -144,7 +144,11 @@ errores típicos.
 
 Los ejercicios de la clase se crean aquí, al procesarla, siguiendo los puntos 1-7 de `/ejercicio`
 (léela antes del primero); se guardan con la sesión, en el punto 8.
-Donde nada se mueve, una línea de por qué no lo lleva.
+
+**Si algún concepto de la clase tiene una fórmula con datos que se pueden cambiar, o un umbral** (una cantidad a
+partir de la cual la respuesta es otra), **la clase lleva al menos un ejercicio:** el del concepto donde más
+cambia el resultado al mover un dato. No se deja como `TODO` ni se cierra con "ninguno"; los demás los puede
+pedir el alumno con `/ejercicio`. Solo si ningún concepto tiene fórmula ni umbral, una línea de por qué no lo lleva.
 
 ### 7. Actualizar los ficheros vivos
 
