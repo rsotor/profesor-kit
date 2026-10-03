@@ -464,6 +464,22 @@ observación y cómo se ve en rojo):
       asumido: un duplicado que enlace al original sale como observación). Hecho, con tests; sobre el `resultado/`
       de esta prueba da verde con la observación.
     Con las dos comprobaciones ajustadas, falta repetir la entera sobre el commit final.
+  - **Tercera entera (`8ae5d75`, 2026-10-04, 00:1x): 20/22, corrección 6/6.** Las dos comprobaciones ajustadas
+    salen verdes. El rojo es un fallo real del kit: `--juntar` chocó en `colchon-financiero.md`, y «conceptos
+    compartidos» cayó detrás (sin juntar no hay notas del módulo 2).
+    - Causa (reproducida con las tres versiones reales): `git merge-file` sale con el **número** de trozos en
+      conflicto y `juntarCuerpo` solo seguía con código 1. Aquí había dos trozos, los dos de solo añadir:
+      `/ejercicio` puso «## Practícalo» y la preparación «## Antes de ahorrar a largo plazo (clase 2.2)» en el
+      mismo punto, y al final la duda y la línea de historial. Ni mi revisión ni la independiente lo vieron.
+    - Arreglado (`mezcla.js`: cualquier código de 1 a 127), con dos tests; el nuevo falla sin el arreglo. Sobre el
+      curso que dejó la prueba, con la mezcla corregida y sin llamar al asistente: `preparar.js --juntar` pasa, la
+      nota queda con las dos secciones, el alias, el ejercicio, la línea de historial y la duda, sin marcadores, y
+      las comprobaciones de después de juntar salen verdes. Segunda revisión independiente, hecha: nada
+      bloqueante (tres trozos de solo añadir se juntan; con uno que cambia una línea, choque sin escribir nada;
+      un error de `merge-file` sale 255 y se rechaza; con más de 127 trozos el tope es 127 y los recorre todos).
+    - Hallado de paso: sin juntar, «lo que deja /sesion 02-0x» salía verde vacío («no hay nota de sesión»). Ahora
+      `procesarClase` da rojo si la clase no tiene nota de sesión (con test).
+    - `npm test` 907 de 908 (1 omitido). Falta la entera en verde sobre el commit final.
 - **Fuera:** un LLM juez que puntúe la explicación (la explicación mala pero bien formada no la ve nada: se dice así
   en el informe de la release) · un curso grande (más clases, índice lleno) · tocar el texto de las clases 01-01 y
   01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón ancho: la regla dice
