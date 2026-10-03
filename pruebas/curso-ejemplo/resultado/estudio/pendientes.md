@@ -6,19 +6,21 @@
 
 ## Bloque modulo-01 (7)
 
-- [ ] **Pendiente del profesor** · [[conceptos/colchon-financiero]] — ¿qué parte exacta no se entiende (el porqué del colchón, cómo se calcula, o por qué en
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — crear un ejercicio de inflación (cambiar la tasa anual y los años y ver cuánto compra el mismo dinero) y guardarlo con esta sesión.
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — patrón oro (diapositiva 6): el PDF solo trae el título. Hace falta el texto de la diapositiva o las notas de la clase.
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — masa monetaria (diapositiva 7): solo dice que el M1 mide el dinero en manos del público. Falta qué incluye M1 y por qué importa en este curso.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — confirmar si la duda iba sobre los conceptos de la sesión o sobre los dos pendientes.
-- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — cifra real de Suscripciones (25,00 € en la diapositiva 4, 52,00 € en la hoja, tras añadir el gimnasio). Las notas usan 25,00 €. Solo lo resuelve el profesor del curso o el alumno si lo recuerda de clase.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — si Suscripciones es de verdad 52,00 €, rehacer los ejemplos de [[presupuesto-personal]], [[gastos-fijos-y-variables]], [[tasa-de-ahorro]] y [[colchon-financiero]] (fijos 742,00 €, gastos 1.222,00 €, ahorro 628,00 €, colchón de 3 meses 3.666,00 €) y el ejercicio.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — El patrón oro (diapositiva 6) llegó solo con el título. Hace falta el texto de esa diapositiva o los apuntes de esa parte de la clase.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — Masa monetaria M1 (diapositiva 7) llegó solo con una definición. Hace falta saber qué entra en el M1 y por qué importa para el curso.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones]] — Decidir con el alumno si el patrón oro y el M1 merecen nota propia cuando haya material.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — ¿Cuánto pagan de verdad las suscripciones al mes: 25,00 € (diapositivas) o 52,00 € (hoja, con el gimnasio)? Solo lo sabe el profesor de la clase; de ahí dependen las cifras del ejemplo.
+- [ ] **Falta material del curso** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — De dónde sale la recomendación de 3 meses (nómina fija) y 5-6 meses (ingresos irregulares) de colchón: la diapositiva 6 no da fuente.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — Cuando se resuelva la cifra de las suscripciones, actualizar los ejemplos de [[presupuesto]], [[gastos-fijos-y-variables]], [[tasa-de-ahorro]] y [[colchon-financiero]].
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]] — Crear un ejercicio donde cambie un gasto y se vea moverse la tasa de ahorro y el colchón (aquí sí algo se mueve).
 
-## Bloque modulo-02 (6)
+## Bloque modulo-02 (4)
 
-- [ ] **Falta material del curso** · [[conceptos/horizonte-temporal]] — la diapositiva 5 afirma que "empezar antes pesa más que aportar un poco más", pero el
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — confirmar con el alumno si la capitalización mensual que explica la diapositiva 4 es la que verá en sus productos reales; el material no trae cifras.
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]] — la unidad 2.2 no figura en el temario de  ni en ; añadirla
-- [ ] **Falta material del curso** · [[sesiones/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]] — la afirmación de la diapositiva 5 («empezar antes pesa más que aportar un poco más») no
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]] — confirmar si las aportaciones son al principio o al final de año (las notas suponen al final).
-- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]] — [[interes-compuesto]] la escribe la clase 02-01-01; recibe la aportación de esta clase como
+- [ ] **Pendiente del profesor** · [[conceptos/aportacion-periodica]] — la clase no dice cómo se trata una aportación que varía; decidir con el alumno si se amplía.
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto]] — Si el profesor de la clase tiene la fórmula y las cifras de la capitalización mensual, confirmar la ampliación de [[capitalizacion]] (1.051,16 € a un año).
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]] — decidir con el alumno cómo tratar la aportación cuando los ingresos son irregulares (la clase solo habla de importe fijo).
+- [ ] **Pendiente del profesor** · [[sesiones/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]] — cálculo propio de "aportar menos un año frente a parar" (caso 3 del ejercicio).
+
+## Sin bloque (1)
+
+- [ ] **Pendiente del profesor** · [[ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]] — la clase no cuantifica este caso; cálculo propio pendiente.

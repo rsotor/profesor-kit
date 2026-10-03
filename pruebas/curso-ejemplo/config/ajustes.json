@@ -6,6 +6,6 @@
   "version_datos": 4,
   "configuracion": { "curso": true, "estilo": true, "nivel": true },
   "patrones_prohibidos": [
-    { "patron": "\\d+([.,]\\d+)?\\s?%(?!\\s*(anual|mensual|diari))", "mensaje": "una tasa de interés sin decir su periodo (anual, mensual, diario) — regla del dominio en config/curso.md" }
+    { "patron": "\\b([Ii]nter[eé]s(es)?|TAE|TIN)\\b[^%]*?\\d+([.,]\\d+)?\\s?%(?!\\s*(anual|mensual|diari))", "mensaje": "una tasa de interés sin decir su periodo (anual, mensual, diario) — regla del dominio en config/curso.md" }
   ]
 }

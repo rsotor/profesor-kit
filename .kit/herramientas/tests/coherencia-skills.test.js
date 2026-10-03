@@ -121,3 +121,23 @@ test('el frontmatter de cada skill cumple Agent Skills y es YAML válido para cu
   }
   assert.deepEqual(fallos, []);
 });
+
+// El cierre es `guardar.js "<mensaje>"`: comprueba por dentro y enseña errores y avisos. Ninguna skill ni guía
+// manda pasar antes por `node .kit/herramientas/comprobar.js` como paso de cierre: es una llamada de más.
+// Criterio simple: un `comprobar.js` sin opciones (--revisado, --json…) con un `guardar.js "<mensaje>"` en las 6
+// líneas siguientes (las filas de tabla, como las de Herramientas de AGENTS.md, no cuentan: listan, no ordenan).
+// Un comprobar.js que abre o valida a mitad (dudas, ejercicio) no tiene guardar cerca.
+test('ninguna skill ni guía manda comprobar.js justo antes de guardar.js', () => {
+  const ficheros = ['AGENTS.md',
+    ...fs.readdirSync(path.join(RAIZ, '.kit', 'skills')).map(s => `.kit/skills/${s}/SKILL.md`),
+    ...fs.readdirSync(path.join(RAIZ, '.kit', 'guias')).filter(n => n.endsWith('.md')).map(n => `.kit/guias/${n}`)];
+  const fallos = [];
+  for (const rel of ficheros) {
+    const lineas = fs.readFileSync(path.join(RAIZ, ...rel.split('/')), 'utf8').split('\n');
+    lineas.forEach((l, i) => {
+      if (l.startsWith('|') || !/node \.kit\/herramientas\/comprobar\.js(?! +--)/.test(l)) return;
+      if (lineas.slice(i, i + 7).some(x => /node \.kit\/herramientas\/guardar\.js +"/.test(x))) fallos.push(`${rel}:${i + 1}`);
+    });
+  }
+  assert.deepEqual(fallos, [], 'guardar.js ya comprueba por dentro: quita el comprobar.js previo');
+});

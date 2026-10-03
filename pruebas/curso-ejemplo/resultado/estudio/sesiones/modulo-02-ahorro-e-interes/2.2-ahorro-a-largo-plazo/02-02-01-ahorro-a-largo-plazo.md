@@ -2,81 +2,67 @@
 tipo: sesion
 bloque: modulo-02
 clases: [2.2]
-trabajada: 2026-10-02
+trabajada: 2026-10-03
 fuente: inbox/clase-04-ahorro-a-largo-plazo.md
 estudiada: false
 ---
-# 02-02-01 · Ahorro a largo plazo
+# 02-02-01-ahorro-a-largo-plazo · Ahorro a largo plazo
 
 ## En una frase
 
-Cómo la tasa de ahorro se convierte en una aportación fija cada año, cómo crece con interés compuesto y por qué el tiempo pesa tanto.
+Cómo la tasa de ahorro se convierte en una aportación regular, qué le hace el interés compuesto a cada aportación y por qué los años pesan más que el importe.
 
 ## Conceptos
 
+- [[tasa-de-ahorro]] — ampliado: se convierte en cifra al año (2.400,00 €/año)
 - [[aportacion-periodica]] — **nuevo**
 - [[horizonte-temporal]] — **nuevo**
-- [[tasa-de-ahorro]] — ampliado: la tasa se convierte en cantidad al año (200,00 €/mes = 2.400,00 €/año)
-- [[interes-compuesto]] — solo enlazado (lo explica la clase 02-01-01)
 
 ## Lo que hay que llevarse
 
-1. La tasa de ahorro se convierte en una aportación fija: 10 sobre 2.000,00 € al mes = 2.400,00 € al año.
-2. Con interés compuesto cada aportación genera intereses desde que entra: 3 años dan 7.566,00 € (366,00 € de intereses).
-3. El horizonte temporal decide: 30 años dan ≈ 159.453,23 €, de los que solo 72.000,00 € se aportaron.
+1. La tasa de ahorro se convierte en una aportación periódica: 10 % de 2.000,00 €/mes = 2.400,00 €/año.
+2. Con interés compuesto, cada aportación crece por su cuenta (2.400,00 € al final de cada año, 5 % anual, 3 años = 7.566,00 €).
+3. El horizonte temporal decide cuánto: con los mismos 2.400,00 € al año, 30 años dan 159.453,23 €.
+4. Repaso (diapositiva 5): "empezar antes pesa más que aportar un poco más" lo dice la clase pero no lo demuestra; la comparación está en [[horizonte-temporal]] como ampliación.
 
 ## Material
 
-- Flashcards: [[flashcards/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]]
-- Ejercicios: [Más años o más aportación](../../../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-empezar-antes.html) (mueve años, aportación y tipo de interés anual hasta que la mejor opción se invierte). [[aportacion-periodica]] no lleva ejercicio propio: su recurrencia es un cálculo de una sola dirección, y lo que se mueve (los años) es del [[horizonte-temporal]].
+- Flashcards: [[flashcards/02-02-01-ahorro-a-largo-plazo]]
+- Ejercicios: [[ejercicios/02-02-01-ahorro-a-largo-plazo]] (de [[horizonte-temporal]]). Para [[aportacion-periodica]] y [[tasa-de-ahorro]] no se mueve nada que enseñe algo más allá de la cuenta.
 
 ## Cobertura del material
 
-| Sección | Destino |
+| Parte del material | Destino |
 |---|---|
-| Diapositiva 1 · De la tasa de ahorro a una cifra al año | [[tasa-de-ahorro]] (ampliada) |
+| Diapositiva 1 · De la tasa de ahorro a una cifra al año | [[tasa-de-ahorro]] |
 | Diapositiva 2 · Las aportaciones periódicas | [[aportacion-periodica]] |
-| Diapositiva 3 · Aportaciones con interés compuesto | Ejemplo y fórmula de [[aportacion-periodica]]; el interés compuesto, enlazado a [[interes-compuesto]] |
+| Diapositiva 3 · Aportaciones con interés compuesto | [[aportacion-periodica]] (ejemplo de 3 años); [[interes-compuesto]] lo incorpora desde la 2.1 |
 | Diapositiva 4 · El horizonte temporal | [[horizonte-temporal]] |
-| Diapositiva 5 · Resumen | Esta sesión, "Lo que hay que llevarse"; su última frase, en "Pendiente" |
+| Diapositiva 5 · Resumen | "Lo que hay que llevarse" (es un repaso; sin nota propia) |
 
 ## Auditoría del material
 
-> Control de calidad del material, no contenido del curso.
+*Control de calidad del material, no contenido del curso.*
 
-- **Cifras reproducidas con cálculo propio:** año 2 = 4.920,00 €, año 3 = 7.566,00 € (7.200,00 € aportados +
-  366,00 € de intereses) y 30 años = 159.453,23 € (72.000,00 € aportados + 87.453,23 € de intereses) cuadran
-  con el material.
-- **El material no dice si la aportación entra al principio o al final del año.** Los números solo salen si es
-  al final; las notas lo suponen y lo dicen. Si fuera al principio, los saldos serían mayores.
-- **La diapositiva 5 afirma sin respaldo numérico** que "empezar antes pesa más que aportar un poco más". La
-  diapositiva 4 solo muestra que más años dan mucho más saldo, no lo compara con aportar más. Marcado
-  ⚠️ **FALTA INFO** en [[horizonte-temporal]]; la comparación propia que se añade allí va como Ampliación fuera
-  de los apuntes (y el ejercicio muestra que no vale siempre: con tipo bajo y plan largo, aportar más gana).
-- **Títulos incoherentes:** el fichero se llama `clase-04` y el título interno dice "Clase 2.2". La numeración
-  del temario manda (2.2); `clase-04` parece el orden de entrega en el inbox.
-- **La unidad 2.2 no figura en el temario de `config/curso.md`** (solo trae 2.1): ver Pendiente.
-- Es una clase de diapositivas (sin hoja de cálculo): no hay fórmulas escondidas que revisar. Sin instrucciones
-  dirigidas al asistente.
+- Reproducidas con node y cuadran: 2.400,00 € → 4.920,00 € → 7.566,00 € (366,00 € de intereses); 30 años = 159.453,23 € (72.000,00 € aportados, 87.453,23 € de intereses).
+- **Supuesto no dicho:** la aportación entra al final de cada año. Con aportación al inicio, las cifras serían otras. Marcado en las notas.
+- **Afirmación sin demostrar (diapositivas 4-5):** "empezar antes pesa más que aportar un poco más". Comparación propia en [[horizonte-temporal]]: 2.400,00 € × 30 años = 159.453,23 € frente a 3.600,00 € × 20 años = 119.037,43 €, con 72.000,00 € aportados en ambos.
+- "Unos 159.453,23 €" mezcla "unos" con una cifra al céntimo: es la cifra exacta.
+- La diapositiva 1 dice "tasa del 10%" sin periodo; es mensual (ingresos mensuales). Se escribe 10 % mensual.
+- Las diapositivas escriben 5% anual sin espacio; no cambia nada.
+- No hay instrucciones dirigidas al asistente en este material.
 
 ## Para pensarlo despacio
 
-1. Tus ingresos cambian de un mes a otro. ¿Cómo fijarías una aportación fija sin que un mes flojo te obligue a
-   tirar del colchón?
-2. Si pudieras elegir entre empezar cinco años antes con menos dinero o empezar ya con más, ¿qué cifras
-   necesitarías para decidir?
-3. ¿Por qué 30 años no dan solo 10 veces más saldo que 3? ¿Qué parte del saldo explica la diferencia?
+1. Con ingresos irregulares, ¿cómo mantendrías una aportación "regular"? ¿Qué pierdes frente a una aportación fija?
+2. ¿Por qué los intereses de 30 años (87.453,23 €) superan lo aportado y los de 3 años (366,00 €) no?
+3. Los 159.453,23 € son dentro de 30 años: ¿qué le hace la [[inflacion]] a esa cifra?
+4. ¿Qué cambiaría si la aportación entrara al principio de cada año y no al final?
 
 ## Pendiente
 
-- **TODO:** la unidad 2.2 no figura en el temario de `config/curso.md` ni en `config/estructura.json`; añadirla
-  (título «2.2 Ahorro a largo plazo») y ejecutar `organizar.js`. Mientras tanto, los ficheros de esta clase están
-  directamente en `modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo`.
-- ⚠️ **FALTA INFO:** la afirmación de la diapositiva 5 («empezar antes pesa más que aportar un poco más») no
-  tiene comparación numérica en el material. Solo lo resuelve el profesor del curso.
-- **TODO:** confirmar si las aportaciones son al principio o al final de año (las notas suponen al final).
-- **TODO:** [[interes-compuesto]] la escribe la clase 02-01-01; recibe la aportación de esta clase como
-  nota enlazada, sin editarla aquí.
+- **TODO:** decidir con el alumno cómo tratar la aportación cuando los ingresos son irregulares (la clase solo habla de importe fijo).
+- **TODO:** cálculo propio de "aportar menos un año frente a parar" (caso 3 del ejercicio).
 
 %% navegación: la genera guardar.js; no se edita a mano %%
 

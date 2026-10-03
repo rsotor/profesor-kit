@@ -1,80 +1,77 @@
 ---
 tipo: concepto
 bloques: [modulo-02]
-visto_en: [02-01-01, 02-02-01]
+visto_en: [02-01-01-interes-simple-y-compuesto, 02-02-01-ahorro-a-largo-plazo]
 dificultad: 3
-requiere: [interes-simple]
-alias: [interés sobre interés]
-tags: [interes, ahorro]
-ejercicio: 02-01-01-simple-contra-compuesto
+requiere: [capital, tipo-de-interes, interes-simple]
+alias: []
+tags: []
+ejercicio: 02-01-01-interes-simple-y-compuesto
 ---
 # Interés compuesto
 
-> **En una frase:** Con interés compuesto, los intereses de cada periodo se suman al capital y desde ahí generan intereses ellos también, así que el dinero crece cada vez más rápido.
+> **En una frase:** Los intereses de cada periodo se suman al capital y desde entonces generan intereses ellos también: "interés sobre interés".
 
 ## El problema
 
-Con [[interes-simple]] los intereses se quedan quietos. Pero si los dejas dentro, trabajan: ahí está la
-diferencia entre ahorrar y hacer crecer lo ahorrado.
+Con [[interes-simple]], el dinero crece siempre lo mismo. Pero si los intereses ya cobrados se quedan dentro, ¿por qué no iban a trabajar también? Eso es lo que hace el compuesto, y por eso crece cada vez más rápido.
 
 ## El ejemplo
 
-Los mismos 1.000,00 € al 5 % anual, 3 años, ahora compuesto:
+1.000,00 € al 5 % anual, 3 años, con intereses que se quedan dentro:
 
-| Año | Capital al empezar | Intereses del año | Capital al acabar |
+| Año | Capital al empezar | Intereses (5 % anual) | Capital al acabar |
 |---|---|---|---|
 | 1 | 1.000,00 € | 50,00 € | 1.050,00 € |
 | 2 | 1.050,00 € | 52,50 € | 1.102,50 € |
 | 3 | 1.102,50 € | 55,13 € | 1.157,63 € |
 
-Frente a los 1.150,00 € del simple: **7,63 € de más**. Poco a 3 años, pero a 10 años el compuesto da
-1.628,89 € y el simple 1.500,00 €.
+Frente a los 1.150,00 € del simple, hay **7,63 €** de diferencia. A 3 años parece poco, pero crece cada vez más rápido cuantos más años pasan.
 
 ## La fórmula
 
 $$ C_f = C \cdot (1 + i)^n $$
 
-`n` es el número de periodos, y `i` el tipo por uno **de ese mismo periodo** (tipo anual, `n` en años).
-Aquí: 1.000 × 1,05³ = 1.000 × 1,157625 = **1.157,63 €**.
+$C$ es el [[capital]], $i$ el tipo en tanto por uno y $n$ el número de periodos de [[capitalizacion]], en el mismo periodo que $i$ (tipo anual, $n$ en años). Aquí: $1.000 \times 1{,}05^3 = 1.157{,}63$ (en €).
 
 ## Con aportaciones periódicas
 
-> [!quote] De la clase 02-02-01 (Ahorro a largo plazo)
-> Aplicado a [[aportacion-periodica]], cada aportación genera intereses desde el momento en que entra, y esos
-> intereses generan a su vez intereses. Ejemplo: 2.400,00 € al final de cada año, al 5 % anual, durante 3 años:
-> año 1, 2.400,00 €; año 2, 2.400,00 × 1,05 + 2.400,00 = 4.920,00 €; año 3, 4.920,00 × 1,05 + 2.400,00 =
-> **7.566,00 €**. Se han aportado 7.200,00 €; los otros **366,00 €** son intereses. Cuanto más tiempo
-> ([[horizonte-temporal]]), más pesa el efecto.
+Visto en la clase 2.2. Si en vez de un solo capital metes una [[aportacion-periodica]], el interés compuesto se aplica a cada aportación: genera intereses desde el momento en que entra.
+
+> **Supuesto:** aportación **al final de cada año**, 5 % anual, 3 años.
+
+Ejemplo: 2.400,00 € cada año.
+
+- Año 1: **2.400,00 €** (la primera aportación acaba de entrar, aún sin intereses).
+- Año 2: 2.400,00 € × 1,05 + 2.400,00 € = **4.920,00 €**.
+- Año 3: 4.920,00 € × 1,05 + 2.400,00 € = **7.566,00 €**.
+
+Aportado: 7.200,00 €. Intereses: **366,00 €**. La primera aportación trabaja 2 años, la segunda 1 y la última ninguno: por eso el [[horizonte-temporal]] pesa tanto.
 
 ## El error típico
 
-Creer que, como a 3 años casi no se nota, no importa. La ventaja del compuesto crece cada vez más rápido con
-el tiempo: es lo que sorprende la primera vez que se ve (y, en el test inicial, lo que se confundió con el
-simple).
+Mirar solo 3 años y concluir que simple y compuesto "dan casi lo mismo" (7,63 €). La diferencia es pequeña al principio y grande al final: en el test inicial confundiste cuál crece más rápido (prueba: test inicial, pregunta 4).
 
 ## Visto desde tus ingresos irregulares
 
-> [!info] Ampliación fuera de los apuntes
-> Un mes flojo en el que no puedes aportar no borra lo ya acumulado: lo aportado antes sigue generando
-> intereses. Retrasa solo esa aportación; no hace falta rehacer todo el plan.
+Si aportas cuando cobras bien y nada en los meses flojos, el mecanismo sigue funcionando: cada aportación genera intereses desde que entra, sea cuando sea. Lo que más suma no es que sean iguales, sino que **entren pronto** y que no las saques.
 
 ## Practícalo
 
-→ **[Simple contra compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-contra-compuesto.html)**
+→ **[Simple o compuesto: qué cambia al mover los años y el tipo](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-y-compuesto.md)**
 
-Con el mismo tipo el compuesto nunca pierde; con tipos distintos sí puede. Busca en cuántos años se invierte el resultado.
+Cambia el número de años y el tipo, y mira cuándo la diferencia entre simple y compuesto se dispara y cuándo desaparece.
 
 ## Relacionados
 
-- [[interes-simple]] — la versión sin reinversión, para comparar
-- [[tipo-de-interes]] — con su periodo: es lo que decide `n`
+- [[interes-simple]] — el contrapunto en línea recta
 - [[capitalizacion]] — cada cuánto se suman los intereses al capital
-- [[regla-del-72]] — años que tarda en doblarse un capital
-- [[aportacion-periodica]] · [[horizonte-temporal]] — el compuesto aplicado al ahorro regular (clase 02-02-01)
-- [[tasa-de-ahorro]] — de ahí sale lo que se aporta
-- [[inflacion]] — lo que resta al crecimiento real
+- [[regla-del-72]] — atajo para saber cuánto tarda en doblarse
+- [[aportacion-periodica]] — el compuesto aplicado a cada aportación
+- [[horizonte-temporal]] — cuantos más años, más pesa el compuesto
+- [[inflacion]] — el interés solo hace crecer tu poder de compra si supera a la inflación
 
 ## Historial
 
-- **02-01-01** · primera vez
-- **02-02-01** · ampliado: aportaciones periódicas con interés compuesto (7.566,00 €, de los que 366,00 € son intereses), aportado por la clase 02-02-01
+- **02-01-01-interes-simple-y-compuesto** · primera vez
+- **02-02-01-ahorro-a-largo-plazo** · ampliado: el compuesto aplicado a cada aportación periódica (supuesto: al final de cada año)

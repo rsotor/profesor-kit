@@ -1,49 +1,51 @@
 ---
 tipo: concepto
 bloques: [modulo-01]
-visto_en: [01-01-01]
+visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
-requiere: []
-alias: [medio de cambio, unidad de cuenta, depósito de valor, trueque]
-tags: [dinero, fundamentos]
+requiere: [trueque]
+alias: [medio de cambio, unidad de cuenta, depósito de valor]
+tags: []
 ---
 # Funciones del dinero
 
-> **En una frase:** El dinero resuelve el problema del trueque cumpliendo a la vez tres funciones: medio de cambio, unidad de cuenta y depósito de valor.
+> **En una frase:** El dinero cumple a la vez tres funciones: medio de cambio, unidad de cuenta y depósito de valor.
 
 ## El problema
 
-Antes del dinero se hacía **trueque**: dos gallinas por un saco de grano. Para que funcione, cada uno tiene
-que querer justo lo que el otro ofrece y en el mismo momento (la "doble coincidencia de deseos"). Si el
-pastor quiere grano pero el agricultor no quiere carne esa semana, no hay trato.
+En el [[trueque]] hay que encontrar a alguien que quiera justo lo que ofreces. El dinero quita ese
+obstáculo, y para eso hace tres cosas distintas a la vez.
 
 ## El ejemplo
 
 Un pescador vende una caja de pescado por 40,00 €.
 
-- Se la compran sin que el comprador tenga que ofrecerle nada que él quiera: **medio de cambio**.
-- Sabe que la caja vale "40,00 €" sin calcular a cuántas gallinas equivale: **unidad de cuenta**.
-  Un café a 1,50 € y un corte de pelo a 12,00 € se comparan directamente.
-- Guarda 15,00 € para el mes que no salga a pescar: **depósito de valor**.
+- Se la compran con dinero sin querer pescado a cambio de nada más: **medio de cambio**.
+- Sabe que la caja vale 40,00 € sin decir a cuántas gallinas equivale: **unidad de cuenta**. Un café a
+  1,50 € y un corte de pelo a 12,00 € se comparan directamente.
+- Guarda parte de esos 40,00 € para el mes que no salga a pescar: **depósito de valor**.
 
-| Función | Qué permite | En el ejemplo |
-|---|---|---|
-| Medio de cambio | Que te acepten pago sin que el vendedor quiera lo tuyo | Venta de la caja |
-| Unidad de cuenta | Poner precio a todo con la misma vara | "40,00 €" |
-| Depósito de valor | Guardar hoy para usar mañana | Los 15,00 € del mes sin pesca |
+## El nombre
+
+| Función | Qué permite |
+|---|---|
+| Medio de cambio | Que te acepten a cambio de cualquier bien o servicio |
+| Unidad de cuenta | Poner precio a todo con la misma vara de medir |
+| Depósito de valor | Guardarlo hoy y usarlo más adelante |
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Quedarse con "el dinero sirve para comprar cosas" y olvidar las otras dos funciones. Es justo lo que pasó
-> en el test inicial: se nombró el medio de cambio pero no la unidad de cuenta ni el depósito de valor.
-> Truco: son tres porque responden a tres preguntas distintas: ¿me lo aceptan?, ¿cuánto vale?, ¿me aguanta hasta mañana?
+> Mezclar **unidad de cuenta** con **medio de cambio**: poner precio a algo no es lo mismo que pagarlo.
+> Un cuadro puede tener un precio en euros (unidad de cuenta) y venderse por otro cuadro (sin usar
+> dinero como medio de cambio). Y la tercera función falla cuando hay [[inflacion]].
 
 ## Relacionados
 
-- [[inflacion]] — es lo que hace fallar la tercera función, el depósito de valor
-- [[liquidez]] — cuánto de rápido se convierte algo en dinero para gastarlo
+- [[trueque]] — el problema que resuelve
+- [[inflacion]] — lo que rompe el depósito de valor
+- [[liquidez]] — qué tan rápido se convierte algo en dinero para gastarlo
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

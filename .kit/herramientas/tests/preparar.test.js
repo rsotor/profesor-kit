@@ -60,10 +60,12 @@ function lanzar(id, ficheros = conFichero(id)) { return herramienta('preparar', 
 // Copia el repo entero como plantilla de instalación (motor + estudio/config de partida), tal como lo
 // dejaría clonar la plantilla del kit — pero desde la copia de trabajo actual, no de git: así no hace
 // falta commitear nada para probar un cambio en marcha. `preparar-curso.js` (más abajo) borra lo que
-// solo es del repo del kit, igual que al instalar de verdad.
+// solo es del repo del kit, igual que al instalar de verdad. Los worktrees del kit (`.claude/worktrees/`) tampoco:
+// cada uno lleva su `.git`, y en el curso clonado serían un repo dentro de otro que ensucia el `git status`.
 function copiarPlantilla() {
   fs.mkdirSync(curso, { recursive: true });
-  fs.cpSync(KIT, curso, { recursive: true, filter: src => path.relative(KIT, src).split(path.sep)[0] !== '.git' });
+  const fuera = ['.git', path.join('.claude', 'worktrees')];
+  fs.cpSync(KIT, curso, { recursive: true, filter: src => !fuera.some(f => `${path.relative(KIT, src)}${path.sep}`.startsWith(`${f}${path.sep}`)) });
 }
 
 test('0. montar un curso real (motor de la copia de trabajo actual) y comprobarlo sano', () => {

@@ -131,10 +131,9 @@ Las dos cosas, con tu herramienta de editar ficheros, nunca con `>>`, `cat >` ni
 
 ### 8. Cerrar
 
-    node .kit/herramientas/comprobar.js
     node .kit/herramientas/guardar.js "ejercicio: <concepto>"
 
-Si `comprobar.js` da errores, se arreglan antes de guardar.
+Si `guardar.js` enseña errores, no guarda: se arreglan y se repite. Los avisos, se arreglan y se guarda otra vez.
 
 ## Al terminar
 

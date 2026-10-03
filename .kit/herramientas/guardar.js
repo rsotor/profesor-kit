@@ -164,6 +164,13 @@ function subirSiProcede(raiz, informe, { ejecutarGh, consultarAnonimo } = {}) {
   return resultado;
 }
 
+// Los ficheros que entran en el guardado recién hecho (rutas desde la raíz del curso). Es solo un dato del resultado:
+// si git no lo da, la lista sale vacía y el guardado sigue igual.
+function ficherosDelUltimoGuardado(raiz) {
+  const r = g.intentarGit(raiz, ['-c', 'core.quotepath=false', 'diff-tree', '--root', '--no-commit-id', '--name-only', '-r', 'HEAD']);
+  return r.ok ? r.stdout.split('\n').map(l => l.trim()).filter(Boolean) : [];
+}
+
 function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
   if (!g.esRepo(raiz)) return { guardado: false, motivo: 'sin-repo', subido: false, informe: comprobar(raiz) };
   // Revisión de la 0.27 (alta 4): un merge/rebase/cherry-pick a medias (de un fallo anterior, nunca del
@@ -181,7 +188,7 @@ function guardar({ raiz, mensaje, permitirErrores = false, hoy }) {
   g.git(raiz, ['add', '-A']);
   g.git(raiz, ['commit', '-q', '-m', mensaje]);
 
-  return { guardado: true, informe, ...subirSiProcede(raiz, informe) };
+  return { guardado: true, informe, ficheros: ficherosDelUltimoGuardado(raiz), ...subirSiProcede(raiz, informe) };
 }
 
 // Compara qué errores hay, no cuántos (como actualizar.js): arreglar uno y romper otro distinto sigue contando
@@ -291,8 +298,28 @@ function traer(raiz, { hoy = new Date().toISOString().slice(0, 10), conservar = 
   }
 }
 
+// Una línea por error o aviso del informe, con la misma forma en --traer y en el guardado normal.
+const lineaDeInforme = e => `  [${e.regla}] ${e.fichero} — ${e.detalle}`;
+
+// Las reglas de calidad que el profesor arregla antes de dar nada por cerrado (AGENTS.md: "Avisos pedagógicos" y
+// el aviso `no-se-vera-bien`). El resto de avisos (todo, falta-info, dudas…) no se arreglan y no se enseñan aquí.
+const REGLAS_A_ARREGLAR = new Set([
+  'no-se-vera-bien', 'nota-larga', 'concepto-sin-ejemplo', 'sesion-incompleta', 'flashcards-fuera-de-rango',
+  'requiere-vacio', 'pregunta-doble', 'falta-info-mal-usado', 'progreso-sin-prueba',
+  'examen-sin-angulos', 'definicion-de-mas', 'pregunta-calcada',
+]);
+const TOPE_AVISOS = 10;
+
+// Los avisos a arreglar que caen en los ficheros de este guardado. `fichero` del informe es relativo a estudio/
+// (casi todas las reglas); `ficheros` del guardado, a la raíz del curso: se cruzan con y sin el prefijo.
+function avisosDeEsteGuardado(informe, ficheros) {
+  const tocados = new Set(ficheros);
+  return informe.avisos.filter(a => REGLAS_A_ARREGLAR.has(a.regla)
+    && (tocados.has(a.fichero) || tocados.has(`${CARPETA_ALUMNO}/${a.fichero}`)));
+}
+
 const EXPLICACION = {
-  'errores': 'No se ha guardado: hay errores que arreglar primero (ejecuta comprobar.js para verlos).',
+  'errores': 'No se ha guardado: hay errores que arreglar primero (están debajo).',
   'sin-cambios': 'No había nada nuevo que guardar.',
   'sin-identidad': 'Git no sabe quién eres todavía. Hay que configurar user.name y user.email (ver INSTALAR-AGENTE.md, paso de identidad).',
   'sin-repo': 'La carpeta del curso no es la raíz de su propio repositorio git (no tiene uno, o está dentro de otro): no se toca nada. Ejecuta node .kit/herramientas/diagnostico.js para ver cómo arreglarlo.',
@@ -329,7 +356,7 @@ const EXPLICACION_TRAER = {
       + `alumno, enseñándole las dos versiones, y repite eligiendo un lado en cada uno, por ejemplo:\n  ${comandoConservar(r.ficheros)}\n`
       + '(sustituye cada "?" por "aqui" o "alla", según con qué lado se quede ese fichero).';
   },
-  'errores': r => `tras traer, comprobar.js da errores nuevos que no estaban antes: no se ha guardado nada de la mezcla. El curso sigue como estaba${notaRescate({ rescatado: r.rescatado })}.\n${r.informe.errores.map(e => `  [${e.regla}] ${e.fichero} — ${e.detalle}`).join('\n')}`,
+  'errores': r => `tras traer, comprobar.js da errores nuevos que no estaban antes: no se ha guardado nada de la mezcla. El curso sigue como estaba${notaRescate({ rescatado: r.rescatado })}.\n${r.informe.errores.map(lineaDeInforme).join('\n')}`,
 };
 function explicarTraer(r) {
   const e = EXPLICACION_TRAER[r.motivo];
@@ -373,10 +400,21 @@ function cli(args, raiz) {
   const mensaje = args[0];
   if (!mensaje) { console.error('Uso: node .kit/herramientas/guardar.js "<mensaje>"  ·  --empezar "<qué>"  ·  --traer [--conservar <ruta>=aqui|alla]...'); return 2; }
   const r = guardar({ raiz, mensaje });
-  if (!r.guardado) { console.log(EXPLICACION[r.motivo]); return r.motivo === 'sin-cambios' ? 0 : 1; }
-  if (r.rechazadoPorOtroSitio) { console.log(`Guardado, pero no subido: ${r.motivoSubida}.`); return 4; }
-  console.log(r.subido ? 'Guardado y subido a GitHub.' : `Guardado en local. No se ha subido: ${r.motivoSubida}.`);
-  return 0;
+  if (!r.guardado) {
+    console.log(EXPLICACION[r.motivo]);
+    if (r.motivo === 'errores') console.log(r.informe.errores.map(lineaDeInforme).join('\n'));
+    return r.motivo === 'sin-cambios' ? 0 : 1;
+  }
+  console.log(r.rechazadoPorOtroSitio ? `Guardado, pero no subido: ${r.motivoSubida}.`
+    : r.subido ? 'Guardado y subido a GitHub.' : `Guardado en local. No se ha subido: ${r.motivoSubida}.`);
+  // Los avisos de calidad de lo que acaba de entrar no bloquean: se enseñan para arreglarlos y guardar otra vez.
+  const avisos = avisosDeEsteGuardado(r.informe, r.ficheros || []);
+  if (avisos.length) {
+    console.log(`\nAvisos en lo que has guardado (no bloquean):\n${avisos.slice(0, TOPE_AVISOS).map(lineaDeInforme).join('\n')}`);
+    if (avisos.length > TOPE_AVISOS) console.log(`  … y ${avisos.length - TOPE_AVISOS} más: comprobar.js los enseña todos.`);
+    console.log('Arréglalos y guarda otra vez; si hay un motivo concreto para dejar alguno, dile al alumno por qué se queda.');
+  }
+  return r.rechazadoPorOtroSitio ? 4 : 0;
 }
 
 if (require.main === module) require('./lib/arranque').arrancar(cli, path.resolve(__dirname, '..', '..'), 'guardar.js');

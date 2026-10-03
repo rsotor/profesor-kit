@@ -1,51 +1,35 @@
 ---
 tipo: concepto
 bloques: [modulo-02]
-visto_en: [02-01-01]
-dificultad: 2
+visto_en: [02-01-01-interes-simple-y-compuesto]
+dificultad: 1
 requiere: [capital]
-alias: [tasa de interés, interés (tipo)]
-tags: [interes, ahorro]
+alias: []
+tags: []
 ---
 # Tipo de interés
 
-> **En una frase:** El tipo de interés es el precio del dinero: cuánto se paga (o se cobra) por tenerlo prestado durante un tiempo, siempre en tanto por ciento y con su periodo.
+> **En una frase:** El precio del dinero prestado: cuánto se paga (o se cobra) por tenerlo durante un tiempo, en tanto por ciento y siempre con su periodo.
 
 ## El problema
 
-Un tanto por ciento suelto no dice nada: no es lo mismo un 5 % anual que un 5 % mensual. Sin el periodo, dos
-personas pueden creer que hablan de lo mismo y estar a mucha distancia.
+Si te prestan 1.000,00 € y devuelves 1.050,00 €, ¿es caro? Depende del tiempo: 50,00 € por un año no es lo mismo que 50,00 € por un mes. Hace falta una medida que incluya el tiempo.
 
 ## El ejemplo
 
-Con un capital de 1.000,00 €:
-
-| Tipo | Intereses al cabo de un periodo |
-|---|---|
-| 5 % anual | 50,00 € al cabo de un año |
-| 5 % mensual | 50,00 € al cabo de un mes |
-
-Misma cifra, otro periodo: el segundo, al cabo de un año, daría unas doce veces más de intereses (sin
-reinvertir). Por eso este curso **siempre** dice el periodo: "5 % anual", nunca "el 5".
-
-## La fórmula
-
-$$ i = \frac{\text{intereses de un periodo}}{C} $$
-
-`i` es el tipo en tanto por uno (5 % anual = 0,05) y `C` el capital. Se usa así en [[interes-simple]] y en
-[[interes-compuesto]].
+Un depósito paga 5 % anual: por cada año con tu capital dentro, te dan 5,00 € por cada 100,00 €. Si dijera 5 % mensual, serían 5,00 € por cada 100,00 € **cada mes**: 60,00 € en un año a interés simple en vez de 5,00 €, con la misma cifra.
 
 ## El error típico
 
-Comparar dos tipos sin mirar el periodo, o aplicar un tipo anual a un tiempo en meses sin pasarlo a años. El
-tiempo siempre se mide en el mismo periodo que el tipo.
+Decir "el 5 %" sin periodo. No es un detalle de redacción: sin él, la cifra no dice nada, y en este curso una tasa sin periodo se considera mal escrita.
 
 ## Relacionados
 
-- [[capital]] — la cantidad sobre la que se aplica el tipo
-- [[interes-simple]] · [[interes-compuesto]] — las dos formas de aplicarlo en el tiempo
-- [[inflacion]] — un tipo solo gana poder de compra si supera la subida de precios
+- [[capital]] — el dinero sobre el que se aplica el tipo
+- [[interes-simple]] — aplica el tipo siempre sobre el capital inicial
+- [[interes-compuesto]] — aplica el tipo sobre el capital ya crecido
+- [[inflacion]] — otra subida expresada por año; el tipo solo gana si supera a la inflación
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez

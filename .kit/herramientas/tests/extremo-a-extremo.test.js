@@ -32,8 +32,13 @@ const leer = rel => fs.readFileSync(path.join(curso, ...rel.split('/')), 'utf8')
 // prueba el kit tal como está en disco, igual que `actualizar --origen KIT` en el paso 7. Con un clon, cualquier
 // cambio sin commit (subir .kit/VERSION antes de guardar, por ejemplo) hacía que el paso 7 viera "una versión nueva".
 test('1. crear el curso desde la plantilla (copia de la carpeta de trabajo del kit) y prepararlo', () => {
+  // Ni los worktrees del kit: cada uno lleva su `.git` y en el curso sería un repo dentro de otro.
   const fuera = new Set(['.git', 'node_modules', '.preparacion', 'pruebas-local']);
-  fs.cpSync(KIT, curso, { recursive: true, filter: src => !fuera.has(path.relative(KIT, src).split(path.sep)[0]) });
+  const worktrees = path.join('.claude', 'worktrees');
+  fs.cpSync(KIT, curso, { recursive: true, filter: src => {
+    const rel = path.relative(KIT, src);
+    return !fuera.has(rel.split(path.sep)[0]) && rel !== worktrees && !rel.startsWith(worktrees + path.sep);
+  } });
   for (const args of [['init', '-q', '-b', 'main'], ['config', 'user.name', 'Alumna E2E'], ['config', 'user.email', 'e2e@example.com'],
     ['config', 'commit.gpgsign', 'false'], ['add', '-A'], ['commit', '-q', '-m', 'plantilla']]) {
     const r = ejecutar('git', args);

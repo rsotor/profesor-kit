@@ -87,8 +87,8 @@ El alumno lee en Obsidian, y hay cosas que Obsidian no dibuja.
 - **Un enlace con alias dentro de una tabla se escribe `[[nota\|texto]]`:** sin la barra invertida, la fila
   se descuadra.
 
-`comprobar.js` lo vigila con el aviso `no-se-vera-bien`. **Ese aviso lo arreglas siempre antes de
-guardar:** es un fallo tuyo de escritura, no una decisión del alumno.
+`comprobar.js` lo vigila con el aviso `no-se-vera-bien`, y `guardar.js` lo enseña al guardar. **Ese aviso lo
+arreglas siempre antes de dar nada por cerrado:** es un fallo tuyo de escritura, no una decisión del alumno.
 
 ## Avisos pedagógicos de `comprobar.js`
 
@@ -98,10 +98,10 @@ también vigila once señales de calidad pedagógica, calculadas desde disco: `n
 `falta-info-mal-usado`, `progreso-sin-prueba` y, en un examen recién escrito, `examen-sin-angulos`,
 `definicion-de-mas` y `pregunta-calcada`. Cada aviso dice qué falta.
 
-**Se arreglan siempre antes de guardar**, igual que `no-se-vera-bien`, salvo que tengas un motivo concreto
-para dejarlos (un concepto que de verdad no se puede partir sin perder sentido, una sesión cuyo material no
-da para pensarlo despacio): entonces se queda el aviso, y se lo dices al alumno en una frase al cerrar — no
-se ignora en silencio.
+`guardar.js` los enseña al guardar, sin bloquear. **Se arreglan siempre antes de dar nada por cerrado** (se
+arreglan y se guarda otra vez), igual que `no-se-vera-bien`, salvo que tengas un motivo concreto para dejarlos
+(un concepto que de verdad no se puede partir sin perder sentido, una sesión cuyo material no da para pensarlo
+despacio): entonces se queda el aviso, y se lo dices al alumno en una frase al cerrar — no se ignora en silencio.
 
 ## Cuando preguntas para medir
 
@@ -247,11 +247,11 @@ Se ejecutan siempre así, con `/`, también en Windows:
 | Cuándo | Comando |
 |---|---|
 | Al empezar cada sesión | `node .kit/herramientas/estado.js` (`--json` para el detalle) |
-| Antes de dar nada por terminado | `node .kit/herramientas/comprobar.js` |
-| Para guardar | `node .kit/herramientas/guardar.js "<mensaje>"` |
+| Para mirar el curso sin guardar | `node .kit/herramientas/comprobar.js` |
+| Para cerrar (comprueba; enseña errores y avisos) | `node .kit/herramientas/guardar.js "<mensaje>"` |
 | Antes de algo de varios pasos | `node .kit/herramientas/guardar.js --empezar "<qué>"` |
 | Para que el alumno acepte los permisos una vez (con su sí) | `node .kit/herramientas/permisos.js --ver` · `--aplicar` · `--quitar` |
-| Para leer un Word, PowerPoint o Excel del material | `node .kit/herramientas/leer.js <fichero>` (`--parte N` si es largo) |
+| Para leer un Word, PowerPoint o Excel del material, o varios ficheros de una vez | `node .kit/herramientas/leer.js <ficheros>` (`--parte N` si es largo) |
 | Para traer lo guardado desde otro sitio (el Mac, la nube) | `node .kit/herramientas/guardar.js --traer` |
 | Para apuntar una duda en el registro de `config/alumno.md` | `node .kit/herramientas/dudas.js <concepto> --prueba "<fichero>"` |
 | Antes de crear una nota, ¿ya existe con otro nombre? | `node .kit/herramientas/candidatos.js "<nombre> — <definición>"` |
@@ -269,7 +269,7 @@ curso**, por si la ventana se cierra a medias; `guardar.js` añade solo la líne
 `git status`: si queda algo sin guardar, guárdalo o dile qué se queda a medias.
 
 Nunca hagas `git add`, `git commit` ni `git push` a mano: `guardar.js` decide si se puede subir. Si
-`comprobar.js` da errores, se arreglan antes de guardar; los avisos no bloquean.
+`guardar.js` enseña errores, no guarda: se arreglan; los avisos no bloquean.
 
 **Los ficheros se crean y se editan con las herramientas de ficheros de tu asistente, nunca con comandos de
 shell** (`cat >`, `echo >>`, `sed -i`, `python`, `node -e`…). Cada comando pide permiso al alumno, y sin nadie

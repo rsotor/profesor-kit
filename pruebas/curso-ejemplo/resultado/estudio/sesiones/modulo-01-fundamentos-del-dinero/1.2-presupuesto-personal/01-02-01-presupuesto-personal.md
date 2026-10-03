@@ -2,85 +2,91 @@
 tipo: sesion
 bloque: modulo-01
 clases: [1.2]
-trabajada: 2026-10-02
+trabajada: 2026-10-03
 fuente: inbox/clase-02-presupuesto-personal.md
 estudiada: true
 ---
-# 01-02-01 · Presupuesto personal
+# 01-02-01-presupuesto-personal · Presupuesto personal
 
 ## En una frase
 
-Cómo apuntar lo que entra y lo que sale cada mes, separar gastos fijos y variables, medir lo que te queda con la tasa de ahorro y guardar un colchón para los meses flojos.
+Cómo apuntar lo que entra y lo que sale, separar gastos fijos y variables, medir cuánto ahorras en
+proporción a lo que ganas y tener un colchón antes de ahorrar para otra cosa.
 
 ## Conceptos
 
-- [[presupuesto-personal]] — **nuevo** (incluye el ingreso medio para ingresos irregulares)
+- [[presupuesto]] — **nuevo** (incluye el ingreso medio cuando los ingresos varían)
 - [[gastos-fijos-y-variables]] — **nuevo**
 - [[tasa-de-ahorro]] — **nuevo**
 - [[colchon-financiero]] — **nuevo**
 
 ## Lo que hay que llevarse
 
-1. Presupuesto = ingresos − gastos, mes a mes; con ingresos irregulares, se parte de la media y no del mejor mes.
-2. Fijos y variables se llevan por separado: solo los variables se recortan en un mes flojo.
-3. La tasa de ahorro compara; el colchón (5-6 meses para un freelance) es el primer objetivo.
+1. Presupuesto = ingresos − gastos; si tus ingresos varían, se usa la media de 6-12 meses.
+2. Fijos y variables se llevan por separado: es variable lo que decides tú cada mes.
+3. La tasa de ahorro compara; el colchón es el primer objetivo, y para un freelance, más alto (5-6 meses).
 
 ## Material
 
-- Flashcards: [[flashcards/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-presupuesto-personal]]
-- Ejercicios: [El mes flojo y el colchón](../../../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-mes-flojo.html) (mueve los ingresos hasta que el mes pasa de ahorrar a tirar del colchón)
+- Flashcards: [[flashcards/01-02-01-presupuesto-personal]]
+- Ejercicios: ninguno por ahora (ver Pendiente).
 
 ## Cobertura del material
 
-| Sección | Destino |
+| Parte del material | Destino |
 |---|---|
-| Diapositiva 1 · Qué es un presupuesto | [[presupuesto-personal]] |
-| Diapositiva 2 · Ingresos irregulares | [[presupuesto-personal]] (ingreso medio) |
-| Diapositiva 3 · Gastos fijos y variables | [[gastos-fijos-y-variables]] |
-| Diapositiva 4 · Ejemplo trabajado | Ejemplo de [[presupuesto-personal]] y de [[gastos-fijos-y-variables]] (ver Auditoría) |
+| Diapositiva 1 · Qué es un presupuesto | [[presupuesto]] |
+| Diapositiva 2 · Ingresos que no son iguales | [[presupuesto]] (ingreso medio) |
+| Diapositiva 3 · Fijos y variables | [[gastos-fijos-y-variables]] |
+| Diapositiva 4 · Ejemplo trabajado | Ejemplos de [[gastos-fijos-y-variables]], [[presupuesto]] y [[tasa-de-ahorro]]; ver Auditoría |
 | Diapositiva 5 · Tasa de ahorro | [[tasa-de-ahorro]] |
 | Diapositiva 6 · Colchón financiero | [[colchon-financiero]] |
-| Diapositiva 7 · Resumen | Esta sesión, "Lo que hay que llevarse" |
-| Hoja "Gastos fijos" | Auditoría: el total está mal (ver abajo) |
-| Hoja "Gastos variables" | Cuadra con la diapositiva 4 (480,00 €); sin nota propia |
+| Diapositiva 7 · Resumen | "Lo que hay que llevarse" |
+| Hoja "Gastos fijos" | Auditoría (fórmula de B5) |
+| Hoja "Gastos variables" | Auditoría: cuadra (`=SUMA(B2:B4)` = 480,00 €) |
 | Hoja "Resumen" | Auditoría: arrastra el error de fijos |
 
 ## Auditoría del material
 
-> Control de calidad del material, no contenido del curso.
+*Control de calidad del material, no contenido del curso.*
 
-- **La hoja de cálculo no cuadra (celda `Gastos fijos!B5`).** El total de fijos es `=B2+B3+25`: el 25 está
-  escrito a mano en vez de sumar `B4`. En clase se subió Suscripciones de 25,00 € a 52,00 € y la fórmula no
-  se tocó. El total mostrado es 715,00 €; el real con 52,00 € es 650,00 + 40,00 + 52,00 = **742,00 €**
-  (+27,00 €).
-- **Lo que arrastra en "Resumen":** total gastos mostrado 1.195,00 €, real **1.222,00 €**; ahorro mostrado
-  655,00 €, real **628,00 €**; tasa de ahorro mostrada 35 (655 ÷ 1.850 = 35,4), real **33,9** (628 ÷ 1.850).
-  Diferencia: 1,5 puntos en la tasa y 27,00 € en el ahorro. La hoja muestra la tasa sin decimal (35); la
-  diapositiva, con uno (35,4).
-- **Las diapositivas y la hoja no coinciden:** la diapositiva 4 usa Suscripciones = 25,00 € y la hoja
-  muestra 52,00 €. Con 25,00 € las cifras de la diapositiva sí cuadran (650 + 40 + 25 = 715; 1.850 − 1.195 =
-  655; 655 ÷ 1.850 = 35,4; 3 × 1.195 = 3.585). Las notas usan las cifras de la diapositiva, que son
-  coherentes entre sí.
-- Con el valor de la hoja (52,00 €) el colchón de 3 meses sería 3 × 1.222,00 = 3.666,00 € (no 3.585,00 €) y el
-  de 5-6 meses, entre 6.110,00 € y 7.332,00 €.
-- Es la primera hoja de cálculo del curso: la auditoría de la 1.1 no tenía ninguna, así que no hay un error
-  repetido de clases anteriores. Las diapositivas de esta clase llegan completas.
-- Sin instrucciones dirigidas al asistente en ninguno de los dos ficheros.
+- **La hoja de cálculo no cuadra consigo misma ni con las diapositivas.** En "Gastos fijos", B4
+  (Suscripciones) vale 52,00 € pero B5 es `=B2+B3+25`: el 25 está escrito a mano en vez de sumar B4. Por eso
+  el total muestra 715,00 € cuando 650,00 + 40,00 + 52,00 = **742,00 €**. Diferencia: 27,00 €.
+- **El error arrastra toda la hoja "Resumen"**, recalculado con 52,00 €:
+
+  | Cifra | Diapositivas y hoja (con el error) | Recalculado con B4 = 52,00 € |
+  |---|---|---|
+  | Total fijos | 715,00 € | 742,00 € |
+  | Total gastos | 1.195,00 € | 1.222,00 € |
+  | Ahorro del mes | 655,00 € | 628,00 € |
+  | Tasa de ahorro | 35,4 % del mes (la hoja muestra 35 %) | 33,9 % del mes |
+  | Colchón de 3 meses | 3.585,00 € | 3.666,00 € |
+
+- **Las diapositivas usan 25,00 €** para las suscripciones y la hoja 52,00 €. La nota del que exportó dice que
+  en clase se subió a 52,00 € por la suscripción del gimnasio, pero no se sabe cuál es la cifra buena (ver
+  Pendiente). Las notas de concepto mantienen las cifras de las diapositivas, con aviso donde hace falta.
+- Las demás cuentas se han reproducido y cuadran: variables 480,00 €; 655 ÷ 1.850 = 35,4 %; 1.195,00 × 3 = 3.585,00 €.
+- La hoja muestra la tasa como "35 %" (redondeada, sin decimales): no es un error, pero pierde precisión.
+- La diapositiva 6 da los meses de colchón (3 y 5-6) sin decir de dónde salen: es una recomendación, no un cálculo.
+- No hay instrucciones dirigidas al asistente en este material. El error de las fórmulas no coincide con
+  ninguno de la clase 1.1 (allí fue una aproximación en la inflación); no hay repetición.
 
 ## Para pensarlo despacio
 
-1. Un mes de ingresos de 1.300,00 € con gastos de 1.195,00 € "cierra", pero con muy poco margen. ¿Qué
-   recortarías primero, fijos o variables, y por qué?
-2. ¿Por qué la tasa de ahorro de un mes suelto puede engañar a alguien con ingresos irregulares? ¿Qué
-   cifra mirarías en su lugar?
-3. Tienes 7.000,00 € ahorrados, pero 6.000,00 € están en algo que tardarías semanas en vender. ¿Cuánto
-   colchón tienes de verdad?
-4. El error de la hoja cambió la tasa en solo 1,5 puntos. ¿Cuándo un error así sería grave y cuándo no?
+1. ¿Por qué un error de 27,00 € en una sola celda cambia el ahorro, la tasa y el colchón, y qué habría
+   avisado de ello en la hoja antes de enseñarla?
+2. Si tu ingreso medio es 1.850,00 € pero este mes cobras 1.300,00 €, ¿qué parte de tu presupuesto no
+   puedes tocar y cuál sí?
+3. ¿Por qué dos personas con el mismo ahorro en euros pueden estar en situaciones muy distintas?
+4. ¿Por qué un freelance necesita un colchón más grande que alguien con nómina, aunque gaste lo mismo?
 
 ## Pendiente
 
-- ⚠️ **FALTA INFO:** cifra real de Suscripciones (25,00 € en la diapositiva 4, 52,00 € en la hoja, tras añadir el gimnasio). Las notas usan 25,00 €. Solo lo resuelve el profesor del curso o el alumno si lo recuerda de clase.
-- **TODO:** si Suscripciones es de verdad 52,00 €, rehacer los ejemplos de [[presupuesto-personal]], [[gastos-fijos-y-variables]], [[tasa-de-ahorro]] y [[colchon-financiero]] (fijos 742,00 €, gastos 1.222,00 €, ahorro 628,00 €, colchón de 3 meses 3.666,00 €) y el ejercicio.
+- ⚠️ **FALTA INFO:** ¿Cuánto pagan de verdad las suscripciones al mes: 25,00 € (diapositivas) o 52,00 € (hoja, con el gimnasio)? Solo lo sabe el profesor de la clase; de ahí dependen las cifras del ejemplo.
+- ⚠️ **FALTA INFO:** De dónde sale la recomendación de 3 meses (nómina fija) y 5-6 meses (ingresos irregulares) de colchón: la diapositiva 6 no da fuente.
+- **TODO:** Cuando se resuelva la cifra de las suscripciones, actualizar los ejemplos de [[presupuesto]], [[gastos-fijos-y-variables]], [[tasa-de-ahorro]] y [[colchon-financiero]].
+- **TODO:** Crear un ejercicio donde cambie un gasto y se vea moverse la tasa de ahorro y el colchón (aquí sí algo se mueve).
 
 %% navegación: la genera guardar.js; no se edita a mano %%
 

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ejercicio · Inflación: ¿aguanta tu colchón?</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 1.6rem; }
+  .bloque { border: 1px solid #8884; border-radius: 8px; padding: .8rem 1rem; margin: .8rem 0; }
+  label { display: block; margin-top: .8rem; }
+  input[type=range] { width: 100%; }
+  .valor { font-weight: 600; }
+  button { font: inherit; padding: .5rem 1rem; margin: .3rem .3rem .3rem 0; border-radius: 6px; border: 1px solid #8886; cursor: pointer; }
+  .ok { border-left: 4px solid #2a9d4b; padding-left: .7rem; }
+  .ko { border-left: 4px solid #d1495b; padding-left: .7rem; }
+  .vacio { opacity: .7; font-style: italic; }
+  small { opacity: .75; }
+</style>
+</head>
+<body>
+<h1>¿Aguanta tu colchón la inflación?</h1>
+<p><small>Concepto: <b>inflación</b> (nota <i>inflacion</i>, carpeta <i>conceptos</i>). Tasas siempre anuales.</small></p>
+
+<h2>1 · Condiciones</h2>
+<div class="bloque">
+  <p>Has guardado un colchón y lo dejas parado <b>un año</b>. Quieres saber si, pasado ese año, seguirá cubriendo lo que hoy cubre. Mueve lo que quieras:</p>
+  <label>Colchón guardado: <span class="valor" id="v-colchon"></span>
+    <input type="range" id="colchon" min="1000" max="12000" step="100" value="3600"></label>
+  <label>Gastos que hoy cubre ese colchón: <span class="valor" id="v-gastos"></span>
+    <input type="range" id="gastos" min="800" max="9000" step="50" value="3585"></label>
+  <label>Inflación anual: <span class="valor" id="v-inflacion"></span>
+    <input type="range" id="inflacion" min="0" max="15" step="0.5" value="3"></label>
+  <button id="nuevo" type="button">Caso nuevo al azar</button>
+  <p><small>Los ahorros están en una cuenta que no da intereses. El colchón no se toca durante el año.</small></p>
+</div>
+
+<h2>2 · Reto</h2>
+<div class="bloque">
+  <p>Dentro de un año, con estas condiciones, esos gastos cuestan más que hoy.</p>
+  <p><b>¿Seguirá cubriéndolos el colchón?</b> <small>(elige una; no hace falta calcular, razona primero)</small></p>
+  <button id="si" type="button">Sí, los cubre</button>
+  <button id="no" type="button">No, se queda corto</button>
+</div>
+
+<h2>3 · Explicación</h2>
+<div class="bloque" id="explicacion" aria-live="polite">
+  <span class="vacio">Elige una respuesta y aquí verás por qué. Si mueves un control después, el reto se reinicia.</span>
+</div>
+
+<script>
+(function () {
+  var fmt = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var pct = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  var VACIO = '<span class="vacio">Elige una respuesta y aquí verás por qué. Si mueves un control después, el reto se reinicia.</span>';
+
+  // Lógica que decide la respuesta correcta. Todo en enteros (inflación en décimas de punto)
+  // para que un empate exacto no dependa de decimales binarios.
+  // Cubre si colchón ≥ gastos × (1 + i), que es lo mismo que colchón ÷ (1 + i) ≥ gastos.
+  window.verificar = function (caso) {
+    var colchon = Math.round(Number(caso.colchon) * 100);
+    var gastos = Math.round(Number(caso.gastos) * 100);
+    var decimas = Math.round(Number(caso.inflacion) * 10);
+    return colchon * 1000 >= gastos * (1000 + decimas) ? 'cubre' : 'no-cubre';
+  };
+
+  function $(id) { return document.getElementById(id); }
+  function leer() { return { colchon: Number($('colchon').value), gastos: Number($('gastos').value), inflacion: Number($('inflacion').value) }; }
+
+  function pintar() {
+    var c = leer();
+    $('v-colchon').textContent = fmt.format(c.colchon);
+    $('v-gastos').textContent = fmt.format(c.gastos);
+    $('v-inflacion').textContent = pct.format(c.inflacion) + ' % anual';
+  }
+  function reiniciar() { pintar(); $('explicacion').innerHTML = VACIO; }
+
+  function responder(dice) {
+    var c = leer();
+    var real = window.verificar(c);
+    var compra = c.colchon / (1 + c.inflacion / 100);
+    var costeNuevo = c.gastos * (1 + c.inflacion / 100);
+    var limite = (c.colchon / c.gastos - 1) * 100;
+    var acierto = dice === real;
+    var h = '<div class="' + (acierto ? 'ok' : 'ko') + '"><b>' + (acierto ? 'Acertaste.' : 'No era esa.') + '</b> ';
+    h += real === 'cubre' ? 'El colchón sí cubre los gastos.' : 'El colchón se queda corto.';
+    h += '</div>';
+    h += '<p>Lo que ves de dos maneras (es lo mismo):</p><ul>';
+    h += '<li>Esos gastos, dentro de un año, cuestan <b>' + fmt.format(costeNuevo) + '</b> (' + fmt.format(c.gastos) + ' × ' + (1 + c.inflacion / 100).toLocaleString('es-ES', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + '). Tu colchón: ' + fmt.format(c.colchon) + '.</li>';
+    h += '<li>O al revés: tu colchón de ' + fmt.format(c.colchon) + ' compra lo que hoy compran <b>' + fmt.format(compra) + '</b> (' + fmt.format(c.colchon) + ' ÷ ' + (1 + c.inflacion / 100).toLocaleString('es-ES', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + '), frente a ' + fmt.format(c.gastos) + ' que necesitas.</li></ul>';
+    if (limite < 0) {
+      h += '<p><b>El colchón ya es menor que los gastos de hoy:</b> no cubre con ninguna inflación, ni con el 0,0 %.</p>';
+    } else if (limite > 15) {
+      h += '<p>Con este colchón, la inflación tendría que superar el 15,0 % anual (el máximo del control) para dejarlo corto: sobra margen.</p>';
+    } else {
+      h += '<p><b>El punto donde se invierte:</b> con una inflación anual de <b>' + pct.format(limite) + ' %</b> justo se cubre; por encima, no. Prueba a mover la inflación cruzando ese punto.</p>';
+    }
+    h += '<p><small>El margen entre colchón y gastos es lo que decide: la inflación se come parte de él cada año, sin que el número de euros guardados cambie. Si el margen es pequeño, un año parado ya lo cruza.</small></p>';
+    $('explicacion').innerHTML = h;
+  }
+
+  function azar() {
+    var gastos = 800 + 50 * Math.floor(Math.random() * 100);
+    // Colchón cerca del límite, a veces por debajo y a veces por encima, para que el veredicto se invierta.
+    var factor = 0.95 + Math.random() * 0.2;
+    var colchon = Math.min(12000, Math.max(1000, Math.round(gastos * factor / 100) * 100));
+    gastos = Math.min(9000, gastos);
+    $('colchon').value = colchon;
+    $('gastos').value = gastos;
+    $('inflacion').value = (Math.floor(Math.random() * 21)) / 2;
+    reiniciar();
+  }
+
+  ['colchon', 'gastos', 'inflacion'].forEach(function (id) { $(id).addEventListener('input', reiniciar); });
+  $('si').addEventListener('click', function () { responder('cubre'); });
+  $('no').addEventListener('click', function () { responder('no-cubre'); });
+  $('nuevo').addEventListener('click', azar);
+  pintar();
+})();
+</script>
+</body>
+</html>

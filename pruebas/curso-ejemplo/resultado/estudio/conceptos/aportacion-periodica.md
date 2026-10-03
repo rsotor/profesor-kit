@@ -1,71 +1,58 @@
 ---
 tipo: concepto
 bloques: [modulo-02]
-visto_en: [02-02-01]
+visto_en: [02-02-01-ahorro-a-largo-plazo]
 dificultad: 2
 requiere: [tasa-de-ahorro, interes-compuesto]
-alias: [aportación periódica, aportaciones periódicas]
-tags: [ahorro, interes]
+alias: []
+tags: []
 ---
 # Aportación periódica
 
-> **En una frase:** Una aportación periódica es una cantidad fija que se añade a los ahorros cada cierto tiempo (cada mes, cada año), en vez de ahorrar de golpe una sola vez.
+> **En una frase:** Una cantidad fija que se añade a los ahorros cada cierto tiempo (cada mes, cada año), en vez de ahorrar de golpe una sola vez; lo importante es que sea el mismo importe con el mismo periodo.
 
 ## El problema
 
-Casi nadie tiene 7.200,00 € de golpe para ahorrar. Lo normal es apartar una cantidad pequeña cada mes o cada
-año. La pregunta es qué pasa con ese dinero cuando cada aportación llega en un momento distinto.
+Esperar a juntar una cantidad grande para ahorrarla de golpe casi nunca pasa. Y la [[tasa-de-ahorro]] sola es un porcentaje: no dice qué haces con el dinero ni cuándo.
 
 ## El ejemplo
 
-Aportas 2.400,00 € al final de cada año (una tasa de ahorro de 10 sobre 2.000,00 € al mes da 200,00 € al mes,
-2.400,00 € al año), y el dinero crece al 5 % anual compuesto:
+> **Supuesto:** la aportación entra **al final de cada año** y el [[tipo-de-interes]] es del 5 % anual, compuesto.
 
-- Año 1: 2.400,00 €
-- Año 2: 2.400,00 × 1,05 + 2.400,00 = **4.920,00 €**
-- Año 3: 4.920,00 × 1,05 + 2.400,00 = **7.566,00 €**
+Aportas 2.400,00 € al final de cada año durante 3 años:
 
-Has aportado 3 × 2.400,00 = 7.200,00 €. Los otros **366,00 €** son intereses: la primera aportación trabajó
-dos años, la segunda uno, y la tercera ninguno.
+| Año | Cuenta | Total |
+|---|---|---|
+| 1 | 2.400,00 € | 2.400,00 € |
+| 2 | 2.400,00 € × 1,05 + 2.400,00 € | 4.920,00 € |
+| 3 | 4.920,00 € × 1,05 + 2.400,00 € | 7.566,00 € |
 
-> [!info] Ampliación fuera de los apuntes
-> El material no dice si la aportación entra al principio o al final del año. Este cálculo supone **al final**
-> (la última aportación aún no ha generado interés). Si entrara al principio, saldría más.
+Has aportado 3 × 2.400,00 € = 7.200,00 €. Los otros **366,00 €** son intereses. Cada aportación gana [[interes-compuesto|interés compuesto]] desde que entra, y esos intereses ganan a su vez intereses.
 
 ## La fórmula
 
-$$ saldo_{n} = saldo_{n-1} \times (1 + i) + a $$
+$$ \text{saldo}_{n} = \text{saldo}_{n-1} \times (1 + r) + A $$
 
-- $saldo_{n}$: lo que tienes al final del año $n$, en €.
-- $i$: el tipo de interés anual en tanto por uno (5 % anual = 0,05).
-- $a$: la aportación de cada año, en €.
-
-Primero crece lo que ya tenías; después entra la aportación nueva.
+Cada año, lo que ya tienes se multiplica por $(1+r)$ (con $r$ la tasa del año, 5 % anual = 0,05) y se suma la nueva aportación $A$. Con aportación al final de año, la del último año todavía no ha ganado nada.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que lo que has aportado es lo que tienes. Con interés compuesto el saldo es mayor que la suma de las
-> aportaciones (7.566,00 € frente a 7.200,00 €), y la diferencia crece cada año.
+> Confundir la aportación con el total ahorrado: 2.400,00 € al año durante 3 años no son 7.566,00 € "aportados", son 7.200,00 € aportados y 366,00 € que ha puesto el interés.
 
 ## Visto desde tus ingresos irregulares
 
-> [!info] Ampliación fuera de los apuntes
-> La aportación periódica pide un importe fijo, y tus ingresos no lo son. Fija la aportación fija sobre tu
-> ingreso medio y no sobre el mejor mes: en un mes de 1.300,00 € con gastos de 1.195,00 € solo te sobran
-> 105,00 €, y una aportación de 200,00 € ese mes saldría del colchón (95,00 €). Lo que sobre en los meses buenos
-> puede ir como aportación extra.
+"El mismo importe con el mismo periodo" choca con facturar unos meses más que otros. Dos formas de llevarlo: fijar la aportación sobre tu ingreso medio y apartar lo mismo cada mes, o aportar un porcentaje de lo que cobres. Lo segundo no es una aportación periódica en sentido estricto (el importe cambia).
+
+**TODO:** la clase no dice cómo se trata una aportación que varía; decidir con el alumno si se amplía.
 
 ## Relacionados
 
-- [[tasa-de-ahorro]] — de ella sale el importe que se aporta
-- [[interes-compuesto]] — hace que cada aportación genere intereses sobre los intereses
-- [[capital]] — cada aportación se suma al capital ahorrado
-- [[tipo-de-interes]] — el tanto anual al que crece el saldo
-- [[capitalizacion]] — el momento en que los intereses se suman al saldo
-- [[horizonte-temporal]] — cuántos años dura la aportación
-- [[presupuesto-personal]] — de donde sale lo que se aparta
+- [[tasa-de-ahorro]] — de ella sale la cifra que se aporta
+- [[interes-compuesto]] — hace que cada aportación crezca por su cuenta
+- [[horizonte-temporal]] — cuántos años se mantiene la aportación
+- [[capital]] — lo que ya hay ahorrado
 
 ## Historial
 
-- **02-02-01** · primera vez
+- **02-02-01-ahorro-a-largo-plazo** · primera vez

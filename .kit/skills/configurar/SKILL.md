@@ -83,6 +83,9 @@ explicaciones y el otro se adapta a cada respuesta.
    derecho: citar siempre el artículo"; "en uno de cocina: cantidades siempre en gramos"). Si una
    regla se puede comprobar con un patrón de texto, **propón** añadirla a `patrones_prohibidos`
    de `config/ajustes.json` como `{ "patron": "<regex>", "mensaje": "<qué pasa>" }`.
+   Que el patrón sea estrecho: antes de proponerlo, pruébalo mentalmente contra dos o tres frases que **no**
+   incumplen la regla (un porcentaje que no es lo que la regla nombra, una cita del material) y afínalo hasta que
+   no salten. Dile al alumno que lo que va entre comillas no se mira: es cita literal.
 5. **La arquitectura del curso → `config/estructura.json`.** Las carpetas de `estudio/` (sesiones, flashcards,
    ejercicios, exámenes) copian la estructura del curso **tal como la ve el alumno en la plataforma**, para
    que dentro de seis meses encuentre las cosas por donde las busca allí: módulos, bloques, semanas, temas…

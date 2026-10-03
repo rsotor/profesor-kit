@@ -1,43 +1,39 @@
 ---
 tipo: concepto
 bloques: [modulo-02]
-visto_en: [02-01-01]
+visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 1
 requiere: [interes-compuesto]
 alias: []
-tags: [interes, ahorro]
+tags: []
 ---
 # Regla del 72
 
-> **En una frase:** La regla del 72 es un atajo para calcular a ojo cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
+> **En una frase:** Un atajo para estimar a ojo cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
 
 ## El problema
 
-Quieres una idea rápida de cuánto tardará tu dinero en duplicarse, sin calculadora ni elevar nada a una
-potencia.
+La fórmula exacta pide calculadora. A veces solo quieres saber, de cabeza, si tu dinero se dobla en 10 años o en 30.
 
 ## El ejemplo
 
-Al 6 % anual: 72 ÷ 6 = **12 años**. El cálculo exacto con la fórmula del [[interes-compuesto]] da 11,9 años:
-la regla es una aproximación, no el resultado exacto.
+Al 6 % anual: 72 ÷ 6 = **12 años**, aproximadamente. El cálculo exacto con la fórmula de [[interes-compuesto]] da 11,9 años: el atajo se queda a 0,1 años.
 
 ## La fórmula
 
-$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, sin el símbolo}} $$
+$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número}} $$
 
-Se usa el número del tipo anual tal cual (6 % anual, 6; no 0,06).
+El tipo va como número, sin el símbolo de tanto por ciento ($6$, no $0{,}06$).
 
 ## El error típico
 
-> [!info] Ampliación fuera de los apuntes
-> Usarla con un tipo que no es anual o tomarla por exacta. Solo vale para tipos anuales y a ojo: sirve para
-> hacerse una idea, no para fijar una fecha.
+Tomarla por exacta: es una aproximación (12 frente a 11,9).
 
 ## Relacionados
 
-- [[interes-compuesto]] — la regla aproxima su resultado
-- [[tipo-de-interes]] — tiene que ser anual
+- [[interes-compuesto]] — el único caso en que vale; con simple no
+- [[tipo-de-interes]] — el divisor, siempre anual
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez
