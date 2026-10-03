@@ -1,12 +1,12 @@
 ---
 tipo: concepto
-bloques: [01-02, 02-02]
-visto_en: [01-02-01-presupuesto-personal, 02-02-01-ahorro-a-largo-plazo]
+bloques: [1.2]
+visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
-requiere: [liquidez, gastos-fijos-y-variables]
-alias: [fondo de emergencia]
-tags: [presupuesto]
-ejercicio: 01-02-01-colchon
+requiere: [liquidez, presupuesto-personal]
+ejercicio: 01-02-01-colchon-meses-flojos
+alias: []
+tags: [ahorro, presupuesto]
 ---
 # Colchón financiero
 
@@ -14,66 +14,46 @@ ejercicio: 01-02-01-colchon
 
 ## El problema
 
-Un mes flojo o un imprevisto (se rompe el portátil) te obliga a endeudarte o a vender algo deprisa. Con un colchón, esos meses no te descolocan.
+Un mes flojo o una avería no avisan. Sin reserva, hay que endeudarse o vender algo deprisa (y [[liquidez]] es justo poder usar el dinero ya, sin perder valor).
 
 ## El ejemplo
 
-Gastos del mes: 1.195,00 €.
-
-- Colchón de 3 meses: 1.195,00 € × 3 = **3.585,00 €**.
-- Colchón de 6 meses: 1.195,00 € × 6 = **7.170,00 €**.
-
-Se mide sobre los **gastos**, no sobre los ingresos: es lo que tienes que seguir pagando aunque no entre nada.
+Con gastos de **1.195,00 €** al mes, un colchón de 3 meses son 1.195,00 × 3 = **3.585,00 €**. Para ingresos irregulares se apunta a 5-6 meses: **5.975,00 €** a **7.170,00 €**.
 
 ## La fórmula
 
 $$ \text{colchón} = \text{gastos mensuales} \times \text{meses a cubrir} $$
 
-Con nómina fija se apunta a unos 3 meses; con ingresos irregulares, a 5-6.
-
 ## El error típico
 
-Ahorrar para otra cosa antes de tener el colchón. Los apuntes lo dicen claro: es el **primer objetivo**. Y tiene que ser líquido ([[liquidez]]): un dinero que no puedes usar ya no cubre un mes flojo.
+Pensar que "tener ahorros" ya es tener colchón. Si el dinero está en algo que no puedes sacar sin perder (no líquido), no cubre un imprevisto.
 
-## Antes de ahorrar a largo plazo
-
-En la clase 2.2 lo llaman **fondo de emergencia**: es lo mismo. Se tiene antes de empezar a ahorrar a largo plazo ([[aportaciones-con-interes-compuesto]]) para que una avería o una mala racha no obliguen a sacar ese ahorro y a perder los intereses que iba a dar.
+> [!info] Ampliación fuera de los apuntes
+> **Visto desde tus ingresos irregulares.** Los apuntes recomiendan 5-6 meses para un freelance, frente a 3 con nómina fija. A tu ritmo, con 1.222,00 € de gastos (con el gimnasio incluido), serían de 6.110,00 € a 7.332,00 €.
 
 ## Practícalo
 
-→ **[¿Aguanta tu colchón?](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon.html)**
-
-Mueve el ingreso de un mes flojo y los gastos variables: hay un punto donde 3.585,00 € dejan de aguantar 6 meses seguidos. Debería sorprenderte cuánto lo mueve recortar el ocio.
-
-> [!tip] Visto desde tus ingresos irregulares
-> Como freelance te corresponde el rango alto (5-6 meses): tus meses flojos no avisan. Y lo que cuenta es el gasto del mes, por eso conviene saber qué parte es [[gastos-fijos-y-variables|fija o variable]]: en un mes flojo, solo lo variable se puede recortar. Y es lo que protege tu ahorro a largo plazo: sin fondo, un mes flojo te obliga a vender ese ahorro por las prisas.
+[[ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-meses-flojos.html|¿Aguanta tu colchón una racha floja?]]: mueve los meses de racha, lo que facturas y la parte de tus ahorros que puedes sacar ya, y mira cuándo el colchón deja de cubrir.
 
 ## Relacionados
 
-- [[liquidez]] — el colchón solo vale si se puede usar ya
-- [[gastos-fijos-y-variables]] — su tamaño sale del total de gastos
-- [[tasa-de-ahorro]] — lo que ahorras es lo que lo va llenando
-- [[aportaciones-con-interes-compuesto]] — el ahorro a largo plazo que el colchón protege
+- [[presupuesto-personal]] — de donde sale el gasto mensual
+- [[tasa-de-ahorro]] — lo que ahorras cada mes para llenarlo
+- [[liquidez]] — por qué debe estar al alcance
 
 ## Historial
 
 - **01-02-01-presupuesto-personal** · primera vez
-- **02-02-01-ahorro-a-largo-plazo** · ampliada: alias "fondo de emergencia"; se tiene antes de ahorrar a largo plazo para no tocar ese ahorro y perder sus intereses
 
 > [!question]- Duda · 2026-10-03
 > no entiendo bien esta parte, ¿me lo explicas con otro ejemplo?
 >
-> **Respuesta:** el marcador estaba al final de la nota, sin señalar una frase, así que lo he tomado como "no me queda claro cómo se usa el colchón". Otro ejemplo, esta vez viendo cómo se vacía en un mal tramo.
+> **Respuesta:** el marcador no decía qué parte, así que he cogido la fórmula y los meses a cubrir, que es lo que más suele atascar. Otro ejemplo, con tus ingresos irregulares:
 >
-> Gastos del mes: 900,00 €. Te marcas 5 meses: 900,00 € × 5 = **4.500,00 €** en la cuenta.
+> | Mes | Facturas | Gastos | Qué pasa |
+> |---|---|---|---|
+> | Enero | 2.000,00 € | 1.200,00 € | Sobran 800,00 € |
+> | Febrero | 300,00 € | 1.200,00 € | Faltan 900,00 € |
+> | Marzo | 0,00 € | 1.200,00 € | Faltan 1.200,00 € |
 >
-> | Mes | Facturas | Gastas | Diferencia | Colchón |
-> |---|---|---|---|---|
-> | 1 | 2.400,00 € | 900,00 € | +1.500,00 € | 4.500,00 € (ya lleno, el resto es ahorro) |
-> | 2 | 300,00 € | 900,00 € | −600,00 € | 3.900,00 € |
-> | 3 | 200,00 € | 900,00 € | −700,00 € | 3.200,00 € |
-> | 4 | 1.500,00 € | 900,00 € | +600,00 € | 3.800,00 € |
->
-> Dos meses malos seguidos se comen 1.300,00 € y no has pedido nada prestado. El colchón no es dinero para gastar: es el que **absorbe la diferencia** en los meses flojos y se rellena en los buenos. Por eso se mide en meses de gastos y no en euros sueltos.
->
-> Donde cojea: el ejemplo supone que el mes 4 repone el colchón entero; en la vida real, rellenarlo es el primer destino del ahorro de los meses buenos.
+> Entre febrero y marzo te faltan **2.100,00 €**. Con un colchón de 1 mes (1.200,00 €) no llegas; con 3 meses (**1.200,00 × 3 = 3.600,00 €**) cubres esos dos meses flojos y aún te quedan 1.500,00 €. Los meses a cubrir son, en la práctica, cuántos meses seguidos flojos quieres aguantar sin tocar nada más. Si otra parte te chirriaba, dime cuál y la rehago.

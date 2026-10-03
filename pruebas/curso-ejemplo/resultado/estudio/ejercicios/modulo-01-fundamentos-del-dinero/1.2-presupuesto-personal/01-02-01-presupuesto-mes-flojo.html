@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presupuesto de un mes flojo</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  label { display: block; margin: .6rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem .9rem; margin: .25rem .25rem .25rem 0; cursor: pointer; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>Presupuesto de un mes flojo</h1>
+<p>Conceptos: <a href="../../../conceptos/presupuesto-personal.md">presupuesto-personal</a> y <a href="../../../conceptos/tasa-de-ahorro.md">tasa-de-ahorro</a>. Tus gastos no bajan cuando bajan tus ingresos. Mueve las condiciones y decide <em>antes</em> de ver el resultado.</p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <label for="ingresos">Ingresos del mes: <strong id="vIngresos"></strong></label>
+  <input type="range" id="ingresos" min="1000" max="2600" step="50" value="1300">
+  <label for="fijos">Gastos fijos: <strong id="vFijos"></strong></label>
+  <input type="range" id="fijos" min="500" max="1000" step="10" value="742">
+  <label for="variables">Gastos variables: <strong id="vVariables"></strong></label>
+  <input type="range" id="variables" min="100" max="900" step="10" value="480">
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p>Con estas condiciones, ¿cómo acaba el mes? (Los tramos son de este ejercicio, no una recomendación.)</p>
+  <button data-t="deficit">Déficit: gasto más de lo que ingreso</button>
+  <button data-t="bajo">Ahorro, con una tasa menor del 20 % del mes</button>
+  <button data-t="alto">Ahorro, con una tasa del 20 % del mes o más</button>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+(function () {
+  function fmt(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+  function calcular(caso) {
+    var gastos = caso.fijos + caso.variables;
+    var ahorro = caso.ingresos - gastos;
+    var tasa = ahorro / caso.ingresos * 100;
+    var tramo = ahorro < 0 ? 'deficit' : (tasa < 20 ? 'bajo' : 'alto');
+    return { gastos: gastos, ahorro: ahorro, tasa: tasa, tramo: tramo };
+  }
+  window.verificar = function (caso) { return calcular(caso).tramo; };
+
+  function leer() {
+    return {
+      ingresos: Number(document.getElementById('ingresos').value),
+      fijos: Number(document.getElementById('fijos').value),
+      variables: Number(document.getElementById('variables').value)
+    };
+  }
+
+  function pintar() {
+    var c = leer();
+    document.getElementById('vIngresos').textContent = fmt(c.ingresos) + ' €';
+    document.getElementById('vFijos').textContent = fmt(c.fijos) + ' €';
+    document.getElementById('vVariables').textContent = fmt(c.variables) + ' €';
+    document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+  }
+
+  ['ingresos', 'fijos', 'variables'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', pintar);
+  });
+
+  var nombres = { deficit: 'déficit', bajo: 'ahorro con tasa menor del 20 % del mes', alto: 'ahorro con tasa del 20 % del mes o más' };
+
+  Array.prototype.forEach.call(document.querySelectorAll('button[data-t]'), function (b) {
+    b.addEventListener('click', function () {
+      var c = leer();
+      var r = calcular(c);
+      var ok = b.getAttribute('data-t') === r.tramo;
+      document.getElementById('explicacion').textContent =
+        (ok ? 'Correcto. ' : 'No: ') +
+        'Ingresos ' + fmt(c.ingresos) + ' € − gastos ' + fmt(r.gastos) + ' € = ahorro de ' + fmt(r.ahorro) + ' €, ' +
+        'una tasa de ' + fmt(r.tasa) + ' % del mes: ' + nombres[r.tramo] + '. ' +
+        'Prueba a bajar los ingresos: el ahorro se va a cero y luego a negativo, porque los gastos fijos no se mueven; la tasa cae más deprisa que los ingresos.';
+    });
+  });
+
+  pintar();
+})();
+</script>
+</body>
+</html>

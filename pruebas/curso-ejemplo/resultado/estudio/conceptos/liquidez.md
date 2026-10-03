@@ -1,6 +1,6 @@
 ---
 tipo: concepto
-bloques: [01-01]
+bloques: [1.1]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 1
 requiere: [funciones-del-dinero]
@@ -13,24 +13,29 @@ tags: [dinero]
 
 ## El problema
 
-Tener riqueza no sirve de nada el día que hay que pagar algo y lo que tienes no se puede convertir en dinero a tiempo.
+Tener valor no basta: hay que poder usarlo cuando hace falta. Un cobro urgente no se paga con la mitad de un piso.
 
 ## El ejemplo
 
-Tienes 300,00 € en la cartera y un piso. Los 300,00 € se gastan al instante: liquidez total. El piso vale muchísimo más, pero venderlo bien lleva meses; si lo vendes en una semana, tendrás que bajar el precio. Poco líquido.
+| Lo que tienes | Liquidez | Por qué |
+|---|---|---|
+| 50,00 € en la cartera | 100 % líquido | Se gasta al instante |
+| Un piso | Muy poco líquido | Venderlo bien lleva meses |
+
+Si necesitas el dinero del piso en una semana, tendrás que rebajar el precio: pierdes valor por las prisas.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que liquidez es "cuánto tengo". No: es **lo rápido que puedo usarlo**. El piso vale mucho y es poco líquido; 300,00 € valen poco y son muy líquidos.
+> Creer que "líquido" es lo mismo que "valioso". Un piso vale mucho y es poco líquido; la cartera vale poco y es líquida. Son dos preguntas distintas: cuánto vale y con qué rapidez se convierte en dinero.
 
-> [!tip] Visto desde tus ingresos irregulares
-> En un mes flojo no puedes esperar a vender nada: necesitas dinero que puedas usar ya. Lo que cuenta para tu colchón no es solo cuánto hay, sino cuánto de eso es líquido. Lo retomamos en el módulo 2, al comparar ahorrar (muy líquido) con invertir (a veces, menos).
+> [!info] Ampliación fuera de los apuntes
+> **Visto desde tus ingresos irregulares.** El dinero para los meses flojos tiene que ser líquido: la utilidad de ese colchón está en poder gastarlo ya, sin esperar ni malvender. En el módulo 2 se compara con invertir, que a veces es menos líquido.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero es el activo más líquido que existe
-- [[inflacion]] — guardar dinero líquido tiene este coste
+- [[funciones-del-dinero]] — el dinero es el activo más líquido
+- [[inflacion]] — el coste de guardar todo en líquido
 
 ## Historial
 

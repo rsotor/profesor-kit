@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inflación y poder de compra</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  label { display: block; margin: .6rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem .9rem; margin: .25rem .25rem .25rem 0; cursor: pointer; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>Inflación y poder de compra</h1>
+<p>Concepto: <a href="../../../conceptos/inflacion.md">inflacion</a>. Guardas dinero en efectivo y los precios suben. Mueve las condiciones y decide <em>antes</em> de ver el resultado.</p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <label for="dinero">Dinero guardado: <strong id="vDinero"></strong></label>
+  <input type="range" id="dinero" min="100" max="5000" step="100" value="1000">
+  <label for="inflacion">Inflación anual: <strong id="vInflacion"></strong></label>
+  <input type="range" id="inflacion" min="0" max="12" step="0.5" value="3">
+  <label for="anios">Años guardado: <strong id="vAnios"></strong></label>
+  <input type="range" id="anios" min="1" max="30" step="1" value="10">
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p>Con estas condiciones, pasado ese tiempo, ¿cuánto de su poder de compra de hoy conserva ese dinero?</p>
+  <button data-t="alto">Más del 80 %</button>
+  <button data-t="medio">Entre el 50 % y el 80 %</button>
+  <button data-t="bajo">Menos del 50 %</button>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+(function () {
+  function fmt(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function pct(x) { return String(x).replace('.', ',') + ' % anual'; }
+
+  function calcular(caso) {
+    var real = caso.dinero / Math.pow(1 + caso.inflacion / 100, caso.anios);
+    var ratio = real / caso.dinero;
+    var tramo = ratio > 0.8 ? 'alto' : (ratio >= 0.5 ? 'medio' : 'bajo');
+    return { real: real, ratio: ratio, tramo: tramo };
+  }
+  window.verificar = function (caso) { return calcular(caso).tramo; };
+
+  function leer() {
+    return {
+      dinero: Number(document.getElementById('dinero').value),
+      inflacion: Number(document.getElementById('inflacion').value),
+      anios: Number(document.getElementById('anios').value)
+    };
+  }
+
+  function pintar() {
+    var c = leer();
+    document.getElementById('vDinero').textContent = fmt(c.dinero) + ' €';
+    document.getElementById('vInflacion').textContent = pct(c.inflacion);
+    document.getElementById('vAnios').textContent = c.anios + (c.anios === 1 ? ' año' : ' años');
+    document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+  }
+
+  ['dinero', 'inflacion', 'anios'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', pintar);
+  });
+
+  var nombres = { alto: 'más del 80 %', medio: 'entre el 50 % y el 80 %', bajo: 'menos del 50 %' };
+
+  Array.prototype.forEach.call(document.querySelectorAll('button[data-t]'), function (b) {
+    b.addEventListener('click', function () {
+      var c = leer();
+      var r = calcular(c);
+      var ok = b.getAttribute('data-t') === r.tramo;
+      document.getElementById('explicacion').textContent =
+        (ok ? 'Correcto. ' : 'No: ') +
+        'Tus ' + fmt(c.dinero) + ' € guardados ' + c.anios + ' años con una inflación de ' + pct(c.inflacion) +
+        ' compran como ' + fmt(r.real) + ' € de hoy, es decir, ' + nombres[r.tramo] +
+        ' (' + String(Math.round(r.ratio * 100)) + ' %). Fórmula: dinero ÷ (1 + inflación)^años. ' +
+        'Prueba a subir los años: el desgaste se acumula año tras año, no es una resta fija.';
+    });
+  });
+
+  pintar();
+})();
+</script>
+</body>
+</html>

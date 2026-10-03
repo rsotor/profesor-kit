@@ -1,48 +1,48 @@
 ---
 tipo: concepto
-bloques: [01-01]
+bloques: [1.1]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [trueque]
-alias: []
+alias: [medio de cambio, unidad de cuenta, depósito de valor]
 tags: [dinero]
 ---
 # Funciones del dinero
 
-> **En una frase:** el dinero cumple tres funciones a la vez (medio de cambio, unidad de cuenta y depósito de valor) y por eso sustituye al trueque.
+> **En una frase:** el dinero hace tres cosas a la vez: sirve para pagar (medio de cambio), para poner precio a todo (unidad de cuenta) y para guardar valor hasta mañana (depósito de valor).
 
 ## El problema
 
-El [[trueque]] exige que coincidan los deseos de dos personas y no da una forma común de comparar precios. Hace falta algo que todos acepten, que sirva para medirlo todo y que se pueda guardar.
+Con el [[trueque]], vender exige encontrar a alguien que quiera justo lo tuyo. Además, ¿cuántas gallinas vale un corte de pelo? Y lo que ganas hoy, ¿cómo lo guardas para el mes que no trabajes?
 
 ## El ejemplo
 
-Un pescador vende una caja de pescado por 40,00 €.
+Un pescador vende una caja de pescado por **40,00 €**.
 
-- Se la compran aunque el comprador no tenga nada que al pescador le interese: el dinero es **medio de cambio**.
-- Sabe que la caja "vale 40,00 €" sin traducirla a gallinas ni a sacos de grano: es la **unidad de cuenta**. Un café a 1,50 € y un corte de pelo a 12,00 € se comparan directamente.
-- Guarda 15,00 € para el mes en que no salga a pescar: es **depósito de valor**.
+| Lo que pasa | Función |
+|---|---|
+| Cobra en dinero, sin que el comprador tenga que ofrecerle nada que él quiera | **Medio de cambio** |
+| Sabe que la caja vale 40,00 €, sin traducirlo a gallinas ni a granos | **Unidad de cuenta** |
+| Guarda 15,00 € para el mes que no salga a pescar | **Depósito de valor** |
+
+Otro ejemplo de unidad de cuenta: un café a 1,50 € y un corte de pelo a 12,00 € se comparan directamente (el corte vale 8 cafés).
 
 ## El nombre
 
-| Función | Qué permite | Pregunta que responde |
-|---|---|---|
-| **Medio de cambio** | Pagar cualquier cosa sin que el vendedor tenga que querer lo tuyo | ¿Me lo aceptan a cambio? |
-| **Unidad de cuenta** | Poner precio a todo con la misma vara | ¿Cuánto vale, comparado con lo otro? |
-| **Depósito de valor** | Guardar hoy y usar más adelante | ¿Seguirá valiendo algo mañana? |
-
-La tercera es la que puede fallar: ver [[inflacion]].
+- **Medio de cambio:** se acepta a cambio de cualquier bien o servicio.
+- **Unidad de cuenta:** la misma vara de medir para todos los precios.
+- **Depósito de valor:** se guarda hoy y se usa después, porque más o menos mantiene su valor. Cuando esto falla, es por la [[inflacion]].
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Confundir unidad de cuenta con medio de cambio. Los puntos de una tarjeta de supermercado pueden poner precio a las cosas ("100 puntos = 1,00 €"), pero no te dejan pagar el alquiler: miden, pero no se aceptan en todas partes. Para ser dinero tienen que cumplirse las tres funciones.
+> Quedarse con "el dinero sirve para pagar" y olvidar las otras dos. Pagar es solo una de las tres; la prueba de que son distintas es que una puede fallar sin las otras: con inflación alta el dinero sigue pagando y poniendo precios, pero guarda mal su valor.
 
 ## Relacionados
 
 - [[trueque]] — el problema que resuelve
 - [[inflacion]] — lo que erosiona el depósito de valor
-- [[liquidez]] — lo rápido que algo se convierte en dinero
+- [[liquidez]] — lo fácil que es gastar algo como si fuera dinero
 
 ## Historial
 

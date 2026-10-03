@@ -1,0 +1,24 @@
+{
+  "revisor": "subagente",
+  "fecha": "2026-10-04",
+  "preguntas": [
+    { "numero": 1, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 2, "respuesta": ["c"], "seguridad": "alta", "problemas": [] },
+    { "numero": 3, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 4, "respuesta": ["a"], "seguridad": "alta", "problemas": [] },
+    { "numero": 5, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 6, "respuesta": ["d"], "seguridad": "alta",
+      "problemas": ["se acierta sin saber: la d es la única opción con cifras calculadas (25,0 % y 20,8 %), las otras son razonamientos sin cuenta, y el enunciado ya da los datos para dividir"],
+      "resolucion": "Reescritas las opciones: las cuatro llevan cifras y las erróneas son errores típicos (41,7 % = ahorro del mes bueno entre los ingresos del flojo; igual; euros absolutos). La correcta sigue siendo d." },
+    { "numero": 7, "respuesta": ["b"], "seguridad": "alta",
+      "problemas": ["se acierta sin saber: la b es la única opción matizada y razonable; la a, la c y la d son descartes triviales"],
+      "resolucion": "Pregunta del test del centro, literal por la regla del examen de referencia (enunciado y opciones no se reescriben). Se deja tal cual; es una de las 5 del centro." },
+    { "numero": 8, "respuesta": ["a"], "seguridad": "media",
+      "problemas": ["ambigua: la media es 1.500,00 €, pero 1.400,00 € es la mediana y la cifra más repetida, y también es defendible para presupuestar con prudencia; el enunciado no dice qué criterio usar (la pregunta 7 sugiere la media, pero no lo afirma)"],
+      "resolucion": "El enunciado ahora pide expresamente el ingreso medio mensual de los seis meses (la media, que es lo que define la nota ingreso-medio): 9.000,00 ÷ 6 = 1.500,00 €. Ya no admite la lectura de la mediana." },
+    { "numero": 9, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 10, "respuesta": ["c"], "seguridad": "alta",
+      "problemas": ["se acierta sin saber: la c es la opción más larga y la única que explica el porqué; la a es comprobablemente falsa (6.000 ÷ 1.000 = 6) y la b es una regla inventada"],
+      "resolucion": "Igualadas las longitudes de las cuatro opciones y la a pasa a ser un error de cálculo plausible. Sigue siendo una pregunta de detectar-error: el alumno debe ver que la cuenta está bien y falla la liquidez; la correcta es c." }
+  ]
+}

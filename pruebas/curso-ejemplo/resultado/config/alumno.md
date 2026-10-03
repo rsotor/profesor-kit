@@ -31,13 +31,16 @@
 
 ## Conceptos que costaron
 
-- **colchón financiero** — pidió otro ejemplo sin decir qué parte no veía. Respondido con una tabla mes a mes de cómo el colchón se vacía y se rellena con ingresos irregulares; falta saber si eso lo desbloquea. — *duda en conceptos/colchon-financiero.md, 2026-10-03*
+- **colchon-financiero:** pidió otro ejemplo sin precisar qué parte no entendía (probablemente la fórmula y los meses a cubrir). Se le dio una tabla mes a mes con sus ingresos irregulares; pendiente de ver si lo desbloquea. — *duda en conceptos/colchon-financiero.md, 2026-10-03*
+- **Examen del módulo 1 (nota 6, aprobado justo):** acertó la cuenta del colchón (p.9) pero dejó en blanco la p.10 (colchón con dinero no líquido) y la p.5 (valor frente a liquidez): no hay prueba de que no lo sepa, pero tampoco de que lo sepa. — *examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-04.md, p.5 y p.10*
+- **trueque:** en la p.1 eligió «falta de unidad de cuenta» en vez de doble coincidencia de deseos: mezcla los problemas del trueque entre sí. — *examen 01-examen-2026-10-04.md, p.1*
+- **tasa-de-ahorro:** en la p.6 eligió «41,7 %» (500 ÷ 1.200), que mezcla el ahorro del mes bueno con el ingreso del flojo; la tasa se calcula con los datos del mismo mes (20,8 % frente a 25,0 %). — *examen 01-examen-2026-10-04.md, p.6*
+- **gastos-fijos-y-variables:** en la p.5 clasificó como variable un alquiler de 700 € que solo sube una vez al año con el IPC; es fijo, porque se paga cada mes por el mismo importe. Parece que confunde "cambia alguna vez" con "cambia cada mes". — *examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-03-correccion.md, p.5*
+- **liquidez:** en la p.3 describió bien la idea (no se puede vender rápido) pero no dio el nombre, que la pregunta pedía. — *examen 01-examen-2026-10-03-correccion.md, p.3*
 
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
-
-- **presupuesto-personal** — en el examen del módulo 1 falla dos de dos: en la p.6 elige que presupuestar con el mejor mes no tiene riesgo, y en la p.10 deja en blanco el cálculo del ahorro con el ingreso medio (la respuesta era −50,00 €). Se ve que no tiene aún claro por qué se usa la media y no el mejor mes, justo lo que más le afecta con ingresos irregulares. En la p.10 no se puede distinguir un fallo de concepto de no haber llegado; conviene repreguntarlo. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-03.md, p.6 y p.10*
 
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
@@ -47,11 +50,10 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 1 | 2026-09-20 · respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-10-03 · respuesta del alumno en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
 | colchon-financiero | 1 | 2026-10-03 · conceptos/colchon-financiero.md, 2026-10-03 |
-| funciones-del-dinero | 1 | 2026-10-03 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-10-03 |

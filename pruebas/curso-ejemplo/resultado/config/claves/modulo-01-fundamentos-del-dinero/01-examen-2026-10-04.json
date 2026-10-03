@@ -1,0 +1,17 @@
+{
+  "opciones": 4,
+  "resta_fallo": 0,
+  "aprobado": 6,
+  "preguntas": [
+    { "correctas": ["b"], "explicacion": "Que ninguna quiera lo que ofrece la otra es la doble coincidencia de deseos (clave del test del centro).", "concepto": "trueque", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["c"], "explicacion": "Con más inflación, los mismos euros guardados compran menos al final del año. En la hucha siguen estando los 1.000,00 €: lo que baja es lo que compran.", "concepto": "inflacion", "angulo": "predecir" },
+    { "correctas": ["b"], "explicacion": "Poner precio en euros a cosas distintas para compararlas es la unidad de cuenta (clave del test del centro).", "concepto": "funciones-del-dinero", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["a"], "explicacion": "Variable es el que cambia según lo que decidas gastar; los otros tres se repiten con la misma cifra.", "concepto": "gastos-fijos-y-variables", "angulo": "distinguir" },
+    { "correctas": ["b"], "explicacion": "Mucho valor pero tarda en venderse: poca liquidez (clave del test del centro).", "concepto": "liquidez", "angulo": "distinguir", "origen": "centro" },
+    { "correctas": ["d"], "explicacion": "Tasa = ahorro ÷ ingresos × 100. Mes flojo: 300,00 ÷ 1.200,00 = 25,0 % del mes. Mes bueno: 500,00 ÷ 2.400,00 ≈ 20,8 % del mes.", "concepto": "tasa-de-ahorro", "angulo": "transferir" },
+    { "correctas": ["b"], "explicacion": "Presupuestar con el mejor mes lleva a gastar dinero que los meses flojos no darán (clave del test del centro).", "concepto": "ingreso-medio", "angulo": "predecir", "origen": "centro" },
+    { "correctas": ["a"], "explicacion": "Media: (1.000,00 + 2.600,00 + 1.400,00 + 800,00 + 1.800,00 + 1.400,00) ÷ 6 = 9.000,00 ÷ 6 = 1.500,00 €.", "concepto": "ingreso-medio", "angulo": "transferir" },
+    { "correctas": ["b"], "explicacion": "Colchón = gastos mensuales × meses: 900 × 5 = 4.500 € (clave del test del centro).", "concepto": "colchon-financiero", "angulo": "transferir", "origen": "centro" },
+    { "correctas": ["c"], "explicacion": "La cuenta de meses es correcta (6.000,00 ÷ 1.000,00 = 6), pero el dinero no es líquido: no se puede sacar sin perder, así que no cubre un imprevisto.", "concepto": "colchon-financiero", "angulo": "detectar-error" }
+  ]
+}

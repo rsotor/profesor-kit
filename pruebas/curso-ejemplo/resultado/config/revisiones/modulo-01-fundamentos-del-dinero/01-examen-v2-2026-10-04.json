@@ -1,0 +1,16 @@
+{
+  "revisor": "subagente",
+  "fecha": "2026-10-04",
+  "preguntas": [
+    { "numero": 1, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 2, "respuesta": ["d"], "seguridad": "alta", "problemas": ["se acierta sin saber: la c ('solo falla el banco') se descarta trivialmente"], "resolucion": "Reescrita la c como 'Medio de cambio y unidad de cuenta, las dos a la vez': ahora es un error de concepto, no un descarte trivial." },
+    { "numero": 3, "respuesta": ["c"], "seguridad": "alta", "problemas": ["se acierta sin saber: la c es la más larga y la única que da la definición; las demás son descartes triviales (a, b)"], "resolucion": "Reescritas las cuatro opciones con longitud parecida y errores conceptuales plausibles (café fuera de la medición, solo por escasez, subida pequeña). La correcta pasa a ser la a; clave corregida." },
+    { "numero": 4, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 5, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 6, "respuesta": ["a"], "seguridad": "alta", "problemas": ["se acierta sin saber: la b compara cifras absolutas y la c ('igual') choca con los datos; basta calcular un porcentaje. Además a y d tienen formato casi idéntico y la d usa un 40 % que no sale de ningún cálculo"], "resolucion": "Rehechas las opciones: a y b con su cuenta escrita (la 40 % sale de 600,00 ÷ 1.500,00, el error de mezclar meses), c con la comparación de cifras absolutas, d 'no se puede saber sin los gastos'. Se quita la 'igual'. Correcta sigue siendo la a." },
+    { "numero": 7, "respuesta": ["d"], "seguridad": "alta", "problemas": ["se acierta sin saber: la d es la única con una cifra y un matiz concreto, y la a es comprobablemente falsa solo con dividir"], "resolucion": "Rehechas las opciones a, b y c como errores de concepto plausibles y de longitud parecida a la d; se quita la de la división, que se descartaba con la cuenta. Correcta sigue siendo la d." },
+    { "numero": 8, "respuesta": ["c"], "seguridad": "alta", "problemas": [] },
+    { "numero": 9, "respuesta": ["a"], "seguridad": "alta", "problemas": ["se acierta sin saber: la c ('el ahorro nunca puede ser negativo') y la d son descartes triviales"], "resolucion": "Reescritas c ('gasta todo lo que ha facturado') y d ('−1.250,00 €, el total de gastos') como errores de cálculo/concepto; la b sigue siendo el error de signo. Correcta sigue siendo la a." },
+    { "numero": 10, "respuesta": ["c"], "seguridad": "alta", "problemas": [] }
+  ]
+}

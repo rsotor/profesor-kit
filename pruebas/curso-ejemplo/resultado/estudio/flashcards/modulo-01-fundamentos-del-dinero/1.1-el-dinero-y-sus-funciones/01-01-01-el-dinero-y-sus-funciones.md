@@ -6,37 +6,37 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 
 > Se responde mentalmente antes de desplegar.
 
-**Un supermercado pone precio a todo en puntos ("un café = 150 puntos"), pero solo se canjean en sus tiendas. ¿Qué función del dinero cumplen los puntos y cuál no?**
+**Un freelance cobra 300,00 € y sabe que un trabajo similar vale 300,00 €, sin traducirlo a otra cosa. ¿Qué función del dinero usa al saberlo?**
 > [!success]- Respuesta
-> Cumplen la de unidad de cuenta (todo tiene precio en la misma vara), pero no la de medio de cambio: no se aceptan en todas partes.
+> Unidad de cuenta: la misma vara de medir para todos los precios.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**El tomate sube un 40 % en un mes por una mala cosecha. ¿Es inflación?**
+**El trueque falla aunque dos gallinas valgan lo mismo que un saco de grano. ¿Por qué?**
 > [!success]- Respuesta
-> No: sube el precio de una cosa concreta. Inflación es la subida general y sostenida del nivel de precios, de casi todo a la vez.
+> Por la doble coincidencia de deseos: el otro tiene que querer justo lo que ofreces, en el momento justo.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Con una inflación del 3 % anual, ¿qué compran dentro de un año 100,00 € guardados?**
+**El precio del aguacate se duplica por una mala cosecha y el resto sigue igual. ¿Es inflación? ¿Por qué?**
 > [!success]- Respuesta
-> Lo que hoy compran unos 97,09 € (100,00 € ÷ 1,03). Pierden poder de compra aunque la cifra siga siendo 100,00 €.
+> No. Es la subida de un solo precio. Inflación es que sube el nivel general, de casi todo a la vez.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Un piso de 200.000,00 € y 2.000,00 € en la cuenta: ¿cuál es más líquido y por qué no significa que valga más?**
+**¿Qué es más líquido, 50,00 € en la cartera o un piso? ¿Qué significa "más líquido"?**
 > [!success]- Respuesta
-> Los 2.000,00 € son más líquidos: se gastan ya. Liquidez es la rapidez de convertir algo en dinero sin perder valor, no cuánto vale.
+> Los 50,00 €. Más líquido es más fácil y rápido de convertir en dinero para gastar ya, sin perder valor.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
 ---
-Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]
+Conceptos que cubren: [[funciones-del-dinero]] · [[trueque]] · [[inflacion]] · [[liquidez]]

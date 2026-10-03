@@ -4,5 +4,7 @@ sesion: 01-02-01-presupuesto-personal
 ---
 # Ejercicios · 01-02-01-presupuesto-personal
 
-- **¿Aguanta tu colchón?** — ejercicio interactivo (`01-02-01-colchon.html`, en esta misma carpeta, ábrelo con doble clic). Practica [[colchon-financiero]] y [[tasa-de-ahorro]]: mueves el ingreso de un mes flojo y los gastos variables, y descubres dónde el colchón de 3.585,00 € deja de aguantar 6 meses seguidos.
-- **¿Con qué ingreso presupuestas?** — ejercicio interactivo (`01-02-01-presupuesto.html`, en esta misma carpeta). Practica [[presupuesto-personal]]: mueves el mes bueno, el mes flojo, cuántos meses buenos hay y el gasto presupuestado, y descubres dónde un presupuesto que cabe en el mes bueno deja de ser sostenible.
+- **[Presupuesto de un mes flojo](01-02-01-presupuesto-mes-flojo.html)** — conceptos [[presupuesto-personal]] y [[tasa-de-ahorro]]. Mueve los ingresos y mira dónde el ahorro pasa a negativo y cómo cae la tasa.
+- **[¿Aguanta tu colchón una racha floja?](01-02-01-colchon-meses-flojos.html)** — concepto [[colchon-financiero]] (y [[liquidez]]). Mueve los meses de racha, lo que facturas y la parte de ahorros que puedes sacar ya, y mira dónde el colchón pasa de cubrir a quedarse corto.
+
+Sin ejercicio para [[ingreso-medio]] y [[gastos-fijos-y-variables]]: son una media y una clasificación, sin umbral que invierta el resultado.
