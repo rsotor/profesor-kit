@@ -312,26 +312,57 @@ fallidos, la restricción de leer antes de editar y fija el formato por código:
   sitios que piden `comprobar.js` antes de guardar estaba incompleta. Comprobado que no rompe: la prueba real no
   mira si se llamó a `comprobar.js`; los permisos ya cubren `guardar.js`.
 
-## Siguiente: ¿basta el curso de ejemplo para asegurar la calidad? (idea de Roberto, 2026-10-03; sin empezar)
+## Siguiente: un curso de ejemplo que mida más (revisado el 2026-10-03; sin empezar)
 
-**Cuándo:** después de cerrar «recortar las llamadas de `/sesion`» (commit hecho). Antes no: tocar el curso de ejemplo
-rompe la línea base con la que se acaba de medir.
+**Decisión de Roberto (2026-10-03):** no se publica versión hasta tener un curso de ejemplo mejor para las pruebas
+reales. La PR #88 no sube `.kit/VERSION`: se acumula. La próxima release depende de esto y del punto 1 de «que no se
+repita la #54» (el curso real como prueba).
 
-**La pregunta:** si el curso de ejemplo, con cambios pequeños, puede cubrir mejor la calidad del material y quedar
-como base de medida, sin pretender tenerlo todo en un sitio.
+**Revisión con ojos nuevos** (un agente sin el contexto de la sesión): `docs/auditoria/2026-10-03-revision-curso-de-ejemplo.md`,
+con su tabla «qué promete el producto → qué lo comprueba» y la ronda del diablo al final.
 
-**Cómo:** primero un agente con ojos nuevos (sin el contexto de esta sesión) revisa qué comprueba hoy la prueba y qué
-no; después, ronda del abogado del diablo sobre su propuesta.
+**Veredicto:** el curso de ejemplo basta para el examen y la corrección (anclados por código y oráculo). No basta para
+notas, índice de sesión, flashcards, ejercicios ni `/repaso`: esos pasos solo exigen que el asistente termine y que
+`comprobar.js` no dé errores. La explicación mala pero bien formada no la ve nada, y no se va a cubrir con esto: se
+dice así en el informe de la release.
 
-**Lo que esta sesión enseñó que el curso de ejemplo no cubre** (para que el agente no parta de cero):
-- En 25 ejecuciones de `/sesion` no saltó ni un aviso pedagógico: nada comprueba que el profesor los arregle.
-- La huella de calidad mira estructura (conceptos, secciones, cobertura, la trampa), no si la explicación es buena.
-- Su patrón no coincidía con su regla y nadie lo vio hasta mirar por qué fallaba `comprobar.js`.
-- Si hace ejercicio o no cambia entre ejecuciones iguales (2 de 9 a 6 de 8) y la prueba no dice qué se espera.
-- Dos clases y el índice casi vacío: un curso grande y los datos que se desvían con el uso (#54) no se ven.
+**Lo que se hace (tras el diablo), todo por código y sin llamadas nuevas:**
+1. **Lo que solo lee lo que ya queda en disco:**
+   - La respuesta del alumno aparece literal en la tabla del intento (no en blanco); tras `/dudas`, el marcador pasa
+     a `> [!question]- Duda` con respuesta.
+   - Del examen: tope de 3 preguntas por concepto y que el concepto de la clave exista en la unidad.
+   - `no-se-vera-bien` en rojo (`AGENTS.md` no le da excepción) y la comprobación de progreso al procesar, en cada
+     `/sesion` y no solo en la 01-01.
+   - Auditoría de la hoja de la 01-02 en rojo si falta, con la cifra normalizada (`742` o `27`, con o sin decimales):
+     lo manda la skill («compara los ficheros», «cuantifica»). `97,09` y la diapositiva 6, observación. Las mismas
+     anclas que la huella de calidad, que pasa al repo (el `pruebas/coste.js` pendiente).
+   - Cobertura: cada diapositiva u hoja con destino, como observación hasta ver que no da falsos positivos.
+   - Ejercicios: volver a pasar `config/casos/*.json` con `verificar-ejercicio.js --casos` (`--barrer` saca casos al
+     azar: solo observación).
+2. **Lo que toca el recorrido sin añadir pasos:** sembrar en la simulación del alumno, antes de `/dudas`, una fórmula
+   con `%` sin proteger y exigir que no quede `no-se-vera-bien` · plantar en la 02-02 un sinónimo de un concepto que
+   ya existe y reutilizar la comprobación de conceptos compartidos (regla 1, el duplicado con otro nombre).
+3. **`PROMPT_COMUN` de la prueba** (`prueba-real.js:286`) dice «si dudas… déjala como TODO»: empuja a no crear el
+   ejercicio que la skill manda crear. Decidir si se cambia (un alumno real no dice eso).
 
-- **Fuera:** TODO (decidir al empezar).
-- **Cómo sabremos:** TODO (decidir al empezar).
+- **Fuera:** un LLM juez que puntúe la explicación · un curso grande (más clases, índice lleno) · tocar el texto de
+  las clases 01-01 y 01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón
+  ancho: la regla dice «todo ejemplo», y un patrón por línea no sabe qué es un ejemplo) · un paso nuevo de «ordenar
+  avisos» (mide el camino fácil y pondría en rojo lo que `AGENTS.md` permite dejar) · un ancla en la 02-02 por su
+  «10 %», que es una tasa de ahorro y no incumple nada.
+- **Cómo sabremos:** cada comprobación nueva se pasa antes, sin gastar cuota, por lo ya escrito en los logs (las 25
+  ejecuciones de `/sesion`) y por el `resultado/` actual: cero rojos falsos; y se ve en rojo con un resultado
+  estropeado a mano. Después, una sola prueba entera en verde con todas. «Mejor» = esas comprobaciones activas y
+  calibradas, no «más pasos».
+- **Decisiones de Roberto, de una en una:** 1) ¿se guardan `config/claves/` y `config/revisiones/` en el `resultado/`
+  público? (el curso es inventado; el examen del resultado ya enseña veredictos) · 2) ¿se puede tocar la 02-02 para
+  plantar el sinónimo? (se prepara en segundo plano, fuera de la línea base de `/sesion`) · 3) `PROMPT_COMUN`.
+- **Abogado del diablo:** ronda completa 2026-10-03 (noche), 5 objeciones, las 5 aceptadas: 1) las anclas de la
+  auditoría incluían un defecto inventado (el «10 %» de la 02-02) y una cifra que no está en el material (97,09),
+  y no coincidían con la huella ya usada → rojo solo la hoja de la 01-02, normalizada · 2) la comprobación de
+  ejercicios no cazaba el caso que citaba, `--barrer` es al azar, y la causa estaba en el prompt de la prueba ·
+  3) el patrón de euros, fuera · 4) el paso de avisos sembrados, fuera: una siembra dentro de `/dudas` · 5) faltaba
+  el duplicado con otro nombre, calibrar contra los logs, y 3 de las 5 dudas «del autor» se resolvían leyendo.
 
 ## Siguiente: prueba real por piezas
 
