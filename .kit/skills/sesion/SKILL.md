@@ -168,15 +168,12 @@ aceptar un permiso para nada.
 ### 8. Cerrar
 
 ```
-node .kit/herramientas/comprobar.js
-```
-
-Si falla, arregla antes de dar la sesión por cerrada. Los avisos pedagógicos, también (ver "Avisos
-pedagógicos" en `AGENTS.md`). Después:
-
-```
 node .kit/herramientas/guardar.js "sesion(<id>): <tema>"
 ```
+
+`guardar.js` comprueba por dentro. Con errores no guarda y los enseña: arréglalos y repite. Si guarda y enseña
+avisos pedagógicos de lo que acabas de escribir, arréglalos y guarda otra vez (ver "Avisos pedagógicos" en
+`AGENTS.md`).
 
 ## Al terminar, resume en pantalla
 
@@ -190,7 +187,7 @@ Conceptos ampliados: <concepto> (+ qué se añadió hoy)
 Flashcards: 5 · Ejercicios: 2
 Auditoría: <discrepancia encontrada, si la hubo>
 FALTA INFO: 1 → <qué falta y dónde debería estar>
-comprobar.js: OK
+Guardado: sin avisos
 Del kit:   nada   ← o qué has visto que valdría para cualquier alumno (→ issue.js)
 ```
 

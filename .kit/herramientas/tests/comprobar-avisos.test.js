@@ -250,3 +250,69 @@ test('los TODO de los ficheros generados (formulario.md) no se cuentan otra vez'
   const avisos = comprobar(raiz).avisos.filter(a => a.regla === 'todo' && a.fichero === 'formulario.md');
   assert.equal(avisos.length, 0);
 });
+
+// --- Corte 1 de /sesion: la regla salta solo sobre lo que afirma el profesor, y el error dice la línea ----------
+const EJEMPLO_AJUSTES = path.join(__dirname, '..', '..', '..', 'pruebas', 'curso-ejemplo', 'config', 'ajustes.json');
+const TASA_EJEMPLO = JSON.parse(fs.readFileSync(EJEMPLO_AJUSTES, 'utf8')).patrones_prohibidos[0];
+const CONCEPTO = cuerpo => `---\ntipo: concepto\nalias: []\n---\n${cuerpo}\n`;
+const SESION = cuerpo => `---\ntipo: sesion\n---\n## Auditoría del material\n\n${cuerpo}\n`;
+const patronProhibido = ficheros => comprobar(cursoTemporal({
+  'config/ajustes.json': JSON.stringify({ patrones_prohibidos: [TASA_EJEMPLO] }), ...ficheros,
+})).errores.filter(x => x.regla === 'patron-prohibido');
+
+test('patrón prohibido: una tasa de interés sin periodo salta en una nota de concepto y en la auditoría de una sesión', () => {
+  const linea = 'Un depósito con un interés del 3 % no dice nada sin su periodo.';
+  const e = patronProhibido({ 'estudio/conceptos/alfa.md': CONCEPTO(linea), 'estudio/sesiones/s01-intro.md': SESION(`- ${linea}`) });
+  assert.deepEqual(e.map(x => x.fichero).sort(), ['conceptos/alfa.md', 'sesiones/s01-intro.md']);
+});
+
+test('patrón prohibido: el error trae el texto de la línea, recortado y sin saltos', () => {
+  const larga = `Un interés del 3 % ${'y mucho más texto '.repeat(30)}`;
+  const e = patronProhibido({ 'estudio/conceptos/alfa.md': CONCEPTO(larga) });
+  assert.equal(e.length, 1);
+  assert.match(e[0].detalle, /^línea 5: una tasa de interés sin decir su periodo .* — «Un interés del 3 % y mucho más/);
+  assert.ok(e[0].detalle.endsWith('…»'));
+  assert.ok(e[0].detalle.length < 400 && !/\n/.test(e[0].detalle));
+});
+
+test('patrón prohibido: lo que va entre comillas es cita del material y no se mira; con comillas sin cerrar, sí', () => {
+  const salta = linea => patronProhibido({ 'estudio/sesiones/s01-intro.md': SESION(linea) }).length;
+  const regla = 'el interés del 3 %';
+  assert.equal(salta(`- la hoja muestra el tipo de interés como «${regla}».`), 0, 'comillas angulares');
+  assert.equal(salta('- la hoja muestra el interés como "3 %".'), 0, 'comillas rectas');
+  assert.equal(salta('- la hoja muestra el interés como “3 %”.'), 0, 'comillas tipográficas');
+  assert.equal(salta('- la hoja muestra el interés como "3 %.'), 1, 'recta sin cerrar');
+  assert.equal(salta('- la hoja muestra el interés como «3 %.'), 1, 'angular sin cerrar');
+  assert.equal(salta('- la hoja dice "x"; el interés es del 3 %.'), 1, 'lo de fuera de las comillas sigue contando');
+});
+
+test('patrón del curso de ejemplo: las líneas reales de los logs no saltan; una tasa sin periodo sí; con periodo, no', () => {
+  const noSaltan = [
+    '- **Diapositiva 5:** dice "100% líquido"; se ha escrito "máxima" en la nota.',
+    '**El precio de las zapatillas que están de moda sube un 20 %. ¿Es inflación?**',
+    '| Dinero en la cartera | 100 % líquido | Se gasta al instante |',
+    '- **Hoja "Resumen":** la tasa de ahorro sale como 35 %, sin decimales (formato) y sin periodo.',
+    '  1,03 = 97,09 €. Diferencia de 0,09 €: el material aproxima restando el 3 %.',
+    'con un tipo de interés del 3 % anual',
+    'Este tipo de gasto sube un 20 % en verano.',
+    'Es interesante: el alquiler se lleva el 35 % del sueldo.',
+  ];
+  const salta = l => patronProhibido({ 'estudio/conceptos/alfa.md': CONCEPTO(l) }).length;
+  for (const l of noSaltan) assert.equal(salta(l), 0, l);
+  assert.equal(salta('Un depósito con un interés del 3 % no dice nada sin su periodo.'), 1);
+  assert.equal(salta('La TAE es del 4,5 % y punto.'), 1);
+  assert.equal(salta('Los intereses, al 2 %, se suman al capital.'), 1);
+});
+
+test('el curso de ejemplo ya preparado no incumple su propia regla de tasas', () => {
+  const dir = path.join(__dirname, '..', '..', '..', 'pruebas', 'curso-ejemplo', 'resultado', 'estudio');
+  const ficheros = { 'config/ajustes.json': JSON.stringify({ patrones_prohibidos: [TASA_EJEMPLO] }) };
+  const rec = d => fs.readdirSync(d, { withFileTypes: true }).forEach(f => {
+    const p = path.join(d, f.name);
+    if (f.isDirectory()) rec(p);
+    else if (f.name.endsWith('.md')) ficheros[`estudio/${path.relative(dir, p).split(path.sep).join('/')}`] = fs.readFileSync(p, 'utf8');
+  });
+  rec(dir);
+  const e = comprobar(cursoTemporal(ficheros)).errores.filter(x => x.regla === 'patron-prohibido');
+  assert.deepEqual(e.map(x => `${x.fichero} ${x.detalle}`), []);
+});

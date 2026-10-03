@@ -283,3 +283,67 @@ process.exit(1);
   assert.deepEqual(clonadas, ['v2.0.0', 'v3.0.0']);
   assert.deepEqual(git(raiz, 'log', '--format=%s').split('\n').filter(l => l.startsWith('kit:')), ['kit: actualizado a 3.0.0', 'kit: actualizado a 2.0.0']);
 });
+
+// Corte 2 de /sesion: guardar.js es el cierre. Con errores los enseña; al guardar enseña los avisos de calidad
+// de los ficheros que entran en ese guardado (sin bloquear, sin cambiar el código de salida).
+const SIN_EJEMPLO = '---\ntipo: concepto\nalias: [a, alpha]\nrequiere: []\n---\n# Alfa\n\nSolo definición.\n';
+
+test('guardar: con errores no guarda y enseña regla, fichero y detalle', t => {
+  const salida = capturar(t);
+  const { cli } = require('../guardar');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  const antes = git(raiz, 'rev-parse', 'HEAD');
+  escribir(raiz, { 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
+  assert.equal(cli(['x'], raiz), 1);
+  assert.match(salida(), /\[[\w-]+\] sesiones\/s01-intro\.md — .*roto/);
+  assert.doesNotMatch(salida(), /ejecuta comprobar\.js/);
+  assert.equal(git(raiz, 'rev-parse', 'HEAD'), antes);
+});
+
+test('guardar: guarda con un aviso pedagógico en un fichero tocado, sale con 0 y lo enseña', t => {
+  const salida = capturar(t);
+  const { cli } = require('../guardar');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/conceptos/alfa.md': SIN_EJEMPLO });
+  assert.equal(cli(['x'], raiz), 0);
+  assert.equal(git(raiz, 'log', '-1', '--format=%s'), 'x');
+  assert.match(salida(), /Guardado en local/);
+  assert.match(salida(), /\[concepto-sin-ejemplo\] conceptos\/alfa\.md/);
+  assert.match(salida(), /guarda otra vez/);
+});
+
+test('guardar: un aviso en un fichero que no entra en el guardado no se enseña; sin avisos, nada de más', t => {
+  const salida = capturar(t);
+  const { cli } = require('../guardar');
+  const raiz = cursoTemporal({ 'estudio/conceptos/alfa.md': SIN_EJEMPLO });
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/mapa-del-curso.md': '# Mapa\n\nnuevo\n' });
+  assert.equal(cli(['x'], raiz), 0);
+  assert.doesNotMatch(salida(), /concepto-sin-ejemplo|Avisos/);
+  assert.equal(salida().split('\n').filter(Boolean).length, 1, 'una sola línea, como antes');
+});
+
+test('guardar: más de 10 avisos enseña 10 y "y N más"', t => {
+  const salida = capturar(t);
+  const { cli } = require('../guardar');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  const filas = Array.from({ length: 13 }, (_, i) => `| [[alfa|a${i}]] | x |`).join('\n');
+  escribir(raiz, { 'estudio/conceptos/alfa.md': `${SIN_EJEMPLO}\n| a | b |\n|---|---|\n${filas}\n` });
+  assert.equal(cli(['x'], raiz), 0);
+  const lineas = salida().split('\n').filter(l => /^  \[/.test(l));
+  assert.equal(lineas.length, 10);
+  assert.match(salida(), /… y 4 más: comprobar\.js los enseña todos/);
+});
+
+test('guardar: guardar() como función no cambia: con permitirErrores guarda con errores, y el resultado trae los ficheros', () => {
+  const { guardar } = require('../guardar');
+  const raiz = cursoTemporal();
+  iniciarGit(raiz);
+  escribir(raiz, { 'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n[[alfa]] [[roto]]\n' });
+  const r = guardar({ raiz, mensaje: 'x', permitirErrores: true });
+  assert.equal(r.guardado, true);
+  assert.ok(r.ficheros.includes('estudio/sesiones/s01-intro.md'));
+});

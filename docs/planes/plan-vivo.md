@@ -121,26 +121,213 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    - **Fuera:** TODO: decidir con Roberto.
    - **Cómo sabremos:** TODO: decidir con Roberto.
 
-## Siguiente: recortar las llamadas de escribir de `/sesion` (sin diseñar; con Fable, sesión limpia)
+## Siguiente: recortar las llamadas de `/sesion` (hecho y medido el 2026-10-03; sin commit)
 
 **La pregunta:** cómo hace `/sesion` su trabajo en menos llamadas, sin perder calidad del material. El piloto de
 lectura (abajo, cerrado) ahorró poco porque tocaba la parte barata.
 
-**Lo que ya se sabe** (todo medido; detalle en «prueba real por piezas», abajo):
+**Lo que ya se sabía** (detalle en «prueba real por piezas», abajo):
 - Cada llamada arrastra un suelo fijo de contexto: 27 K con Claude aislado (36 K con la configuración personal), 19 K
-  con Codex. Suelo × llamadas ≈ 51–61 % del gasto.
-- `/sesion 01-01`: 10–12 llamadas, 441–551 K; `/sesion 01-02`: 14, 772–786 K (Claude, Sonnet). El grueso son las
-  **7–9 llamadas de escribir, comprobar y corregir**; leer ya está en 2–4.
-- Cada K que entra en el contexto se paga en todas las llamadas de después: la segunda vuelta del piloto (paquete
-  grande) salió +28 %. Solo compensa lo que evita una llamada entera.
-- Dispersión alta entre ejecuciones iguales (355–608 K y 512–879 K en la misma clase): 3 ejecuciones no distinguen un
-  ±9 %. El diseño de la medida es parte del problema.
-- Ideas que el piloto dejó **fuera** a propósito, candidatas ahora (sin evaluar): pedir que escriba todas las notas
-  en una tanda · una herramienta que escriba las filas de los ficheros vivos (`progreso.md`, `mapa-del-curso.md`,
-  `conceptos/_index.md`). TODO: cuántas vueltas de `comprobar.js` → corregir hay por ejecución (no medido).
+  con Codex. Suelo × llamadas ≈ 51–61 % del gasto **en tokens brutos** (ver el punto 5 de abajo).
+- `/sesion 01-01`: 10–12 llamadas, 441–551 K; `/sesion 01-02`: 14, 772–786 K (Claude, Sonnet). Leer ya está en 2–4.
+- Dispersión alta entre ejecuciones iguales (355–608 K y 512–879 K en la misma clase).
 - Restricción: Claude Code solo deja editar un fichero leído con su herramienta (comprobado el 2026-10-03).
-- **Fuera:** TODO (decidir en la sesión de diseño).
-- **Cómo sabremos:** TODO (decidir en la sesión de diseño; ver la dispersión).
+
+**Lo que faltaba medir, sacado de los logs que ya había** (2026-10-03; las 16 ejecuciones de `/sesion` del piloto y
+de las dos enteras aisladas: 8 de la 01-01 y 8 de la 01-02; guiones en `pruebas-local/medida-sesion/`, sin subir).
+
+1. **Rondas de `comprobar.js` → corregir** (era el TODO): 13 de 16 fallan al menos una vez (14 rondas), **siempre
+   por `patron-prohibido`** (23 líneas; más 2 de `ejercicio` en una). Cada ronda son 2–5 llamadas.
+   - De las 23 líneas: **15 son la auditoría citando o describiendo el material** («la hoja muestra "35%"»), 4 son
+     porcentajes que no son una tasa («sube un 20 %», «100 % líquido») y 4 son «el 3 %» de la inflación sin periodo.
+     La regla del curso de ejemplo dice «tasa de interés»; su patrón caza cualquier `N %`.
+   - **Corregirlo empeora el material:** en 2 ejecuciones la cita pasó a decir «"35% mensual"», que el material no
+     dice. Es el fallo que la 0.28.0 arregló para la respuesta del alumno (`comprobar.js:202`), ahora con el material.
+   - El error solo da el número de línea: 6 de 16 gastan una llamada en ir a mirarla (9 lecturas, 1 denegada).
+2. **`comprobar.js` bueno y, en otra llamada, `guardar.js`** (que vuelve a comprobar por dentro): 14 de 16. En las 16
+   no salió ningún aviso pedagógico: solo `todo` y `falta-info`, que no se arreglan.
+3. **Escribir:** 1–4 llamadas (todo en una, 2 de 16). Los ficheros vivos en llamada propia, 6 de 16; un `Edit`
+   fallido sobre ellos, 1 de 16.
+4. **El entregable cambia entre ejecuciones iguales:** hace ejercicio en 2 de 8 (01-01) y en 6 de 8 (01-02); lo
+   escrito va de 8,9 a 18 K caracteres y de 12 a 21 K. Con ejercicio, ~+25 % de coste (01-02: 222 K sin, 280 K con;
+   n = 2 y 6). Es la mayor fuente de dispersión y no es ineficiencia. Corrige al piloto: en su segunda vuelta la 01-01
+   hizo ejercicio en 2 de 3 (0 de 5 antes); el +28 % no era solo el paquete grande.
+5. **La métrica.** A precio de API (leer de caché ×0,1 · escribir en caché ×2, que el TTL es de 1 h · salida ×5), una
+   `/sesion` es 19–29 % leer de caché (el suelo × llamadas), 40–50 % escribir en caché y 28–33 % salida. Las dos
+   primeras llamadas (`AGENTS.md`, la skill, `config/`) son el 14–32 %, fijo. El mismo recorte baja un 45 % en
+   brutos y un 23 % ponderado. **TODO: cómo pondera la cuota de la suscripción; no sale en los logs.**
+
+Contrafactual sobre las 16 (qué costaron las llamadas que cada corte quitaría; mediana, coste ponderado):
+
+| Corte | Qué quita | 01-01 | 01-02 |
+|---|---|---|---|
+| B. Que no falle a la primera | las rondas ✗ → corregir | −16 % | −10 % |
+| A. Cerrar con un comando | el `comprobar.js` bueno antes de `guardar.js` | −4 % | −3 % |
+| D. Ficheros vivos por herramienta | sus `Edit` y su llamada propia | −2 % | −4 % |
+| C. Escribir todo en una tanda | 1–2 llamadas de escribir | −2 % | −2 % |
+| Los cuatro | de 10 a 6 llamadas · de 14 a 8 | −23 % (−45 % brutos) | −20 % (−41 % brutos) |
+
+**Cómo se mide sin que la dispersión lo tape.**
+
+- **Primero el contrafactual, que es gratis y no tiene ruido:** el techo de cada corte sale de contar las llamadas que
+  ya ocurrieron (tabla de arriba). Un corte con techo por debajo del ruido no se ejecuta (C y D, por coste).
+- **Lo que se ejecuta mide si el profesor toma el camino nuevo, que es sí o no por ejecución**, no una media de
+  tokens: de 13/16 a ≤ 1/6 se ve con 6 ejecuciones; un −9 % de tokens con 3, no.
+- **El total, por estratos del entregable** (con y sin ejercicio, contra las de su mismo estrato) y en coste
+  ponderado. Sin estratos la 01-01 va de 160 a 297 K; sin ejercicio, de 160 a 208 K (mediana 186 K).
+- **Calidad, con una huella por ejecución sacada de lo escrito** (`pruebas-local/medida-sesion/huella.js`): mismos conceptos, secciones de cada
+  nota, cobertura sin huecos, hallazgos de la auditoría, avisos de `comprobar.js`, y **citas del material alteradas
+  al corregir** (hoy ≥ 2 de 16).
+- **Sin resolver:** qué métrica sigue la cuota de la suscripción (decidido abajo: no se calibra) · Codex (una sola ejecución).
+
+**Diseño (borrador, tras la ronda corta del diablo).**
+
+**Lo que dice la medida, antes que el diseño:** las «7–9 llamadas de escribir, comprobar y corregir» son, sobre todo,
+el patrón del curso de ejemplo saltando sobre la auditoría. Recortar llamadas en el **producto** da un −3–4 % seguro
+(corte 2); el −10–16 % del corte 1 solo existe en cursos con un patrón mal afinado, y hoy solo consta en la prueba.
+Lo que pesa de verdad queda en «Fuera»: lo fijo (14–32 %), la salida (28–33 %, que es el material) y el ejercicio.
+
+*Corte 1 (B): que no falle a la primera.* Dos partes, con su etiqueta:
+- **Arreglo del curso de ejemplo (abarata la prueba, no el producto):** su patrón se estrecha a lo que dice su regla
+  (el `%` solo cuenta si la línea habla de interés, TAE, TIN o tipo antes de la cifra).
+- **Producto:**
+  1. `comprobar.js`: cada error con línea trae **el texto de la línea**, no solo el número.
+  2. `/configurar` (su punto de `patrones_prohibidos`) pide probar el patrón contra frases que **no** incumplen la
+     regla antes de proponerlo.
+  3. `patrones_prohibidos` no mira lo que va **entre comillas** («…», "…"): es la cita literal del material, como la
+     respuesta del alumno (`sinRespuestaDelAlumno`). Por comillas y no por sección: en `## Auditoría del material` el
+     profesor también afirma cosas suyas. Sin esto, con el patrón ya estrecho, «la hoja muestra la tasa como "35%"»
+     sigue saltando y la cita se sigue falseando.
+  4. `leer.js --para sesion` añade al paquete los `mensaje` de `patrones_prohibidos` («esto lo comprueba una
+     máquina»): una línea por patrón; sin patrones, nada. Solo si con 1–3 sigue fallando a la primera.
+
+*Corte 2 (A): cerrar con un comando.* `guardar.js "<mensaje>"` es el cierre: comprueba y, si hay errores, no guarda y
+**los enseña** (hoy dice «ejecuta comprobar.js para verlos»). **Cambia el producto para todas las skills**
+(`AGENTS.md`: «Avisos pedagógicos» y la tabla de Herramientas; el punto 8 de `/sesion`): hoy un aviso pedagógico no
+bloquea `guardar.js` (`guardar.js:173-174`) y la regla «se arreglan antes de guardar» depende de que el profesor
+pase antes por `comprobar.js`. Dos formas (decidida la (b) reducida, abajo): **(a)** `guardar.js` tampoco guarda si los ficheros tocados
+traen avisos pedagógicos o `no-se-vera-bien` nuevos, los enseña, y con `--con-avisos` guarda igualmente (el «motivo
+concreto» de `AGENTS.md`) · **(b)** guarda y enseña los avisos; si los hay, se arreglan y se guarda otra vez (dos
+guardados; `deshacer.js` solo desharía el segundo).
+
+*Aparte, no por coste (D):* que `guardar.js` genere `conceptos/_index.md` y las filas ⬜ nuevas de `progreso.md` desde
+las notas (la plantilla ya dice que «En una frase» va literal al índice). Ahorra poco (−2–4 %) pero quita los `Edit`
+fallidos, la restricción de leer antes de editar y fija el formato por código: es el punto 3 de «que no se repita la
+#54». Pide migración de cursos reales: plan propio.
+
+*No (C):* pedir en la skill que escriba todo en una tanda. Techo −2 %, y el precedente de pedir un orden en la skill es
+0 de 6 (`guardar.js --empezar` con las primeras notas).
+
+- **El piloto de ayer, vuelto a mirar con esta medida (2026-10-03, noche):** la huella de calidad es la misma antes
+  y después (mismos conceptos, secciones completas, cobertura, y la trampa del material cazada en 16 de 16). En
+  coste ponderado, 01-01 sin ejercicio: 178 y 194 K antes, 208, 164 y 160 K después: no se distingue. Se queda por
+  lo que no es ruido (6 de 6 lo usan, es la forma permitida de leer y va en los dos asistentes), no por ahorro. La
+  huella mira estructura, no si la explicación es buena: eso pide leerlas.
+- **Fuera:** el bucle de `verificar-ejercicio.js` dentro de `/sesion` (lo siguiente que pesa en la 01-02) · recortar
+  lo fijo (`AGENTS.md`, 14–32 %) · el corte D · el coordinador de varias clases · medir Codex.
+- **Cómo sabremos:**
+  - **Sin gastar cuota, y antes de ejecutar nada (tests):** un incumplimiento real plantado **dentro y fuera** de la
+    auditoría sigue saltando; una cita entre comillas no; con el patrón estrecho, ninguna de las 23 líneas de los
+    logs salta (ninguna es una tasa de interés) y una tasa de interés plantada sin periodo, sí; el error trae el
+    texto de la línea. Y el guion
+    de la huella de calidad (`pruebas/coste.js`), escrito y pasado por las 16 ejecuciones de hoy.
+  - **Con 3 × `--solo "/sesion 01-01"` y 3 × `--solo "/sesion 01-02"`** (una tanda, Sonnet, aislado): la huella de
+    calidad, sin pérdidas, y 0 citas del material alteradas (lo que decide) · el profesor toma el camino nuevo: rondas
+    ✗ por `patron-prohibido` de 13/16 a ≤ 1/6 y `comprobar.js` suelto antes de guardar de 14/16 a ≤ 1/6 (dicen si
+    lo ha adoptado, no si ha salido bien) · el coste ponderado por estrato se apunta como dato: con n = 1–2 por
+    estrato no es puerta.
+- **Decisiones (Roberto, 2026-10-03, noche):**
+  1. **El curso real no tiene patrones** (`inversion-multimercado`: `patrones_prohibidos: []`; en sus logs, 6
+     guardados de sesión y ningún `comprobar.js` con errores). Las rondas ✗ eran del curso de ejemplo: en el curso
+     real `/sesion` ya va por el camino corto. Otros cursos sí pueden tenerlos (`/configurar` los propone si una
+     regla se puede comprobar con un patrón). Queda del corte 1: el arreglo del curso de ejemplo (la prueba deja de
+     medir un bucle que el curso real no tiene) y los puntos 1–3, por calidad. **El punto 4 se cae.**
+  2. **Decide el coste ponderado.** La sonda de la cuota no se hace: con un −3–4 % en juego no cambia ninguna
+     decisión; solo si una futura depende de brutos contra ponderado.
+  3. **Corte 2, forma (b) reducida** (cambiado tras la ronda completa del diablo, 2026-10-03, noche; antes (a), que
+     era recomendación mía): `guardar.js`, en su vía normal, **enseña los errores** y sigue sin guardar con ellos; si
+     guarda y lo tocado trae avisos pedagógicos o `no-se-vera-bien`, **los enseña al guardar**, y el profesor los
+     arregla y guarda otra vez (o le dice al alumno por qué se quedan, como hoy). No bloquea por avisos, no hay
+     `--con-avisos`, sale con 0. Los guardados internos (`--traer`, `--juntar`, `actualizar.js`) y el segundo plano
+     no cambian. El ahorro es el mismo que con (a): sale de no llamar a `comprobar.js` aparte.
+     - **Se cambian a la vez, o el ahorro no llega:** `AGENTS.md:90-91`, `:101-104` («antes de guardar» pasa a
+       «antes de dar nada por cerrado»), `:250`, `:272` · `.kit/skills/sesion/SKILL.md:171` y `:193` ·
+       `.kit/skills/ejercicio/SKILL.md:134-137` · `.kit/skills/dudas/SKILL.md:18` · `.kit/skills/actualizar/SKILL.md:53` ·
+       `.kit/guias/segundo-plano.md:86`. Y un test de coherencia: falla si una skill pide `comprobar.js` justo antes
+       de `guardar.js`.
+     - **Cómo sabremos (se añade):** tests de los cinco guardados internos sin cambio de comportamiento · sobre una
+       copia del curso real en `pruebas-local/`, un guardado que toca `progreso.md` no llena la pantalla de avisos
+       viejos (medido el 2026-10-03 sobre una copia: 31 avisos, 5 pedagógicos en 2 ficheros, 0 en `progreso.md`; tope de
+       10 líneas y «y N más») · la huella cuenta los segundos guardados por avisos.
+  - **Paso 1, hecho (2026-10-03, noche; sin commit):** `comprobar.js` (`sinCitas`, texto de la línea en
+    `patron-prohibido`), `/configurar`, el patrón del curso de ejemplo (`\\b(inter[eé]s(es)?|TAE|TIN)\\b` antes de la
+    cifra; sin «tipo», que saltaba con «este tipo de gasto») y 5 tests. `npm test`: 849 de 850, 0 fallos, 1 saltado
+    (de antes). Las 23 líneas de los logs (recortadas a 170 caracteres), contra el patrón nuevo: 0 saltan. **Falta su
+    línea en el CHANGELOG de la siguiente versión** (no hay sección de lo no publicado).
+  - **Pasos 3 y 4, hechos (2026-10-03, noche; sin commit).** Corte 2, forma (b) reducida: `guardar.js` enseña errores
+    y, al guardar, los avisos de calidad de lo tocado (tope 10); `AGENTS.md`, `/sesion`, `/ejercicio` y `/actualizar`
+    cierran con `guardar.js`; test de coherencia. `npm test`: 855 de 856, 0 fallos (el saltado es el de Windows,
+    `lanzar-asistente.test.js:48`). `segundo-plano.md:86` no se toca (el coordinador comprueba y guarda una vez).
+    **Medida** (`--solo`, Sonnet, aislado; cuota 5 h del 21 % al 29 % con 9 ejecuciones y esta conversación):
+
+    | | Llamadas | Coste ponderado | Guardar con ✗ | Huella de calidad |
+    |---|---|---|---|---|
+    | 01-01 antes (8) | 8–15, mediana 10 | sin ejercicio: 160–208 K, mediana 186 | 7 de 8 | — |
+    | 01-01 ahora (3) | 6, 6, 6 | 144, 150, 157 K (**−19 %**; las tres por debajo de la mejor de antes) | 0 de 3 | igual; trampa cazada 3 de 3 |
+    | 01-02 antes (8) | 9–15, mediana 14 | sin ejercicio 200 y 245 K · con, 229–312 K (mediana 280) | 6 de 8 | — |
+    | 01-02 ahora (3) | 9, 8, 9 | sin ejercicio 182 y 192 K · con, 234 K | 0 de 3 | igual; trampa cazada 3 de 3 |
+
+    - Los criterios se cumplen: rondas ✗ por `patron-prohibido` 0 de 6 (antes 13 de 16), `comprobar.js` suelto antes
+      de guardar 0 de 6 (antes 14 de 16), citas del material alteradas 0 de 6. El coste cae lo que decía el
+      contrafactual (−20 % y −13 %); en la 01-02, con 1–2 por estrato, es dato y no prueba.
+    - **De quién es el ahorro:** casi todo, del curso de ejemplo (deja de fallar por su patrón). En un curso sin
+      patrones, como el real, queda el corte 2: ~−4 %.
+    - **Una tanda de 3 se tiró** (la primera de la 01-02): las copias de `--solo` llevan su `config/`, con el patrón
+      viejo. Falló 3 de 3 al guardar, pero sin ir a mirar la línea (0 de 3; antes 6 de 16) y en 10–12 llamadas. Y
+      una cita volvió a salir falseada («"35 % mensual"»): el patrón ancho era el problema.
+    - **Para vigilar:** hace ejercicio en 2 de 9 (antes, con el mismo paquete de lectura, 3 de 10): sin señal, pero
+      son pocas · 2 permisos denegados en 9, los dos por `cat config/ajustes.json; ls -R estudio | head; cat …` antes
+      de escribir · un `Edit` fallido sobre `mapa-del-curso.md` costó un segundo guardado (es el corte D).
+    - **Bandeja:** `--solo` y `--desde` no refrescan `config/` de la copia: un cambio en
+      `pruebas/curso-ejemplo/config/` no llega hasta la siguiente entera · `pruebas/coste.js` sigue sin existir (los
+      guiones están en `pruebas-local/medida-sesion/`) · falta la línea del CHANGELOG de los dos cortes.
+  - **Orden:** 1) arreglo del curso de ejemplo + puntos 1–3 del corte 1, con sus tests · 2) ronda completa del
+    diablo sobre el corte 2 (hecha) · 3) corte 2, forma (b) reducida · 4) una tanda de 3 + 3. Lo siguiente que pesa, en «Fuera».
+- **Abogado del diablo:** ronda corta 2026-10-03, 5 objeciones, las 5 aplicadas: 1) eximir la auditoría por sección
+  escondía incumplimientos del profesor → solo lo que va entre comillas, y después de estrechar el patrón · 2)
+  «cerrar con `guardar.js`» guardaba antes de arreglar los avisos y decía no tocar las skills → el cambio de
+  `AGENTS.md` declarado y la decisión 3 · 3) criterios cumplidos por construcción → casos plantados y huella de
+  calidad antes de ejecutar; la adopción ya no es el éxito · 4) el corte 1 abarata la prueba y no el producto →
+  etiquetado así, y la decisión 1 va primero · 5) 3 + 3 no sostienen un umbral de coste → el coste es dato, no
+  puerta. **Ronda completa sobre el corte 2, 2026-10-03 (noche), 5 objeciones, las 5 aceptadas;
+  veredicto: la forma (a) no compensa un 3–4 %** y se pasa a la (b) reducida: 1) en segundo plano nadie puede decidir
+  `--con-avisos`: o la preparación falla (una `/sesion` perdida) o se salta la regla en silencio · 2) saber si un
+  aviso es «nuevo» no tiene definición barata que aguante los datos reales (el detalle lleva números que se mueven;
+  `progreso-sin-prueba` va siempre a `progreso.md`) · 3) cinco guardados internos con `permitirErrores` quedarían
+  bloqueados o sin decidir · 4) `--con-avisos` acabaría siendo lo normal y se tragaría los avisos · 5) la lista de
+  sitios que piden `comprobar.js` antes de guardar estaba incompleta. Comprobado que no rompe: la prueba real no
+  mira si se llamó a `comprobar.js`; los permisos ya cubren `guardar.js`.
+
+## Siguiente: ¿basta el curso de ejemplo para asegurar la calidad? (idea de Roberto, 2026-10-03; sin empezar)
+
+**Cuándo:** después de cerrar «recortar las llamadas de `/sesion`» (commit hecho). Antes no: tocar el curso de ejemplo
+rompe la línea base con la que se acaba de medir.
+
+**La pregunta:** si el curso de ejemplo, con cambios pequeños, puede cubrir mejor la calidad del material y quedar
+como base de medida, sin pretender tenerlo todo en un sitio.
+
+**Cómo:** primero un agente con ojos nuevos (sin el contexto de esta sesión) revisa qué comprueba hoy la prueba y qué
+no; después, ronda del abogado del diablo sobre su propuesta.
+
+**Lo que esta sesión enseñó que el curso de ejemplo no cubre** (para que el agente no parta de cero):
+- En 25 ejecuciones de `/sesion` no saltó ni un aviso pedagógico: nada comprueba que el profesor los arregle.
+- La huella de calidad mira estructura (conceptos, secciones, cobertura, la trampa), no si la explicación es buena.
+- Su patrón no coincidía con su regla y nadie lo vio hasta mirar por qué fallaba `comprobar.js`.
+- Si hace ejercicio o no cambia entre ejecuciones iguales (2 de 9 a 6 de 8) y la prueba no dice qué se espera.
+- Dos clases y el índice casi vacío: un curso grande y los datos que se desvían con el uso (#54) no se ven.
+
+- **Fuera:** TODO (decidir al empezar).
+- **Cómo sabremos:** TODO (decidir al empezar).
 
 ## Siguiente: prueba real por piezas
 

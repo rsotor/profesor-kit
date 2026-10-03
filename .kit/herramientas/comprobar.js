@@ -213,6 +213,22 @@ function sinRespuestaDelAlumno(linea) {
   return celdas.join('|');
 }
 
+// Lo que va entre comillas («…», "…", “…”) es cita literal del material: las reglas del dominio son para lo que
+// afirma el profesor, no para lo que cita. Prueba real del 2026-10-03: la auditoría citaba «la hoja muestra "35%"»,
+// la regla saltaba y el profesor reescribía la cita como «"35% mensual"», que el material no dice. Comillas sin
+// cerrar: no se quita nada (no se sabe dónde acaba la cita). Las comillas simples no cuentan (apóstrofos, sin par).
+function sinCitas(linea) {
+  return linea.replace(/«[^»]*»|“[^”]*”|"[^"]*"/g, ' ');
+}
+
+// El texto de la línea en el error: quien corrige lo ve sin tener que abrir el fichero (6 de 16 ejecuciones del
+// piloto gastaban una llamada solo en eso).
+const MAX_TEXTO_LINEA = 160;
+function textoDeLinea(linea) {
+  const t = linea.replace(/\s+/g, ' ').trim();
+  return t.length > MAX_TEXTO_LINEA ? `${t.slice(0, MAX_TEXTO_LINEA - 1)}…` : t;
+}
+
 function comprobarPatrones(raiz, notas, informe) {
   for (const { patron, mensaje } of v.leerAjustes(raiz).patrones_prohibidos || []) {
     let regex;
@@ -223,7 +239,7 @@ function comprobarPatrones(raiz, notas, informe) {
     for (const nota of notas) {
       const esExamen = nota.startsWith('examenes/');
       leer(raiz, nota).split(/\r?\n/).forEach((linea, i) => {
-        if (regex.test(esExamen ? sinRespuestaDelAlumno(linea) : linea)) informe.errores.push({ regla: 'patron-prohibido', fichero: nota, detalle: `línea ${i + 1}: ${mensaje}` });
+        if (regex.test(sinCitas(esExamen ? sinRespuestaDelAlumno(linea) : linea))) informe.errores.push({ regla: 'patron-prohibido', fichero: nota, detalle: `línea ${i + 1}: ${mensaje} — «${textoDeLinea(linea)}»` });
       });
     }
   }

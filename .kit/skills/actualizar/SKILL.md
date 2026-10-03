@@ -50,8 +50,8 @@ Hazlas ahora, con él, antes de seguir con lo que estuvierais haciendo:
    mismos huecos que usó `/configurar` (nombre del curso, atajo, marcador de dudas…).
 6. Dile al alumno, en una frase: "abre **inicio** en Obsidian y fija su pestaña".
 
-Termina con `node .kit/herramientas/comprobar.js` y guarda con
-`node .kit/herramientas/guardar.js "config: índice del curso"`.
+Termina guardando con
+`node .kit/herramientas/guardar.js "config: índice del curso"` (comprueba por dentro y enseña errores y avisos).
 
 ## 5. Contar el resultado
 
