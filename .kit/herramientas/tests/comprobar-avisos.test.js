@@ -316,3 +316,37 @@ test('el curso de ejemplo ya preparado no incumple su propia regla de tasas', ()
   const e = comprobar(cursoTemporal(ficheros)).errores.filter(x => x.regla === 'patron-prohibido');
   assert.deepEqual(e.map(x => `${x.fichero} ${x.detalle}`), []);
 });
+
+// --- fuente-inexistente (#92) ----------------------------------------------------------------------
+
+const sesionCon = fuente => `---\ntipo: sesion\nfuente: ${fuente}\n---\n# Intro\n\n[[alfa]]\n\n`
+  + '## Cobertura del material\n\nx\n\n## Auditoría del material\n\nx\n\n## Para pensarlo despacio\n\nx\n';
+
+test('fuente-inexistente: `fuente:` con la carpeta sola, o con texto libre detrás, y su material sin citar, aviso', () => {
+  for (const fuente of ['inbox/clase-09/', 'inbox/clase-09/ (Clase 9 · apuntes.pdf)']) {
+    const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': sesionCon(fuente), 'estudio/inbox/clase-09/apuntes.pdf': 'x' });
+    const a = avisos(raiz, 'fuente-inexistente');
+    assert.equal(a.length, 1, fuente);
+    assert.equal(a[0].fichero, 'sesiones/s01-intro.md');
+    assert.match(a[0].detalle, /inbox\/clase-09\/apuntes\.pdf/);
+  }
+});
+
+test('fuente-inexistente: con la ruta del fichero (también en lista, y con tildes en NFD en disco) no avisa', () => {
+  const conTilde = 'Revisión.pdf';
+  const raiz = cursoTemporal({
+    'estudio/sesiones/s01-intro.md': sesionCon(`[inbox/clase-09/apuntes.pdf, inbox/${conTilde.normalize('NFC')}]`),
+    'estudio/inbox/clase-09/apuntes.pdf': 'x', [`estudio/inbox/${conTilde.normalize('NFD')}`]: 'x', 'estudio/inbox/clase-10.pdf': 'x',
+  });
+  assert.equal(avisos(raiz, 'fuente-inexistente').length, 0);
+});
+
+test('fuente-inexistente: un fichero que ya no está en inbox no avisa si no queda material sin citar', () => {
+  const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': sesionCon('inbox/lo-borro-el-alumno.pdf') });
+  assert.equal(avisos(raiz, 'fuente-inexistente').length, 0);
+});
+
+test('fuente-inexistente: un `fuente:` que no apunta a inbox (apuntes pegados en el chat) no avisa', () => {
+  const raiz = cursoTemporal({ 'estudio/sesiones/s01-intro.md': sesionCon('apuntes pegados en el chat'), 'estudio/inbox/clase-10.pdf': 'x' });
+  assert.equal(avisos(raiz, 'fuente-inexistente').length, 0);
+});

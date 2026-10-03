@@ -8,6 +8,7 @@ const indice = require('./lib/indice');
 const generados = require('./lib/generados');
 const paginasWeb = require('./lib/paginas-web');
 const examenesLib = require('./lib/examenes');
+const material = require('./lib/material');
 
 const FUERA_DE_ENLACES = new Set(['.git', '.kit', '.claude', '.github', '.obsidian', 'docs', 'node_modules', 'pruebas-local']);
 
@@ -181,6 +182,23 @@ function comprobarFaltaInfoMalUsado(raiz, informe) {
     if (seccion !== null && /FALTA INFO:/.test(seccion)) {
       informe.avisos.push({ regla: 'falta-info-mal-usado', fichero, detalle: '"## El error típico" lleva FALTA INFO — no es algo que el curso tuviera que entregar: propón uno marcado como ampliación, o borra la sección' });
     }
+  }
+}
+
+// `estado.js` decide qué material es nuevo casando cada fichero de inbox con el `fuente:` de alguna sesión. Un
+// `fuente:` que dice `inbox/…` y no casa con ningún fichero (la carpeta sola, texto libre detrás de la ruta, un
+// nombre mal copiado) deja ese material como nuevo para siempre, sin que nada lo señale (#92). Solo se avisa si
+// de verdad queda material sin citar: un fichero que el alumno borró de su inbox no estorba a nadie, y un
+// `fuente:` que no apunta a inbox (apuntes pegados en el chat) tampoco.
+function comprobarFuenteInexistente(raiz, informe) {
+  const sinCitar = material.materialNuevo(raiz);
+  if (!sinCitar.length) return;
+  const enInbox = new Set(material.ficherosDeInbox(raiz).map(material.nombreDe));
+  for (const { sesion, fuentes } of material.fuentesDeSesiones(raiz)) {
+    const sueltas = fuentes.filter(f => /^(estudio\/)?inbox\//.test(v.aPosix(f)) && !enInbox.has(material.nombreDe(f)));
+    if (!sueltas.length) continue;
+    informe.avisos.push({ regla: 'fuente-inexistente', fichero: sesion,
+      detalle: `\`fuente:\` cita ${sueltas.map(f => `"${f}"`).join(', ')}, que no es ningún fichero de inbox, y hay ${sinCitar.length} sin citar en ninguna sesión (${sinCitar.slice(0, 3).join(', ')}${sinCitar.length > 3 ? '…' : ''}) — si alguno es de esta sesión, escribe su ruta completa en \`fuente:\` (una lista si son varios)` });
   }
 }
 
@@ -566,10 +584,16 @@ function preguntasDeExamen(texto) {
 // enunciado, así que un "?" ahí no cuenta como una segunda pregunta.
 const ES_OPCION = l => /^-\s*(\[[ xX]\]\s*)?[a-zA-Z]\)/.test(l.trim());
 
+// Un examen que el alumno ya hizo (tiene nota o algún intento) no se reescribe: cambiar el enunciado después de
+// corregirlo falsea lo que se le preguntó. Un aviso ahí no se puede arreglar y saldría para siempre (#90).
+const yaCorregido = fm => (v.numero(fm.intentos) || 0) > 0 || v.numero(fm.nota) !== null;
+
 function comprobarPreguntaDoble(raiz, informe) {
   for (const abs of v.recorrer(path.join(v.baseAlumno(raiz), 'examenes'), n => n.endsWith('.md'))) {
     const rel = v.aPosix(path.relative(v.baseAlumno(raiz), abs));
-    for (const pregunta of preguntasDeExamen(fs.readFileSync(abs, 'utf8'))) {
+    const texto = fs.readFileSync(abs, 'utf8');
+    if (yaCorregido(v.leerFrontmatter(texto) || {})) continue;
+    for (const pregunta of preguntasDeExamen(texto)) {
       const enunciado = pregunta.split('\n').filter(l => !ES_OPCION(l)).join('\n');
       const signos = (enunciado.match(/\?/g) || []).length;
       if (signos >= 2) {
@@ -686,6 +710,7 @@ function comprobar(raiz) {
   comprobarQueSeVeraBien(raiz, notas, informe);
   comprobarPendientes(raiz, informe);
   comprobarFaltaInfoMalUsado(raiz, informe);
+  comprobarFuenteInexistente(raiz, informe);
   comprobarHuerfanos(raiz, notas, informe);
   comprobarDuplicados(raiz, informe);
   comprobarAlias(raiz, informe);
