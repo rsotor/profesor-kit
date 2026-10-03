@@ -243,3 +243,128 @@ test('resolverConflictos: la misma línea del cuerpo cambiada en los dos lados s
   assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: false, ficheros: [rel] });
 });
 
+
+// --- la duda del alumno (callout al final) y la ampliación de la preparación (línea de historial) añaden en el mismo punto ---
+
+const NOTA_COLCHON = ['---', 'tipo: concepto', 'alias: [colchon]', 'visto_en: [02-01-01-presupuesto]', 'dificultad: 2', '---',
+  '# Colchón financiero', '', 'Dinero apartado para imprevistos.', '', '## Historial', '',
+  '- **02-01-01-presupuesto** · primera vez', ''].join('\n');
+const DUDA = ['', '> [!question]- Duda (2026-10-02)', '> ¿Cuántos meses?', '>', '> Entre tres y seis meses de gastos fijos.', ''].join('\n');
+const LINEA_CLASE = '- **02-02-01-ahorro** · la clase lo llama «fondo de emergencia»: es el mismo concepto\n';
+const preparacionAmplia = t => t.replace('alias: [colchon]', 'alias: [colchon, fondo de emergencia]')
+  .replace('visto_en: [02-01-01-presupuesto]', 'visto_en: [02-01-01-presupuesto, 02-02-01-ahorro]') + LINEA_CLASE;
+
+function choqueConBase(base, aqui, alla) {
+  const raiz = cursoTemporal();
+  const rel = 'estudio/conceptos/colchon-financiero.md';
+  escribir(raiz, { [rel]: base });
+  iniciarGit(raiz);
+  git(raiz, 'checkout', '-q', '-b', 'otra');
+  escribir(raiz, { [rel]: alla(base) });
+  git(raiz, 'commit', '-q', '-am', 'amplía en la otra');
+  git(raiz, 'checkout', '-q', 'main');
+  escribir(raiz, { [rel]: aqui(base) });
+  git(raiz, 'commit', '-q', '-am', 'cambia en main');
+  merge(raiz, '--no-commit', '--no-ff', 'otra');
+  return { raiz, rel, abs: path.join(raiz, ...rel.split('/')) };
+}
+
+test('resolverConflictos: la duda (callout al final) y la línea de historial de la preparación se quedan las dos, la línea pegada a su lista', () => {
+  const { raiz, rel, abs } = choqueConBase(NOTA_COLCHON, t => t + DUDA, preparacionAmplia);
+  assert.deepEqual(ficherosEnConflicto(raiz), [rel]);
+  assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: true });
+  const nota = fs.readFileSync(abs, 'utf8');
+  assert.doesNotMatch(nota, /<<<<<<<|>>>>>>>|\|\|\|\|\|\|\||^=======$/m);
+  assert.match(nota, /^alias: \[colchon, fondo de emergencia\]$/m);
+  assert.match(nota, /^visto_en: \[02-01-01-presupuesto, 02-02-01-ahorro\]$/m);
+  assert.ok(nota.endsWith(`- **02-01-01-presupuesto** · primera vez\n${LINEA_CLASE}${DUDA}`), 'línea, línea en blanco y el callout entero');
+  assert.equal(git(raiz, 'status', '--porcelain').split('\n').filter(l => /^(UU|AA)/.test(l)).length, 0, 'sin conflicto pendiente');
+});
+
+test('resolverConflictos: dos lados que añaden en medio del fichero, en el mismo punto, se quedan los dos (la preparación primero)', () => {
+  const { raiz, rel, abs } = choqueConBase(NOTA_COLCHON,
+    t => t.replace('## Historial', 'Aquí: una nota del alumno.\n\n## Historial'),
+    t => t.replace('## Historial', 'Allá: un párrafo de la clase.\n\n## Historial'));
+  assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: true });
+  const nota = fs.readFileSync(abs, 'utf8');
+  assert.match(nota, /Allá: un párrafo de la clase\.\n\nAquí: una nota del alumno\.\n\n## Historial/);
+  assert.doesNotMatch(nota, /<<<<<<<|>>>>>>>/);
+});
+
+test('resolverConflictos: los dos lados cambian la misma línea que ya existía → sigue siendo un choque', () => {
+  const { raiz, rel } = choqueConBase(NOTA_COLCHON,
+    t => t.replace('imprevistos', 'urgencias'),
+    t => preparacionAmplia(t).replace('imprevistos', 'emergencias'));
+  assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: false, ficheros: [rel] });
+});
+
+test('resolverConflictos: añadir en el mismo punto a la vez que se cambia una línea que ya existía en ese trozo sigue siendo un choque', () => {
+  const { raiz, rel } = choqueConBase(NOTA_COLCHON,
+    t => t.replace('· primera vez', '· primera vez (corregida)'),
+    t => t.replace('· primera vez\n', '· primera vez\n- **02-02-01-ahorro** · ampliada\n'));
+  assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: false, ficheros: [rel] });
+});
+
+test('resolverConflictos: las dos adiciones con fin de línea CRLF se juntan sin marcadores', () => {
+  const crlf = t => t.replace(/\n/g, '\r\n');
+  const { raiz, rel, abs } = choqueConBase(NOTA_COLCHON, t => t + crlf(DUDA), t => t + crlf(LINEA_CLASE));
+  assert.deepEqual(resolverConflictos(raiz, [rel]), { ok: true });
+  const nota = fs.readFileSync(abs, 'utf8');
+  assert.doesNotMatch(nota, /<<<<<<<|>>>>>>>|\|\|\|\|\|\|\|/);
+  assert.match(nota, /primera vez\n- \*\*02-02-01-ahorro\*\*[^\n]*\r\n\r?\n> \[!question\]- Duda/);
+});
+
+// --- revisión independiente de juntarCuerpo ---
+
+const CABECERA = ['---', 'tipo: concepto', 'alias: [x]', 'dificultad: 2', '---', '# Git', '', 'Apuntes.', ''].join('\n');
+const BASE_LISTA = CABECERA + '\n- a\n';
+const juntada = (base, aqui, alla) => {
+  const { raiz, rel, abs } = choqueConBase(base, aqui, alla);
+  const r = resolverConflictos(raiz, [rel]);
+  return { r, rel, nota: fs.existsSync(abs) ? fs.readFileSync(abs, 'utf8') : '' };
+};
+
+test('juntarCuerpo: un bloque de código con marcadores de 7 dentro se junta, el bloque intacto y la línea del otro lado fuera', () => {
+  const bloque = '```\n<<<<<<< HEAD\nx\n=======\ny\n>>>>>>> otra\n```\n';
+  const { r, nota } = juntada(BASE_LISTA, t => t + '- b\n', t => t + bloque);
+  assert.deepEqual(r, { ok: true });
+  assert.ok(nota.endsWith(`- a\n${bloque}\n- b\n`) || nota.endsWith(`- a\n- b\n\n${bloque}`), nota);
+  assert.ok(nota.includes(bloque), 'el bloque entero e intacto');
+  assert.doesNotMatch(nota, /kit-concepto|\/var\/|\/tmp\//);
+  assert.equal(nota.split('>>>>>>>').length - 1, 1, 'ningún marcador de más');
+});
+
+test('juntarCuerpo: una línea suelta ">>>>>>> cita" en un lado no se confunde con un marcador', () => {
+  const { r, nota } = juntada(BASE_LISTA, t => t + '- b\n', t => t + '>>>>>>> cita\n');
+  assert.deepEqual(r, { ok: true });
+  assert.equal(nota.split('>>>>>>> cita').length - 1, 1);
+  assert.match(nota, /- b/);
+  assert.doesNotMatch(nota, /kit-concepto|\/var\/|\/tmp\//);
+});
+
+test('juntarCuerpo: un título setext con ======= no es un choque', () => {
+  const { r, nota } = juntada(BASE_LISTA, t => t + '- b\n', t => t + '\nOtro título\n=======\n');
+  assert.deepEqual(r, { ok: true });
+  assert.match(nota, /Otro título\n=======\n/);
+  assert.match(nota, /- b\n/);
+});
+
+test('juntarCuerpo: si un cuerpo ya trae una línea de 31 "<", no se puede distinguir y es un choque', () => {
+  const { r, rel } = juntada(BASE_LISTA, t => t + '- b\n', t => t + '<'.repeat(31) + ' raro\n');
+  assert.deepEqual(r, { ok: false, ficheros: [rel] });
+});
+
+test('juntarCuerpo: las líneas iniciales comunes de los dos añadidos se escriben una sola vez', () => {
+  const { r, nota } = juntada(BASE_LISTA, t => t + '- b\n- c\n', t => t + '- b\n- d\n');
+  assert.deepEqual(r, { ok: true });
+  assert.ok(nota.endsWith('- a\n- b\n- d\n- c\n'), nota);
+  const j = juntada(BASE_LISTA, t => t + '- b\n- c\n', t => t + '- b\n');
+  assert.ok(j.nota.endsWith('- a\n- b\n- c\n'), j.nota);
+});
+
+test('juntarCuerpo: la preparación añade un callout y el curso una línea de lista tras una lista → la línea no queda huérfana', () => {
+  const callout = '\n> [!info] Ampliación fuera de los apuntes\n> Algo más.\n';
+  const { r, nota } = juntada(BASE_LISTA, t => t + '- b\n', t => t + callout);
+  assert.deepEqual(r, { ok: true });
+  assert.ok(nota.endsWith('- a\n- b\n' + callout), nota);
+});

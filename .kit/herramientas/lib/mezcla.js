@@ -88,6 +88,55 @@ function fusionarCabecera(comun, nuestra, suya) {
   return salida.join('\n');
 }
 
+// El cuerpo a tres bandas. Si `merge-file` choca, se miran los trozos con --diff3: donde la parte común está vacía,
+// los dos lados solo AÑADEN en ese punto (la preparación una línea de historial, /dudas un callout al final) y no se
+// pisan: se quedan los dos. Las líneas iniciales que los dos añadidos comparten se escriben una vez; detrás va el
+// resto de la preparación (`suya`) y después el del curso principal, salvo que lo anterior sea una lista, lo del
+// curso principal siga la lista y lo de la preparación no: entonces va primero lo del curso (que la línea de lista
+// no quede huérfana tras un callout). Si en algún trozo la parte común no está vacía (los dos cambiaron o borraron
+// lo que ya existía), sigue siendo un choque: null.
+// Los marcadores llevan un tamaño raro (31) para no confundirlos con texto del alumno (un bloque de código con
+// `<<<<<<<` de un curso de git); si algún cuerpo ya trae una línea con esos marcadores, no se puede distinguir: null.
+const MARCA = 31;
+const regexMarca = c => new RegExp(`^${c === '|' ? '\\|' : c}{${MARCA}}( .*)?\\r?\\n?$`);
+const [M_NUESTRA, M_COMUN, M_SUYA, M_FIN] = ['<', '|', '=', '>'].map(regexMarca);
+const esLista = l => /^\s*[-*+] /.test(l) || /^\s*\d+[.)] /.test(l);
+
+function juntarCuerpo(fn, fc, fs2) {
+  const parecenMarcador = [fn, fc, fs2].some(f => fs.readFileSync(f, 'utf8').split(/\r?\n/).some(l => /^(<{31}|\|{31}|={31}|>{31})/.test(l)));
+  const r = spawnSync('git', ['merge-file', '-p', '--diff3', `--marker-size=${MARCA}`, fn, fc, fs2], { encoding: 'utf8' });
+  if (r.status === 0) return r.stdout;
+  if (r.status !== 1 || parecenMarcador) return null;
+  const salida = [];
+  let zona = null, trozo = null;   // zona: 'nuestra' | 'comun' | 'suya'
+  for (const linea of r.stdout.split(/(?<=\n)/)) {
+    if (zona === null) {
+      if (M_NUESTRA.test(linea)) { zona = 'nuestra'; trozo = { nuestra: [], comun: [], suya: [] }; } else salida.push(linea);
+    } else if (zona === 'nuestra' && M_COMUN.test(linea)) zona = 'comun';
+    else if (zona === 'comun' && M_SUYA.test(linea)) zona = 'suya';
+    else if (zona === 'suya' && M_FIN.test(linea)) {
+      if (trozo.comun.length) return null;
+      const [a, b] = [trozo.suya, trozo.nuestra];
+      let n = 0;
+      while (n < a.length && n < b.length && a[n] === b[n]) n++;
+      const prefijo = a.slice(0, n);
+      let [ra, rb] = [a.slice(n), b.slice(n)];
+      const anterior = prefijo.length ? prefijo[prefijo.length - 1] : (salida[salida.length - 1] || '');
+      if (rb.length && ra.length && esLista(anterior) && esLista(rb[0]) && !esLista(ra[0])) [ra, rb] = [rb, ra];
+      [prefijo, ra, rb].forEach((lados, i) => {
+        if (!lados.length) return;
+        const ultima = salida.length ? salida[salida.length - 1] : '';
+        if (ultima && !ultima.endsWith('\n')) salida[salida.length - 1] = ultima + '\n';
+        // Dos bloques distintos pegados (la línea de una lista y un callout) se separan con una línea en blanco.
+        if (i > 0 && ultima.trim() !== '' && lados[0].trim() !== '' && !(esLista(ultima) && esLista(lados[0]))) salida.push('\n');
+        salida.push(...lados);
+      });
+      zona = null; trozo = null;
+    } else trozo[zona].push(linea);
+  }
+  return zona === null ? salida.join('') : null;
+}
+
 function fusionarNotaDeConcepto(raiz, rel) {
   if (![1, 2, 3].every(e => existeEnEtapa(raiz, rel, e))) return false;
   const [comun, nuestra, suya] = [1, 2, 3].map(e => partirNota(g.intentarGit(raiz, ['show', `:${e}:${rel}`]).stdout || ''));
@@ -100,9 +149,9 @@ function fusionarNotaDeConcepto(raiz, rel) {
     fs.writeFileSync(fn, nuestra.cuerpo);
     fs.writeFileSync(fc, comun.cuerpo);
     fs.writeFileSync(fs2, suya.cuerpo);
-    const r = spawnSync('git', ['merge-file', '-p', fn, fc, fs2], { encoding: 'utf8' });
-    if (r.status !== 0) return false;
-    fs.writeFileSync(path.join(raiz, ...rel.split('/')), `---\n${cabecera}\n---\n${r.stdout}`);
+    const cuerpo = juntarCuerpo(fn, fc, fs2);
+    if (cuerpo === null) return false;
+    fs.writeFileSync(path.join(raiz, ...rel.split('/')), `---\n${cabecera}\n---\n${cuerpo}`);
     g.git(raiz, ['add', '--', rel]);
     return true;
   } finally {
