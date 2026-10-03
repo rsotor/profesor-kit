@@ -128,6 +128,11 @@ test('historialDe: sin informe previo o sin la sección, vacío', () => {
   assert.deepEqual(historialDe('Otro texto\n- suelto'), []);
 });
 
+test('historialDe: el «todavía ninguna noche» de un informe vacío no cuenta como noche', () => {
+  const vacio = informe({ fecha: 'x', interruptor: 'on', propuestas: [], bloqueados: [], prs: [], historial: [] });
+  assert.deepEqual(historialDe(vacio), []);
+});
+
 test('tituloDelMes: un informe por mes', () => {
   assert.equal(tituloDelMes('2026-10-31T23:59:00Z'), 'Informe de mantenimiento 2026-10');
   assert.equal(tituloDelMes('2026-11-01T01:00:00Z'), 'Informe de mantenimiento 2026-11');
