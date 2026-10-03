@@ -1,26 +1,42 @@
 ---
 tipo: flashcards
-sesion: 01-02-01
+sesion: 01-02-01-presupuesto-personal
 ---
-# Flashcards · 01-02-01
+# Flashcards · 01-02-01-presupuesto-personal
 
 > Se responde mentalmente antes de desplegar.
 
 **Gastas algo en ocio todos los meses. ¿Es un gasto fijo? ¿Por qué?**
 > [!success]- Respuesta
-> No, es variable. Que lo gastes siempre no lo hace fijo: la cifra la decides tú cada mes.
+> No, es variable: aunque gastes algo siempre, la cifra exacta la decides tú cada mes.
 
-**Un freelance factura 2.400,00 € un mes y 1.300,00 € otro. ¿Con qué cifra de ingresos presupuesta?**
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 3/10*
+
+**Facturas 2.400,00 € unos meses y 1.300,00 € otros. ¿Con qué ingreso haces el presupuesto?**
 > [!success]- Respuesta
 > Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
 
-**Ingresas 2.000,00 € y ahorras 500,00 €. ¿Cuál es tu tasa de ahorro?**
-> [!success]- Respuesta
-> 500,00 ÷ 2.000,00 × 100 = 25: te quedan 25,00 € de cada 100,00 € ingresados.
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 3/10*
 
-**Tus gastos son 1.000,00 € al mes y eres freelance. ¿Qué colchón financiero te conviene?**
+**Ingresas 1.000,00 € y ahorras 200,00 €. ¿Cuál es la tasa de ahorro del mes?**
 > [!success]- Respuesta
-> De 5 a 6 meses de gastos: entre 5.000,00 € y 6.000,00 €. Con nómina fija bastarían 3 meses.
+> 200,00 € ÷ 1.000,00 € × 100 = 20 % del mes.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 3/10*
+
+**Gastas 1.000,00 € al mes y eres freelance. ¿Qué colchón financiero te fijas?**
+> [!success]- Respuesta
+> Entre 5.000,00 € y 6.000,00 €: 5-6 meses de gastos, más que los 3 de una nómina fija.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 3/10*
 
 ---
-Conceptos que cubren: [[presupuesto-personal]] · [[gastos-fijos-y-variables]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[gastos-fijos-y-variables]] · [[presupuesto]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

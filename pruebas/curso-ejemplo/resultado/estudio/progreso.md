@@ -14,13 +14,14 @@ Estados: `⬜ sin evaluar` · `🟡 flojo` · `✅ sólido` · `🔴 falló dos 
 
 | Concepto | Teoría | Aplicación |
 |---|---|---|
-| [[funciones-del-dinero]] | 🟡 flojo · examen del módulo 1, p.1: elige falta de unidad de cuenta en vez de doble coincidencia de deseos (la p.8, depósito de valor, bien) | ⬜ sin evaluar |
-| [[inflacion]] | ✅ sólido · examen del módulo 1, p.3: calcula bien que 2.000 € guardados un año con inflación del 5 % anual compran como unos 1.905 € | ⬜ sin evaluar |
-| [[liquidez]] | 🟡 flojo · test de corrección (01-examen-2026-10-02-correccion), p.3: explica bien la idea (no se vende rápido) pero no da el nombre que se pedía; la p.2 bien y, en el examen del módulo 1, p.4, distinguía valor de liquidez | ⬜ sin evaluar |
-| [[presupuesto-personal]] | 🟡 flojo · examen del módulo 1, p.6: marca −205 € en vez de 205 € (invierte la resta); la p.7, presupuestar con el mejor mes, bien | ⬜ sin evaluar |
-| [[gastos-fijos-y-variables]] | 🟡 flojo · test de corrección (01-examen-2026-10-02-correccion), p.5: marca variable el alquiler que sube una vez al año con el IPC (es fijo); en el examen del módulo 1, p.2, clasificaba bien internet y material | ⬜ sin evaluar |
-| [[tasa-de-ahorro]] | ✅ sólido · test de corrección (01-examen-2026-10-02-correccion), p.1: calcula bien 300 de 1.500 € = 20 % mensual | ⬜ sin evaluar |
-| [[colchon-financiero]] | 🟡 flojo · test de corrección (01-examen-2026-10-02-correccion), p.6: sin responder cuántos meses recomienda el curso con nómina fija; antes, examen del módulo 1, p.10, también en blanco (la p.9 bien) | ⬜ sin evaluar |
+| [[trueque]] | 🟡 flojo · examen del módulo 1, p.1: marcó «falta de unidad de cuenta» en vez de la doble coincidencia de deseos | ⬜ sin evaluar |
+| [[funciones-del-dinero]] | ✅ sólido · examen del módulo 1, p.3: reconoce la unidad de cuenta | ⬜ sin evaluar |
+| [[inflacion]] | ✅ sólido · examen del módulo 1, p.2: sabe que 3.000,00 € parados compran menos | ⬜ sin evaluar |
+| [[liquidez]] | 🟡 flojo · examen del módulo 1, p.5: en blanco (no se sabe si la confunde con valor); acertó la p.8. Test de corrección, p.2: ve la idea (dinero atado en el piso); p.3: no da el nombre «liquidez», que se pedía | ⬜ sin evaluar |
+| [[presupuesto]] | ✅ sólido · examen del módulo 1, p.7: ve el riesgo de presupuestar con el mejor mes | ⬜ sin evaluar |
+| [[gastos-fijos-y-variables]] | 🟡 flojo · examen del módulo 1, p.10: en blanco; acertó la p.9 (alquiler = fijo). Test de corrección, p.5: marcó el alquiler (700 €, sube una vez al año con el IPC) como variable; el curso dice fijo | ⬜ sin evaluar |
+| [[tasa-de-ahorro]] | ✅ sólido · examen del módulo 1, p.4: distingue porcentaje de euros ahorrados | ⬜ sin evaluar |
+| [[colchon-financiero]] | 🟡 flojo · examen del módulo 1, p.6: marcó 3 meses cubiertos; eran 2 (4.000,00 € − 2 × 1.000,00 €). Test de corrección, p.6: en blanco (cuántos meses recomienda el curso) | ⬜ sin evaluar |
 | [[capital]] | ⬜ sin evaluar | ⬜ sin evaluar |
 | [[tipo-de-interes]] | ⬜ sin evaluar | ⬜ sin evaluar |
 | [[interes-simple]] | ⬜ sin evaluar | ⬜ sin evaluar |

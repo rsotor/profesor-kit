@@ -1,26 +1,42 @@
 ---
 tipo: flashcards
-sesion: 01-01-01
+sesion: 01-01-01-el-dinero-y-sus-funciones
 ---
-# Flashcards · 01-01-01
+# Flashcards · 01-01-01-el-dinero-y-sus-funciones
 
 > Se responde mentalmente antes de desplegar.
 
-**Un freelance cobra 300,00 € y guarda 100,00 € para un mes flojo. ¿Qué función del dinero usa al guardarlos?**
+**Una caja de pescado cuesta 40,00 € y un corte de pelo 12,00 €. ¿Qué función del dinero te deja compararlos directamente?**
 > [!success]- Respuesta
-> Depósito de valor. Cobrar los 300,00 € es medio de cambio.
+> La unidad de cuenta: todo se mide con la misma vara. No es el medio de cambio, que es el que permite pagar.
 
-**El café cuesta 1,50 € y el corte de pelo 12,00 €. ¿Qué función permite comparar ambos precios directamente?**
-> [!success]- Respuesta
-> Unidad de cuenta: la misma vara de medir para todo.
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 3/10*
 
-**El aceite sube de precio porque hubo mala cosecha. ¿Es inflación? ¿Por qué?**
+**Guardas 100,00 € y, con una inflación anual del 3 %, el año que viene compran menos. ¿Qué función falla?**
 > [!success]- Respuesta
-> No. Es la subida de una cosa concreta. Inflación es que suba el nivel general de precios, de casi todo a la vez.
+> El depósito de valor: el dinero no mantiene su poder de compra con el tiempo.
 
-**¿Quién es más líquido: 200,00 € en la cartera o un piso? ¿Por qué?**
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 3/10*
+
+**Sube el precio de las entradas de un concierto por moda. ¿Es inflación?**
 > [!success]- Respuesta
-> Los 200,00 €: se gastan al instante. Vender un piso bien lleva meses.
+> No. Inflación es que sube el nivel general de precios, de casi todo a la vez, no el de una sola cosa.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 3/10*
+
+**¿Qué es más líquido, un piso valorado en mucho dinero o 200,00 € en la cartera, y por qué?**
+> [!success]- Respuesta
+> Los 200,00 €: se gastan al instante. El piso vale más, pero venderlo bien lleva meses.
+
+- [ ] ✅ la sabía
+- [ ] ❌ no la sabía
+*Caja 1 de 5 · te toca el 3/10*
 
 ---
 Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]

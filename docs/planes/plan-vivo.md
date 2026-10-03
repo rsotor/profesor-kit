@@ -121,7 +121,7 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    - **Fuera:** TODO: decidir con Roberto.
    - **Cómo sabremos:** TODO: decidir con Roberto.
 
-## Siguiente: recortar las llamadas de `/sesion` (hecho y medido el 2026-10-03; sin commit)
+## Siguiente: recortar las llamadas de `/sesion` (hecho y medido el 2026-10-03; en la PR #88)
 
 **La pregunta:** cómo hace `/sesion` su trabajo en menos llamadas, sin perder calidad del material. El piloto de
 lectura (abajo, cerrado) ahorró poco porque tocaba la parte barata.
@@ -237,7 +237,7 @@ fallidos, la restricción de leer antes de editar y fija el formato por código:
     lo ha adoptado, no si ha salido bien) · el coste ponderado por estrato se apunta como dato: con n = 1–2 por
     estrato no es puerta.
 - **Decisiones (Roberto, 2026-10-03, noche):**
-  1. **El curso real no tiene patrones** (`inversion-multimercado`: `patrones_prohibidos: []`; en sus logs, 6
+  1. **El curso real no tiene patrones** (`patrones_prohibidos: []`; en sus logs, 6
      guardados de sesión y ningún `comprobar.js` con errores). Las rondas ✗ eran del curso de ejemplo: en el curso
      real `/sesion` ya va por el camino corto. Otros cursos sí pueden tenerlos (`/configurar` los propone si una
      regla se puede comprobar con un patrón). Queda del corte 1: el arreglo del curso de ejemplo (la prueba deja de
@@ -288,7 +288,11 @@ fallidos, la restricción de leer antes de editar y fija el formato por código:
     - **Para vigilar:** hace ejercicio en 2 de 9 (antes, con el mismo paquete de lectura, 3 de 10): sin señal, pero
       son pocas · 2 permisos denegados en 9, los dos por `cat config/ajustes.json; ls -R estudio | head; cat …` antes
       de escribir · un `Edit` fallido sobre `mapa-del-curso.md` costó un segundo guardado (es el corte D).
-    - **Bandeja:** `--solo` y `--desde` no refrescan `config/` de la copia: un cambio en
+    - **Prueba real entera (2026-10-03, `cd3c634`): 16/16**, corrección 6/6, 5 permisos denegados (lecturas y
+      comandos encadenados por la shell en `/sesion 01-02`, `/examen` y `/repaso`: lo de la #79, no lo tocan estos
+      cortes). Cuota de 5 h: del 32 % al 42 %. Informe fijo: `docs/auditoria/2026-10-03-llamadas-de-sesion.md`.
+    - **Bandeja:** el nombre del curso real se coló en este plan (repo público); corregido, y `generico.test.js` ya
+      lo vigila en `docs/`, `pruebas/`, `.github/` y la raíz · `--solo` y `--desde` no refrescan `config/` de la copia: un cambio en
       `pruebas/curso-ejemplo/config/` no llega hasta la siguiente entera · `pruebas/coste.js` sigue sin existir (los
       guiones están en `pruebas-local/medida-sesion/`) · falta la línea del CHANGELOG de los dos cortes.
   - **Orden:** 1) arreglo del curso de ejemplo + puntos 1–3 del corte 1, con sus tests · 2) ronda completa del

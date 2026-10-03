@@ -26,6 +26,22 @@ test('el motor no contiene nada de ningún curso concreto', () => {
   assert.deepEqual(fallos, []);
 });
 
+// El repo es público: el curso real de quien mantiene el kit no se nombra tampoco fuera del motor (planes, informes,
+// pruebas). El 2026-10-03 se coló en el plan vivo, que el test de arriba no mira.
+const CURSO_REAL = /multimercado/i;
+test('el nombre del curso real no aparece en docs/, pruebas/, .github/ ni en los ficheros de la raíz', () => {
+  const texto = n => /\.(md|js|json|yml|yaml|html|css|txt)$/.test(n);
+  const ficheros = [
+    ...['docs', 'pruebas', '.github'].flatMap(d => v.recorrer(path.join(RAIZ, d), texto, new Set(['node_modules']))),
+    ...fs.readdirSync(RAIZ, { withFileTypes: true }).filter(e => e.isFile() && texto(e.name)).map(e => path.join(RAIZ, e.name)),
+  ];
+  const fallos = [];
+  for (const f of ficheros) {
+    fs.readFileSync(f, 'utf8').split(/\r?\n/).forEach((linea, i) => { if (CURSO_REAL.test(linea)) fallos.push(`${path.relative(RAIZ, f)}:${i + 1}`); });
+  }
+  assert.deepEqual(fallos, []);
+});
+
 test('están las siete skills, con name y description', () => {
   for (const nombre of SKILLS) {
     const fichero = path.join(RAIZ, '.kit', 'skills', nombre, 'SKILL.md');

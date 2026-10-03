@@ -1,50 +1,58 @@
 ---
 tipo: concepto
 bloques: [modulo-01]
-visto_en: [01-01-01]
+visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
 alias: []
-tags: [dinero, precios]
+tags: []
+ejercicio: 01-01-01-inflacion
 ---
 # Inflación
 
-> **En una frase:** La inflación es la subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
+> **En una frase:** La subida general y sostenida de los precios: con el mismo dinero, mañana se compra menos que hoy.
 
 ## El problema
 
-El dinero guardado debería mantener su valor (depósito de valor). Si los precios suben, el mismo dinero
-compra menos y esa función falla un poco.
+Guardar dinero (depósito de valor, ver [[funciones-del-dinero]]) solo sirve si el dinero compra lo mismo
+más adelante. Con inflación, no.
 
 ## El ejemplo
 
-Con una inflación del 3 % anual, una cesta de la compra que hoy cuesta 100,00 € costará 103,00 € dentro de
-un año. Al revés: tus 100,00 € de hoy compran el año que viene lo que hoy compran unos 97,00 €.
+Con una inflación anual del 3 %, tienes 100,00 € hoy. El año que viene, esos 100,00 € compran lo que hoy
+compran unos **97,00 €** (el curso redondea así).
 
-| | Hoy | Dentro de un año |
-|---|---|---|
-| Precio de la cesta | 100,00 € | 103,00 € |
-| Lo que compran tus 100,00 € | la cesta entera | un poco menos de la cesta |
+## La fórmula
 
-Tus euros siguen siendo 100,00 €; lo que baja es lo que se puede comprar con ellos.
+> [!info] Ampliación fuera de los apuntes
+> El cálculo exacto, que el curso solo aproxima:
+
+$$ P = \frac{D}{1 + i} $$
+
+$P$ es lo que compra el dinero dentro de un año (en euros de hoy), $D$ el dinero que guardas e $i$ la
+inflación **anual** (0,03 para una inflación anual del 3 %). Con 100,00 €: 100,00 ÷ 1,03 = **97,09 €**.
 
 ## El error típico
 
-Confundir "sube el precio de una cosa" con "inflación". Un producto puede encarecerse por moda o por
-escasez propia; la inflación es que sube el nivel general de precios, de casi todo a la vez.
+Confundir "sube el precio de una cosa" (por moda o por escasez de esa cosa) con inflación: que sube el
+nivel general de precios, de casi todo a la vez.
 
 ## Visto desde tus ingresos irregulares
 
-> [!info] Ampliación fuera de los apuntes
-> Si guardas un colchón para los meses flojos, la inflación lo va desgastando mientras espera. Con un
-> 3 % anual, un colchón de 3.000,00 € parado un año compra como unos 2.910,00 € de hoy (cifra aproximada,
-> ver la auditoría de la sesión). Es el precio de tener ese dinero a mano.
+Si ahorras en los meses buenos para cubrir los flojos, la inflación se come parte de ese colchón mientras
+espera. Cuanto más tiempo lo dejes parado, más compra de menos: no basta con guardar, importa cuánto
+tiempo y dónde.
+
+## Practícalo
+
+[[ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion.html]]:
+mueve la inflación anual y el margen entre colchón y gastos, y mira dónde el colchón deja de cubrir.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la inflación debilita el depósito de valor
-- [[liquidez]] — guardar con liquidez total tiene este coste
+- [[funciones-del-dinero]] — la inflación rompe el depósito de valor
+- [[liquidez]] — el otro factor de guardar dinero
 
 ## Historial
 
-- **01-01-01** · primera vez
+- **01-01-01-el-dinero-y-sus-funciones** · primera vez

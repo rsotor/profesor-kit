@@ -31,13 +31,12 @@
 
 ## Conceptos que costaron
 
-- **funciones-del-dinero:** en el examen del módulo 1 confunde el problema del trueque (doble coincidencia de
-  deseos) con la falta de unidad de cuenta; en cambio reconoce bien el depósito de valor. — *examen del módulo 1, p.1 y p.8*
-- **presupuesto-personal:** al calcular el ahorro de un mes flojo (1.400 − 1.195) responde −205 € en vez de 205 €,
-  es decir, invierte la resta; sí detecta el error de presupuestar con el mejor mes. — *examen del módulo 1, p.6 y p.7*
-- **tasa-de-ahorro y colchon-financiero:** dejó en blanco la comparación de tasas (p.5) y el colchón con gastos
-  más altos (p.10). Son dos preguntas sin responder, no dos errores demostrados: no sabemos si no las entiende o
-  si le faltó tiempo; conviene repreguntar. — *examen del módulo 1, p.5 y p.10*
+- **trueque**: en el examen del módulo 1, p.1, describió la doble coincidencia de deseos como «falta de unidad
+  de cuenta»: mezcla dos problemas distintos del trueque. — *examen 01-examen-2026-10-03, p.1*
+- **colchón financiero**: en la p.6 del mismo examen contó 3 meses cubiertos tras gastar 2 de un colchón de
+  4 meses; salían 2. Falla el cálculo de lo que queda, no la idea. — *examen 01-examen-2026-10-03, p.6*
+- Dejó en blanco las p.5 (liquidez) y p.10 (gastos fijos y variables): no hay prueba de qué piensa, solo de
+  que no contestó. — *examen 01-examen-2026-10-03, p.5 y p.10*
 
 ## Conceptos que entraron a la primera
 
@@ -51,10 +50,10 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-10-02 · 01-01-01-el-dinero-y-sus-funciones.md, en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-10-03 · 01-01-01-el-dinero-y-sus-funciones, respuesta del alumno en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-10-02 · conceptos/colchon-financiero.md |
+| colchon-financiero | 1 | 2026-10-03 · conceptos/colchon-financiero.md, 2026-10-03 |

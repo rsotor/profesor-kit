@@ -1,7 +1,7 @@
 ---
 tipo: examen
 unidad: 01
-fecha: 2026-10-02
+fecha: 2026-10-03
 nota: 5
 parcial: true
 intentos: 1
@@ -59,19 +59,19 @@ intentos: 1
 
 | Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |
 |---|---|---|---|---|---|---|
-| 1 | 2026-10-02 | 5 | 2 | 2 | 1 | 1 |
+| 1 | 2026-10-03 | 5 | 2 | 2 | 1 | 1 |
 
-> [!example]- Intento 1 · 2026-10-02 · tus respuestas y la corrección
+> [!example]- Intento 1 · 2026-10-03 · tus respuestas y la corrección
 >
-> ✅ Dominado → tasa-de-ahorro (p.1), liquidez en el caso (p.2)
-> ⚠️ Hay que repasar → liquidez (p.3: la idea bien, falta el nombre), interés mensual (p.4: falta el periodo)
-> 🔴 Vuelve a la nota → gastos-fijos-y-variables (p.5), colchon-financiero (p.6, sin responder)
+> ✅ Dominado → tasa-de-ahorro
+> ⚠️ Hay que repasar → liquidez (idea bien, sin el nombre), gastos-fijos-y-variables (alquiler = variable; el curso dice fijo), colchon-financiero (en blanco), interés (falta el periodo; sin nota propia en el curso)
+> 🔴 Vuelve a la nota → ninguno (ningún concepto con 2 o más fallos en este examen)
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20 % | ✅ Correcta | 300 ÷ 1.500 = 20 % mensual. La pregunta no pedía el periodo, así que la cifra basta. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no se puede sacar a tiempo: es la idea de inmovilizado. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre. Describe bien la idea (no se puede vender rápido), pero la pregunta pedía el nombre del concepto: liquidez. | La idea es correcta; el nombre se pedía y no aparece. |
-> | 4 | 2 % | ⚠️ Le falta: el periodo. Sin el periodo la cifra no dice cuánto pagas: es un 2 % mensual. | La cifra es correcta, pero la pregunta pedía la cifra con su periodo. |
-> | 5 | Variable. | ❌ Incorrecta | El alquiler es fijo: se repite cada mes con casi la misma cifra. Que se actualice una vez al año con el IPC no lo vuelve variable, porque no lo decides tú cada mes. |
-> | 6 | *(en blanco)* | ❌ Incorrecta | Sin responder. El curso recomienda 3 meses de gastos con nómina fija (5-6 con ingresos irregulares). |
+> | 1 | 20 % | ✅ Correcta | 300 ÷ 1.500 = 20 %. La pregunta pedía una cifra; el periodo no se pedía. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no llega a tiempo: es la idea de inmovilizado. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre | Explica bien la idea (no puede venderlo rápido), pero la pregunta pedía el nombre del concepto: liquidez. |
+> | 4 | 2 % | ⚠️ Le falta: el periodo | La pregunta pedía la cifra con su periodo: un 2 % mensual. Sin el periodo la cifra no dice cuánto pagas. |
+> | 5 | Variable. | ❌ Incorrecta | Responde «Variable»; según la clave y el curso es fijo: el importe no cambia cada mes, solo se actualiza una vez al año. |
+> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin respuesta. La clave es 3 meses de gastos. |
