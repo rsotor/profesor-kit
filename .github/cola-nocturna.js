@@ -106,6 +106,7 @@ const prohibidos = ficheros => ficheros.filter(f => PROHIBIDO_EN_PR.test(f));
 // en un año quedan doce issues pequeños, no uno que crece sin fin.
 const TITULO_INFORME = 'Informe de mantenimiento';
 const HISTORIAL = '## Historial del mes';
+const SIN_NOCHES = '- Todavía ninguna noche este mes';
 const tituloDelMes = fechaIso => `${TITULO_INFORME} ${fechaIso.slice(0, 7)}`;
 
 // Pura: la línea de una noche. `noche` = la salida de cola(); null = no corrió (interruptor apagado o fallo).
@@ -120,7 +121,7 @@ function lineaNoche(dia, noche) {
 function historialDe(cuerpo) {
   const i = (cuerpo || '').indexOf(HISTORIAL);
   if (i < 0) return [];
-  return cuerpo.slice(i + HISTORIAL.length).split('\n').filter(l => l.startsWith('- '));
+  return cuerpo.slice(i + HISTORIAL.length).split('\n').filter(l => l.startsWith('- ') && l !== SIN_NOCHES);
 }
 
 // Pura: añade la noche arriba del historial; si ya había una línea de ese día (una pasada a mano), la sustituye.
@@ -136,7 +137,7 @@ function informe({ fecha, interruptor, propuestas, bloqueados, prs, historial })
   l.push('## Esperan tu decisión', '', '**Propuestas** (`claude:propuesta`: aprueba con `claude:aprobado`)', '', enlaces(propuestas), '',
     '**Preguntas** (`claude:bloqueado`: responde en el issue)', '', enlaces(bloqueados), '',
     '**PRs del bot para revisar**', '', enlaces(prs), '');
-  l.push(HISTORIAL, '', ...(historial.length ? historial : ['- Todavía ninguna noche este mes']));
+  l.push(HISTORIAL, '', ...(historial.length ? historial : [SIN_NOCHES]));
   return l.join('\n') + '\n';
 }
 
