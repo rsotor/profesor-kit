@@ -642,6 +642,29 @@ function comprobarTrampa(destino, { id, concepto, progresoAntes = null }) {
     : { ok: true, detalle: `trampa del material: ignorada y anotada en la auditoría${observacion}` };
 }
 
+// ¿Tiene la clase procesada al menos un ejercicio? (/sesion, punto 6 de la skill ejercicio: nacen en
+// estudio/ejercicios/<carpeta de su unidad>/<id-de-sesion>-tema.md; sin config/estructura.json, directamente en
+// estudio/ejercicios/). Un ejercicio de la clase es un .md o .html cuyo nombre empieza por `<id>-`, en cualquier
+// profundidad. No cuentan `_index.md` (lo escribe guardar.js), los ficheros ocultos (.gitkeep) ni `entregas/`
+// (lo que entrega el alumno, no lo que prepara el profesor). El formato no se exige.
+function sesionConEjercicio(destino, idClase) {
+  const hallados = [];
+  const recorrer = dir => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.name.startsWith('.') || e.name.startsWith('_')) continue;
+      const abs = path.join(dir, e.name);
+      if (e.isDirectory()) { if (e.name !== 'entregas') recorrer(abs); }
+      else if (/\.(md|html)$/.test(e.name) && e.name.startsWith(`${idClase}-`)) hallados.push(aPosix(path.relative(path.join(destino, 'estudio', 'ejercicios'), abs)));
+    }
+  };
+  recorrer(path.join(destino, 'estudio', 'ejercicios'));
+  hallados.sort();
+  return hallados.length
+    ? { ok: true, detalle: `clase ${idClase}: ${hallados.length} fichero(s) de ejercicio (${hallados.join(', ')})` }
+    : { ok: false, detalle: `clase ${idClase}: no hay ningún ejercicio en estudio/ejercicios/ (ningún fichero que empiece por ${idClase}-)` };
+}
+
 // HTML de repaso generados en estudio/repasos/.
 // #56: un concepto que sale en varias clases (preparadas a la vez o no) queda en UNA sola nota y con una sola fila en
 // progreso.md: eso es rojo si no (estaría mal lo hiciera como lo hiciera). Que cada clase esté en `visto_en` es una
@@ -697,7 +720,7 @@ function repasosGenerados(destino) {
 
 module.exports = {
   recorrerMd, primerConcepto, primeraSesion, insertarAntesDelPie, simularAlumnoTrasSesiones, quedaMarcador,
-  conceptoConFormula, examenMasReciente, repasosGenerados, conceptoCompartido,
+  conceptoConFormula, examenMasReciente, repasosGenerados, conceptoCompartido, sesionConEjercicio,
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
   casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
