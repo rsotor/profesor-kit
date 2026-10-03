@@ -964,7 +964,26 @@ function validarDesde(desde, sinLlm, copiasArg) {
   return { ok: true, copiasDir };
 }
 
+// Las opciones que entiende cli(): las que llevan valor detrás y las que no. Cualquier otra cosa para la prueba
+// antes de lanzar nada: una opción desconocida (`--ayuda`) se ignoraba y arrancaba la prueba entera, gastando cuota
+// (2026-10-03).
+const OPCIONES_CON_VALOR = ['--modelo', '--limite-ms', '--volcar', '--desde', '--solo', '--copias', '--asistente'];
+const OPCIONES_SIN_VALOR = ['--sin-llm', '--sin-comprobar-rama'];
+function opcionesDesconocidas(args) {
+  const raras = [];
+  for (let i = 0; i < args.length; i++) {
+    if (OPCIONES_CON_VALOR.includes(args[i])) i++;
+    else if (!OPCIONES_SIN_VALOR.includes(args[i])) raras.push(args[i]);
+  }
+  return raras;
+}
+
 function cli(args) {
+  const raras = opcionesDesconocidas(args);
+  if (raras.length) {
+    console.error(`No conozco ${raras.map(r => `\`${r}\``).join(', ')}. No se ha lanzado nada.\nOpciones: ${[...OPCIONES_SIN_VALOR, ...OPCIONES_CON_VALOR.map(o => `${o} <valor>`)].join(' · ')}`);
+    return 2;
+  }
   const valor = nombre => { const i = args.indexOf(nombre); return i >= 0 ? args[i + 1] : undefined; };
   const sinLlm = args.includes('--sin-llm');
   const modelo = valor('--modelo') || null;

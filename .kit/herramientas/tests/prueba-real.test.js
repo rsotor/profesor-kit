@@ -1141,6 +1141,14 @@ test('cli: --desde con --sin-llm, error claro y código 2 (sin llegar a comproba
   assert.match(mensajes.join('\n'), /--desde no se puede combinar con --sin-llm/);
 });
 
+test('cli: una opción que no conoce (--ayuda) o un argumento suelto paran la prueba antes de lanzar nada', () => {
+  for (const args of [['--ayuda'], ['--sin-llm', '--help'], ['suelto'], ['--solo', '/dudas', 'otro']]) {
+    const { codigo, mensajes } = conConsoleErrorCapturado(() => cli(args));
+    assert.equal(codigo, 2, args.join(' '));
+    assert.match(mensajes.join('\n'), /No se ha lanzado nada/);
+  }
+});
+
 test('cli: --desde con un paso que no existe, la lista de pasos válidos y código 2', () => {
   const { codigo, mensajes } = conConsoleErrorCapturado(() => cli(['--desde', 'esto-no-es-un-paso']));
   assert.equal(codigo, 2);

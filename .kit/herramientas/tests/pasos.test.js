@@ -420,3 +420,13 @@ test('sinNoSeVeraBien: verde con el curso sano; rojo con un % sin proteger en un
   assert.equal(vera.ok, false);
   assert.match(vera.detalle, /no-se-vera-bien/);
 });
+
+test('coberturaDelMaterial: reconoce «Diap. N» abreviado en la tabla de cobertura', () => {
+  const raiz = temporal('cobertura-diap-');
+  escribir(raiz, {
+    'material.md': '# Clase\n\n### Diapositiva 1 · Uno\n\ntexto\n\n### Diapositiva 2 · Dos\n\ntexto\n',
+    'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\n---\n# s01\n\n## Cobertura del material\n\n| Sección | Destino |\n|---|---|\n| Diap. 1 · Uno | [[alfa]] |\n| Diap. 2 · Dos | [[alfa]] |\n',
+  });
+  const r = coberturaDelMaterial(raiz, { id: 's01', ficheros: [path.join(raiz, 'material.md')] });
+  assert.match(r.detalle, /2 de 2/);
+});

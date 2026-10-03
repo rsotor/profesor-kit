@@ -908,7 +908,8 @@ function coberturaDelMaterial(destino, { id, ficheros }) {
   const cobertura = seccionDe(sesion, 'Cobertura del material');
   const donde = cobertura === null ? sesion : cobertura;
   const cubiertas = new Set();
-  for (const m of donde.matchAll(/diapositivas?\s+(\d+)(?:\s*(?:-|–|a|al|y)\s*(\d+))?/gi)) {
+  // «Diapositiva 3», «Diapositivas 1-3» o abreviado, «Diap. 3» (así las escribió el profesor en la prueba del 2026-10-03).
+  for (const m of donde.matchAll(/diap(?:ositiva)?s?\.?\s+(\d+)(?:\s*(?:-|–|a|al|y)\s*(\d+))?/gi)) {
     const [a, b] = [Number(m[1]), Number(m[2] || m[1])];
     for (let n = a; n <= Math.max(a, b) && n - a < 50; n++) cubiertas.add(n);
   }
