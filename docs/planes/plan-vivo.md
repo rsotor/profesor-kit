@@ -414,6 +414,34 @@ observación y cómo se ve en rojo):
     formato de `fuente:` y `pregunta-doble`). Mirado: no choca con lo de esta rama (solo coinciden en
     `docs/arquitectura.md`, en zonas distintas), y su `comprobar.js` no da `fuente-inexistente` sobre los dos
     resultados guardados. En el resultado de la entera no debe salir `fuente-inexistente`.
+  - **Prueba real entera (2026-10-03, 23:1x, Claude/sonnet, commit `c42fc59`, con `arreglos-89-90-92` mezclada):
+    21/22, corrección 6/6.** Se lanzó por error (`prueba-real.js --ayuda`: el script ignora las opciones que no
+    conoce y arranca la entera); Roberto decidió dejarla terminar. Arreglado después: `cli()` rechaza opciones desconocidas y argumentos sueltos
+    antes de lanzar nada (con test).
+    - Rojo, `lo que deja /sesion 01-02`: sin ejercicio. Con la frase nueva ya no deja un TODO: escribe «Ejercicios:
+      ninguno. Las cuentas son de un paso… nada cambia de forma interesante» (la línea de por qué que admite
+      `sesion/SKILL.md`, punto 6). Después, el paso de `/ejercicio` sí creó uno del colchón (un concepto de esa
+      clase), con casos a mano que pasan. Tres ejecuciones, tres resultados (TODO «aquí sí algo se mueve» · ninguno
+      con motivo · Codex, tres ejercicios): el criterio de la skill deja demasiado al juicio. **Decidido (Roberto):
+      se concreta el punto 6 de `sesion/SKILL.md`** y la comprobación sigue en rojo. Texto elegido (Roberto): si
+      algún concepto de la clase tiene fórmula con datos que se pueden cambiar o un umbral, la clase lleva al menos
+      un ejercicio (el del concepto donde más cambia el resultado); ni `TODO` ni «ninguno». Uno por concepto se
+      descartó por coste. Escrito en la skill. Es un cambio que el alumno nota: falta su línea en el CHANGELOG.
+      Comprobado con `--solo "/sesion 01-02"` (2026-10-03, 118 s, 0 permisos denegados; una sola ejecución): crea
+      `01-02-01-mes-flojo.html`, enlazado desde `presupuesto-personal` y `tasa-de-ahorro`; sobre ese resultado
+      (`pruebas-local/solo-claude-code/`) salen verdes ejercicio, progreso, auditoría y cobertura 10/10. Para la
+      release falta una entera sobre el commit final.
+    - Caso 2 verde (`FALTA INFO:` del patrón oro, ya sin que la frase lo pida). `/dudas`, `/ejercicio`, clave del
+      examen, tabla del intento y ejercicios con casos, verdes. 0 `no-se-vera-bien`, 0 `fuente-inexistente`
+      (la 01-02 escribe `fuente:` como lista con sus dos ficheros).
+    - La mezcla arreglada se ejercitó de verdad: la nota del colchón lleva la línea de historial de la 02-02 y el
+      callout de la duda, sin marcadores, y `--juntar` pasó.
+    - Sinónimo verde, pero mide menos de lo previsto: el alias «fondo de emergencia» lo puso ya `/sesion 01-02`
+      por su cuenta (conocimiento general), antes de preparar la 02-02, que lo enlazó al colchón.
+    - Cobertura (observación): falsos positivos. No reconoce «Diap. N» ni «Plantilla · hojas …»: 4 de 10 en la
+      01-02 y 0 de 6 en la 02-02 con todas las diapositivas cubiertas. Arreglado después («Diap. N», con test):
+      sobre este resultado da 9/9, 10/10, 6/6 y 6/6. Sigue como observación.
+    - 5 permisos denegados (`cat`, `sed -i`, `for … cat` en examen y repaso): lo que `AGENTS.md` prohíbe.
 - **Fuera:** un LLM juez que puntúe la explicación (la explicación mala pero bien formada no la ve nada: se dice así
   en el informe de la release) · un curso grande (más clases, índice lleno) · tocar el texto de las clases 01-01 y
   01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón ancho: la regla dice
