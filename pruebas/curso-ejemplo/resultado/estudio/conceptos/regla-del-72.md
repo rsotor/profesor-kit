@@ -1,38 +1,42 @@
 ---
 tipo: concepto
-bloques: [modulo-02]
+bloques: [2.1]
 visto_en: [02-01-01-interes-simple-y-compuesto]
-dificultad: 1
+dificultad: 2
 requiere: [interes-compuesto]
 alias: []
-tags: []
+tags: [interes]
 ---
 # Regla del 72
 
-> **En una frase:** Un atajo para estimar a ojo cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
+> **En una frase:** la regla del 72 es un atajo para calcular a ojo cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
 
 ## El problema
 
-La fórmula exacta pide calculadora. A veces solo quieres saber, de cabeza, si tu dinero se dobla en 10 años o en 30.
+Saber cuánto tarda en doblarse un dinero exige la fórmula del compuesto y una calculadora. A veces
+quieres una cifra rápida, de cabeza.
 
 ## El ejemplo
 
-Al 6 % anual: 72 ÷ 6 = **12 años**, aproximadamente. El cálculo exacto con la fórmula de [[interes-compuesto]] da 11,9 años: el atajo se queda a 0,1 años.
+Con un 6 % anual: 72 ÷ 6 = **12 años**, aproximadamente. El cálculo exacto con la fórmula del compuesto
+da 11,9 años: la regla es una aproximación, no el resultado exacto.
 
 ## La fórmula
 
-$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número}} $$
+$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número, sin el signo de porcentaje}} $$
 
-El tipo va como número, sin el símbolo de tanto por ciento ($6$, no $0{,}06$).
+El 6 % anual entra como 6, no como 0,06.
 
 ## El error típico
 
-Tomarla por exacta: es una aproximación (12 frente a 11,9).
+> [!info] Ampliación fuera de los apuntes
+> Usarla con interés simple, o tomarla por exacta. Solo vale para el compuesto, y da una cifra aproximada.
+> Y el tipo entra como número entero (6), no en tanto por uno (0,06).
 
 ## Relacionados
 
-- [[interes-compuesto]] — el único caso en que vale; con simple no
-- [[tipo-de-interes]] — el divisor, siempre anual
+- [[interes-compuesto]] — la fórmula exacta de la que sale la regla
+- [[inflacion]] — con precios que suben, la misma cuenta da, a ojo, cuánto tarda el dinero en comprar la mitad (ampliación mía, no es del material de la clase)
 
 ## Historial
 

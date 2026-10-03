@@ -1,0 +1,17 @@
+{
+  "opciones": 4,
+  "resta_fallo": 0,
+  "aprobado": 6,
+  "preguntas": [
+    { "correctas": ["b"], "explicacion": "Ninguna quiere lo que ofrece la otra en ese momento: es la doble coincidencia de deseos, el problema que el dinero como medio de cambio resuelve. Clave del test del centro: 1-b.", "concepto": "funciones-del-dinero", "angulo": "reconocer", "origen": "centro", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-04.md, p.1" },
+    { "correctas": ["c"], "explicacion": "Si los precios suben un 5 % anual y tus ingresos un 2 % anual, tu poder de compra baja aunque cobres más euros.", "concepto": "inflacion", "angulo": "transferir" },
+    { "correctas": ["b"], "explicacion": "Con ingresos irregulares se presupuesta con la media de 6-12 meses; con el mejor mes se gasta dinero que los meses flojos no tendrán. Clave del test del centro: 7-b.", "concepto": "presupuesto", "angulo": "detectar-error", "origen": "centro", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-04.md, p.5" },
+    { "correctas": ["a"], "explicacion": "Tasa de ahorro = ahorro ÷ ingresos × 100: 300,00 ÷ 1.500,00 = 20 % del mes y 500,00 ÷ 2.500,00 = 20 % del mes. Más euros ahorrados no es mayor tasa.", "concepto": "tasa-de-ahorro", "angulo": "distinguir" },
+    { "correctas": ["d"], "explicacion": "Valor y liquidez son cosas distintas: la moto vale 3.000,00 € pero convertirla en dinero rápido suele costar tiempo o un descuento.", "concepto": "liquidez", "angulo": "predecir" },
+    { "correctas": ["c"], "explicacion": "La inflación golpea el depósito de valor, no el medio de cambio ni la unidad de cuenta: el euro sigue aceptándose para pagar y sirviendo para comparar precios. Las funciones fallan por separado.", "concepto": "funciones-del-dinero", "angulo": "detectar-error", "origen": "examen anterior", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-04.md, p.6" },
+    { "correctas": ["b"], "explicacion": "Colchón = gastos del mes × meses a cubrir = 900 € × 5 = 4.500 €. Clave del test del centro: 9-b.", "concepto": "colchon-financiero", "angulo": "transferir", "origen": "centro", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-04.md, p.10" },
+    { "correctas": ["c"], "explicacion": "Las cenas con amigas son variables: la cifra la decides tú cada mes. El alquiler, el seguro y la cuota con contrato se repiten con la misma cifra y llegan igual.", "concepto": "gastos-fijos-y-variables", "angulo": "reconocer" },
+    { "correctas": ["a"], "explicacion": "El colchón se mide en meses de gastos cubiertos: 6.000,00 ÷ 1.000,00 € = 6 meses para Ana y 6.000,00 ÷ 2.000,00 € = 3 meses para Beto.", "concepto": "colchon-financiero", "angulo": "distinguir" },
+    { "correctas": ["d"], "explicacion": "Ahorro del mes = ingresos − gastos totales: 1.600,00 − (900,00 + 500,00) = 200,00 €. Julia solo ha restado los fijos.", "concepto": "presupuesto", "angulo": "detectar-error" }
+  ]
+}

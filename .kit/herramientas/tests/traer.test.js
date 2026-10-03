@@ -141,6 +141,34 @@ test('un choque real (el mismo cuerpo tocado en los dos lados) no se resuelve so
   if (r.volcado) carpetasDeVolcado.push(r.volcado.carpeta);
 });
 
+// La duda del alumno (callout al final de la nota) y la ampliación del otro sitio (alias, visto_en y una línea de
+// historial al final de la lista) añaden en el mismo punto: no se pisan, se quedan las dos.
+test('una duda aquí y la ampliación de la clase allí, en la misma nota de concepto, se juntan sin choque', () => {
+  const base = '---\ntipo: concepto\nalias: [a]\nvisto_en: [s01]\nrequiere: []\n---\n# Alfa\n\nLa primera letra.\n\n## Historial\n\n- **s01** · primera vez\n';
+  const raiz = cursoTemporal({ 'config/ajustes.json': ajustes(true), 'estudio/conceptos/alfa.md': base });
+  iniciarGit(raiz);
+  const remoto = conRemoto(raiz);
+  const otroSitio = clonarOtroSitio(remoto);
+
+  escribir(otroSitio, { 'estudio/conceptos/alfa.md': base.replace('alias: [a]', 'alias: [a, alpha]').replace('visto_en: [s01]', 'visto_en: [s01, s02]') + '- **s02** · la clase la llama alpha\n' });
+  git(otroSitio, 'add', '-A');
+  git(otroSitio, 'commit', '-q', '-m', 'sesion(s02): alfa (otro sitio)');
+  git(otroSitio, 'push', '-q', 'origin', 'main');
+
+  const duda = '\n> [!question]- Duda (2026-10-02)\n> ¿Y la segunda?\n>\n> La beta.\n';
+  escribir(raiz, { 'estudio/conceptos/alfa.md': base + duda });
+  git(raiz, 'add', '-A');
+  git(raiz, 'commit', '-q', '-m', 'dudas: alfa (aquí)');
+
+  const r = traer(raiz);
+  assert.equal(r.traido, true, JSON.stringify(r));
+  const nota = leer(raiz, 'estudio/conceptos/alfa.md');
+  assert.match(nota, /^alias: \[a, alpha\]$/m);
+  assert.match(nota, /^visto_en: \[s01, s02\]$/m);
+  assert.ok(nota.endsWith('- **s01** · primera vez\n- **s02** · la clase la llama alpha\n' + duda), nota);
+  assert.doesNotMatch(nota, /<<<<<<<|>>>>>>>/);
+});
+
 // El ensayo del plan 0.27: los dos lados avanzaron (divergencia), con un generado distinto (inicio.md, porque
 // cada lado cambió algo de su temario) y un concepto tocado en los dos lados (progreso.md, por filas) sin choque.
 test('divergencia sin choque real: se mezcla, con inicio.md y progreso.md resueltos solos', () => {

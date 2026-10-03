@@ -161,6 +161,21 @@ test('pregunta-doble: sin la línea "✍️ **Tu respuesta:**" no sigue el forma
   assert.equal(avisos(raiz, 'pregunta-doble').length, 0);
 });
 
+// #90: un examen ya hecho no se reescribe (falsearía lo que se preguntó), así que el aviso no se podría arreglar.
+test('pregunta-doble: en un examen ya corregido (con nota o con intentos) no avisa', () => {
+  const examen = fm => `---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\n${fm}\n---\n# Examen\n\n**1.** ¿Qué es alfa? ¿Por qué importa?\n\n✍️ **Tu respuesta:**\n`;
+  assert.equal(avisos(cursoTemporal({ 'estudio/examenes/01-examen.md': examen('nota: 6') }), 'pregunta-doble').length, 0);
+  assert.equal(avisos(cursoTemporal({ 'estudio/examenes/01-examen.md': examen('nota: 4\nintentos: 2\ntipo_examen: modulo') }), 'pregunta-doble').length, 0);
+});
+
+test('pregunta-doble: recién escrito, con el frontmatter de la skill (nota vacía con su comentario, intentos 0), avisa', () => {
+  const raiz = cursoTemporal({
+    'estudio/examenes/01-examen.md': '---\ntipo: examen\nunidad: 01\nfecha: 2026-10-02\nnota:                   # la rellena examen.js al corregir\n'
+      + 'intentos: 0             # la sube examen.js en cada corrección\n---\n# Examen\n\n**1.** ¿Qué es alfa? ¿Por qué importa?\n\n✍️ **Tu respuesta:**\n',
+  });
+  assert.equal(avisos(raiz, 'pregunta-doble').length, 1);
+});
+
 // examen v1 (tipo test): sin "✍️ **Tu respuesta:**", el enunciado va de "**N.**" a su primera opción "- [ ]".
 test('pregunta-doble: examen tipo test (con casillas, sin "✍️"), dos signos de interrogación, aviso', () => {
   const raiz = cursoTemporal({

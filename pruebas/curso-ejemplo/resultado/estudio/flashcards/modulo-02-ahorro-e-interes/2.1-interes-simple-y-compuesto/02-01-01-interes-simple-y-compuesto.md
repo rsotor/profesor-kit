@@ -4,23 +4,21 @@ sesion: 02-01-01-interes-simple-y-compuesto
 ---
 # Flashcards · 02-01-01-interes-simple-y-compuesto
 
-> Se responde mentalmente antes de desplegar.
-
-**Un depósito te promete "un 5 %". ¿Qué falta para poder valorarlo?**
+**Un amigo dice "te presto con un 5 % de interés". ¿Qué le falta a esa frase?**
 > [!success]- Respuesta
-> El periodo: 5 % anual y 5 % mensual no son lo mismo.
+> El periodo: no es lo mismo un 5 % anual que un 5 % mensual.
 
-**Pones 1.000,00 € a interés simple, 5 % anual, durante 3 años. ¿Cuántos intereses cobras en total?**
+**1.000,00 € a interés simple, 5 % anual, 3 años. ¿Cuánto tienes al final?**
 > [!success]- Respuesta
-> 1.000,00 € × 0,05 × 3 = 150,00 €.
+> 1.000,00 € + 1.000,00 € × 0,05 × 3 = 1.150,00 €.
 
-**Mismo caso, pero a interés compuesto: te salen 1.157,63 € y no 1.150,00 €. ¿Por qué?**
+**Mismo caso con interés compuesto: ¿por qué sale más (1.157,63 €)?**
 > [!success]- Respuesta
-> Porque los intereses de cada año se suman al capital y desde entonces generan intereses ellos también.
+> Porque los intereses de cada año se suman al capital y generan intereses ellos también.
 
-**Tu capital crece al 6 % anual compuesto. ¿En cuántos años se dobla, aproximadamente?**
+**Quieres saber a ojo cuánto tarda en doblarse un dinero al 8 % anual compuesto. ¿Qué haces y por qué es solo aproximado?**
 > [!success]- Respuesta
-> 72 ÷ 6 = 12 años (regla del 72). Es una aproximación: el cálculo exacto da 11,9.
+> 72 ÷ 8 = 9 años; es una aproximación, no sale de la fórmula exacta.
 
 ---
 Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[regla-del-72]]

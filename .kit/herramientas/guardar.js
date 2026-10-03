@@ -306,7 +306,7 @@ const lineaDeInforme = e => `  [${e.regla}] ${e.fichero} — ${e.detalle}`;
 const REGLAS_A_ARREGLAR = new Set([
   'no-se-vera-bien', 'nota-larga', 'concepto-sin-ejemplo', 'sesion-incompleta', 'flashcards-fuera-de-rango',
   'requiere-vacio', 'pregunta-doble', 'falta-info-mal-usado', 'progreso-sin-prueba',
-  'examen-sin-angulos', 'definicion-de-mas', 'pregunta-calcada',
+  'examen-sin-angulos', 'definicion-de-mas', 'pregunta-calcada', 'fuente-inexistente',
 ]);
 const TOPE_AVISOS = 10;
 

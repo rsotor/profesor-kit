@@ -1,61 +1,70 @@
 ---
 tipo: concepto
-bloques: [modulo-02]
+bloques: [2.2]
 visto_en: [02-02-01-ahorro-a-largo-plazo]
 dificultad: 2
 requiere: [aportacion-periodica, interes-compuesto]
 alias: []
-tags: []
-ejercicio: 02-02-01-ahorro-a-largo-plazo
+tags: [ahorro, interes]
+ejercicio: 02-02-01-empezar-antes-o-aportar-mas
 ---
 # Horizonte temporal
 
-> **En una frase:** El tiempo que el dinero va a estar ahorrado antes de usarlo; con interés compuesto es lo que más pesa.
+> **En una frase:** el horizonte temporal es el tiempo que el dinero va a estar ahorrado antes de usarlo, y con interés compuesto es lo que más pesa en cuánto crece.
 
 ## El problema
 
-Dos personas ahorran lo mismo cada año y a la misma tasa, pero una necesita el dinero en 3 años y la otra en 30. Si solo miras cuánto se aporta cada año, parecen iguales.
+Al planificar el ahorro se mira la cantidad ("¿cuánto aparto?"). Pero con interés compuesto la cantidad es
+solo la mitad de la historia: la otra mitad es cuántos años le das al dinero para trabajar.
 
 ## El ejemplo
 
-> **Supuesto:** aportación de 2.400,00 € **al final de cada año**, 5 % anual compuesto.
+El mismo ahorro de 2.400,00 € al final de cada año, a un 5 % anual compuesto:
 
 | Horizonte | Aportado | Intereses | Total |
 |---|---|---|---|
 | 3 años | 7.200,00 € | 366,00 € | 7.566,00 € |
 | 30 años | 72.000,00 € | 87.453,23 € | 159.453,23 € |
 
-Con 30 años, **los intereses (87.453,23 €) superan lo que has aportado (72.000,00 €)**. Con 3 años, apenas son una fracción pequeña.
+Con 10 veces más años aportas 10 veces más (72.000,00 € frente a 7.200,00 €), pero acabas con unas 21 veces
+más dinero: el resto lo ponen los intereses, que a 30 años ya son más que todo lo que aportaste.
 
-> [!info] Ampliación fuera de los apuntes
-> La clase afirma que "empezar antes pesa más que aportar un poco más", pero no lo demuestra. Comparación propia, misma cantidad total aportada (72.000,00 €), 5 % anual, aportación al final de cada año:
->
-> | Plan | Aportado | Total |
-> |---|---|---|
-> | 2.400,00 € al año durante 30 años | 72.000,00 € | 159.453,23 € |
-> | 3.600,00 € al año durante 20 años | 72.000,00 € | 119.037,43 € |
->
-> Aportando 1.200,00 € más al año pero 10 años menos, terminas con 40.415,80 € menos.
+## La fórmula
+
+Es la de la [[aportacion-periodica]], con `n` = el horizonte en años:
+
+$$ F = A \cdot \frac{(1+i)^n - 1}{i} $$
+
+Lo que aquí se mueve es `n`. Con `A` = 2.400,00 € e `i` = 0,05, pasar de `n` = 3 a
+`n` = 30 multiplica el factor de 3,1525 a 66,4388.
 
 ## El error típico
 
-Mirar solo la aportación ("ahorro poco, no merece la pena") y no los años: con interés compuesto, cada año extra añade más que el anterior.
+Pensar que el crecimiento es proporcional: "30 años es 10 veces más que 3, así que saldrá 10 veces más".
+Sale 21 veces más, porque cada año los intereses se suman al capital y empiezan a rendir ellos también.
+
+> [!info] Ampliación fuera de los apuntes
+> La clase afirma que "empezar antes pesa más que aportar un poco más", pero no lo demuestra. Con las cifras
+> de aquí sí se puede comprobar: quien empieza hoy con 2.400,00 € al año durante 30 años llega a
+> 159.453,23 €; quien espera 10 años y aporta 3.600,00 € al año (un 50 % más) durante 20 años llega a
+> 119.037,43 €. Para igualar a quien empezó antes, tendría que aportar unos 4.822,28 € al año, más del doble.
+> Es un caso concreto (5 % anual, 30 años): con retrasos pequeños, aportar más sí compensa (ver el ejercicio).
 
 ## Practícalo
 
-→ **[Qué pasa si cambia el horizonte](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo.md)**
+→ **[Empezar antes o aportar más](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-empezar-antes-o-aportar-mas.html)**
 
-Cambia los años y la aportación y mira qué pesa más; lo que debería sorprender es que 10 años menos no se compensan con 1.200,00 € más al año.
-
-## Visto desde tus ingresos irregulares
-
-Un mal mes no estropea el horizonte: lo que cuenta es seguir años y no parar. Si un año facturas poco, aportar menos ese año sigue siendo mejor que parar del todo, porque el tiempo es lo que pesa más.
+Mueve cuántos años espera Luis para empezar y cuánto aporta. Lo que debería sorprender: con pocos años de
+retraso aportar algo más lo compensa, pero a partir de cierto retraso ninguna aportación razonable alcanza a
+quien empezó antes.
 
 ## Relacionados
 
-- [[aportacion-periodica]] — el importe que se mantiene durante el horizonte
+- [[aportacion-periodica]] — la cantidad que se va sumando durante el horizonte
 - [[interes-compuesto]] — por qué el tiempo pesa tanto
-- [[inflacion]] — a 30 años, los 159.453,23 € compran menos que hoy (la clase no lo cuantifica)
+- [[regla-del-72]] — otra forma de ver cuánto tarda en crecer un capital
+- [[colchon-financiero]] — para no tener que sacar el ahorro antes de que acabe el horizonte
+- [[inflacion]] — a 30 años, los precios también habrán subido: 159.453,23 € de entonces no compran lo mismo que hoy
 
 ## Historial
 

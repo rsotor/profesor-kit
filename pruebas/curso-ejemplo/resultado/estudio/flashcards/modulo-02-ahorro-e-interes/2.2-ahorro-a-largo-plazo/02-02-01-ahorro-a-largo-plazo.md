@@ -4,23 +4,21 @@ sesion: 02-02-01-ahorro-a-largo-plazo
 ---
 # Flashcards · 02-02-01-ahorro-a-largo-plazo
 
-> Se responde mentalmente antes de desplegar.
-
-**Ingresas 2.000,00 € al mes y tu tasa de ahorro es del 10 %. ¿Cuánto ahorras al año?**
+**Ingresas 2.000,00 € al mes y tu tasa de ahorro es del 10 % del mes. ¿Qué aportación periódica anual sale?**
 > [!success]- Respuesta
-> 2.000,00 € × 0,10 = 200,00 € al mes, y × 12 = 2.400,00 € al año.
+> 200,00 € al mes, es decir, 2.400,00 € al año.
 
-**¿Qué hace que un ahorro sea una aportación periódica y no un ahorro de golpe?**
+**Aportas 2.400,00 € al final de cada año a un 5 % anual compuesto durante 3 años. ¿Cuánto tienes al final y cuánto son intereses?**
 > [!success]- Respuesta
-> Que es el mismo importe con el mismo periodo (cada mes, cada año), de forma regular.
+> 7.566,00 € en total; aportaste 7.200,00 €, así que 366,00 € son intereses.
 
-**Aportas 2.400,00 € al final de cada año durante 3 años, al 5 % anual compuesto. ¿Cuánto de los 7.566,00 € son intereses?**
+**El mismo ahorro pasa de 3 a 30 años (10 veces más tiempo). ¿Acabas con unas 10 veces más dinero? ¿Por qué?**
 > [!success]- Respuesta
-> 366,00 €: 7.566,00 € − 7.200,00 € aportados.
+> No, con unas 21 veces más (159.453,23 € frente a 7.566,00 €): los intereses también generan intereses, así que el crecimiento no es proporcional.
 
-**Dos personas aportan 2.400,00 € al año al 5 % anual, una 3 años y otra 30. ¿Qué es lo que más pesa en la diferencia?**
+**¿Por qué conviene tener un fondo de emergencia antes de ahorrar a largo plazo?**
 > [!success]- Respuesta
-> El horizonte temporal: con 30 años salen 159.453,23 €, y 87.453,23 € son intereses.
+> Para que un imprevisto no te obligue a sacar el ahorro a largo plazo y a perder los intereses que iba a dar.
 
 ---
-Conceptos que cubren: [[tasa-de-ahorro]] · [[aportacion-periodica]] · [[horizonte-temporal]]
+Conceptos que cubren: [[tasa-de-ahorro]] · [[aportacion-periodica]] · [[horizonte-temporal]] · [[colchon-financiero]]

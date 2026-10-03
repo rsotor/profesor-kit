@@ -312,7 +312,7 @@ fallidos, la restricción de leer antes de editar y fija el formato por código:
   sitios que piden `comprobar.js` antes de guardar estaba incompleta. Comprobado que no rompe: la prueba real no
   mira si se llamó a `comprobar.js`; los permisos ya cubren `guardar.js`.
 
-## Siguiente: un curso de ejemplo que mida más (revisado el 2026-10-03; sin empezar)
+## Siguiente: un curso de ejemplo que mida más (revisado el 2026-10-03, tres rondas del diablo; sin empezar)
 
 **Decisión de Roberto (2026-10-03):** no se publica versión hasta tener un curso de ejemplo mejor para las pruebas
 reales. La PR #88 no sube `.kit/VERSION`: se acumula. La próxima release depende de esto y del punto 1 de «que no se
@@ -326,43 +326,224 @@ notas, índice de sesión, flashcards, ejercicios ni `/repaso`: esos pasos solo 
 `comprobar.js` no dé errores. La explicación mala pero bien formada no la ve nada, y no se va a cubrir con esto: se
 dice así en el informe de la release.
 
-**Lo que se hace (tras el diablo), todo por código y sin llamadas nuevas:**
-1. **Lo que solo lee lo que ya queda en disco:**
-   - La respuesta del alumno aparece literal en la tabla del intento (no en blanco); tras `/dudas`, el marcador pasa
-     a `> [!question]- Duda` con respuesta.
-   - Del examen: tope de 3 preguntas por concepto y que el concepto de la clave exista en la unidad.
-   - `no-se-vera-bien` en rojo (`AGENTS.md` no le da excepción) y la comprobación de progreso al procesar, en cada
-     `/sesion` y no solo en la 01-01.
-   - Auditoría de la hoja de la 01-02 en rojo si falta, con la cifra normalizada (`742` o `27`, con o sin decimales):
-     lo manda la skill («compara los ficheros», «cuantifica»). `97,09` y la diapositiva 6, observación. Las mismas
-     anclas que la huella de calidad, que pasa al repo (el `pruebas/coste.js` pendiente).
-   - Cobertura: cada diapositiva u hoja con destino, como observación hasta ver que no da falsos positivos.
-   - Ejercicios: volver a pasar `config/casos/*.json` con `verificar-ejercicio.js --casos` (`--barrer` saca casos al
-     azar: solo observación).
-2. **Lo que toca el recorrido sin añadir pasos:** sembrar en la simulación del alumno, antes de `/dudas`, una fórmula
-   con `%` sin proteger y exigir que no quede `no-se-vera-bien` · plantar en la 02-02 un sinónimo de un concepto que
-   ya existe y reutilizar la comprobación de conceptos compartidos (regla 1, el duplicado con otro nombre).
-3. **`PROMPT_COMUN` de la prueba** (`prueba-real.js:286`) dice «si dudas… déjala como TODO»: empuja a no crear el
-   ejercicio que la skill manda crear. Decidir si se cambia (un alumno real no dice eso).
+**Lo que se hace, en orden** (reescrito tras la tercera ronda del diablo; cada comprobación dice si es rojo u
+observación y cómo se ve en rojo):
 
-- **Fuera:** un LLM juez que puntúe la explicación · un curso grande (más clases, índice lleno) · tocar el texto de
-  las clases 01-01 y 01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón
-  ancho: la regla dice «todo ejemplo», y un patrón por línea no sabe qué es un ejemplo) · un paso nuevo de «ordenar
-  avisos» (mide el camino fácil y pondría en rojo lo que `AGENTS.md` permite dejar) · un ancla en la 02-02 por su
-  «10 %», que es una tasa de ahorro y no incumple nada.
-- **Cómo sabremos:** cada comprobación nueva se pasa antes, sin gastar cuota, por lo ya escrito en los logs (las 25
-  ejecuciones de `/sesion`) y por el `resultado/` actual: cero rojos falsos; y se ve en rojo con un resultado
-  estropeado a mano. Después, una sola prueba entera en verde con todas. «Mejor» = esas comprobaciones activas y
-  calibradas, no «más pasos».
-- **Decisiones de Roberto, de una en una:** 1) ¿se guardan `config/claves/` y `config/revisiones/` en el `resultado/`
-  público? (el curso es inventado; el examen del resultado ya enseña veredictos) · 2) ¿se puede tocar la 02-02 para
-  plantar el sinónimo? (se prepara en segundo plano, fuera de la línea base de `/sesion`) · 3) `PROMPT_COMUN`.
-- **Abogado del diablo:** ronda completa 2026-10-03 (noche), 5 objeciones, las 5 aceptadas: 1) las anclas de la
-  auditoría incluían un defecto inventado (el «10 %» de la 02-02) y una cifra que no está en el material (97,09),
-  y no coincidían con la huella ya usada → rojo solo la hoja de la 01-02, normalizada · 2) la comprobación de
-  ejercicios no cazaba el caso que citaba, `--barrer` es al azar, y la causa estaba en el prompt de la prueba ·
-  3) el patrón de euros, fuera · 4) el paso de avisos sembrados, fuera: una siembra dentro de `/dudas` · 5) faltaba
-  el duplicado con otro nombre, calibrar contra los logs, y 3 de las 5 dudas «del autor» se resolvían leyendo.
+1. **Comprobaciones sobre lo que queda en disco.** Funciones de `pruebas/lib/pasos.js` con su test en
+   `.kit/herramientas/tests/pasos.test.js`. Se escriben y se calibran sin gastar cuota.
+
+   | Comprobación | Veredicto | Se ve en rojo si se estropea a mano… |
+   |---|---|---|
+   | La respuesta del alumno aparece literal en la tabla del intento | rojo | dejando la celda en blanco |
+   | Tras `/dudas`, el marcador pasa a `> [!question]- Duda` con respuesta | rojo | quitando la respuesta |
+   | Examen: tope de 3 preguntas por concepto, y el concepto de la clave existe en la unidad | rojo | con una cuarta pregunta del mismo concepto; con una clave de un concepto que no existe |
+   | `no-se-vera-bien` (`AGENTS.md` no le da excepción) y progreso al procesar, en cada `/sesion` | rojo | con un `%` sin proteger en una fórmula; quitando una fila de `progreso` |
+   | Auditoría de la hoja de la 01-02, con la cifra normalizada (`742` o `27`, con o sin decimales) | rojo | borrando la cifra de la auditoría |
+   | `97,09` y la diapositiva 6 de la 01-01 en la auditoría | observación | — |
+   | Cobertura: cada diapositiva u hoja con destino | observación, hasta ver que no da falsos positivos | — |
+   | Ejercicios: `config/casos/*.json` con `verificar-ejercicio.js --casos` | rojo si hay `.html` con casos y falla; sin casos a mano, observación (`--barrer` es al azar) | cambiando un `esperado` |
+   | **Caso 1 en `/sesion`** (genera lo que toca): la 01-02 sale con al menos un ejercicio | rojo (dos fórmulas con parámetros: `ejercicio/SKILL.md:59`). No se exige formato | **el `resultado/` actual ya lo incumple** (`01-02-01-presupuesto-personal.md:89`, un TODO «Crear un ejercicio…»): es un rojo esperado, de la frase vieja |
+   | **Caso 2 en `/sesion`** (falta información): la sesión 01-01 lleva `FALTA INFO:` en la línea del «patrón oro» | rojo: es el marcador de la regla 3. Anclada a ese fichero y a ese texto (la 01-02 tiene otro `FALTA INFO` con «diapositiva 6»). Lo que el profesor amplíe por su cuenta no se valida | quitando esa línea |
+   | **`/ejercicio`** deja un ejercicio del concepto pedido | rojo. Cuenta un fichero nuevo **o modificado** desde que empieza el paso (como `pasoRepaso`, `prueba-real.js:570-575`) y enlazado desde `ejercicio:` o `## Practícalo` de la nota: con la frase nueva, `/sesion` puede haberlo creado ya y `/ejercicio` lo amplía o dice «ya tienes uno» | sin tocar ningún ejercicio en el paso |
+   | **Sinónimo** «fondo de emergencia» (comprobación propia: `conceptoCompartido` busca por título contenido y no lo caza, `pasos.js:669-675`) | rojo si una nota distinta de la del colchón financiero lo lleva en el título o en un alias. Verde si la nota del colchón lleva ese alias o hay un `TODO` que pregunta si son lo mismo (la 02-02 se prepara con el prompt de segundo plano del producto, `preparar.js:154-157`, que manda TODO ante la duda) | creando una nota `fondo-de-emergencia.md` |
+
+2. **Antes de tocar el curso, sin cuota:** probar `fusionarNotaDeConcepto` a mano con tres versiones de
+   `colchon-financiero.md` (base · con la duda del alumno al final · con el alias y una línea en `## Historial`). El
+   paso de `/dudas` escribe en el primer concepto por orden alfabético (`pasos.js:34-38`), que es el colchón, y la
+   02-02 se lanza antes: si las dos ramas añaden al final, `--juntar` puede chocar (`lib/mezcla.js:103-104`) y saldría
+   un rojo de la mezcla que parece de la regla 1. Si choca: TODO, decidir con Roberto entre arreglar la mezcla (es un
+   caso real: un alumno escribe una duda en una nota que la preparación amplía), mover la simulación a otro concepto,
+   o cambiar de sinónimo.
+3. **Cambios en el curso y en la prueba:**
+   - Clase 02-02: una diapositiva que define «fondo de emergencia» (dinero líquido para cubrir unos meses de gastos
+     ante un imprevisto) sin decir que es el colchón financiero.
+   - `PROMPT_COMUN` (`prueba-real.js:286`) pasa a «No me preguntes nada: decide tú. Al terminar, guarda.» en todos
+     los pasos de primer plano. El de segundo plano es del producto y no se toca.
+   - `no-se-vera-bien` también tras `/dudas` y `/ejercicio`, sin siembra (ver «Estado»).
+   - `config/claves/` y `config/revisiones/` se guardan en el `resultado/` de la prueba.
+4. **Una prueba real entera con todo**, con Claude. Lo único obligatorio que gasta cuota.
+5. **Opcional, al final (Roberto, 2026-10-03): dos pasos sueltos con Codex**, solo donde el resultado depende del
+   modelo: `--asistente codex --solo "/sesion 01-02"` (¿crea el ejercicio con la frase nueva?) y
+   `--asistente codex --solo "preparar.js --lanzar 02-01, 02-02"` (el sinónimo; `--solo` ejecuta también juntar y
+   los compartidos). No una entera: la cuota de Codex es la más corta, y el examen y la corrección no cambian con
+   este plan. Sin esto, de Codex solo hay la calibración sobre su resultado guardado del 2026-10-02 (frase vieja).
+
+- **Estado (2026-10-03, noche):**
+  - Punto 1, hecho y sin enganchar en `prueba-real.js`: las funciones están en `pruebas/lib/pasos.js`
+    (`sesionConEjercicio`, `respuestasEnLaTabla`, `dudasRespondidas`, `conceptosDelExamen`, `procesarClase`,
+    `auditoriaRecoge`, `coberturaDelMaterial`, `ejerciciosConCasos`, `faltaInfoEnSesion`, `fotoDeEjercicios`,
+    `ejercicioDelConcepto`, `sinonimoDelConcepto`), con 23 tests en `pasos.test.js`. Calibradas sobre `resultado/`,
+    `resultado-codex-macos/` y las copias por paso de `pruebas-local/prueba-real-pasos-*/`: verdes salvo dos rojos
+    verdaderos (la 01-02 de Claude sin ejercicio; el examen de Codex sin tabla de intento, porque su corrección
+    falló aquel día). Un rojo falso corregido al calibrar: la cobertura no reconocía filas «| 2 · El trueque |».
+    Estropeando a mano una copia del `resultado/` se ponen en rojo las filas 4, 5, 8 y 10 (comprobado).
+  - Afinado al revisar: si `/sesion` ya creó y enlazó el ejercicio del concepto que pide el paso de `/ejercicio`, un
+    buen profesor puede contestar «ya tienes uno» sin tocar nada, y `ejercicioDelConcepto` daría rojo falso. Al
+    enganchar: el paso pide el ejercicio de un concepto con fórmula que aún no tenga ejercicio enlazado; si todos
+    lo tienen, vale el enlace que ya existe, con observación.
+  - Punto 2, hecho: **la mezcla choca.** Con la nota del colchón de la última prueba (base: tras `/sesion 01-02`;
+    un lado: tras `/dudas`, con la duda respondida al final; el otro: alias nuevo y una línea al final de
+    `## Historial`), `git merge` choca y `resolverConflictos` devuelve `ok: false`. Si la preparación solo añade el
+    alias y `visto_en` (cabecera), se junta sin choque. Es un fallo del kit con un caso real (el alumno deja una
+    duda en una nota que la preparación amplía): los dos lados añaden al final del cuerpo. **Decidido (Roberto):
+    se arregla la mezcla ahora** («es un fallo que se puede dar y no podemos mirar para otro lado»). La duda
+    simulada se queda en el colchón y el sinónimo también: así la prueba real cubre el caso. En marcha, en
+    `.kit/herramientas/lib/mezcla.js`; al tocar el git del alumno, lleva revisión independiente antes de darlo
+    por bueno.
+  - Mezcla arreglada (`lib/mezcla.js`, `juntarCuerpo`): cuando los dos lados solo añaden en el mismo punto del
+    cuerpo de una nota de concepto, se quedan los dos añadidos (primero el del otro lado, después el del curso
+    principal); si alguno cambia o borra lo que ya existía, sigue siendo choque. 6 tests en `mezcla.test.js` y 1 en
+    `traer.test.js`. Con la nota real del colchón: alias, `visto_en`, línea de historial y el callout de la duda
+    entero, sin marcadores. Falta su línea en el CHANGELOG de la siguiente release (hoy el CHANGELOG no tiene
+    sección sin publicar).
+  - Punto 3, hecho salvo la siembra: comprobaciones enganchadas en `prueba-real.js` (22 pasos: «lo que deja
+    /sesion <id>» tras cada clase, «sinónimo de un concepto que ya existe» y «ejercicios con casos» nuevos; el resto
+    dentro de los pasos que ya había), `PROMPT_COMUN` nuevo, claves y revisiones al `resultado/`, la diapositiva 5
+    de la 02-02 con el «fondo de emergencia» y `sinonimos` en `clases.json`. `npm test` 888 de 889 (1 omitido) antes
+    del sinónimo; después, `prueba-real.test.js` y `pasos.test.js` 126 de 126. Los nombres de los pasos cambian:
+    las copias guardadas de `--desde`/`--solo` ya no valen hasta la próxima entera.
+  - **Decidido (Roberto): sin siembra del `%`.** El diseño no decía en qué nota iba ni si la fórmula era del
+    alumno, y exigir al profesor que reescriba texto del alumno no es regla explícita. En su lugar, `no-se-vera-bien`
+    se mira también tras `/dudas` y `/ejercicio` (`sinNoSeVeraBien`): mide lo que escribe el profesor y no cuesta nada.
+  - Revisión independiente de la mezcla, hecha: 1 bloqueante (una nota con líneas que parecen marcadores de git
+    quedaba rota y se daba por buena) y 2 menores (línea repetida con añadidos de prefijo común; línea de lista
+    huérfana tras un callout). Corregidos: marcadores de tamaño 31, prefijo común una sola vez y el orden según la
+    lista. Repasados los casos con el montaje de la revisión: se juntan bien, y siguen chocando los dos lados que
+    cambian la misma línea y un contenido con marcadores de 31.
+  - Antes de la prueba entera: mezclar la rama local `arreglos-89-90-92` (#89, #90, #92; cambia `AGENTS.md`:
+    formato de `fuente:` y `pregunta-doble`). Mirado: no choca con lo de esta rama (solo coinciden en
+    `docs/arquitectura.md`, en zonas distintas), y su `comprobar.js` no da `fuente-inexistente` sobre los dos
+    resultados guardados. En el resultado de la entera no debe salir `fuente-inexistente`.
+  - **Prueba real entera (2026-10-03, 23:1x, Claude/sonnet, commit `c42fc59`, con `arreglos-89-90-92` mezclada):
+    21/22, corrección 6/6.** Se lanzó por error (`prueba-real.js --ayuda`: el script ignora las opciones que no
+    conoce y arranca la entera); Roberto decidió dejarla terminar. Arreglado después: `cli()` rechaza opciones desconocidas y argumentos sueltos
+    antes de lanzar nada (con test).
+    - Rojo, `lo que deja /sesion 01-02`: sin ejercicio. Con la frase nueva ya no deja un TODO: escribe «Ejercicios:
+      ninguno. Las cuentas son de un paso… nada cambia de forma interesante» (la línea de por qué que admite
+      `sesion/SKILL.md`, punto 6). Después, el paso de `/ejercicio` sí creó uno del colchón (un concepto de esa
+      clase), con casos a mano que pasan. Tres ejecuciones, tres resultados (TODO «aquí sí algo se mueve» · ninguno
+      con motivo · Codex, tres ejercicios): el criterio de la skill deja demasiado al juicio. **Decidido (Roberto):
+      se concreta el punto 6 de `sesion/SKILL.md`** y la comprobación sigue en rojo. Texto elegido (Roberto): si
+      algún concepto de la clase tiene fórmula con datos que se pueden cambiar o un umbral, la clase lleva al menos
+      un ejercicio (el del concepto donde más cambia el resultado); ni `TODO` ni «ninguno». Uno por concepto se
+      descartó por coste. Escrito en la skill. Es un cambio que el alumno nota: falta su línea en el CHANGELOG.
+      Comprobado con `--solo "/sesion 01-02"` (2026-10-03, 118 s, 0 permisos denegados; una sola ejecución): crea
+      `01-02-01-mes-flojo.html`, enlazado desde `presupuesto-personal` y `tasa-de-ahorro`; sobre ese resultado
+      (`pruebas-local/solo-claude-code/`) salen verdes ejercicio, progreso, auditoría y cobertura 10/10. Para la
+      release falta una entera sobre el commit final.
+    - Caso 2 verde (`FALTA INFO:` del patrón oro, ya sin que la frase lo pida). `/dudas`, `/ejercicio`, clave del
+      examen, tabla del intento y ejercicios con casos, verdes. 0 `no-se-vera-bien`, 0 `fuente-inexistente`
+      (la 01-02 escribe `fuente:` como lista con sus dos ficheros).
+    - La mezcla arreglada se ejercitó de verdad: la nota del colchón lleva la línea de historial de la 02-02 y el
+      callout de la duda, sin marcadores, y `--juntar` pasó.
+    - Sinónimo verde, pero mide menos de lo previsto: el alias «fondo de emergencia» lo puso ya `/sesion 01-02`
+      por su cuenta (conocimiento general), antes de preparar la 02-02, que lo enlazó al colchón.
+    - Cobertura (observación): falsos positivos. No reconoce «Diap. N» ni «Plantilla · hojas …»: 4 de 10 en la
+      01-02 y 0 de 6 en la 02-02 con todas las diapositivas cubiertas. Arreglado después («Diap. N», con test):
+      sobre este resultado da 9/9, 10/10, 6/6 y 6/6. Sigue como observación.
+    - 5 permisos denegados (`cat`, `sed -i`, `for … cat` en examen y repaso): lo que `AGENTS.md` prohíbe.
+  - **0.30.0 preparada (2026-10-03, noche):** entrada del CHANGELOG (texto aprobado por Roberto, con la oferta
+    «Si ya tenías tu curso» de crear los ejercicios que faltan) y `.kit/VERSION`. Recoge lo acumulado desde la
+    0.29.0: #82, #88, #89, #90, #92, la mezcla y el punto 6 de `/sesion`. Falta: la prueba entera sobre ese commit,
+    subir la rama y el PR («Closes #89, #90, #92»). Opcional, después: los dos pasos con Codex.
+  - **Prueba entera sobre la 0.30.0 (`6141684`, 2026-10-03, 23:3x): 20/22, corrección 6/6.** No vale para
+    publicar. Lo de este plan, en verde: la 01-02 sale con ejercicio (`01-02-01-colchon.html`), `FALTA INFO` del
+    patrón oro, `/dudas`, `/ejercicio`, clave, tabla, sinónimo, mezcla. 0 `no-se-vera-bien`, 0 pedagógicos, 0
+    `fuente-inexistente`, 3 permisos denegados. Los dos rojos son de comprobaciones que ya existían:
+    - `/examen (otra vez, reutiliza falladas)`: el profesor escribió `de: "01-examen-2026-10-03, p.1"` y la
+      comprobación exige la ruta entera con carpeta y `.md`. La skill solo dice `de: "<examen donde la falló>,
+      p.<n>"`, ningún código lee ese campo, y el comentario de la comprobación dice «basta con que identifique el
+      examen anterior». Las 4 falladas sí se reutilizaron. **Decidido (Roberto): se relaja la comprobación**: vale
+      también el nombre del examen sin carpeta ni `.md`; otro examen sigue siendo rojo. Hecho, con test; sobre la
+      copia de ese paso (`pruebas-local/prueba-real-pasos-claude-code/14-…/curso`) da verde, 4 de 4.
+    - `conceptos compartidos`: la 02-02 creó `aportaciones-con-interes-compuesto` (su diapositiva 3), con
+      `requiere: [aportacion-periodica, interes-compuesto]`. La comprobación da por duplicado cualquier nota de
+      esas clases cuyo título contenga «interés compuesto».
+      **Decidido (Roberto): rojo solo si la nota con el nombre dentro no declara el concepto en su `requiere`**;
+      si lo declara, se apoya en él y queda como observación (cambia en parte lo decidido en la #56; punto débil
+      asumido: un duplicado que enlace al original sale como observación). Hecho, con tests; sobre el `resultado/`
+      de esta prueba da verde con la observación.
+    Con las dos comprobaciones ajustadas, falta repetir la entera sobre el commit final.
+  - **Tercera entera (`8ae5d75`, 2026-10-04, 00:1x): 20/22, corrección 6/6.** Las dos comprobaciones ajustadas
+    salen verdes. El rojo es un fallo real del kit: `--juntar` chocó en `colchon-financiero.md`, y «conceptos
+    compartidos» cayó detrás (sin juntar no hay notas del módulo 2).
+    - Causa (reproducida con las tres versiones reales): `git merge-file` sale con el **número** de trozos en
+      conflicto y `juntarCuerpo` solo seguía con código 1. Aquí había dos trozos, los dos de solo añadir:
+      `/ejercicio` puso «## Practícalo» y la preparación «## Antes de ahorrar a largo plazo (clase 2.2)» en el
+      mismo punto, y al final la duda y la línea de historial. Ni mi revisión ni la independiente lo vieron.
+    - Arreglado (`mezcla.js`: cualquier código de 1 a 127), con dos tests; el nuevo falla sin el arreglo. Sobre el
+      curso que dejó la prueba, con la mezcla corregida y sin llamar al asistente: `preparar.js --juntar` pasa, la
+      nota queda con las dos secciones, el alias, el ejercicio, la línea de historial y la duda, sin marcadores, y
+      las comprobaciones de después de juntar salen verdes. Segunda revisión independiente, hecha: nada
+      bloqueante (tres trozos de solo añadir se juntan; con uno que cambia una línea, choque sin escribir nada;
+      un error de `merge-file` sale 255 y se rechaza; con más de 127 trozos el tope es 127 y los recorre todos).
+    - Hallado de paso: sin juntar, «lo que deja /sesion 02-0x» salía verde vacío («no hay nota de sesión»). Ahora
+      `procesarClase` da rojo si la clase no tiene nota de sesión (con test).
+    - `npm test` 907 de 908 (1 omitido). Falta la entera en verde sobre el commit final.
+  - **Cuarta entera (`d8164a6`, 2026-10-04, 00:3x): 22/22, corrección 6/6.** Es la que vale para la 0.30.0. La
+    01-02 con su ejercicio, `FALTA INFO` del patrón oro, `--juntar` sin choque, compartidos y sinónimo en verde.
+    0 errores de `comprobar.js`, 0 `no-se-vera-bien`, 0 `fuente-inexistente`, 1 aviso pedagógico (`requiere-vacio`),
+    4 permisos denegados. Falta: subir la rama y el PR («Closes #89, #90, #92»). Opcional: los dos pasos con Codex.
+  - **Para las siguientes (Roberto, 2026-10-04):**
+    - La prueba ya imprime cada paso con su ✅/❌ al terminar; las enteras de esta noche se lanzaron con la salida
+      pasada por un filtro (`sed | cut`) que la retiene hasta el final, y no se veía nada mientras corrían. Se
+      lanza sin filtro, para poder cortarla al ver un rojo.
+    - Mejora de la prueba, sin hacer: que pare sola al primer rojo (`--parar-al-primer-rojo`, o siempre que falle
+      un paso del que dependen los siguientes). En la tercera entera `--juntar` chocó y aun así se gastó el
+      `/repaso` entero, con los pasos de después sin nada que medir.
+- **Fuera:** un LLM juez que puntúe la explicación (la explicación mala pero bien formada no la ve nada: se dice así
+  en el informe de la release) · un curso grande (más clases, índice lleno) · tocar el texto de las clases 01-01 y
+  01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón ancho: la regla dice
+  «todo ejemplo», y un patrón por línea no sabe qué es un ejemplo) · un paso nuevo de «ordenar avisos» (mide el
+  camino fácil y pondría en rojo lo que `AGENTS.md` permite dejar) · un ancla en la 02-02 por su «10 %», que es una
+  tasa de ahorro y no incumple nada.
+- **Cómo sabremos:** cada comprobación da el veredicto esperado, no «todo en verde». Sin cuota: sobre el
+  `resultado/` actual y los logs de `pruebas-local/medida-sesion/`, cero rojos falsos (el caso 1 sale en rojo y es
+  correcto) y cada una se ve en rojo con el estropeo de su fila. Esos datos son de la frase vieja y sin sinónimo:
+  el caso 2 y el sinónimo nacen en verde trivial, y solo los mide de verdad la prueba entera. En la prueba entera,
+  un rojo que venga del kit (p. ej. la 01-02 vuelve a salir sin ejercicio) abre su propio punto en este plan: no se
+  ablanda la comprobación ni se cuenta como fallo de la medida. «Mejor» = esas comprobaciones activas y calibradas,
+  no «más pasos».
+- **Decidido (Roberto, 2026-10-03):**
+  - `config/claves/` y `config/revisiones/` al `resultado/` (el curso es inventado), para releer si una clave está mal.
+  - La 02-02 se puede tocar: es un curso de ejemplo y se puede evolucionar.
+  - La frase nueva, en todos los pasos: cuándo va un TODO o un FALTA INFO lo dice `AGENTS.md`, y la prueba lo mide
+    en vez de dictarlo. Su criterio: donde un paso se da por bueno solo con terminar (`/ejercicio` solo miraba el
+    código de salida, `prueba-real.js:425-426`; `/dudas` acepta cualquier respuesta), la frase vieja deja pasarlo
+    con un TODO. Coste asumido: `/sesion` y `/ejercicio` hacen más llamadas y dejan de ser comparables con lo medido.
+  - Dos casos de uso: el profesor genera lo que toca, y cuando le falta información deja el marcador que define la
+    regla (el término da igual mientras sea el de la regla: es lo que permite buscar luego dónde falta).
+  - El sinónimo: «fondo de emergencia» = colchón financiero (01-02, diapositiva 6).
+  - El orden: comprobaciones calibradas sin cuota → cambios en el curso y la prueba → una prueba entera.
+- **Decidido (Roberto, 2026-10-03, tras la tercera ronda):** el caso «falta información» no se mide dentro de
+  `/ejercicio`. Se había decidido pedir en la misma petición un ejercicio del patrón oro; la tercera ronda lo tumba: `ejercicio/SKILL.md:26-39` ya manda parar si
+  nada se mueve, y un hecho histórico no se mueve, haya material o no. Que no nazca no mide la regla, y ponerlo en
+  rojo si nace como ampliación contradice «las ampliaciones no se validan». En este curso no hay un concepto sin
+  material que sí se pueda practicar (el M1 de la diapositiva 7 también es una definición). Se quita de la
+  petición: la regla queda medida en `/sesion` (caso 2), y `/ejercicio` mide solo «genera lo que toca».
+- **Observaciones del kit, sin decidir:** `comprobar.js:166` cuenta `TBD` como aviso, pero `lib/generados.js:16-17`
+  solo lleva a **pendientes** `FALTA INFO:` y `TODO:` · `ejercicio/SKILL.md` no dice qué hacer cuando el concepto se
+  puede practicar pero no tiene material.
+- **Rama:** `curso-ejemplo-mide-mas` (local, sobre `main` con la #88 mezclada: rebase hecho el 2026-10-03).
+- **Abogado del diablo:**
+  - Ronda completa 2026-10-03 (primera sesión), 5 objeciones, las 5 aceptadas: 1) las anclas de la auditoría
+    incluían un defecto inventado (el «10 %» de la 02-02) y una cifra que no está en el material (97,09), y no
+    coincidían con la huella ya usada → rojo solo la hoja de la 01-02, normalizada · 2) la comprobación de
+    ejercicios no cazaba el caso que citaba, `--barrer` es al azar, y la causa estaba en el prompt de la prueba ·
+    3) el patrón de euros, fuera · 4) el paso de avisos sembrados, fuera: una siembra dentro de `/dudas` · 5) faltaba
+    el duplicado con otro nombre, calibrar contra los logs, y 3 de las 5 dudas «del autor» se resolvían leyendo.
+  - Ronda corta 2026-10-03 (segunda sesión) sobre tocar la 02-02, la frase nueva y los dos casos, 4 objeciones:
+    1) caso 2 anclado a la sesión 01-01 y a «patrón oro», aceptada; que no sea rojo si amplía con 💬, rechazada (el
+    marcador es regla explícita) · 2) caso 1 sin exigir formato, aceptada; pasarlo a observación, rechazada · 3)
+    frase nueva solo en `/sesion`, rechazada por Roberto (ver «Decidido») · 4) el sinónimo, de un concepto del
+    módulo 1, inequívoco y fuera de los compartidos de `clases.json`, aceptada.
+  - Ronda completa 2026-10-03 (segunda sesión) antes de implementar, 5 objeciones: 1) el sinónimo no lo cazaba
+    `conceptoCompartido` y la 02-02 usa el prompt de segundo plano → comprobación propia, aceptada · 2) el colchón es
+    el concepto donde escribe `/dudas` y puede chocar al juntar → probar la mezcla a mano antes, aceptada · 3) el
+    patrón oro en `/ejercicio` sale verde por la razón equivocada → se quita de la petición (Roberto), aceptada · 4) «ejercicio nuevo»
+    daba rojo falso si `/sesion` ya lo creó → nuevo o modificado y enlazado, aceptada · 5) «Lo que se hace» y «Cómo
+    sabremos» no recogían lo de hoy y la meta «en verde» chocaba con un rojo ya conocido → sección reescrita,
+    aceptada.
 
 ## Siguiente: prueba real por piezas
 

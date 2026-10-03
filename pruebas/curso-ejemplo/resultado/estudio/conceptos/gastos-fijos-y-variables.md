@@ -1,19 +1,19 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
+bloques: [1.2]
 visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
 requiere: [presupuesto]
 alias: [gastos fijos, gastos variables]
-tags: []
+tags: [presupuesto, gastos]
 ---
 # Gastos fijos y variables
 
-> **En una frase:** Un gasto es fijo si se repite cada mes con casi la misma cifra sin que decidas nada; es variable si la cifra la decides tú cada mes.
+> **En una frase:** un gasto es fijo si se repite con (casi) la misma cifra y no depende de lo que decidas ese mes; es variable si la cifra la decides tú cada mes.
 
 ## El problema
 
-Si mezclas todo en un solo total, no ves qué puedes recortar un mes flojo y qué no.
+Si metes todos los gastos en un saco, no sabes cuáles puedes recortar un mes flojo y cuáles te llegan igual.
 
 ## El ejemplo
 
@@ -26,11 +26,9 @@ Si mezclas todo en un solo total, no ves qué puedes recortar un mes flojo y qu�
 | Transporte | Variable | 60,00 € |
 | Ocio | Variable | 120,00 € |
 
-Fijos: **715,00 €** · Variables: **480,00 €** · Total: **1.195,00 €**.
+Total fijos: **715,00 €** · Total variables: **480,00 €** · Total gastos: **1.195,00 €**.
 
-> [!warning] Cifra en duda
-> La hoja de cálculo de la clase pone las suscripciones a 52,00 €, no a 25,00 €. Ver la auditoría de la
-> sesión [[01-02-01-presupuesto-personal]]. Aquí se mantienen las cifras de las diapositivas.
+Un mes flojo solo puedes tocar los 480,00 € de variables; los 715,00 € de fijos llegan igual.
 
 ## El error típico
 
@@ -39,13 +37,13 @@ cifra exacta la decides tú, y eso es lo que define "variable".
 
 ## Visto desde tus ingresos irregulares
 
-Los fijos hay que pagarlos aunque el mes sea malo: son lo primero que tu ingreso medio tiene que cubrir. Los
-variables son tu margen de maniobra cuando facturas poco.
+En un mes de 1.300,00 € solo puedes recortar variables. Tu suelo de gasto son los fijos (715,00 € en el
+ejemplo): conviene que quepan en tu mes más flojo.
 
 ## Relacionados
 
-- [[presupuesto]] — de donde salen los gastos
-- [[colchon-financiero]] — se mide en meses de estos gastos
+- [[presupuesto]] — donde se suman los dos tipos
+- [[colchon-financiero]] — se calcula con el total de gastos
 
 ## Historial
 

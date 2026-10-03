@@ -158,12 +158,18 @@ curso sea la raíz de su repositorio (`lib/git.js#esRepo`), no una carpeta dentr
 (símbolo de moneda o `%` sin proteger dentro de una fórmula, `[[nota|alias]]` sin escapar dentro de una
 tabla) · `obsidian-oculta-ejercicios` (falta activar "Detectar todas las extensiones" y hay `.html`).
 
+**El material y su sesión (aviso, también "se arregla siempre")**: `fuente-inexistente` (#92: el `fuente:` de una
+sesión dice `inbox/…` y no casa con ningún fichero —la carpeta sola, texto libre, un nombre mal copiado— y queda
+material de inbox sin citar; sin material sin citar no avisa, para no señalar un fichero que el alumno borró). Los
+nombres se comparan en Unicode NFC (`lib/material.js#nombreDe`, #89): macOS puede guardar las tildes en NFD.
+
 **Lint pedagógico (aviso, "se arreglan siempre antes de guardar salvo motivo concreto")**: `nota-larga`
 (no cabe en una pantalla) · `concepto-sin-ejemplo` (falta o está vacía "## El ejemplo", con o sin añadido en el título) ·
 `sesion-incompleta` (falta "Cobertura", "Auditoría" o "Para pensarlo despacio") ·
 `flashcards-fuera-de-rango` · `requiere-vacio` (dificultad 3 sin prerrequisito declarado) ·
 `pregunta-doble` (≥2 signos `?` en el enunciado de una pregunta de examen — libre, hasta `✍️ **Tu respuesta:**`,
-o tipo test, hasta su primera opción `- [ ]`) · `examen-sin-angulos`, `definicion-de-mas` y `pregunta-calcada`
+o tipo test, hasta su primera opción `- [ ]`; solo en un examen sin corregir, sin `nota` ni intentos: uno ya hecho
+no se reescribe, #90) · `examen-sin-angulos`, `definicion-de-mas` y `pregunta-calcada`
 (#55, solo en un examen tipo test recién escrito, `intentos: 0`, y sin contar las preguntas del centro: cada
 pregunta nueva lleva `angulo` en la clave, al menos 3 distintos —2 en `lo-que-falta`—, como mucho una de
 definición, y ningún enunciado comparte 8 palabras seguidas con la nota de su concepto) · `falta-info-mal-usado` (`FALTA INFO` dentro de
@@ -347,7 +353,7 @@ código — y por eso es la única que usa un LLM de verdad y nunca corre en el 
   procesan en primer plano; la que no hace falta para ese examen se lanza con `preparar.js --lanzar` en segundo plano justo antes de
   `/dudas`, sigue corriendo durante `/ejercicio` y el examen, y se junta con `--juntar` en cuanto el
   examen está corregido — el caso de verdad con choques posibles (plan 0.22, §4). Guarda el resultado en
-  `curso-ejemplo/resultado/` (estudio, `config/alumno.md` y `RESUMEN.md`) y borra siempre la temporal.
+  `curso-ejemplo/resultado/` (estudio, `config/alumno.md`, `config/claves/`, `config/revisiones/` y `RESUMEN.md`) y borra siempre la temporal.
   `--sin-llm` monta y prueba el propio ejecutor sin gastar cuota (también se salta el `--lanzar`: nunca
   llama a `claude`) — es lo único que corren los tests del repo y el CI nunca la lanza con un LLM de
   verdad. Ver CONTRIBUTING.md, "Prueba real del profesor", para cuándo es obligatoria.

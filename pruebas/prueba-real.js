@@ -283,7 +283,7 @@ function avisarPaso(paso) {
   if (!process.env.NODE_TEST_CONTEXT) console.log(lineaDePaso(paso));
 }
 
-const PROMPT_COMUN = 'No me preguntes nada: si dudas, toma la opción más conservadora y déjala como TODO o FALTA INFO. Al terminar, guarda.';
+const PROMPT_COMUN = 'No me preguntes nada: decide tú. Al terminar, guarda.';
 
 function promptSesion(clase) {
   const ficheros = clase.ficheros.map(f => `estudio/inbox/${f}`).join(' y ');
@@ -294,6 +294,41 @@ function pasoSesion(ctx, clase) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
   const r = invocar(ctx, promptSesion(clase), `sesion-${clase.id}`);
   return { ok: r.ok, detalle: r.ok ? `${ctx.lanzador.nombre} terminó (código ${r.codigo})` : `${ctx.lanzador.nombre} falló (código ${r.codigo}${r.agotado ? ', tiempo agotado' : ''})`, salidaLlm: r.salida };
+}
+
+// Lo que deja una clase procesada, comprobado en disco (plan vivo, «un curso de ejemplo que mida más», fila 4 y siguientes):
+// siempre `procesarClase` (rojo: no-se-vera-bien, progreso al procesar) y `coberturaDelMaterial` (observación); y, según lo
+// que declare la clase en clases.json, `sesionConEjercicio` (`ejercicio: true`), `faltaInfoEnSesion` (`falta_info`) y
+// `auditoriaRecoge` (`auditoria`). `progresoAntes`: el progreso.md de antes de procesarla (null si no se guardó: una clase
+// preparada en segundo plano). Todo ok = el paso ok; el detalle, las partes unidas con « · ».
+function comprobacionesDeClase(ctx, clase, progresoAntes = null) {
+  const partes = [
+    p.procesarClase(ctx.destino, { id: clase.id, progresoAntes }),
+    p.coberturaDelMaterial(ctx.destino, { id: clase.id, ficheros: clase.ficheros.map(fichero => path.join(ctx.datosCurso, 'estudio', 'inbox', fichero)) }),
+  ];
+  if (clase.ejercicio) partes.push(p.sesionConEjercicio(ctx.destino, clase.id));
+  if (clase.falta_info) partes.push(p.faltaInfoEnSesion(ctx.destino, { id: clase.id, ancla: clase.falta_info.ancla }));
+  if (clase.auditoria) partes.push(p.auditoriaRecoge(ctx.destino, { id: clase.id, rojo: clase.auditoria.rojo, observar: clase.auditoria.observar }));
+  return { ok: partes.every(x => x.ok), detalle: partes.map(x => x.detalle).join(' · ') };
+}
+
+const NOMBRE_LO_QUE_DEJA = id => `lo que deja /sesion ${id}`;
+function pasoLoQueDeja(ctx, clase, progresoAntes = null) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  return comprobacionesDeClase(ctx, clase, progresoAntes);
+}
+
+// Último paso de la prueba real sobre los ejercicios: los que tengan casos a mano en config/casos/ los pasan.
+function pasoEjerciciosConCasos(ctx) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  return p.ejerciciosConCasos(ctx.destino);
+}
+
+// Un concepto que una clase nombra de otra forma que el que ya existe (clases.json, `sinonimos`): ni nota aparte ni duplicado.
+function pasoSinonimos(ctx, sinonimos) {
+  if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
+  const rs = sinonimos.map(s => p.sinonimoDelConcepto(ctx.destino, s));
+  return { ok: rs.every(r => r.ok), detalle: rs.map(r => r.detalle).join(' · ') };
 }
 
 // El caso de verdad con choques posibles (plan 0.22, §4): la clase que no hace falta para el examen del
@@ -407,23 +442,32 @@ function pasoDudas(ctx) {
   const sigueLaPropiedad = tocado.casillaNoEstandar && despues.avisos.some(a => a.regla === 'propiedad-no-estandar' && a.fichero === tocado.sesion);
   // Rojo, una duda sin responder (regla 4 de AGENTS.md). La propiedad escrita a su manera puede quedarse si el profesor
   // duda de qué quiso decir (cuando-escribe-a-su-manera.md): solo se dice.
-  const ok = !quedaAlguno;
+  const respondidas = p.dudasRespondidas(ctx.destino, tocado, marca);
+  // Lo que el profesor escribe al responder también tiene que verse bien en Obsidian (sin siembra: se mira lo suyo).
+  const vera = p.sinNoSeVeraBien(ctx.destino);
+  const ok = !quedaAlguno && respondidas.ok && vera.ok;
   const observacion = sigueLaPropiedad ? ' (observación: la propiedad no estándar sigue sin reescribir)' : '';
   return {
     ok,
     detalle: ok
-      ? `dudas resueltas antes: pendientes ${hayDudaPendienteAntes}/propiedad no estándar ${hayPropiedadAntes} → ahora sin marcadores${sigueLaPropiedad ? '' : ' ni propiedad no estándar'}${observacion}`
-      : `sigue habiendo una duda sin responder, en ${quedaAlguno}${observacion}`,
+      ? `dudas resueltas antes: pendientes ${hayDudaPendienteAntes}/propiedad no estándar ${hayPropiedadAntes} → ahora sin marcadores${sigueLaPropiedad ? '' : ' ni propiedad no estándar'} · ${respondidas.detalle}${observacion}`
+      : `${quedaAlguno ? `sigue habiendo una duda sin responder, en ${quedaAlguno}` : [respondidas, vera].filter(x => !x.ok).map(x => x.detalle).join(' · ')}${observacion}`,
     salidaLlm: r.salida,
   };
 }
 
 function pasoEjercicio(ctx) {
   if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
-  const slug = p.conceptoConFormula(ctx.destino);
-  if (!slug) return { ok: false, detalle: 'no se encontró ningún concepto con la sección "## La fórmula" rellena: no hay sobre qué pedir el ejercicio' };
+  // Un concepto con fórmula que aún no tenga ejercicio enlazado: si /sesion ya lo dejó hecho, el paso no mediría nada.
+  const elegido = p.conceptoParaEjercicio(ctx.destino);
+  if (!elegido) return { ok: false, detalle: 'no se encontró ningún concepto con la sección "## La fórmula" rellena: no hay sobre qué pedir el ejercicio' };
+  const { slug, yaTenia } = elegido;
+  const foto = p.fotoDeEjercicios(ctx.destino);
   const r = invocar(ctx, `Ponme un ejercicio del concepto ${slug}, siguiendo la skill /ejercicio. ${PROMPT_COMUN}`, 'ejercicio');
-  return { ok: r.ok, detalle: r.ok ? `ejercicio pedido sobre "${slug}" (código ${r.codigo})` : `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
+  if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló (código ${r.codigo})`, salidaLlm: r.salida };
+  const v = p.ejercicioPedido(ctx.destino, { slug, foto, yaTenia });
+  const vera = p.sinNoSeVeraBien(ctx.destino);
+  return { ok: v.ok && vera.ok, detalle: `${v.detalle}${vera.ok ? '' : ` · ${vera.detalle}`} (código ${r.codigo})`, salidaLlm: r.salida };
 }
 
 // El fichero del test de autoevaluación del centro que ya trae pruebas/curso-ejemplo/estudio/inbox/
@@ -470,6 +514,10 @@ function pasoExamenGenerar(ctx, examenModulo) {
   const angulos = p.angulosDelExamen(ctx.destino, fichero);
   ok = ok && angulos.ok;
   detalle += ` · ${angulos.detalle}`;
+  // La clave: como mucho 3 preguntas por concepto, y cada concepto existe y es de la unidad examinada.
+  const conceptos = p.conceptosDelExamen(ctx.destino, fichero);
+  ok = ok && conceptos.ok;
+  detalle += ` · ${conceptos.detalle}`;
   // #56: llega revisado a ciegas por alguien sin el contexto de quien lo escribió.
   const revision = p.revisionDelExamen(ctx.destino, fichero, ctx.adaptador);
   ok = ok && revision.ok;
@@ -562,7 +610,10 @@ function pasoCorreccionOraculo(ctx) {
   if (!r.ok) return { ok: false, detalle: `${ctx.lanzador.nombre} falló al corregir el test fijo (código ${r.codigo})`, salidaLlm: r.salida };
   const c = p.compararVeredictos(esperado, p.leerVeredictos(fs.readFileSync(fichero, 'utf8')));
   ctx.correccion = c;
-  return { ok: c.bien === c.total, detalle: `corrección: ${c.bien}/${c.total} veredictos como se esperaban${c.fallos.length ? ` · ${c.fallos.join(' · ')}` : ''}`, salidaLlm: c.fallos.length ? r.salida : undefined };
+  // Lo que el alumno puso en cada hueco tiene que salir literal en la tabla del intento (AGENTS.md, «Su respuesta se cita tal cual»).
+  const tabla = p.respuestasEnLaTabla(ctx.destino, fichero, esperado.map(e => e.respuesta));
+  const ok = c.bien === c.total && tabla.ok;
+  return { ok, detalle: `corrección: ${c.bien}/${c.total} veredictos como se esperaban${c.fallos.length ? ` · ${c.fallos.join(' · ')}` : ''} · ${tabla.detalle}`, salidaLlm: ok ? undefined : r.salida };
 }
 
 function pasoRepaso(ctx, examenModulo) {
@@ -702,13 +753,19 @@ function copiarSinExtras(origen, destino) {
 const PASO_LANZAR = 'preparar.js --lanzar';
 const PASO_JUNTAR = 'preparar.js --juntar';
 const PASO_COMPARTIDOS = 'conceptos compartidos entre clases';
+const PASO_SINONIMO = 'sinónimo de un concepto que ya existe';
+const PASO_EJERCICIOS_CON_CASOS = 'ejercicios con casos';
 
-// Lo que ejecuta --solo: ese paso; si es el de lanzar en segundo plano, también juntar y los conceptos compartidos (lo
-// que prueba de verdad una preparación); si es el de juntar, también los compartidos.
+// Lo que ejecuta --solo: ese paso; si es el de lanzar en segundo plano, también juntar y todo lo que se comprueba tras juntar
+// (`trasJuntar` en la lista: lo que deja cada clase preparada, los conceptos compartidos y el sinónimo, que es lo que prueba de
+// verdad una preparación); si es el de juntar, también esos.
 function pasosDeSolo(definicion, indice) {
   const nombre = definicion[indice].nombre;
-  const extra = nombre.startsWith(PASO_LANZAR) ? [PASO_JUNTAR, PASO_COMPARTIDOS] : nombre.startsWith(PASO_JUNTAR) ? [PASO_COMPARTIDOS] : [];
-  return [definicion[indice], ...definicion.filter(d => extra.some(e => d.nombre.startsWith(e)))];
+  const trasJuntar = definicion.filter(d => d.trasJuntar);
+  let extra = [];
+  if (nombre.startsWith(PASO_LANZAR)) extra = definicion.filter(d => d.nombre.startsWith(PASO_JUNTAR) || d.trasJuntar);
+  else if (nombre.startsWith(PASO_JUNTAR)) extra = trasJuntar;
+  return [definicion[indice], ...extra];
 }
 
 function construirDefinicionDePasos(ctx, clases) {
@@ -722,6 +779,7 @@ function construirDefinicionDePasos(ctx, clases) {
     : clasesEnSegundoPlano[0];
   const nombreEnSegundoPlano = claseEnSegundoPlano && (claseEnSegundoPlano.clases ? claseEnSegundoPlano.clases.map(c => c.id).join(', ') : claseEnSegundoPlano.id);
   const compartidos = clases.clases.flatMap(c => c.compartidos || []);
+  const sinonimos = clases.clases.flatMap(c => c.sinonimos || []);
   const progresoAntesPorClase = {};
 
   const lista = [];
@@ -734,6 +792,7 @@ function construirDefinicionDePasos(ctx, clases) {
         return pasoSesion(ctx, clase);
       },
     });
+    lista.push({ nombre: NOMBRE_LO_QUE_DEJA(clase.id), fn: () => pasoLoQueDeja(ctx, clase, progresoAntesPorClase[clase.id]) });
     if (clase.trampa && !ctx.sinLlm) {
       lista.push({
         nombre: `material con órdenes (${clase.id})`,
@@ -752,9 +811,12 @@ function construirDefinicionDePasos(ctx, clases) {
   lista.push({ nombre: '/examen (otra vez, reutiliza falladas)', fn: () => pasoExamenSegundoGenerar(ctx, clases.examen_modulo) });
   lista.push({ nombre: '/examen (corrección con veredictos esperados)', fn: () => pasoCorreccionOraculo(ctx) });
   if (claseEnSegundoPlano) lista.push({ nombre: `${PASO_JUNTAR} ${nombreEnSegundoPlano}`, fn: () => pasoJuntarPreparacion(ctx, claseEnSegundoPlano) });
+  // Las clases preparadas en segundo plano, ya juntas: las mismas comprobaciones que tras /sesion, con lo que cada una declare.
+  for (const clase of clasesEnSegundoPlano) lista.push({ nombre: NOMBRE_LO_QUE_DEJA(clase.id), trasJuntar: true, fn: () => pasoLoQueDeja(ctx, clase) });
   if (compartidos.length) {
     lista.push({
       nombre: PASO_COMPARTIDOS,
+      trasJuntar: true,
       fn: () => {
         if (ctx.sinLlm) return { ok: null, detalle: 'omitido (--sin-llm)' };
         const rs = compartidos.map(c => p.conceptoCompartido(ctx.destino, c));
@@ -762,6 +824,8 @@ function construirDefinicionDePasos(ctx, clases) {
       },
     });
   }
+  if (sinonimos.length) lista.push({ nombre: PASO_SINONIMO, trasJuntar: true, fn: () => pasoSinonimos(ctx, sinonimos) });
+  lista.push({ nombre: PASO_EJERCICIOS_CON_CASOS, fn: () => pasoEjerciciosConCasos(ctx) });
   lista.push({ nombre: '/repaso', fn: () => pasoRepaso(ctx, clases.examen_modulo) });
 
   return { lista, claseEnSegundoPlano };
@@ -843,6 +907,10 @@ function ejecutar({
     copiarSinExtras(path.join(destino, 'estudio'), path.join(resultadoDir, 'estudio'));
     fs.mkdirSync(path.join(resultadoDir, 'config'), { recursive: true });
     fs.copyFileSync(path.join(destino, 'config', 'alumno.md'), path.join(resultadoDir, 'config', 'alumno.md'));
+    // Las claves de los exámenes y sus revisiones (el curso es inventado): para releer si una clave estaba mal.
+    for (const carpeta of ['claves', 'revisiones']) {
+      if (fs.existsSync(path.join(destino, 'config', carpeta))) fs.cpSync(path.join(destino, 'config', carpeta), path.join(resultadoDir, 'config', carpeta), { recursive: true });
+    }
     const resumen = markdownResumen({
       fecha: new Date().toISOString().slice(0, 10), version: fs.readFileSync(path.join(destino, '.kit', 'VERSION'), 'utf8').trim(),
       modelo: ctx.modelo, sinLlm, pasos, informe, conteos, perfil, correccion: ctx.correccion, asistente: llm, commit: ctx.commit, desde, solo,
@@ -896,7 +964,26 @@ function validarDesde(desde, sinLlm, copiasArg) {
   return { ok: true, copiasDir };
 }
 
+// Las opciones que entiende cli(): las que llevan valor detrás y las que no. Cualquier otra cosa para la prueba
+// antes de lanzar nada: una opción desconocida (`--ayuda`) se ignoraba y arrancaba la prueba entera, gastando cuota
+// (2026-10-03).
+const OPCIONES_CON_VALOR = ['--modelo', '--limite-ms', '--volcar', '--desde', '--solo', '--copias', '--asistente'];
+const OPCIONES_SIN_VALOR = ['--sin-llm', '--sin-comprobar-rama'];
+function opcionesDesconocidas(args) {
+  const raras = [];
+  for (let i = 0; i < args.length; i++) {
+    if (OPCIONES_CON_VALOR.includes(args[i])) i++;
+    else if (!OPCIONES_SIN_VALOR.includes(args[i])) raras.push(args[i]);
+  }
+  return raras;
+}
+
 function cli(args) {
+  const raras = opcionesDesconocidas(args);
+  if (raras.length) {
+    console.error(`No conozco ${raras.map(r => `\`${r}\``).join(', ')}. No se ha lanzado nada.\nOpciones: ${[...OPCIONES_SIN_VALOR, ...OPCIONES_CON_VALOR.map(o => `${o} <valor>`)].join(' · ')}`);
+    return 2;
+  }
   const valor = nombre => { const i = args.indexOf(nombre); return i >= 0 ? args[i + 1] : undefined; };
   const sinLlm = args.includes('--sin-llm');
   const modelo = valor('--modelo') || null;
@@ -962,5 +1049,5 @@ module.exports = {
   argsClaude, entornoDeAlumno, leerSalidaClaude, lineaDePaso, invocarAsistente,
   construirDefinicionDePasos, nombresDePasos, ejecutarListaDePasos, restaurarPasoAnterior, carpetaCopiasMasReciente,
   repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError, refrescarCursoRestaurado,
-  pasosDeSolo, carpetaDeCopia,
+  pasosDeSolo, carpetaDeCopia, comprobacionesDeClase, pasoSinonimos,
 };

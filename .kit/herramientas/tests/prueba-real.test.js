@@ -12,7 +12,7 @@ const {
   ejecutar, cli, markdownResumen, agruparPorRegla, modeloRecomendado,
   construirDefinicionDePasos, nombresDePasos, ejecutarListaDePasos, restaurarPasoAnterior, carpetaCopiasMasReciente,
   repararPreparacionSiHaceFalta, pasoJuntarPreparacion, validarDesde, PasoDesconocidoError, SinCopiasError, refrescarCursoRestaurado,
-  pasosDeSolo, carpetaDeCopia,
+  pasosDeSolo, carpetaDeCopia, comprobacionesDeClase, pasoSinonimos,
 } = require('../../../pruebas/prueba-real');
 const { montarCurso, git: gitDe } = require('../../../pruebas/lib/montaje');
 const p = require('../../../pruebas/lib/pasos');
@@ -766,6 +766,16 @@ test('verificarReutilizacionFalladas: un examen sin falladas no se puede comprob
   assert.match(r.detalle, /no dejó ninguna pregunta fallada/);
 });
 
+test('verificarReutilizacionFalladas: "de" con solo el nombre del examen, sin carpeta ni .md, también lo identifica', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  const corto = n => ({ de: `01-examen-2026-10-01, p.${n}` });
+  examenNuevoOk(raiz, { ajustesClave: { 1: corto(3), 2: { de: '01-examen-2026-10-01.md, p.1' }, 4: corto(2), 5: corto(4) } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, true, r.detalle);
+});
+
 test('verificarReutilizacionFalladas: "de" apuntando a otro examen, no pasa', () => {
   const raiz = temporal('reutilizacion-');
   const ficheroAnterior = examenAnteriorCorregido(raiz);
@@ -949,10 +959,13 @@ test('nombresDePasos: el orden real del curso de ejemplo, con la trampa y sin el
   // Las clases en segundo plano (02-01 y 02-02, #56) se procesan enteras con un solo --lanzar/--juntar: no hay un
   // "/sesion 02-0x" aparte (eso lo hace el asistente en segundo plano, no un paso más del ejecutor).
   assert.deepEqual(conTrampa, [
-    '/sesion 01-01', 'material con órdenes (01-01)', '/sesion 01-02', 'preparar.js --lanzar 02-01, 02-02',
+    '/sesion 01-01', 'lo que deja /sesion 01-01', 'material con órdenes (01-01)', '/sesion 01-02', 'lo que deja /sesion 01-02',
+    'preparar.js --lanzar 02-01, 02-02',
     '/dudas', '/ejercicio', '/examen (referencia del centro)', '/examen (generar)', '/examen (contestar)',
     '/examen (corregir)', '/examen (progreso con prueba)', '/examen (otra vez, reutiliza falladas)',
-    '/examen (corrección con veredictos esperados)', 'preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases', '/repaso',
+    '/examen (corrección con veredictos esperados)', 'preparar.js --juntar 02-01, 02-02',
+    'lo que deja /sesion 02-01', 'lo que deja /sesion 02-02', 'conceptos compartidos entre clases',
+    'sinónimo de un concepto que ya existe', 'ejercicios con casos', '/repaso',
   ]);
   // --sin-llm nunca pide el paso de la trampa (sin LLM no hay nada que comprobar en la auditoría): un
   // paso menos, mismo orden en lo demás.
@@ -1138,6 +1151,14 @@ test('cli: --desde con --sin-llm, error claro y código 2 (sin llegar a comproba
   assert.match(mensajes.join('\n'), /--desde no se puede combinar con --sin-llm/);
 });
 
+test('cli: una opción que no conoce (--ayuda) o un argumento suelto paran la prueba antes de lanzar nada', () => {
+  for (const args of [['--ayuda'], ['--sin-llm', '--help'], ['suelto'], ['--solo', '/dudas', 'otro']]) {
+    const { codigo, mensajes } = conConsoleErrorCapturado(() => cli(args));
+    assert.equal(codigo, 2, args.join(' '));
+    assert.match(mensajes.join('\n'), /No se ha lanzado nada/);
+  }
+});
+
 test('cli: --desde con un paso que no existe, la lista de pasos válidos y código 2', () => {
   const { codigo, mensajes } = conConsoleErrorCapturado(() => cli(['--desde', 'esto-no-es-un-paso']));
   assert.equal(codigo, 2);
@@ -1257,14 +1278,15 @@ test('conceptoCompartido: una nota con todas las sesiones en visto_en y una fila
 
 // --- Tras la ronda completa del diablo (2026-10-01) -------------------------------------------------------------
 
-test('pasosDeSolo: el de lanzar arrastra juntar y compartidos; el de juntar, compartidos; otro, solo él', () => {
+test('pasosDeSolo: el de lanzar arrastra juntar y lo que se comprueba tras juntar; el de juntar, eso mismo; otro, solo él', () => {
   const clases = JSON.parse(fs.readFileSync(path.join(EJEMPLO, 'clases.json'), 'utf8'));
   const { lista } = construirDefinicionDePasos({ sinLlm: true }, clases);
   const nombres = i => pasosDeSolo(lista, i).map(d => d.nombre);
   const indice = n => lista.findIndex(d => d.nombre === n);
-  assert.deepEqual(nombres(indice('preparar.js --lanzar 02-01, 02-02')),
-    ['preparar.js --lanzar 02-01, 02-02', 'preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases']);
-  assert.deepEqual(nombres(indice('preparar.js --juntar 02-01, 02-02')), ['preparar.js --juntar 02-01, 02-02', 'conceptos compartidos entre clases']);
+  const trasJuntar = ['lo que deja /sesion 02-01', 'lo que deja /sesion 02-02', 'conceptos compartidos entre clases', 'sinónimo de un concepto que ya existe'];
+  assert.deepEqual(nombres(indice('preparar.js --lanzar 02-01, 02-02')), ['preparar.js --lanzar 02-01, 02-02', 'preparar.js --juntar 02-01, 02-02', ...trasJuntar]);
+  assert.deepEqual(nombres(indice('preparar.js --juntar 02-01, 02-02')), ['preparar.js --juntar 02-01, 02-02', ...trasJuntar]);
+  assert.deepEqual(nombres(indice('lo que deja /sesion 01-02')), ['lo que deja /sesion 01-02'], 'el de una clase de primer plano va solo');
   assert.deepEqual(nombres(indice('/dudas')), ['/dudas']);
 });
 
@@ -1298,5 +1320,68 @@ test('conceptoCompartido: visto_en en bloque y alias valen; otra nota de esas cl
   fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-a-largo-plazo.md'),
     '---\ntipo: concepto\nvisto_en: [02-02-01-ahorro]\n---\n# Interés compuesto a largo plazo\n');
   assert.match(p.conceptoCompartido(destino, caso).detalle, /2 notas/);
+
+  // Con el concepto en su `requiere` (por slug o por alias), se apoya en él: observación, no duplicado.
+  for (const requiere of ['[aportacion-periodica, capitalizacion-compuesta]', '[Interés compuesto]']) {
+    fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-a-largo-plazo.md'),
+      `---\ntipo: concepto\nvisto_en: [02-02-01-ahorro]\nrequiere: ${requiere}\n---\n# Aportaciones con interés compuesto\n`);
+    const apoyada = p.conceptoCompartido(destino, caso);
+    assert.equal(apoyada.ok, true, apoyada.detalle);
+    assert.match(apoyada.detalle, /observación: .*se apoya en él/);
+  }
+  // Si requiere otra cosa, sigue siendo el duplicado con otro título.
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-a-largo-plazo.md'),
+    '---\ntipo: concepto\nvisto_en: [02-02-01-ahorro]\nrequiere: [aportacion-periodica]\n---\n# Interés compuesto a largo plazo\n');
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /2 notas/);
 });
 
+// --- Lo que deja una clase y el sinónimo (plan vivo, «un curso de ejemplo que mida más») -----------------------------
+
+test('clases.json: la 01-01 declara falta_info y observar, la 01-02 el ejercicio y las cifras en rojo, y la 02-02 el sinónimo del colchón', () => {
+  const [c1, c2] = CLASES_EJEMPLO.clases;
+  assert.equal(c1.falta_info.ancla, 'patrón oro');
+  assert.deepEqual(c1.auditoria.observar, ['97,09', 'diapositiva 6']);
+  assert.equal(c2.ejercicio, true);
+  assert.deepEqual(c2.auditoria.rojo, ['742', '27']);
+  assert.deepEqual(CLASES_EJEMPLO.clases[3].sinonimos, [{ titulo: 'Colchón financiero', sinonimo: 'fondo de emergencia' }]);
+  assert.equal(CLASES_EJEMPLO.clases.filter(c => c.sinonimos).length, 1);
+});
+
+test('comprobacionesDeClase: junta lo que la clase declara y solo eso; ok si todas ok, el detalle unido con « · »', () => {
+  const destino = temporal('lo-que-deja-');
+  const datosCurso = temporal('lo-que-deja-datos-');
+  escribir(datosCurso, { 'estudio/inbox/material.md': '### Diapositiva 1 · Algo\n\n### Diapositiva 2 · Otra\n' });
+  escribir(destino, {
+    'estudio/sesiones/01-01-tema.md': '# Tema\n\n## Cobertura del material\n\nDiapositivas 1-2.\n\n## Auditoría del material\n\nLa cifra buena es 742,00 €.\n\nFALTA INFO: el patrón oro no trae contenido.\n',
+    'estudio/progreso.md': '| Concepto | Estado |\n|---|---|\n',
+  });
+  const ctx = { destino, datosCurso };
+  const base = { id: '01-01', ficheros: ['material.md'] };
+  const sola = comprobacionesDeClase(ctx, base);
+  assert.equal(sola.detalle.split(' · ').length >= 2, true, 'procesarClase y cobertura, siempre');
+  assert.doesNotMatch(sola.detalle, /ejercicio|FALTA INFO|auditoría/);
+  const completa = comprobacionesDeClase(ctx, { ...base, falta_info: { ancla: 'patrón oro' }, auditoria: { rojo: ['742'], observar: ['97,09'] } });
+  assert.equal(completa.ok, true);
+  assert.match(completa.detalle, /FALTA INFO[^·]*patrón oro/);
+  assert.match(completa.detalle, /observación: la auditoría no recoge 97,09/);
+  const sinEjercicio = comprobacionesDeClase(ctx, { ...base, ejercicio: true });
+  assert.equal(sinEjercicio.ok, false);
+  assert.match(sinEjercicio.detalle, /no hay ningún ejercicio/);
+  assert.equal(comprobacionesDeClase(ctx, { ...base, auditoria: { rojo: ['99'] } }).ok, false);
+});
+
+test('el paso de sinónimo solo aparece si alguna clase declara `sinonimos`, tras los conceptos compartidos', () => {
+  const clases = JSON.parse(JSON.stringify(CLASES_EJEMPLO));
+  const sinonimos = clases.clases[3].sinonimos;
+  delete clases.clases[3].sinonimos;
+  assert.equal(nombresDePasos(clases, true).includes('sinónimo de un concepto que ya existe'), false);
+  clases.clases[3].sinonimos = sinonimos;
+  const nombres = nombresDePasos(clases, true);
+  assert.equal(nombres.indexOf('sinónimo de un concepto que ya existe'), nombres.indexOf('conceptos compartidos entre clases') + 1);
+  const { lista } = construirDefinicionDePasos({ sinLlm: true }, clases);
+  assert.ok(pasosDeSolo(lista, lista.findIndex(d => d.nombre.startsWith('preparar.js --lanzar'))).some(d => d.nombre === 'sinónimo de un concepto que ya existe'));
+  const destino = temporal('sinonimo-');
+  escribir(destino, { 'estudio/conceptos/colchon-financiero.md': '---\ntipo: concepto\nalias: [fondo de emergencia]\n---\n# Colchón financiero\n' });
+  assert.equal(pasoSinonimos({ destino }, clases.clases[3].sinonimos).ok, true);
+  assert.equal(pasoSinonimos({ sinLlm: true }, clases.clases[3].sinonimos).ok, null);
+});

@@ -1,44 +1,45 @@
 ---
 tipo: concepto
-bloques: [modulo-01]
+bloques: [1.1]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 1
 requiere: [funciones-del-dinero]
 alias: []
-tags: []
+tags: [dinero, ahorro]
 ---
 # Liquidez
 
-> **En una frase:** Lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor no basta: si necesitas dinero hoy, importa si lo que tienes se convierte en dinero hoy.
+Tener valor no basta: hay que poder usarlo cuando hace falta. Un piso vale mucho, pero no sirve para
+pagar el alquiler de mañana.
 
 ## El ejemplo
 
 | Lo que tienes | Cuánto tardas en gastarlo | Liquidez |
 |---|---|---|
-| Dinero en la cartera | Al instante | Total |
-| Un piso | Meses, para venderlo bien | Muy poca |
+| 50,00 € en la cartera | al instante | máxima |
+| Un piso de 120.000,00 € | meses, y si hay prisa, bajas el precio | muy baja |
 
-Esto importa en el módulo 2, al comparar ahorrar (muy líquido) con invertir (a veces, menos líquido).
+Si mañana necesitas 300,00 €, la cartera responde y el piso no.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que lo más valioso es lo más líquido. El piso vale muchísimo más que lo de la cartera y es mucho
-> menos líquido: si lo vendes con prisa, pierdes valor.
+> Creer que "valer mucho" es lo mismo que "ser líquido". El piso vale más que la cartera y es peor
+> para una urgencia. La liquidez no mide cuánto vale algo, sino lo rápido que lo conviertes en dinero.
 
 ## Visto desde tus ingresos irregulares
 
-Un mes flojo no espera a que vendas nada: lo que tengas para cubrirlo tiene que ser líquido. Un colchón
-en algo que tarda meses en convertirse en dinero no te cubre el mes que lo necesitas.
+Para un mes flojo necesitas dinero que puedas usar ya: la parte de tu colchón para esos meses tiene
+que ser líquida, aunque rinda menos. Se retoma en el módulo 2, al comparar ahorrar con invertir.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero es lo más líquido que hay
-- [[inflacion]] — el enemigo de tener el dinero parado
+- [[funciones-del-dinero]] — la liquidez es lo cerca que está algo de funcionar como medio de cambio
+- [[inflacion]] — lo más líquido (efectivo) es también lo que más sufre sus efectos si se deja parado
 
 ## Historial
 

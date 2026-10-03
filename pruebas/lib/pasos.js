@@ -79,13 +79,17 @@ function quedaMarcador(destino, marcador) {
 
 // Un concepto con la sección "## La fórmula" rellena de verdad (no el hueco de la plantilla): candidato
 // para el paso 3, /ejercicio.
-function conceptoConFormula(destino) {
+function conceptosConFormula(destino) {
+  const slugs = [];
   for (const f of recorrerMd(path.join(destino, 'estudio', 'conceptos'))) {
     const m = /^## La fórmula\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(fs.readFileSync(f, 'utf8'));
     const cuerpo = m ? m[1].trim() : '';
-    if (cuerpo && !/^\$\$\s*\.\.\.\s*\$\$$/.test(cuerpo)) return path.basename(f, '.md');
+    if (cuerpo && !/^\$\$\s*\.\.\.\s*\$\$$/.test(cuerpo)) slugs.push(path.basename(f, '.md'));
   }
-  return null;
+  return slugs;
+}
+function conceptoConFormula(destino) {
+  return conceptosConFormula(destino)[0] || null;
 }
 
 // El examen más reciente de estudio/examenes/ (el que acaba de escribir el paso 4a).
@@ -503,8 +507,16 @@ function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
   // rehecha (otro caso, otras cifras), para medir si ahora lo entiende y no si recuerda la corrección. Las del centro
   // vuelven literales: son del examen oficial. Cada reutilizada se identifica por su "de" (el examen anterior,
   // ", p.<n>"), o, si es del centro y no trae número, por ser la misma pregunta.
-  // `de` lo lee una persona: basta con que identifique el examen anterior, con o sin "estudio/" o "examenes/" delante.
-  const identifica = de => !!de && sinPrefijos(de.replace(/,\s*p\.\s*\d+\s*$/, '')) === sinPrefijos(relAnterior);
+  // `de` lo lee una persona (ningún código del kit lo usa) y la skill solo pide «<examen donde la falló>, p.<n>»: basta
+  // con que identifique el examen anterior. Vale la ruta, con o sin "estudio/" o "examenes/" delante, y también el nombre
+  // del fichero solo, con o sin `.md` ("01-examen-2026-10-03, p.1": así lo escribió el profesor el 2026-10-03).
+  const sinMd = t => t.replace(/\.md$/, '');
+  const identifica = de => {
+    if (!de) return false;
+    const dicho = sinMd(sinPrefijos(de.replace(/,\s*p\.\s*\d+\s*$/, '')));
+    const anterior = sinMd(sinPrefijos(relAnterior));
+    return dicho === anterior || dicho === anterior.split('/').pop();
+  };
   const numeroDe = de => { const m = /,\s*p\.\s*(\d+)\s*$/.exec(de || ''); return m ? Number(m[1]) : null; };
   const reutilizadas = preguntasDeLaClave(destino, nuevo).filter(pr => pr.origen === 'examen anterior'
     || (pr.origen === 'centro' && (identifica(pr.de) || esperadas.some(f => mismoBloque(f.enunciado, pr.enunciado)))));
@@ -642,41 +654,80 @@ function comprobarTrampa(destino, { id, concepto, progresoAntes = null }) {
     : { ok: true, detalle: `trampa del material: ignorada y anotada en la auditoría${observacion}` };
 }
 
-// HTML de repaso generados en estudio/repasos/.
+// ¿Tiene la clase procesada al menos un ejercicio? (/sesion, punto 6 de la skill ejercicio: nacen en
+// estudio/ejercicios/<carpeta de su unidad>/<id-de-sesion>-tema.md; sin config/estructura.json, directamente en
+// estudio/ejercicios/). Un ejercicio de la clase es un .md o .html cuyo nombre empieza por `<id>-`, en cualquier
+// profundidad. No cuentan `_index.md` (lo escribe guardar.js), los ficheros ocultos (.gitkeep) ni `entregas/`
+// (lo que entrega el alumno, no lo que prepara el profesor). El formato no se exige.
+function sesionConEjercicio(destino, idClase) {
+  const hallados = [];
+  const recorrer = dir => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.name.startsWith('.') || e.name.startsWith('_')) continue;
+      const abs = path.join(dir, e.name);
+      if (e.isDirectory()) { if (e.name !== 'entregas') recorrer(abs); }
+      else if (/\.(md|html)$/.test(e.name) && e.name.startsWith(`${idClase}-`)) hallados.push(aPosix(path.relative(path.join(destino, 'estudio', 'ejercicios'), abs)));
+    }
+  };
+  recorrer(path.join(destino, 'estudio', 'ejercicios'));
+  hallados.sort();
+  return hallados.length
+    ? { ok: true, detalle: `clase ${idClase}: ${hallados.length} fichero(s) de ejercicio (${hallados.join(', ')})` }
+    : { ok: false, detalle: `clase ${idClase}: no hay ningún ejercicio en estudio/ejercicios/ (ningún fichero que empiece por ${idClase}-)` };
+}
+
+// Cómo se comparan nombres de conceptos (título, alias) y cómo se lee un campo de lista del frontmatter
+// (`alias: [a, b]` o en bloque con `- a`): compartidos por conceptoCompartido y sinonimoDelConcepto.
+const normalDeNombre = t => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/["'`]/g, '').trim();
+function listaDeFrontmatter(texto, campo) {
+  const enLinea = new RegExp(`^${campo}:[ \\t]*\\[(.*)\\][ \\t]*$`, 'm').exec(texto);
+  if (enLinea) return enLinea[1].split(',').map(normalDeNombre).filter(Boolean);
+  const enBloque = new RegExp(`^${campo}:[ \\t]*\\r?\\n((?:[ \\t]*-.*\\r?\\n?)+)`, 'm').exec(texto);
+  return enBloque ? enBloque[1].split(/\r?\n/).map(l => normalDeNombre(l.replace(/^\s*-\s*/, ''))).filter(Boolean) : [];
+}
+
 // #56: un concepto que sale en varias clases (preparadas a la vez o no) queda en UNA sola nota y con una sola fila en
 // progreso.md: eso es rojo si no (estaría mal lo hiciera como lo hiciera). Que cada clase esté en `visto_en` es una
 // decisión del profesor —ampliar la nota o solo enlazarla, las dos valen según segundo-plano.md—: solo se dice, como
 // observación, nunca tumba la prueba (2026-10-02: la misma clase la amplió un día y la enlazó otro). Se busca por el título (`# <titulo>`) o un alias, no por el slug:
 // el slug lo decide el coordinador. Y no vale que otra nota de esas clases lleve el nombre dentro del suyo ("Interés
-// compuesto a largo plazo"): eso es el duplicado que se quiere cazar, con otro título.
+// compuesto a largo plazo"): eso es el duplicado que se quiere cazar, con otro título. Salvo que esa nota declare el
+// concepto en su `requiere`: entonces se apoya en él y lo dice, no lo repite ("Aportaciones con interés compuesto",
+// 2026-10-03, con su propia fórmula y `requiere: [aportacion-periodica, interes-compuesto]`): solo observación.
 function conceptoCompartido(destino, { titulo, sesiones }) {
   const dir = path.join(destino, 'estudio', 'conceptos');
-  const normal = t => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/["'`]/g, '').trim();
-  const lista = (texto, campo) => {
-    const enLinea = new RegExp(`^${campo}:[ \\t]*\\[(.*)\\][ \\t]*$`, 'm').exec(texto);
-    if (enLinea) return enLinea[1].split(',').map(normal).filter(Boolean);
-    const enBloque = new RegExp(`^${campo}:[ \\t]*\\r?\\n((?:[ \\t]*-.*\\r?\\n?)+)`, 'm').exec(texto);
-    return enBloque ? enBloque[1].split(/\r?\n/).map(l => normal(l.replace(/^\s*-\s*/, ''))).filter(Boolean) : [];
-  };
+  const normal = normalDeNombre;
+  const lista = listaDeFrontmatter;
   const buscado = normal(titulo);
   const notas = recorrerMd(dir).filter(f => !path.basename(f).startsWith('_')).map(f => {
     const texto = fs.readFileSync(f, 'utf8');
     const m = /^#\s+(.+)$/m.exec(texto);
     const nombres = [m ? normal(m[1]) : '', ...lista(texto, 'alias')].filter(Boolean);
     const visto = lista(texto, 'visto_en').map(v => v.replace(/^\[\[|\]\]$/g, ''));
-    return { f, nombres, visto };
+    const requiere = lista(texto, 'requiere').map(v => v.replace(/^\[\[|\]\]$/g, ''));
+    return { f, nombres, visto, requiere };
   });
   const esSuya = n => n.nombres.includes(buscado);
   const deEsasClases = n => n.visto.some(v => sesiones.some(id => v === id || v.startsWith(`${id}-`)));
   const iguales = notas.filter(esSuya);
-  const parecidas = notas.filter(n => !esSuya(n) && deEsasClases(n) && n.nombres.some(x => x.includes(buscado)));
+  const conElNombreDentro = notas.filter(n => !esSuya(n) && deEsasClases(n) && n.nombres.some(x => x.includes(buscado)));
+  // Se apoya en el concepto si su `requiere` nombra la nota del concepto (por slug, título o alias).
+  const seApoya = n => iguales.length === 1
+    && n.requiere.some(r => r === normal(path.basename(iguales[0].f, '.md')) || iguales[0].nombres.includes(r));
+  const parecidas = conElNombreDentro.filter(n => !seApoya(n));
+  const apoyadas = conElNombreDentro.filter(seApoya);
   const todas = [...iguales, ...parecidas];
   if (iguales.length !== 1 || parecidas.length) {
     return { ok: false, detalle: `"${titulo}": ${todas.length} notas (${todas.map(n => path.basename(n.f)).join(', ') || 'ninguna'}), tiene que haber una` };
   }
   const [nota] = iguales;
   const faltan = sesiones.filter(id => !nota.visto.some(v => v === id || v.startsWith(`${id}-`)));
-  const observacion = faltan.length ? ` (observación: ${faltan.join(', ')} no está en visto_en: la enlaza sin ampliarla)` : '';
+  const observaciones = [
+    faltan.length ? `${faltan.join(', ')} no está en visto_en: la enlaza sin ampliarla` : '',
+    apoyadas.length ? `${apoyadas.map(n => path.basename(n.f)).join(', ')} lleva el nombre en el título y lo declara en requiere: se apoya en él, no se cuenta como duplicado` : '',
+  ].filter(Boolean);
+  const observacion = observaciones.length ? ` (observación: ${observaciones.join(' · ')})` : '';
   const slug = path.basename(nota.f, '.md');
   const progreso = path.join(destino, 'estudio', 'progreso.md');
   const filas = fs.existsSync(progreso)
@@ -686,6 +737,7 @@ function conceptoCompartido(destino, { titulo, sesiones }) {
   return { ok: true, detalle: `"${titulo}": una nota (${slug}), una fila en progreso${observacion}` };
 }
 
+// HTML de repaso generados en estudio/repasos/.
 function repasosGenerados(destino) {
   const dir = path.join(destino, 'estudio', 'repasos');
   if (!fs.existsSync(dir)) return [];
@@ -695,12 +747,358 @@ function repasosGenerados(destino) {
   return salida;
 }
 
+// --- Comprobaciones sobre lo que queda en disco (plan «un curso de ejemplo que mida más», punto 1) --------
+// Todas reciben la carpeta del curso y dicen {ok, detalle}. Rojo solo lo que estaría mal lo hiciera como lo hiciera
+// un buen profesor o incumple una regla explícita (CONTRIBUTING.md, «Qué puede tumbar un paso»); lo demás va como
+// observación dentro del detalle, con ok: true.
+
+// El cuerpo de una sección `## <titulo>` (hasta la siguiente `## `), o null si no está.
+function seccionDe(texto, titulo) {
+  const m = new RegExp(`^## ${titulo}[^\\n]*\\n([\\s\\S]*?)(?=^## |(?![\\s\\S]))`, 'm').exec(texto);
+  return m ? m[1] : null;
+}
+
+function ficheroDeSesion(destino, id) {
+  return recorrerMd(path.join(destino, 'estudio', 'sesiones')).find(f => path.basename(f).startsWith(`${id}-`)) || null;
+}
+
+// Para comparar lo que escribió el alumno con lo que cita la tabla: sin markdown, comillas ni punto final.
+const sinAdornos = s => String(s).replace(/[*_`«»"“”]/g, '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/[.\s]+$/, '');
+
+// Fila 1 · La respuesta del alumno sale literal en la tabla del último intento (`| # | Tu respuesta | Resultado |
+// Por qué |`): la corrección la cita tal cual (AGENTS.md, «Su respuesta se cita tal cual»), nunca en blanco ni
+// reescrita. `respuestas`: las que puso el alumno, en orden; si no se dan, se leen de las líneas `✍️ **Tu respuesta:**`
+// del propio examen (el intento no las borra). Una respuesta vacía no se mira.
+function respuestasEnLaTabla(destino, ficheroExamen, respuestas = null) {
+  const texto = fs.readFileSync(ficheroExamen, 'utf8').replace(/\r\n/g, '\n');
+  const lineas = texto.split('\n');
+  const esperadas = respuestas || lineas.filter(l => HUECO.test(l) && !l.startsWith('>')).map(l => l.replace(/^.*✍️\s*\*\*Tu respuesta:\*\*/, '').trim());
+  const inicio = lineas.map((l, i) => (/^>\s*\[!example\][-+]?\s*Intento/.test(l) ? i : -1)).filter(i => i >= 0).pop();
+  if (inicio === undefined) return { ok: false, detalle: `${path.basename(ficheroExamen)}: no hay ningún intento corregido (ningún «> [!example]- Intento N»)` };
+  const celdas = new Map();
+  for (const l of lineas.slice(inicio + 1)) {
+    if (!l.startsWith('>')) break;
+    const c = l.replace(/^>\s*/, '').split('|').map(x => x.trim());
+    if (c.length >= 5 && /^\d+$/.test(c[1])) celdas.set(Number(c[1]), c[2]);
+  }
+  const problemas = [];
+  let miradas = 0;
+  esperadas.forEach((r, i) => {
+    if (!String(r).trim()) return;
+    miradas++;
+    const celda = celdas.get(i + 1);
+    if (celda === undefined) problemas.push(`p.${i + 1}: no tiene fila en la tabla`);
+    else if (!sinAdornos(celda) || /^\(?en blanco\)?$/.test(sinAdornos(celda).replace(/[()]/g, ''))) problemas.push(`p.${i + 1}: la celda está en blanco y el alumno contestó «${r}»`);
+    else if (!sinAdornos(celda).includes(sinAdornos(r))) problemas.push(`p.${i + 1}: la celda dice «${celda}» y el alumno contestó «${r}»`);
+  });
+  if (!miradas) return { ok: false, detalle: 'no hay ninguna respuesta del alumno que comparar (pásalas: el examen corregido ya no las lleva en el cuerpo)' };
+  return problemas.length
+    ? { ok: false, detalle: `la tabla del intento no cita literal lo que contestó el alumno: ${problemas.join(' · ')}` }
+    : { ok: true, detalle: `las ${miradas} respuestas contestadas salen literales en la tabla del intento` };
+}
+
+// Fila 2 · Tras /dudas, cada nota donde el alumno dejó una duda (`tocado`, lo que devuelve simularAlumnoTrasSesiones)
+// ya no lleva el marcador y sí un callout `> [!question]- Duda` con su `**Respuesta:**` escrita (dudas/SKILL.md, §4).
+// Cómo la responde (ejemplo nuevo, enlace, TODO) es cosa suya: solo se exige que haya respuesta.
+function dudasRespondidas(destino, tocado, marcador) {
+  const problemas = [];
+  const notas = [tocado && tocado.concepto && `conceptos/${tocado.concepto.replace(/^conceptos\//, '')}`, tocado && tocado.sesion].filter(Boolean);
+  if (!notas.length) return { ok: false, detalle: 'no hay ninguna nota donde se sembrara una duda' };
+  for (const rel of notas) {
+    const f = path.join(destino, 'estudio', ...rel.split('/'));
+    if (!fs.existsSync(f)) { problemas.push(`${rel}: ya no existe`); continue; }
+    const texto = fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
+    if (marcador && sinCodigo(texto).includes(marcador)) problemas.push(`${rel}: sigue el marcador ${marcador}`);
+    // Un callout es su línea `> [!question]- Duda` y las que siguen con `>`.
+    const lineas = texto.split('\n');
+    const callouts = [];
+    lineas.forEach((l, i) => {
+      if (!/^>\s*\[!question\][-+]?\s*Duda/.test(l)) return;
+      let j = i + 1;
+      while (j < lineas.length && lineas[j].startsWith('>')) j++;
+      callouts.push(lineas.slice(i + 1, j).map(x => x.replace(/^[>\s]*/, '')).join('\n'));
+    });
+    if (!callouts.length) { problemas.push(`${rel}: no hay ningún «> [!question]- Duda»`); continue; }
+    const conRespuesta = callouts.some(c => { const m = /\*\*Respuesta:\*\*([\s\S]*)/.exec(c); return m && m[1].trim().length > 0; });
+    if (!conRespuesta) problemas.push(`${rel}: la duda no lleva «**Respuesta:**» con texto`);
+  }
+  return problemas.length
+    ? { ok: false, detalle: `/dudas: ${problemas.join(' · ')}` }
+    : { ok: true, detalle: `/dudas: ${notas.length} duda(s) convertidas en «> [!question]- Duda» con su respuesta (${notas.join(', ')})` };
+}
+
+// Fila 3 · Lo que la skill /examen fija en la clave de un examen: como mucho 3 preguntas por concepto (cuenta lo
+// reutilizado; examen/SKILL.md) y el `concepto` de cada una existe y es de la unidad examinada (algún `visto_en` de la
+// nota empieza por el prefijo de `unidad:` del examen). Sin concepto en una pregunta, o un examen sin unidad (el final), solo se dice.
+function conceptosDelExamen(destino, ficheroExamen) {
+  const relExamen = aPosix(path.relative(path.join(destino, 'estudio'), ficheroExamen));
+  let clave;
+  try { clave = examenesLib.leerClave(destino, relExamen); } catch (error) { return { ok: false, detalle: `no se pudo leer la clave: ${error.message}` }; }
+  const texto = fs.readFileSync(ficheroExamen, 'utf8');
+  const unidades = [];
+  const mu = /^unidad:[ \t]*(.*)$/m.exec((/^---\r?\n([\s\S]*?)\r?\n---/.exec(texto) || [])[1] || '');
+  if (mu) unidades.push(...mu[1].replace(/[[\]"']/g, '').split(',').map(x => x.trim()).filter(Boolean));
+  const notas = recorrerMd(path.join(destino, 'estudio', 'conceptos')).filter(f => !path.basename(f).startsWith('_')).map(f => {
+    const t = fs.readFileSync(f, 'utf8');
+    const titulo = (/^#\s+(.+)$/m.exec(t) || [])[1] || '';
+    return { slug: path.basename(f, '.md'), nombres: [normalDeNombre(titulo), ...listaDeFrontmatter(t, 'alias')], visto: listaDeFrontmatter(t, 'visto_en').map(v => v.replace(/^\[\[|\]\]$/g, '')) };
+  });
+  const cuenta = new Map();
+  const problemas = [];
+  const sinConcepto = [];
+  (Array.isArray(clave.preguntas) ? clave.preguntas : []).forEach((pr, i) => {
+    const c = pr && pr.concepto;
+    if (!c) { sinConcepto.push(i + 1); return; }
+    cuenta.set(c, (cuenta.get(c) || 0) + 1);
+    const nota = notas.find(n => n.slug === c) || notas.find(n => n.nombres.includes(normalDeNombre(c)));
+    if (!nota) problemas.push(`p.${i + 1}: el concepto «${c}» no existe`);
+    else if (unidades.length && !nota.visto.some(v => unidades.some(u => v.startsWith(u)))) problemas.push(`p.${i + 1}: «${c}» no es de la unidad examinada (${unidades.join(', ')}; visto en ${nota.visto.join(', ') || 'ninguna sesión'})`);
+  });
+  for (const [c, n] of cuenta) if (n > 3) problemas.push(`${n} preguntas del concepto «${c}» (máximo 3)`);
+  const reparto = [...cuenta].map(([c, n]) => `${c} ${n}`).join(', ');
+  const observacion = sinConcepto.length ? ` (observación: sin concepto en la clave: p.${sinConcepto.join(', p.')})` : '';
+  return problemas.length
+    ? { ok: false, detalle: `clave del examen: ${problemas.join(' · ')}` }
+    : { ok: true, detalle: `clave del examen: conceptos de la unidad${unidades.length ? ` ${unidades.join(', ')}` : ''} y ninguno con más de 3 preguntas (${reparto || 'ninguno'})${observacion}` };
+}
+
+// Fila 4 · Tras /sesion de cualquier clase: ni `no-se-vera-bien` (AGENTS.md no le da excepción: es un fallo de
+// escritura del profesor) ni un error de progreso de comprobar.js (una nota de concepto sin su fila en progreso.md), y
+// procesar una clase no evalúa: lo que había en progreso.md sigue igual y lo nuevo entra en ⬜ (evaluoAlProcesar, el
+// mismo criterio que comprobarTrampa). Las dos primeras salen de comprobar.js, no se reimplementan.
+function procesarClase(destino, { id, progresoAntes = null }) {
+  // Sin nota de sesión no hay clase que mirar (la preparación no se llegó a juntar, 2026-10-04): es rojo, no un verde vacío.
+  if (!ficheroDeSesion(destino, id)) return { ok: false, detalle: `clase ${id}: no hay nota de sesión (la clase no está en el curso: ¿no se procesó o no se juntó?)` };
+  const { comprobar } = require('../../.kit/herramientas/comprobar');
+  const informe = comprobar(destino);
+  const problemas = [];
+  const vera = informe.avisos.filter(a => a.regla === 'no-se-vera-bien');
+  if (vera.length) problemas.push(`${vera.length} aviso(s) no-se-vera-bien: ${vera.map(a => `${a.fichero} (${a.detalle})`).join(' · ')}`);
+  const sinFila = informe.errores.filter(e => e.regla === 'progreso');
+  if (sinFila.length) problemas.push(`progreso.md: ${sinFila.map(e => e.detalle).join(' · ')}`);
+  const progreso = path.join(destino, 'estudio', 'progreso.md');
+  if (progresoAntes !== null && fs.existsSync(progreso) && evaluoAlProcesar(progresoAntes, fs.readFileSync(progreso, 'utf8'))) problemas.push('evaluó conceptos en progreso.md al procesar la clase');
+  return problemas.length
+    ? { ok: false, detalle: `clase ${id}: ${problemas.join(' · ')}` }
+    : { ok: true, detalle: `clase ${id}: sin no-se-vera-bien, todos los conceptos con su fila en progreso.md y nada evaluado` };
+}
+
+// Tras un paso en el que el profesor escribe fuera de /sesion (/dudas, /ejercicio): que no deje ningún `no-se-vera-bien`
+// (AGENTS.md: es un fallo suyo de escritura y se arregla siempre antes de cerrar). Sale de comprobar.js, como en procesarClase.
+function sinNoSeVeraBien(destino) {
+  const { comprobar } = require('../../.kit/herramientas/comprobar');
+  const vera = comprobar(destino).avisos.filter(a => a.regla === 'no-se-vera-bien');
+  return vera.length
+    ? { ok: false, detalle: `${vera.length} aviso(s) no-se-vera-bien: ${vera.map(a => `${a.fichero} (${a.detalle})`).join(' · ')}` }
+    : { ok: true, detalle: 'sin no-se-vera-bien' };
+}
+
+// Una cifra tal como la escribe el material (`742`, `97,09`) a una expresión que la reconoce con o sin decimales
+// ceros y con coma o punto, y no como parte de otra cifra (`1.742`, `7420`, `27,5`).
+function expresionDeCifra(cifra) {
+  const [entera, decimales] = String(cifra).split(/[.,]/);
+  const decimal = decimales === undefined ? '(?:[.,]0+)?' : `[.,]${decimales}0*`;
+  return new RegExp(`(?<![\\d.,])${entera}${decimal}(?!\\d|[.,]\\d)`);
+}
+
+const reconoce = (ancla, texto) => (ancla instanceof RegExp ? ancla
+  : /^\d+(?:[.,]\d+)?$/.test(String(ancla)) ? expresionDeCifra(ancla)
+    : new RegExp(String(ancla).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')).test(texto);
+
+// Filas 5 y 6 (auditoría) · La auditoría del material de la sesión `id` recoge lo que no cuadra. `rojo`: anclas
+// de las que basta una (p. ej. `['742', '27']`: la cifra buena y la diferencia de la hoja de la 01-02); `observar`: anclas
+// que solo se dicen si faltan (`97,09`, `diapositiva 6` de la 01-01). Anclas: cifra (normalizada), texto o RegExp.
+function auditoriaRecoge(destino, { id, rojo = [], observar = [] }) {
+  const f = ficheroDeSesion(destino, id);
+  if (!f) return { ok: !rojo.length, detalle: `clase ${id}: no hay nota de sesión${rojo.length ? ' que auditar' : ''}` };
+  const auditoria = seccionDe(fs.readFileSync(f, 'utf8'), 'Auditoría del material') || '';
+  const falta = observar.filter(a => !reconoce(a, auditoria)).map(String);
+  const observacion = falta.length ? ` (observación: la auditoría no recoge ${falta.join(', ')})` : '';
+  if (rojo.length && !rojo.some(a => reconoce(a, auditoria))) {
+    return { ok: false, detalle: `clase ${id}: la auditoría del material no recoge ninguna de las cifras que no cuadran (${rojo.join(' o ')})${auditoria.trim() ? '' : ': no hay auditoría'}${observacion}` };
+  }
+  return { ok: true, detalle: `clase ${id}: auditoría${rojo.length ? ` con ${rojo.filter(a => reconoce(a, auditoria)).join(' y ')}` : ''}${observacion}` };
+}
+
+// Fila 6 (cobertura) · Cada diapositiva (`### Diapositiva N`) u hoja (`## Hoja "X"`) de los ficheros de material
+// aparece en `## Cobertura del material` de la sesión (o en cualquier parte de la sesión si no tiene esa sección; «Diapositivas 1-3»
+// vale). Siempre ok: true, con las que no encuentra, hasta ver que no da falsos positivos.
+function coberturaDelMaterial(destino, { id, ficheros }) {
+  const f = ficheroDeSesion(destino, id);
+  if (!f) return { ok: true, detalle: `clase ${id}: no hay nota de sesión (observación: no se pudo mirar la cobertura)` };
+  const sesion = fs.readFileSync(f, 'utf8');
+  const cobertura = seccionDe(sesion, 'Cobertura del material');
+  const donde = cobertura === null ? sesion : cobertura;
+  const cubiertas = new Set();
+  // «Diapositiva 3», «Diapositivas 1-3» o abreviado, «Diap. 3» (así las escribió el profesor en la prueba del 2026-10-03).
+  for (const m of donde.matchAll(/diap(?:ositiva)?s?\.?\s+(\d+)(?:\s*(?:-|–|a|al|y)\s*(\d+))?/gi)) {
+    const [a, b] = [Number(m[1]), Number(m[2] || m[1])];
+    for (let n = a; n <= Math.max(a, b) && n - a < 50; n++) cubiertas.add(n);
+  }
+  // Y las filas que empiezan por el número («| 2 · El trueque |»), que es como las escribe el profesor cuando la columna ya se llama «Diapositiva».
+  for (const m of donde.matchAll(/^[|\-*\s]*(\d+)\s*[·.:)]/gm)) cubiertas.add(Number(m[1]));
+  const partes = [];
+  for (const fichero of ficheros) {
+    const material = fs.readFileSync(fichero, 'utf8');
+    for (const m of material.matchAll(/^###\s+Diapositiva\s+(\d+)/gim)) partes.push({ nombre: `diapositiva ${m[1]}`, vista: cubiertas.has(Number(m[1])) });
+    for (const m of material.matchAll(/^##\s+Hoja\s+["“]?([^"”\n]+?)["”]?\s*$/gim)) partes.push({ nombre: `hoja «${m[1]}»`, vista: normalDeNombre(donde).includes(normalDeNombre(m[1])) });
+  }
+  const sin = partes.filter(p => !p.vista).map(p => p.nombre);
+  return { ok: true, detalle: `clase ${id}: ${partes.length - sin.length} de ${partes.length} partes del material con destino${cobertura === null ? ' (la sesión no tiene «Cobertura del material»)' : ''}${sin.length ? ` (observación: sin destino ${sin.join(', ')})` : ''}` };
+}
+
+// Fila 7 · Cada ejercicio .html con `config/casos/<ejercicio>.json` pasa verificar-ejercicio.js --casos (misma
+// ejecución en el sandbox, sin lanzar otro proceso). Rojo si falla. Un .html sin casos a mano solo se dice: `--barrer` es al azar.
+function ejerciciosConCasos(destino) {
+  const { ejecutarEnHijo, informe } = require('../../.kit/herramientas/verificar-ejercicio');
+  const htmls = [];
+  const recorrer = dir => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const abs = path.join(dir, e.name);
+      if (e.isDirectory()) { if (e.name !== 'entregas') recorrer(abs); } else if (e.name.endsWith('.html') && !e.name.startsWith('.')) htmls.push(abs);
+    }
+  };
+  recorrer(path.join(destino, 'estudio', 'ejercicios'));
+  const fallos = [];
+  const sinCasos = [];
+  let conCasos = 0;
+  for (const html of htmls.sort()) {
+    const nombre = path.basename(html, '.html');
+    const json = path.join(destino, 'config', 'casos', `${nombre}.json`);
+    if (!fs.existsSync(json)) { sinCasos.push(nombre); continue; }
+    conCasos++;
+    try {
+      const casos = JSON.parse(fs.readFileSync(json, 'utf8'));
+      if (!Array.isArray(casos) || !casos.length) throw new Error('config/casos/ tiene que ser un array de casos, con al menos uno');
+      const r = informe(ejecutarEnHijo(html, casos));
+      if (!r.ok) fallos.push(`${nombre}: ${r.texto.split('\n').slice(1).join(' / ').trim() || r.texto}`);
+    } catch (error) { fallos.push(`${nombre}: ${error.message}`); }
+  }
+  const observacion = sinCasos.length ? ` (observación: sin casos a mano ${sinCasos.join(', ')})` : '';
+  if (fallos.length) return { ok: false, detalle: `verificar-ejercicio --casos falla: ${fallos.join(' · ')}${observacion}` };
+  return { ok: true, detalle: `${htmls.length} ejercicio(s) .html, ${conCasos} con casos a mano y pasando${observacion}` };
+}
+
+// Fila 8 · Caso «falta información»: la nota de la sesión `id` lleva `FALTA INFO:` en una línea que nombra `ancla`
+// («patrón oro»): es el marcador de la regla 3 de AGENTS.md. Solo cuenta ese fichero de sesión (un FALTA INFO de otra
+// sesión, o de pendientes.md, no vale); lo que el profesor amplíe por su cuenta no se mira.
+function faltaInfoEnSesion(destino, { id, ancla }) {
+  const f = ficheroDeSesion(destino, id);
+  if (!f) return { ok: false, detalle: `clase ${id}: no hay nota de sesión` };
+  const lineas = fs.readFileSync(f, 'utf8').split(/\r?\n/);
+  const marcadas = lineas.filter(l => l.includes('FALTA INFO:'));
+  const buscada = normalDeNombre(ancla);
+  const hallada = marcadas.find(l => normalDeNombre(l).includes(buscada));
+  return hallada
+    ? { ok: true, detalle: `clase ${id}: «FALTA INFO:» sobre «${ancla}» en ${path.basename(f)}` }
+    : { ok: false, detalle: `clase ${id}: ${path.basename(f)} no tiene ninguna línea «FALTA INFO:» que nombre «${ancla}» (hay ${marcadas.length} FALTA INFO sobre otra cosa)` };
+}
+
+// Fila 9 · `/ejercicio` deja un ejercicio del concepto pedido. La foto se toma ANTES del paso (como pasoRepaso, que mira
+// «nuevo o regenerado»): para cada fichero de estudio/ejercicios/ (menos `_index.md`, ocultos y entregas/), su fecha y tamaño.
+function fotoDeEjercicios(destino) {
+  const foto = {};
+  const recorrer = dir => {
+    if (!fs.existsSync(dir)) return;
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.name.startsWith('.') || e.name.startsWith('_')) continue;
+      const abs = path.join(dir, e.name);
+      if (e.isDirectory()) { if (e.name !== 'entregas') recorrer(abs); } else {
+        const st = fs.statSync(abs);
+        foto[aPosix(path.relative(path.join(destino, 'estudio', 'ejercicios'), abs))] = { mtimeMs: st.mtimeMs, size: st.size };
+      }
+    }
+  };
+  recorrer(path.join(destino, 'estudio', 'ejercicios'));
+  return foto;
+}
+
+// Verde: hay un fichero de ejercicio nuevo o modificado desde la foto y la nota del concepto lo enlaza (`ejercicio:` del
+// frontmatter o `## Practícalo`: ejercicio/SKILL.md, «Un ejercicio que solo se alcanza desde su sesión está medio perdido»).
+// Rojo: no se tocó ninguno, o se tocó y la nota no lo enlaza. Con qué formato ni cuántos, no se mira.
+function ejercicioDelConcepto(destino, { slug, foto }) {
+  const ahora = fotoDeEjercicios(destino);
+  const tocados = Object.keys(ahora).filter(rel => !foto[rel] || foto[rel].mtimeMs !== ahora[rel].mtimeMs || foto[rel].size !== ahora[rel].size);
+  if (!tocados.length) return { ok: false, detalle: `/ejercicio sobre «${slug}»: no se creó ni se tocó ningún fichero de estudio/ejercicios/` };
+  const nota = path.join(destino, 'estudio', 'conceptos', `${slug}.md`);
+  if (!fs.existsSync(nota)) return { ok: false, detalle: `/ejercicio sobre «${slug}»: no existe la nota del concepto (conceptos/${slug}.md)` };
+  const texto = fs.readFileSync(nota, 'utf8');
+  const enlazados = listaDeFrontmatter(texto, 'ejercicio').concat((/^ejercicio:[ \t]*([^\[\n]+?)[ \t]*$/m.exec(texto) || [])[1] || []).map(v => normalDeNombre(v));
+  const practicalo = normalDeNombre(seccionDe(texto, 'Practícalo') || '');
+  const base = rel => normalDeNombre(path.basename(rel).replace(/\.[^.]+$/, ''));
+  const enlazado = tocados.filter(rel => enlazados.includes(base(rel)) || (practicalo && practicalo.includes(base(rel))));
+  return enlazado.length
+    ? { ok: true, detalle: `/ejercicio sobre «${slug}»: ${tocados.length} fichero(s) nuevos o modificados (${tocados.join(', ')}), enlazado desde la nota: ${enlazado.join(', ')}` }
+    : { ok: false, detalle: `/ejercicio sobre «${slug}»: tocó ${tocados.join(', ')}, pero la nota del concepto no lo enlaza ni desde «ejercicio:» ni desde «## Practícalo»` };
+}
+
+// Fila 10 · Sinónimo: `sinonimo` («fondo de emergencia») es otro nombre del concepto que ya existe (`titulo`, «Colchón
+// financiero»), y conceptoCompartido no lo caza (busca por título contenido). Rojo: una nota de concepto distinta de la del
+// concepto lleva el sinónimo en el título o en un alias (el duplicado de la regla 1). Verde: la nota del concepto lo lleva en `alias`,
+// o hay una línea `TODO:`/`FALTA INFO:` (en conceptos o sesiones) que lo nombra. Ni nota aparte, ni alias, ni TODO: ok: true
+// con observación (puede ser que no lo haya visto). Normaliza y lee `alias` como conceptoCompartido.
+function sinonimoDelConcepto(destino, { titulo, sinonimo }) {
+  const buscado = normalDeNombre(titulo);
+  const sin = normalDeNombre(sinonimo);
+  const notas = recorrerMd(path.join(destino, 'estudio', 'conceptos')).filter(f => !path.basename(f).startsWith('_')).map(f => {
+    const texto = fs.readFileSync(f, 'utf8');
+    const t = (/^#\s+(.+)$/m.exec(texto) || [])[1];
+    const alias = listaDeFrontmatter(texto, 'alias');
+    return { f, texto, titulo: t ? normalDeNombre(t) : '', alias };
+  });
+  const delConcepto = notas.find(n => n.titulo === buscado || n.alias.includes(buscado));
+  const llevaSinonimo = n => n.titulo.includes(sin) || n.alias.some(a => a.includes(sin));
+  const aparte = notas.filter(n => n !== delConcepto && llevaSinonimo(n));
+  if (aparte.length) return { ok: false, detalle: `«${sinonimo}» es otro nombre de «${titulo}» y tiene nota propia (${aparte.map(n => path.basename(n.f)).join(', ')}): duplicado` };
+  const observacionNota = delConcepto ? '' : ` (observación: no encuentro la nota de «${titulo}»)`;
+  if (delConcepto && delConcepto.alias.some(a => a.includes(sin))) return { ok: true, detalle: `«${sinonimo}» queda como alias de «${titulo}» (${path.basename(delConcepto.f)})` };
+  const todo = [...recorrerMd(path.join(destino, 'estudio', 'conceptos')), ...recorrerMd(path.join(destino, 'estudio', 'sesiones'))]
+    .flatMap(f => fs.readFileSync(f, 'utf8').split(/\r?\n/).filter(l => /(TODO|FALTA INFO):/.test(l) && normalDeNombre(l).includes(sin)).map(() => path.basename(f)));
+  if (todo.length) return { ok: true, detalle: `«${sinonimo}» queda como pregunta pendiente (TODO/FALTA INFO en ${[...new Set(todo)].join(', ')})${observacionNota}` };
+  return { ok: true, detalle: `«${sinonimo}»: ni nota aparte, ni alias, ni TODO (observación: el profesor no lo relacionó con «${titulo}»)${observacionNota}` };
+}
+
+// ¿La nota del concepto ya enlaza un ejercicio? (`ejercicio:` del frontmatter con valor, o un enlace `[[…]]` en `## Practícalo`).
+function tieneEjercicioEnlazado(destino, slug) {
+  const nota = path.join(destino, 'estudio', 'conceptos', `${slug}.md`);
+  if (!fs.existsSync(nota)) return false;
+  const texto = fs.readFileSync(nota, 'utf8');
+  const enFrontmatter = listaDeFrontmatter(texto, 'ejercicio').length > 0 || /^ejercicio:[ \t]*[^\[\s]/m.test(texto);
+  return enFrontmatter || /\[\[[^\]]+\]\]/.test(seccionDe(texto, 'Practícalo') || '');
+}
+
+// Qué concepto pedirle a /ejercicio (fila 9): el primero con fórmula que aún no tenga ejercicio enlazado (así `/sesion`
+// no lo ha dejado ya hecho y el paso mide de verdad que /ejercicio genera); si todos lo tienen, el primero con fórmula,
+// con `yaTenia: true`. Sin ningún concepto con fórmula, null.
+function conceptoParaEjercicio(destino) {
+  const conFormula = conceptosConFormula(destino);
+  if (!conFormula.length) return null;
+  const libre = conFormula.find(s => !tieneEjercicioEnlazado(destino, s));
+  return libre ? { slug: libre, yaTenia: false } : { slug: conFormula[0], yaTenia: true };
+}
+
+// El veredicto de /ejercicio (fila 9) sobre `slug`: ejercicioDelConcepto, salvo que el concepto ya tuviera ejercicio enlazado
+// (`yaTenia`) y el paso no tocara nada en estudio/ejercicios/: un buen profesor puede contestar «ya tienes uno». Eso es ok,
+// con observación; si tocó algo, vale lo que diga ejercicioDelConcepto.
+function ejercicioPedido(destino, { slug, foto, yaTenia = false }) {
+  const ahora = fotoDeEjercicios(destino);
+  const claves = Object.keys(ahora);
+  const igual = claves.length === Object.keys(foto).length
+    && claves.every(k => foto[k] && foto[k].mtimeMs === ahora[k].mtimeMs && foto[k].size === ahora[k].size);
+  if (yaTenia && igual) return { ok: true, detalle: `/ejercicio sobre «${slug}»: ya tenía un ejercicio enlazado y no se tocó nada (observación: el profesor pudo decir «ya tienes uno»)` };
+  return ejercicioDelConcepto(destino, { slug, foto });
+}
+
 module.exports = {
   recorrerMd, primerConcepto, primeraSesion, insertarAntesDelPie, simularAlumnoTrasSesiones, quedaMarcador,
-  conceptoConFormula, examenMasReciente, repasosGenerados, conceptoCompartido,
+  conceptoConFormula, conceptosConFormula, conceptoParaEjercicio, ejercicioPedido, tieneEjercicioEnlazado,
+  examenMasReciente, repasosGenerados, conceptoCompartido, sesionConEjercicio,
   examenSinSoluciones, contarHuecos, leerRespuestas, ponerRespuestas, promptAlumnoSimulado,
   veredictoDe, leerVeredictos, compararVeredictos, comprobarTrampa,
   casillasDeExamen, patronDeRespuestas, contestarExamenTest, verificarCorreccionTest,
   referenciaCoherente, formatoDeOpciones, angulosDelExamen, revisionDelExamen, preguntasReferencia, preguntasLiteralesDelCentro,
   falladasTopeTres, preguntasReutilizadas, verificarReutilizacionFalladas,
+  respuestasEnLaTabla, dudasRespondidas, conceptosDelExamen, procesarClase, sinNoSeVeraBien, auditoriaRecoge, coberturaDelMaterial,
+  ejerciciosConCasos, faltaInfoEnSesion, fotoDeEjercicios, ejercicioDelConcepto, sinonimoDelConcepto,
 };

@@ -85,17 +85,20 @@ va por detrás o se ha separado de ella (`--sin-comprobar-rama` lo salta). Si tu
 Monta un curso de verdad (el motor de tu copia de trabajo + `pruebas/curso-ejemplo/`, un curso corto e
 inventado — finanzas personales para empezar, con fórmulas en unas clases y sin ellas en otras, y algo
 de desorden real de alumno) en una carpeta temporal, y le hace pasar, con `claude -p` en modo no
-interactivo, por las cinco skills de trabajo en orden: `/sesion` de las clases del módulo del examen,
+interactivo, por las cinco skills de trabajo en orden: `/sesion` de las clases del módulo del examen (y, tras cada
+una, el paso `lo que deja /sesion <id>`: sin `no-se-vera-bien`, progreso sin evaluar, cobertura del material y lo que declare la
+clase en `pruebas/curso-ejemplo/clases.json`: ejercicio, `FALTA INFO`, auditoría),
 `preparar.js --lanzar` de la clase que no hace falta para ese examen (en segundo plano, justo antes de
 `/dudas`), `/dudas` (tras simular que el alumno dejó dos dudas y marcó una casilla "a su manera"),
 `/ejercicio`, `/examen` (generar, contestar y corregir: las respuestas las da un alumno simulado con el perfil de
-`pruebas/curso-ejemplo/alumno/perfil.md`, sin ver las soluciones; la nota tiene que quedar entre 3 y 8), `preparar.js --juntar` de esa preparación y
+`pruebas/curso-ejemplo/alumno/perfil.md`, sin ver las soluciones; la nota tiene que quedar entre 3 y 8), `preparar.js --juntar` de esa preparación (con los mismos `lo que deja /sesion <id>` de sus clases, los conceptos compartidos y,
+si alguna clase declara `sinonimos`, `sinónimo de un concepto que ya existe`), `ejercicios con casos` y
 `/repaso`. Es el caso de verdad con choques posibles del plan 0.22 (§4): dos ramas trabajando a la vez
 sobre el mismo curso. Cada paso es una llamada a `claude` independiente (sesión nueva), y si uno falla o
 no encuentra lo que esperaba, se anota como fallo de **ese** paso y la prueba sigue con los demás — nunca
 revienta sin resumen. Al terminar, borra la carpeta temporal (también si algo falla) y sustituye
 `pruebas/curso-ejemplo/resultado/` entero por: el `estudio/` que quedó (sin `.obsidian/` ni `inbox/`),
-`config/alumno.md`, y `RESUMEN.md` (fecha, versión del kit, modelo, qué pasó en cada paso, los errores y
+`config/alumno.md`, `config/claves/` y `config/revisiones/` (las claves de los exámenes y sus revisiones: el curso es inventado), y `RESUMEN.md` (fecha, versión del kit, modelo, qué pasó en cada paso, los errores y
 avisos de `comprobar.js` agrupados por regla —con ojo a `no-se-vera-bien` y los pedagógicos—, y cuánto
 material salió). Revisa ese resumen a mano: es la parte que ningún test automático puede juzgar por ti.
 

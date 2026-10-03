@@ -13,6 +13,27 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.30.0
+- **Preparar una clase tiene menos idas y venidas.** Tu profesor lee de una vez el material de la clase y lo que
+  necesita consultar, y la cierra con un solo guardado, en el que repasa los avisos de lo que acaba de escribir.
+- **Cada clase con cuentas llega con su ejercicio.** Si en la clase hay una fórmula con datos que se pueden cambiar,
+  o una cantidad a partir de la cual la respuesta es otra, tu profesor te deja al menos un ejercicio al prepararla,
+  en vez de dejarlo para luego. Los demás se los puedes pedir cuando quieras.
+- **Con varias clases nuevas, de una en una.** Si dejas material de dos clases o más, tu profesor las prepara una
+  detrás de otra, en el orden del curso, y ya no te ofrece hacerlas a la vez: gasta bastante más cuota. Si aun así
+  las quieres a la vez, pídeselo: te avisa del gasto y espera tu sí.
+- **Arreglo: una duda tuya y una clase nueva sobre la misma nota ya no se atascan.** Si dejabas una duda en una nota
+  y, mientras tanto, una clase preparada en segundo plano ampliaba esa misma nota, juntarlas fallaba. Ahora se
+  quedan las dos cosas, y solo se para si de verdad cambian la misma línea.
+- **Arreglo: el material con tildes en el nombre ya no sale siempre como nuevo.** En un Mac, un fichero como
+  `sesión-3.pdf` aparecía como pendiente de preparar aunque ya lo estuviera.
+- **Tu profesor apunta mejor de qué material salió cada clase,** y avisa si una sesión no casa con ningún fichero
+  de tu **inbox**: así no te ofrece preparar otra vez algo que ya tienes.
+- **Arreglo: menos avisos que no tocaban.** Las reglas de tu curso ya no saltan sobre las citas literales del
+  material, y no salen avisos de "pregunta doble" sobre exámenes que ya hiciste (un examen hecho no se reescribe).
+- **Si ya tenías tu curso:** tu profesor te ofrece crear el ejercicio de las clases que ya tenías preparadas y se
+  quedaron sin él.
+
 ## 0.29.0
 - **Cada examen lo revisa alguien antes de llegarte.** Quien escribe un examen no ve sus propios fallos: antes de
   ofrecértelo, lo resuelve a ciegas otro ayudante, sin la clave ni tus notas. Si una pregunta se acierta sin saber,

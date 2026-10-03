@@ -4,17 +4,15 @@ sesion: 01-02-01-presupuesto-personal
 ---
 # Flashcards · 01-02-01-presupuesto-personal
 
-> Se responde mentalmente antes de desplegar.
-
 **Gastas algo en ocio todos los meses. ¿Es un gasto fijo? ¿Por qué?**
 > [!success]- Respuesta
-> No, es variable: aunque gastes algo siempre, la cifra exacta la decides tú cada mes.
+> No, es variable: que lo gastes siempre no lo hace fijo; la cifra la decides tú cada mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Facturas 2.400,00 € unos meses y 1.300,00 € otros. ¿Con qué ingreso haces el presupuesto?**
+**Facturas por tu cuenta y tus ingresos oscilan entre 1.300,00 € y 2.400,00 €. ¿Con qué cifra presupuestas?**
 > [!success]- Respuesta
 > Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
 
@@ -22,17 +20,17 @@ sesion: 01-02-01-presupuesto-personal
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Ingresas 1.000,00 € y ahorras 200,00 €. ¿Cuál es la tasa de ahorro del mes?**
+**Ingresos de 2.000,00 € y ahorro de 500,00 €. ¿Qué tasa de ahorro del mes es?**
 > [!success]- Respuesta
-> 200,00 € ÷ 1.000,00 € × 100 = 20 % del mes.
+> 500,00 € ÷ 2.000,00 € × 100 = 25 % del mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Gastas 1.000,00 € al mes y eres freelance. ¿Qué colchón financiero te fijas?**
+**Con 1.000,00 € de gastos al mes, ¿qué colchón de 6 meses necesitas y por qué 6 y no 3?**
 > [!success]- Respuesta
-> Entre 5.000,00 € y 6.000,00 €: 5-6 meses de gastos, más que los 3 de una nómina fija.
+> 6.000,00 €. Seis porque con ingresos irregulares conviene un colchón mayor que con nómina fija.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía

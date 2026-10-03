@@ -7,29 +7,12 @@ const perfil = require('./lib/perfil');
 const examenesLib = require('./lib/examenes');
 const { comprobar } = require('./comprobar');
 const g = require('./lib/git');
+const { materialNuevo, nombreDe } = require('./lib/material');
 
 // La foto del curso al abrir (plan 0.22, §3.1): lo que el arranque necesita para confirmar con el alumno
 // si toca estudiar lo ya preparado, esperar a que se prepare lo nuevo, o repasar mientras se prepara.
 // Todo sale de disco: nadie rellena esto a mano, y es solo una sugerencia — el profesor la confirma siempre.
 // Y las señales de que algo no funciona (`lib/perfil.js`), para que el profesor no tenga que acordarse de buscarlas.
-
-// "Material nuevo" (plan §2): un fichero de estudio/inbox/ que ninguna sesión cita en su `fuente:`.
-// Se compara por nombre de fichero, no por ruta completa: `fuente:` se escribe sin `estudio/` delante
-// (AGENTS.md), y comparar solo el nombre es más tolerante a cómo cada sesión lo anotó.
-function materialNuevo(raiz) {
-  const base = v.baseAlumno(raiz);
-  const ficheros = v.recorrer(path.join(base, 'inbox'), n => !n.startsWith('.'));
-  const citados = new Set();
-  for (const abs of v.recorrer(path.join(base, 'sesiones'), n => n.endsWith('.md') && !n.startsWith('_'))) {
-    const fm = v.leerFrontmatter(fs.readFileSync(abs, 'utf8')) || {};
-    const fuentes = Array.isArray(fm.fuente) ? fm.fuente : (fm.fuente ? [String(fm.fuente)] : []);
-    for (const f of fuentes) citados.add(path.posix.basename(v.aPosix(f)));
-  }
-  return ficheros
-    .map(abs => v.aPosix(path.relative(base, abs)))
-    .filter(rel => !citados.has(path.posix.basename(rel)))
-    .sort();
-}
 
 // true si el proceso sigue vivo. EPERM significa que existe pero no es nuestro (también cuenta como vivo);
 // cualquier otro error (típicamente ESRCH) significa que ya no existe.
@@ -155,8 +138,8 @@ function calcularEstado(raiz, { ejecutarFetch } = {}) {
   // Lo que ya está en una preparación en marcha o terminada (sin juntar todavía) no es material nuevo: si lo
   // fuera, el profesor ofrecería prepararlo otra vez (visto en la prueba real de la 0.22).
   const enPreparacion = new Set(preparaciones.filter(p => p.resultado === 'en-curso' || p.resultado === 'terminada')
-    .flatMap(p => (p.ficheros || []).map(f => path.posix.basename(v.aPosix(String(f))))));
-  const nuevos = materialNuevo(raiz).filter(rel => !enPreparacion.has(path.posix.basename(rel)));
+    .flatMap(p => (p.ficheros || []).map(nombreDe)));
+  const nuevos = materialNuevo(raiz).filter(rel => !enPreparacion.has(nombreDe(rel)));
   const sesiones = indice.leerSesiones(raiz).sort(indice.compararSesiones);
   const progreso = indice.leerProgreso(raiz);
   const siguiente = sesiones.find(s => !s.estudiada) || null;

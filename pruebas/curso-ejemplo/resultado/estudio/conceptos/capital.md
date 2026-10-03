@@ -1,33 +1,39 @@
 ---
 tipo: concepto
-bloques: [modulo-02]
+bloques: [2.1]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 1
 requiere: []
 alias: []
-tags: []
+tags: [interes]
 ---
 # Capital
 
-> **En una frase:** La cantidad de dinero de la que se parte: lo que se deposita, se presta o se invierte.
+> **En una frase:** el capital es la cantidad de dinero de la que se parte: lo que se presta, se deposita o se invierte.
 
 ## El problema
 
-Para hablar de cuánto crece un dinero hay que fijar de cuánto se parte. Sin un punto de partida, "ganar 50,00 €" no dice si es mucho o poco.
+Para hablar de lo que "da" un dinero hay que decir antes **de cuánto dinero** hablamos. Sin ese punto de
+partida, ningún interés se puede calcular.
 
 ## El ejemplo
 
-Metes 1.000,00 € en un depósito. Esos 1.000,00 € son el **capital** (o capital inicial). Lo que el depósito te pague por tenerlos ahí no es capital: son los intereses, que se calculan a partir de él (ver [[interes-simple]] e [[interes-compuesto]]).
+Metes 1.000,00 € en una cuenta de ahorro. Esos 1.000,00 € son el capital. Todo lo que la cuenta te
+dé después (los intereses) se calcula a partir de esa cifra.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Mezclar el capital inicial con el capital final. Con 1.000,00 € al 5 % anual durante 3 años a interés simple, el capital inicial son 1.000,00 € y el final 1.150,00 €: la fórmula pide el inicial.
+> Pensar que el capital es siempre lo que hay *hoy* en la cuenta. El **capital inicial** es con lo que
+> empiezas; con interés compuesto, lo que hay después (capital inicial más intereses) ya es otra cosa. En
+> las fórmulas, `C` es el inicial.
 
 ## Relacionados
 
-- [[tipo-de-interes]] — el precio que se paga por ese capital
-- [[presupuesto]] — el ahorro del mes es de donde puede salir un capital
+- [[tipo-de-interes]] — el precio que se paga por tener ese capital durante un tiempo
+- [[interes-simple]] — intereses calculados siempre sobre el capital inicial
+- [[interes-compuesto]] — intereses que se suman al capital y generan más
+- [[colchon-financiero]] — un capital guardado con un fin concreto
 
 ## Historial
 
