@@ -446,6 +446,24 @@ observación y cómo se ve en rojo):
     «Si ya tenías tu curso» de crear los ejercicios que faltan) y `.kit/VERSION`. Recoge lo acumulado desde la
     0.29.0: #82, #88, #89, #90, #92, la mezcla y el punto 6 de `/sesion`. Falta: la prueba entera sobre ese commit,
     subir la rama y el PR («Closes #89, #90, #92»). Opcional, después: los dos pasos con Codex.
+  - **Prueba entera sobre la 0.30.0 (`6141684`, 2026-10-03, 23:3x): 20/22, corrección 6/6.** No vale para
+    publicar. Lo de este plan, en verde: la 01-02 sale con ejercicio (`01-02-01-colchon.html`), `FALTA INFO` del
+    patrón oro, `/dudas`, `/ejercicio`, clave, tabla, sinónimo, mezcla. 0 `no-se-vera-bien`, 0 pedagógicos, 0
+    `fuente-inexistente`, 3 permisos denegados. Los dos rojos son de comprobaciones que ya existían:
+    - `/examen (otra vez, reutiliza falladas)`: el profesor escribió `de: "01-examen-2026-10-03, p.1"` y la
+      comprobación exige la ruta entera con carpeta y `.md`. La skill solo dice `de: "<examen donde la falló>,
+      p.<n>"`, ningún código lee ese campo, y el comentario de la comprobación dice «basta con que identifique el
+      examen anterior». Las 4 falladas sí se reutilizaron. **Decidido (Roberto): se relaja la comprobación**: vale
+      también el nombre del examen sin carpeta ni `.md`; otro examen sigue siendo rojo. Hecho, con test; sobre la
+      copia de ese paso (`pruebas-local/prueba-real-pasos-claude-code/14-…/curso`) da verde, 4 de 4.
+    - `conceptos compartidos`: la 02-02 creó `aportaciones-con-interes-compuesto` (su diapositiva 3), con
+      `requiere: [aportacion-periodica, interes-compuesto]`. La comprobación da por duplicado cualquier nota de
+      esas clases cuyo título contenga «interés compuesto».
+      **Decidido (Roberto): rojo solo si la nota con el nombre dentro no declara el concepto en su `requiere`**;
+      si lo declara, se apoya en él y queda como observación (cambia en parte lo decidido en la #56; punto débil
+      asumido: un duplicado que enlace al original sale como observación). Hecho, con tests; sobre el `resultado/`
+      de esta prueba da verde con la observación.
+    Con las dos comprobaciones ajustadas, falta repetir la entera sobre el commit final.
 - **Fuera:** un LLM juez que puntúe la explicación (la explicación mala pero bien formada no la ve nada: se dice así
   en el informe de la release) · un curso grande (más clases, índice lleno) · tocar el texto de las clases 01-01 y
   01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón ancho: la regla dice
