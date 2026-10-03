@@ -867,6 +867,8 @@ function conceptosDelExamen(destino, ficheroExamen) {
 // procesar una clase no evalúa: lo que había en progreso.md sigue igual y lo nuevo entra en ⬜ (evaluoAlProcesar, el
 // mismo criterio que comprobarTrampa). Las dos primeras salen de comprobar.js, no se reimplementan.
 function procesarClase(destino, { id, progresoAntes = null }) {
+  // Sin nota de sesión no hay clase que mirar (la preparación no se llegó a juntar, 2026-10-04): es rojo, no un verde vacío.
+  if (!ficheroDeSesion(destino, id)) return { ok: false, detalle: `clase ${id}: no hay nota de sesión (la clase no está en el curso: ¿no se procesó o no se juntó?)` };
   const { comprobar } = require('../../.kit/herramientas/comprobar');
   const informe = comprobar(destino);
   const problemas = [];

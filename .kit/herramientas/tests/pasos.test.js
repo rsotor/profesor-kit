@@ -430,3 +430,10 @@ test('coberturaDelMaterial: reconoce «Diap. N» abreviado en la tabla de cobert
   const r = coberturaDelMaterial(raiz, { id: 's01', ficheros: [path.join(raiz, 'material.md')] });
   assert.match(r.detalle, /2 de 2/);
 });
+
+test('procesarClase: una clase sin nota de sesión en el curso es rojo, no un verde vacío', () => {
+  const raiz = cursoTemporal();
+  const r = procesarClase(raiz, { id: '02-09' });
+  assert.equal(r.ok, false);
+  assert.match(r.detalle, /no hay nota de sesión/);
+});
