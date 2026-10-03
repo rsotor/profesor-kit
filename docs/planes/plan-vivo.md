@@ -359,8 +359,7 @@ observación y cómo se ve en rojo):
      ante un imprevisto) sin decir que es el colchón financiero.
    - `PROMPT_COMUN` (`prueba-real.js:286`) pasa a «No me preguntes nada: decide tú. Al terminar, guarda.» en todos
      los pasos de primer plano. El de segundo plano es del producto y no se toca.
-   - Sembrar en la simulación del alumno, antes de `/dudas`, una fórmula con `%` sin proteger y exigir que no quede
-     `no-se-vera-bien`.
+   - `no-se-vera-bien` también tras `/dudas` y `/ejercicio`, sin siembra (ver «Estado»).
    - `config/claves/` y `config/revisiones/` se guardan en el `resultado/` de la prueba.
 4. **Una prueba real entera con todo**, con Claude. Lo único obligatorio que gasta cuota.
 5. **Opcional, al final (Roberto, 2026-10-03): dos pasos sueltos con Codex**, solo donde el resultado depende del
@@ -369,6 +368,52 @@ observación y cómo se ve en rojo):
    los compartidos). No una entera: la cuota de Codex es la más corta, y el examen y la corrección no cambian con
    este plan. Sin esto, de Codex solo hay la calibración sobre su resultado guardado del 2026-10-02 (frase vieja).
 
+- **Estado (2026-10-03, noche):**
+  - Punto 1, hecho y sin enganchar en `prueba-real.js`: las funciones están en `pruebas/lib/pasos.js`
+    (`sesionConEjercicio`, `respuestasEnLaTabla`, `dudasRespondidas`, `conceptosDelExamen`, `procesarClase`,
+    `auditoriaRecoge`, `coberturaDelMaterial`, `ejerciciosConCasos`, `faltaInfoEnSesion`, `fotoDeEjercicios`,
+    `ejercicioDelConcepto`, `sinonimoDelConcepto`), con 23 tests en `pasos.test.js`. Calibradas sobre `resultado/`,
+    `resultado-codex-macos/` y las copias por paso de `pruebas-local/prueba-real-pasos-*/`: verdes salvo dos rojos
+    verdaderos (la 01-02 de Claude sin ejercicio; el examen de Codex sin tabla de intento, porque su corrección
+    falló aquel día). Un rojo falso corregido al calibrar: la cobertura no reconocía filas «| 2 · El trueque |».
+    Estropeando a mano una copia del `resultado/` se ponen en rojo las filas 4, 5, 8 y 10 (comprobado).
+  - Afinado al revisar: si `/sesion` ya creó y enlazó el ejercicio del concepto que pide el paso de `/ejercicio`, un
+    buen profesor puede contestar «ya tienes uno» sin tocar nada, y `ejercicioDelConcepto` daría rojo falso. Al
+    enganchar: el paso pide el ejercicio de un concepto con fórmula que aún no tenga ejercicio enlazado; si todos
+    lo tienen, vale el enlace que ya existe, con observación.
+  - Punto 2, hecho: **la mezcla choca.** Con la nota del colchón de la última prueba (base: tras `/sesion 01-02`;
+    un lado: tras `/dudas`, con la duda respondida al final; el otro: alias nuevo y una línea al final de
+    `## Historial`), `git merge` choca y `resolverConflictos` devuelve `ok: false`. Si la preparación solo añade el
+    alias y `visto_en` (cabecera), se junta sin choque. Es un fallo del kit con un caso real (el alumno deja una
+    duda en una nota que la preparación amplía): los dos lados añaden al final del cuerpo. **Decidido (Roberto):
+    se arregla la mezcla ahora** («es un fallo que se puede dar y no podemos mirar para otro lado»). La duda
+    simulada se queda en el colchón y el sinónimo también: así la prueba real cubre el caso. En marcha, en
+    `.kit/herramientas/lib/mezcla.js`; al tocar el git del alumno, lleva revisión independiente antes de darlo
+    por bueno.
+  - Mezcla arreglada (`lib/mezcla.js`, `juntarCuerpo`): cuando los dos lados solo añaden en el mismo punto del
+    cuerpo de una nota de concepto, se quedan los dos añadidos (primero el del otro lado, después el del curso
+    principal); si alguno cambia o borra lo que ya existía, sigue siendo choque. 6 tests en `mezcla.test.js` y 1 en
+    `traer.test.js`. Con la nota real del colchón: alias, `visto_en`, línea de historial y el callout de la duda
+    entero, sin marcadores. Falta su línea en el CHANGELOG de la siguiente release (hoy el CHANGELOG no tiene
+    sección sin publicar).
+  - Punto 3, hecho salvo la siembra: comprobaciones enganchadas en `prueba-real.js` (22 pasos: «lo que deja
+    /sesion <id>» tras cada clase, «sinónimo de un concepto que ya existe» y «ejercicios con casos» nuevos; el resto
+    dentro de los pasos que ya había), `PROMPT_COMUN` nuevo, claves y revisiones al `resultado/`, la diapositiva 5
+    de la 02-02 con el «fondo de emergencia» y `sinonimos` en `clases.json`. `npm test` 888 de 889 (1 omitido) antes
+    del sinónimo; después, `prueba-real.test.js` y `pasos.test.js` 126 de 126. Los nombres de los pasos cambian:
+    las copias guardadas de `--desde`/`--solo` ya no valen hasta la próxima entera.
+  - **Decidido (Roberto): sin siembra del `%`.** El diseño no decía en qué nota iba ni si la fórmula era del
+    alumno, y exigir al profesor que reescriba texto del alumno no es regla explícita. En su lugar, `no-se-vera-bien`
+    se mira también tras `/dudas` y `/ejercicio` (`sinNoSeVeraBien`): mide lo que escribe el profesor y no cuesta nada.
+  - Revisión independiente de la mezcla, hecha: 1 bloqueante (una nota con líneas que parecen marcadores de git
+    quedaba rota y se daba por buena) y 2 menores (línea repetida con añadidos de prefijo común; línea de lista
+    huérfana tras un callout). Corregidos: marcadores de tamaño 31, prefijo común una sola vez y el orden según la
+    lista. Repasados los casos con el montaje de la revisión: se juntan bien, y siguen chocando los dos lados que
+    cambian la misma línea y un contenido con marcadores de 31.
+  - Antes de la prueba entera: mezclar la rama local `arreglos-89-90-92` (#89, #90, #92; cambia `AGENTS.md`:
+    formato de `fuente:` y `pregunta-doble`). Mirado: no choca con lo de esta rama (solo coinciden en
+    `docs/arquitectura.md`, en zonas distintas), y su `comprobar.js` no da `fuente-inexistente` sobre los dos
+    resultados guardados. En el resultado de la entera no debe salir `fuente-inexistente`.
 - **Fuera:** un LLM juez que puntúe la explicación (la explicación mala pero bien formada no la ve nada: se dice así
   en el informe de la release) · un curso grande (más clases, índice lleno) · tocar el texto de las clases 01-01 y
   01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón ancho: la regla dice
