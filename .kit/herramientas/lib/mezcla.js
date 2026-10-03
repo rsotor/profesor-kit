@@ -106,7 +106,9 @@ function juntarCuerpo(fn, fc, fs2) {
   const parecenMarcador = [fn, fc, fs2].some(f => fs.readFileSync(f, 'utf8').split(/\r?\n/).some(l => /^(<{31}|\|{31}|={31}|>{31})/.test(l)));
   const r = spawnSync('git', ['merge-file', '-p', '--diff3', `--marker-size=${MARCA}`, fn, fc, fs2], { encoding: 'utf8' });
   if (r.status === 0) return r.stdout;
-  if (r.status !== 1 || parecenMarcador) return null;
+  // merge-file sale con el NÚMERO de trozos en conflicto (hasta 127), no con 1: con dos añadidos en dos puntos de la
+  // nota (una sección nueva a media nota y una línea al final) sale 2, y los dos se pueden juntar. Negativo o más: error.
+  if (r.status === null || r.status < 0 || r.status > 127 || parecenMarcador) return null;
   const salida = [];
   let zona = null, trozo = null;   // zona: 'nuestra' | 'comun' | 'suya'
   for (const linea of r.stdout.split(/(?<=\n)/)) {

@@ -368,3 +368,28 @@ test('juntarCuerpo: la preparación añade un callout y el curso una línea de l
   assert.deepEqual(r, { ok: true });
   assert.ok(nota.endsWith('- a\n- b\n' + callout), nota);
 });
+
+// Visto en la prueba real del 2026-10-04: /ejercicio añade «## Practícalo» a media nota y /dudas un callout al final, y la
+// preparación añade otra sección en el mismo punto y una línea al historial. Son DOS trozos en conflicto, los dos de solo añadir.
+const BASE_SECCIONES = CABECERA + '\n## El error típico\n\nTexto.\n\n## Relacionados\n\n- [[x]]\n\n## Historial\n\n- **s01** · primera vez\n';
+const conSeccion = seccion => t => t.replace('## Relacionados', `${seccion}\n\n## Relacionados`);
+
+test('juntarCuerpo: dos trozos en conflicto, los dos de solo añadir, se juntan (merge-file sale con el número de trozos)', () => {
+  const aqui = t => conSeccion('## Practícalo\n\n[[ejercicios/e1.html|Un ejercicio]]')(t) + '\n> [!question]- Duda\n> ¿y esto?\n>\n> **Respuesta:** así.\n';
+  const alla = t => conSeccion('## Antes de ahorrar (clase 2.2)\n\nOtro nombre del mismo concepto.')(t) + '- **s02** · ampliada\n';
+  const { r, nota } = juntada(BASE_SECCIONES, aqui, alla);
+  assert.deepEqual(r, { ok: true });
+  assert.ok(!/^[<|=>]{7,}/m.test(nota), nota);
+  for (const trozo of ['## Practícalo', '[[ejercicios/e1.html|Un ejercicio]]', '## Antes de ahorrar (clase 2.2)', 'Otro nombre del mismo concepto.', '- **s02** · ampliada', '> **Respuesta:** así.']) {
+    assert.equal(nota.split(trozo).length, 2, `«${trozo}» tiene que salir una vez:\n${nota}`);
+  }
+  assert.ok(nota.indexOf('## Antes de ahorrar') < nota.indexOf('## Relacionados') && nota.indexOf('## Practícalo') < nota.indexOf('## Relacionados'), 'las dos secciones nuevas quedan antes de Relacionados');
+  assert.ok(nota.indexOf('- **s01** · primera vez\n- **s02** · ampliada\n\n> [!question]- Duda') > 0, `la línea de historial pegada a su lista y el callout detrás:\n${nota}`);
+});
+
+test('juntarCuerpo: dos trozos en conflicto y uno cambia una línea que ya existía → sigue siendo un choque', () => {
+  const aqui = t => conSeccion('## Practícalo\n\n[[ejercicios/e1.html|Un ejercicio]]')(t).replace('primera vez', 'primera vez, aquí');
+  const alla = t => conSeccion('## Antes de ahorrar (clase 2.2)\n\nOtro nombre.')(t).replace('primera vez', 'primera vez, allá');
+  const { r } = juntada(BASE_SECCIONES, aqui, alla);
+  assert.equal(r.ok, false);
+});
