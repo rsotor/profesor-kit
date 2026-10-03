@@ -271,6 +271,22 @@ semanal del 13 % al 14 % (seis ejecuciones y la sonda de Haiku).
   vuelta (estructura, auditoría, plantillas; los tres `config/*.md` fuera, porque suelen venir ya con la skill) y
   quitar los ejemplos y la skill `/ejercicio` del paquete; dejar `leer.js` con varios ficheros para `/repaso` y
   `/examen`. Luego, lo que de verdad pesa: las 7–9 llamadas de escribir, comprobar y corregir.
+- **Vuelta al paquete pequeño (2026-10-03, tarde; sí de Roberto; sin commit).** `PAQUETES.sesion` = estructura,
+  auditoría y las tres plantillas; fuera los `config/*.md`, `ajustes.json`, los ejemplos y `/ejercicio` (el punto 6
+  vuelve a «léela antes del primero»). Quitada la frase de `guardar.js --empezar` (0 de 6 la siguió). `leer.test.js`
+  18/18. La suite entera falla en `preparar.test.js` (y `guardar` solo dentro de la suite) por el entorno, no por
+  esto: el curso de los tests ve `M .claude/worktrees/prueba-aislada`, un worktree que sigue en el disco. TODO: decidir
+  si se borra ese worktree o los tests ignoran `.claude/worktrees/`.
+- **Codex, `--solo "/sesion 01-01"` con el paquete pequeño (2026-10-03, 16:41):** 1/1, 0 permisos denegados, 0
+  errores de `comprobar.js`, 208 s, 283 K tokens (sin línea base de Codex: dato, no resultado). Usó `leer.js --para
+  sesion` en su 2.ª llamada y los tres ficheros que edita en la misma tanda. El primer intento falló por el sandbox
+  de Codex (no por el kit). **Piloto cerrado: se queda.** Ahorra poco (−9 % / −15 % con Claude, en el borde del
+  ruido), no empeora y funciona en los dos asistentes. Lo que pesa son las 7–9 llamadas de escribir: siguiente diseño.
+- **Bandeja:** con Codex, `AGENTS.md` («Otro asistente») le hace leer `cambiar-de-asistente.md` y `ESTANDARES.md`
+  en cada `/sesion`, aunque no cambie de asistente.
+- **Bandeja:** analizador de incumplimientos de `AGENTS.md` (shell para editar, `&&`, `git commit` a mano, sin
+  `guardar.js`) sobre el log de `prueba-real`, en vez del mod de Claude Code que se propuso en otra conversación
+  (el mod solo sirve en `pruebas-local` interactivo). Después del piloto.
 
 - **Abogado del diablo:** ronda corta 2026-10-02, 5 objeciones, las 5 aplicadas al diseño de arriba: 1) el paquete
   crece con el curso → material primero, todas las partes a la vez, y el límite declarado (no se recorta el

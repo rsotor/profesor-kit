@@ -142,31 +142,17 @@ function leer(fichero) {
 // Qué va dentro lo dicen los logs de la prueba real (plan vivo, piloto de /sesion): lo que el profesor leía suelto,
 // llamada a llamada, antes de escribir. Fuera quedan, a propósito, los ficheros que la skill edita después (el índice
 // de conceptos, el progreso y el mapa): Claude Code solo deja editar un fichero que ha leído con su propia
-// herramienta, y la salida de un comando no le cuenta (comprobado el 2026-10-03).
+// herramienta, y la salida de un comando no le cuenta (comprobado el 2026-10-03). Y fuera, también a propósito, lo
+// que no evita una llamada entera: cada carácter del paquete se paga en todas las llamadas de después (los tres
+// `config/*.md`, que suelen venir ya con la skill; los ejemplos ya hechos y la skill /ejercicio: con ellos, la
+// segunda vuelta del piloto salió +28 % en la 01-01).
 const E = v.CARPETA_ALUMNO;
 const PAQUETES = {
   sesion: {
     ficheros: [
-      'config/curso.md', 'config/profesor.md', 'config/alumno.md', 'config/ajustes.json', 'config/estructura.json',
-      `${E}/auditoria-del-material.md`,
+      'config/estructura.json', `${E}/auditoria-del-material.md`,
       '.kit/plantillas/concepto.md', '.kit/plantillas/sesion.md', '.kit/plantillas/flashcards.md',
     ],
-    // Lo que se usa más tarde (los ejercicios son el punto 6), al final: si el paquete no cabe en una parte, que lo
-    // que falte sea esto y no la clase ni la configuración.
-    alFinal: [`${E}/ejercicios/_index.md`, '.kit/skills/ejercicio/SKILL.md'],
-    // El profesor prefiere ver una sesión ya hecha a la plantilla: la última, sus flashcards y uno de sus conceptos.
-    ejemplos: raiz => {
-      const md = n => n.endsWith('.md') && !n.startsWith('_');
-      // La última por su nombre, que empieza por el id de la sesión (el orden del temario), esté en la carpeta que esté.
-      const sesiones = v.recorrer(path.join(raiz, E, 'sesiones'), md).map(f => conBarras(path.relative(raiz, f)));
-      if (!sesiones.length) return [];
-      const sesion = sesiones.sort((a, b) => path.basename(a).localeCompare(path.basename(b))).pop();
-      const nombre = path.basename(sesion);
-      const flashcards = v.recorrer(path.join(raiz, E, 'flashcards'), md).map(f => conBarras(path.relative(raiz, f))).find(f => path.basename(f) === nombre);
-      const enlaces = [...fs.readFileSync(path.join(raiz, sesion), 'utf8').matchAll(/\[\[([^\]|#]+)/g)].map(m => m[1].trim());
-      const concepto = enlaces.map(s => `${E}/conceptos/${s}.md`).find(f => fs.existsSync(path.join(raiz, f)));
-      return [sesion, flashcards, concepto].filter(Boolean);
-    },
   },
 };
 
@@ -245,9 +231,7 @@ function cli(args, raiz = process.cwd()) {
   const bloques = !para && ficheros.length === 1
     ? [{ titulo: null, texto: leer(ficheros[0]) }]
     : [...ficheros.map(f => bloque(raiz, f, Boolean(para) || f.startsWith(inbox))),
-      ...(paquete ? paquete.ficheros.map(delCurso) : []),
-      ...(paquete ? paquete.ejemplos(raiz).map(ruta => ({ ...delCurso(ruta), titulo: `ya hecho, como ejemplo de formato: ${ruta}` })) : []),
-      ...(paquete ? paquete.alFinal.map(delCurso) : [])];
+      ...(paquete ? paquete.ficheros.map(delCurso) : [])];
   const trozos = partes(bloques);
   if (trozos.length === 1 && n === 1) { console.log(trozos[0]); return 0; }
   const comando = ['node .kit/herramientas/leer.js', ...args.filter((a, j) => a !== '--parte' && args[j - 1] !== '--parte').map(a => (/\s/.test(a) ? `"${a}"` : a))].join(' ');

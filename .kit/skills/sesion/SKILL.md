@@ -19,16 +19,13 @@ Sigue estos puntos en orden y no te saltes ninguno.
 
 **Lo primero, una sola tanda de lecturas, todas a la vez:**
 
-- `node .kit/herramientas/leer.js --para sesion <ficheros de la clase>`: te da el material entero y, detrás, todo
-  lo que consulta esta skill: `config/` (curso, profesor, alumno, ajustes, estructura), la auditoría del material,
-  las tres plantillas, la última sesión ya hecha con sus flashcards y un concepto (el formato real), y la skill
-  `/ejercicio` con su índice. Si dice que hay más partes, pídelas en la siguiente llamada, todas a la vez.
+- `node .kit/herramientas/leer.js --para sesion <ficheros de la clase>`: te da el material entero y, detrás, lo
+  que consulta esta skill: la estructura del curso, la auditoría del material y las tres plantillas. Si dice que
+  hay más partes, pídelas en la siguiente llamada, todas a la vez.
 - Con tu herramienta de leer ficheros, los tres que vas a editar en el punto 7: `estudio/conceptos/_index.md`,
   `estudio/progreso.md` y `estudio/mapa-del-curso.md`.
 
-Con eso tienes todo lo que hace falta para escribir: no vuelvas a leer nada de eso suelto, no busques más
-ejemplos, no listes carpetas ni mires el código de las herramientas. Y `guardar.js --empezar` va en la misma
-tanda que las primeras notas que escribas, no en una llamada aparte.
+No vuelvas a leer nada de eso suelto ni mires el código de las herramientas.
 
 El identificador de la sesión sale de la sección "Cómo numera el centro las clases" de
 `config/curso.md`. Si esa sección no basta para nombrar esta clase, **pregunta** — no lo
@@ -145,8 +142,8 @@ errores típicos.
 
 ### 6. Ejercicios — solo donde algo se mueve
 
-Los ejercicios de la clase se crean aquí, al procesarla, siguiendo los puntos 1-7 de `/ejercicio` (ya la
-tienes: venía con `leer.js --para sesion`); se guardan con la sesión, en el punto 8.
+Los ejercicios de la clase se crean aquí, al procesarla, siguiendo los puntos 1-7 de `/ejercicio`
+(léela antes del primero); se guardan con la sesión, en el punto 8.
 Donde nada se mueve, una línea de por qué no lo lleva.
 
 ### 7. Actualizar los ficheros vivos
