@@ -723,6 +723,9 @@ a los demás repos.
   clasificación (tamaño, prioridad, propuesta o no) coincide con la de Roberto en 9 de cada 10 issues; en la fase
   2, dos semanas sin revertir un merge automático; un PR que toca solo `/examen` pasa con la prueba del paso del
   examen, sin la entera; la primera release semiautomática sale sin lanzar nada en el Mac.
+- **Iterar sobre un PR del bot:** hoy no lee los comentarios del PR (se cierra y la revisión va al issue, ver
+  `CONTRIBUTING.md`). Primera prueba: #68, rehecho tras cerrar el #85 (2026-10-03). Si sale bien y pasa a menudo,
+  que la cola entre también en issues con PR abierto y revisión nueva de Roberto en el PR.
 - **Decisiones abiertas:** TODO: cuánta cuota gasta un punto (se mide la primera semana y se ajusta el
   tope); TODO: umbral de diff y N de la prueba entera.
 - **Abogado del diablo:** ronda completa 2026-10-02, 5 objeciones, todas aplicadas (exclusiones del auto-merge,

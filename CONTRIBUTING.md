@@ -191,6 +191,12 @@ por mes («Informe de mantenimiento 2026-10»): arriba, lo que espera a Roberto 
 del bot o cambiar una etiqueta); debajo, una línea por noche. Si algo le espera, el bot le menciona en un único
 comentario (borra el anterior), que es lo que le llega por email.
 
+**Revisar un PR del bot.** El bot lee el issue (el cuerpo y los comentarios de Roberto), nunca los comentarios del
+PR, y se salta todo issue que ya tenga PR abierto. Para que lo rehaga: se cierra el PR diciendo por qué y la
+revisión va como comentario de Roberto **en el issue**, que conserva `claude:go`. La noche siguiente lo rehace desde
+`main`, con la revisión delante. Si en lugar de un PR deja una pregunta (`claude:bloqueado`), se responde en el
+issue y sigue solo.
+
 ## Documentación viva: quién es la fuente de verdad de qué
 
 | Para quién | Fuente viva | Quién la mantiene |
