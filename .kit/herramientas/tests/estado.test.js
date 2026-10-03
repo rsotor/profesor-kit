@@ -59,6 +59,18 @@ test('material nuevo: se compara por nombre de fichero, tolera `fuente:` en list
   assert.deepEqual(materialNuevo(raiz), ['inbox/clase2.pdf']);
 });
 
+// #89: macOS puede guardar "Límites.pdf" con la tilde separada de la letra (NFD); la nota lo escribe compuesto (NFC).
+test('material nuevo: un fichero con tildes citado en `fuente:` no es nuevo, aunque el disco lo guarde en NFD', () => {
+  const nombre = 'Límites del DCA - 202608.pdf';
+  const raiz = cursoTemporal({
+    'estudio/sesiones/s01-intro.md': `---\ntipo: sesion\nestudiada: true\nfuente: inbox/${nombre.normalize('NFC')}\n---\n# Intro\n\n`
+      + '## Cobertura del material\n\nx\n\n## Auditoría del material\n\nx\n\n## Para pensarlo despacio\n\nx\n',
+    [`estudio/inbox/${nombre.normalize('NFD')}`]: 'x',
+  });
+  assert.deepEqual(materialNuevo(raiz), []);
+  assert.equal(calcularEstado(raiz).caso, 1);
+});
+
 test('siguiente sesión sin estudiar y preparadas sin estudiar, en orden del temario', () => {
   const raiz = cursoTemporal({
     'estudio/sesiones/s01-intro.md': '---\ntipo: sesion\nestudiada: true\n---\n# Intro\n\n## Cobertura del material\n\nx\n\n## Auditoría del material\n\nx\n\n## Para pensarlo despacio\n\nx\n',
