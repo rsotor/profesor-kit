@@ -480,6 +480,17 @@ observación y cómo se ve en rojo):
     - Hallado de paso: sin juntar, «lo que deja /sesion 02-0x» salía verde vacío («no hay nota de sesión»). Ahora
       `procesarClase` da rojo si la clase no tiene nota de sesión (con test).
     - `npm test` 907 de 908 (1 omitido). Falta la entera en verde sobre el commit final.
+  - **Cuarta entera (`d8164a6`, 2026-10-04, 00:3x): 22/22, corrección 6/6.** Es la que vale para la 0.30.0. La
+    01-02 con su ejercicio, `FALTA INFO` del patrón oro, `--juntar` sin choque, compartidos y sinónimo en verde.
+    0 errores de `comprobar.js`, 0 `no-se-vera-bien`, 0 `fuente-inexistente`, 1 aviso pedagógico (`requiere-vacio`),
+    4 permisos denegados. Falta: subir la rama y el PR («Closes #89, #90, #92»). Opcional: los dos pasos con Codex.
+  - **Para las siguientes (Roberto, 2026-10-04):**
+    - La prueba ya imprime cada paso con su ✅/❌ al terminar; las enteras de esta noche se lanzaron con la salida
+      pasada por un filtro (`sed | cut`) que la retiene hasta el final, y no se veía nada mientras corrían. Se
+      lanza sin filtro, para poder cortarla al ver un rojo.
+    - Mejora de la prueba, sin hacer: que pare sola al primer rojo (`--parar-al-primer-rojo`, o siempre que falle
+      un paso del que dependen los siguientes). En la tercera entera `--juntar` chocó y aun así se gastó el
+      `/repaso` entero, con los pasos de después sin nada que medir.
 - **Fuera:** un LLM juez que puntúe la explicación (la explicación mala pero bien formada no la ve nada: se dice así
   en el informe de la release) · un curso grande (más clases, índice lleno) · tocar el texto de las clases 01-01 y
   01-02 · un patrón de «euros con dos decimales» en `patrones_prohibidos` (es otra vez el patrón ancho: la regla dice
