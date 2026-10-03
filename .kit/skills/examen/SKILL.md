@@ -178,6 +178,9 @@ minúscula), `explicacion` (por qué la correcta es correcta; si viene de intern
 `origen` (`"examen anterior"`, o `"centro"` si es literal del test de referencia) y `de: "<examen donde la
 falló>, p.<n>"`; sin ninguna, es nueva.
 
+**Escribe la clave antes que el examen.** Si no puedes escribir en `config/claves/`, no crees el examen:
+sin clave no se corrige. Díselo al alumno y pídele permiso sobre `config/`.
+
 **En el final**, la clave lleva además `"escalones"`: el array completo de `tipos.final.escalones` tal como
 estaba, para que la escalera siga coherente si luego cambia la configuración.
 
