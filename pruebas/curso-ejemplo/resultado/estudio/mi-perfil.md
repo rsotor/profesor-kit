@@ -26,12 +26,12 @@ Ejemplos con su propia situación (ingresos irregulares de freelance) en vez de 
 
 ### Conceptos que te costaron
 
-- **trueque**: en el examen del módulo 1, p.1, describió la doble coincidencia de deseos como «falta de unidad
-  de cuenta»: mezcla dos problemas distintos del trueque. — *examen 01-examen-2026-10-03, p.1*
-- **colchón financiero**: en la p.6 del mismo examen contó 3 meses cubiertos tras gastar 2 de un colchón de
-  4 meses; salían 2. Falla el cálculo de lo que queda, no la idea. — *examen 01-examen-2026-10-03, p.6*
-- Dejó en blanco las p.5 (liquidez) y p.10 (gastos fijos y variables): no hay prueba de qué piensa, solo de
-  que no contestó. — *examen 01-examen-2026-10-03, p.5 y p.10*
+- **colchon-financiero** — la explicación de la tabla (meses × gastos) no bastó; pidió otro ejemplo sin decir qué parte. Se le ha dado un mes flojo contado como cuenta (qué sale del colchón y cuánto queda). Prueba: duda en conceptos/colchon-financiero.md, 2026-10-03.
+
+### Errores que se repiten
+
+- **funciones-del-dinero** — Confunde las funciones entre sí: en la p.1 marcó "falta de unidad de cuenta" donde el problema era la doble coincidencia de deseos del trueque, y en la p.6 marcó medio de cambio sin unidad de cuenta cuando el caso era justo al revés (pone precio en euros pero no paga con dinero). No distingue poner precio de pagar. Prueba: examen 01-examen-2026-10-03, p.1 y p.6.
+- **gastos-fijos-y-variables** — Dejó en blanco las dos preguntas del concepto (p.5, alquiler; p.10, suma de gastos fijos), así que no hay prueba de que lo domine ni de qué confunde: queda sin demostrar, no es un error concreto. Después, en el test de corrección, marcó «variable» para un alquiler de 700 € que sube una vez al año con el IPC: es fijo (importe conocido y constante, solo se revisa al año). Parece asociar «cambia» con «variable» aunque el cambio sea anual y previsible. Prueba: examen 01-examen-2026-10-03, p.5 y p.10; 01-examen-2026-10-03-correccion, p.5.
 
 ## Lo que te entró a la primera
 
@@ -51,12 +51,12 @@ Cuántos hay en cada estado: ✅ sólido · 🟡 flojo · 🔴 falló dos veces 
 
 | Bloque | Teoría ✅ · 🟡 · 🔴 · ⬜ | Aplicación ✅ · 🟡 · 🔴 · ⬜ |
 |---|---|---|
-| modulo-01 | 4 · 4 · 0 · 0 | 0 · 0 · 0 · 8 |
-| modulo-02 | 0 · 0 · 0 · 8 | 0 · 0 · 0 · 8 |
+| modulo-1 | 3 · 2 · 2 · 0 | 0 · 0 · 0 · 7 |
+| modulo-2 | 0 · 0 · 0 · 8 | 0 · 0 · 0 · 8 |
 
 ### Donde más dudas
 
-- colchon-financiero: 1 duda (última: 2026-10-03 · conceptos/colchon-financiero.md, 2026-10-03)
+- colchon-financiero: 1 duda (última: 2026-10-03 · conceptos/colchon-financiero.md)
 
 ## Cambios en cómo te explico
 

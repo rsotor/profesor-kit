@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ejercicio · Colchón financiero</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.1rem; margin-top: 1.6rem; }
+  section { border: 1px solid #8884; border-radius: 10px; padding: .8rem 1rem; margin: 1rem 0; }
+  label { display: block; margin: .7rem 0 .1rem; }
+  input[type=range] { width: 100%; }
+  .valor { font-weight: 600; }
+  .opciones label { display: block; margin: .4rem 0; cursor: pointer; }
+  button { font: inherit; padding: .45rem .9rem; margin: .5rem .5rem 0 0; border-radius: 8px; border: 1px solid #8887; cursor: pointer; }
+  #explicacion { min-height: 3rem; }
+  .ok { color: #1a7f37; font-weight: 600; }
+  .mal { color: #c0392b; font-weight: 600; }
+  @media (prefers-color-scheme: dark) { .ok { color: #4ccf7a; } .mal { color: #ff7b6b; } }
+</style>
+</head>
+<body>
+<h1>Colchón financiero: ¿aguanta la racha?</h1>
+<p>Concepto: <em>colchón financiero</em>. Mueve las condiciones, decide, y solo después comprueba.</p>
+
+<section id="condiciones">
+  <h2>1 · Condiciones</h2>
+  <label for="gastos">Gastos al mes: <span class="valor" id="v-gastos"></span></label>
+  <input type="range" id="gastos" min="600" max="2400" step="50" value="1200">
+  <label for="meses">Colchón guardado, en meses de gastos: <span class="valor" id="v-meses"></span></label>
+  <input type="range" id="meses" min="1" max="8" step="1" value="3">
+  <label for="factura">Lo que facturas cada mes flojo: <span class="valor" id="v-factura"></span></label>
+  <input type="range" id="factura" min="0" max="1500" step="50" value="300">
+  <label for="racha">Meses flojos seguidos: <span class="valor" id="v-racha"></span></label>
+  <input type="range" id="racha" min="1" max="12" step="1" value="4">
+  <button type="button" id="otro">Otro caso al azar</button>
+</section>
+
+<section id="reto">
+  <h2>2 · Reto</h2>
+  <p id="enunciado"></p>
+  <p><strong>¿Cubre el colchón toda la racha sin deuda?</strong> <em>(elige una y comprueba)</em></p>
+  <div class="opciones">
+    <label><input type="radio" name="resp" value="aguanta"> Sí, aguanta toda la racha</label>
+    <label><input type="radio" name="resp" value="no-aguanta"> No, se agota antes de que acabe</label>
+  </div>
+  <button type="button" id="comprobar">Comprobar</button>
+</section>
+
+<section id="explicacion-caja">
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás la cuenta y por qué.</div>
+</section>
+
+<script>
+(function () {
+  var eur = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var num1 = new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  var ids = ['gastos', 'meses', 'factura', 'racha'];
+
+  // Lógica que decide la respuesta correcta (la usa el botón y verificar-ejercicio.js).
+  function cuentas(c) {
+    var colchon = c.meses * c.gastos;
+    var hueco = Math.max(0, c.gastos - c.factura);
+    var saca = hueco * c.racha;
+    return { colchon: colchon, hueco: hueco, saca: saca, queda: colchon - saca };
+  }
+  window.verificar = function (caso) {
+    return cuentas(caso).queda >= 0 ? 'aguanta' : 'no-aguanta';
+  };
+
+  function leer() {
+    var c = {};
+    ids.forEach(function (id) { c[id] = Number(document.getElementById(id).value); });
+    return c;
+  }
+  function pintar() {
+    var c = leer();
+    document.getElementById('v-gastos').textContent = eur.format(c.gastos);
+    document.getElementById('v-meses').textContent = c.meses + (c.meses === 1 ? ' mes' : ' meses');
+    document.getElementById('v-factura').textContent = eur.format(c.factura);
+    document.getElementById('v-racha').textContent = c.racha + (c.racha === 1 ? ' mes' : ' meses');
+    document.getElementById('enunciado').textContent =
+      'Gastas ' + eur.format(c.gastos) + ' al mes y tienes un colchón de ' + c.meses + ' meses de gastos. ' +
+      'Llegan ' + c.racha + ' meses seguidos en los que facturas solo ' + eur.format(c.factura) + ' cada uno.';
+    document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás la cuenta y por qué.';
+  }
+
+  ids.forEach(function (id) { document.getElementById(id).addEventListener('input', pintar); });
+
+  document.getElementById('otro').addEventListener('click', function () {
+    function al(id) {
+      var e = document.getElementById(id), mn = Number(e.min), mx = Number(e.max), st = Number(e.step);
+      e.value = mn + Math.floor(Math.random() * ((mx - mn) / st + 1)) * st;
+    }
+    ids.forEach(al);
+    pintar();
+  });
+
+  document.getElementById('comprobar').addEventListener('click', function () {
+    var sel = document.querySelector('input[name=resp]:checked');
+    var out = document.getElementById('explicacion');
+    if (!sel) { out.textContent = 'Primero elige una respuesta.'; return; }
+    var c = leer(), r = cuentas(c), real = window.verificar(c);
+    var acierto = sel.value === real;
+    var html = '<p class="' + (acierto ? 'ok' : 'mal') + '">' + (acierto ? 'Correcto.' : 'No era esa.') + '</p>';
+    html += '<p>Colchón: ' + c.meses + ' × ' + eur.format(c.gastos) + ' = <strong>' + eur.format(r.colchon) + '</strong>.</p>';
+    if (r.hueco === 0) {
+      html += '<p>Facturas ' + eur.format(c.factura) + ', que ya cubre los gastos de ' + eur.format(c.gastos) +
+        ': no falta nada cada mes y el colchón no se toca.</p>';
+    } else {
+      html += '<p>Cada mes flojo falta ' + eur.format(c.gastos) + ' − ' + eur.format(c.factura) + ' = <strong>' + eur.format(r.hueco) + '</strong>. ' +
+        'En ' + c.racha + ' meses salen ' + c.racha + ' × ' + eur.format(r.hueco) + ' = <strong>' + eur.format(r.saca) + '</strong> del colchón.</p>';
+      if (r.queda >= 0) {
+        html += '<p>' + eur.format(r.colchon) + ' − ' + eur.format(r.saca) + ' = <strong>' + eur.format(r.queda) + '</strong> que sobran: aguanta.</p>';
+      } else {
+        html += '<p>' + eur.format(r.colchon) + ' − ' + eur.format(r.saca) + ' = <strong>' + eur.format(r.queda) + '</strong>: te faltan ' + eur.format(-r.queda) + ', que serían deuda.</p>';
+      }
+      html += '<p>Con este nivel de facturación el colchón dura ' + num1.format(r.colchon / r.hueco) + ' meses (colchón ÷ hueco mensual).</p>';
+    }
+    html += '<p><strong>Lo que se ve moviendo los controles:</strong> «5 meses» solo son 5 meses si facturas <em>cero</em>. ' +
+      'Cada euro que facturas en un mes flojo alarga el colchón; sube «lo que facturas» y mira cómo se invierte la respuesta.</p>';
+    out.innerHTML = html;
+  });
+
+  pintar();
+})();
+</script>
+</body>
+</html>

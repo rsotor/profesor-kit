@@ -14,14 +14,13 @@ Estados: `⬜ sin evaluar` · `🟡 flojo` · `✅ sólido` · `🔴 falló dos 
 
 | Concepto | Teoría | Aplicación |
 |---|---|---|
-| [[trueque]] | 🟡 flojo · examen del módulo 1, p.1: marcó «falta de unidad de cuenta» en vez de la doble coincidencia de deseos | ⬜ sin evaluar |
-| [[funciones-del-dinero]] | ✅ sólido · examen del módulo 1, p.3: reconoce la unidad de cuenta | ⬜ sin evaluar |
-| [[inflacion]] | ✅ sólido · examen del módulo 1, p.2: sabe que 3.000,00 € parados compran menos | ⬜ sin evaluar |
-| [[liquidez]] | 🟡 flojo · examen del módulo 1, p.5: en blanco (no se sabe si la confunde con valor); acertó la p.8. Test de corrección, p.2: ve la idea (dinero atado en el piso); p.3: no da el nombre «liquidez», que se pedía | ⬜ sin evaluar |
-| [[presupuesto]] | ✅ sólido · examen del módulo 1, p.7: ve el riesgo de presupuestar con el mejor mes | ⬜ sin evaluar |
-| [[gastos-fijos-y-variables]] | 🟡 flojo · examen del módulo 1, p.10: en blanco; acertó la p.9 (alquiler = fijo). Test de corrección, p.5: marcó el alquiler (700 €, sube una vez al año con el IPC) como variable; el curso dice fijo | ⬜ sin evaluar |
-| [[tasa-de-ahorro]] | ✅ sólido · examen del módulo 1, p.4: distingue porcentaje de euros ahorrados | ⬜ sin evaluar |
-| [[colchon-financiero]] | 🟡 flojo · examen del módulo 1, p.6: marcó 3 meses cubiertos; eran 2 (4.000,00 € − 2 × 1.000,00 €). Test de corrección, p.6: en blanco (cuántos meses recomienda el curso) | ⬜ sin evaluar |
+| [[funciones-del-dinero]] | 🔴 falló dos veces · examen 1, p.1 y p.6: confunde la doble coincidencia de deseos con la unidad de cuenta, y poner precio con pagar | ⬜ sin evaluar |
+| [[inflacion]] | ✅ sólido · examen 1, p.2: acierta que con más inflación los mismos euros compran menos | ⬜ sin evaluar |
+| [[liquidez]] | 🟡 flojo · test de corrección, p.3: explica bien qué le falta al piso pero no sabe nombrarlo (liquidez); antes ✅ en examen 1, p.3 | ⬜ sin evaluar |
+| [[presupuesto-personal]] | ✅ sólido · examen 1, p.7: ve el riesgo de presupuestar con el mejor mes | ⬜ sin evaluar |
+| [[gastos-fijos-y-variables]] | 🔴 falló dos veces · examen 1, p.5 y p.10: en blanco las dos, sin prueba de que lo domine; test de corrección, p.5: responde «variable» al alquiler que solo se revisa una vez al año con el IPC (es fijo) | ⬜ sin evaluar |
+| [[tasa-de-ahorro]] | ✅ sólido · examen 1, p.4: detecta que se divide entre los ingresos | ⬜ sin evaluar |
+| [[colchon-financiero]] | 🟡 flojo · test de corrección, p.6: en blanco, no da los meses que recomienda el curso (3); antes ✅ en examen 1, p.8 y p.9 | ⬜ sin evaluar |
 | [[capital]] | ⬜ sin evaluar | ⬜ sin evaluar |
 | [[tipo-de-interes]] | ⬜ sin evaluar | ⬜ sin evaluar |
 | [[interes-simple]] | ⬜ sin evaluar | ⬜ sin evaluar |

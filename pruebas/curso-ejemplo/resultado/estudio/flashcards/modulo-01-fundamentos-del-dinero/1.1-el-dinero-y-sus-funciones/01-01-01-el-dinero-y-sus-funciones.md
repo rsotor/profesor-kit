@@ -6,33 +6,33 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 
 > Se responde mentalmente antes de desplegar.
 
-**Una caja de pescado cuesta 40,00 € y un corte de pelo 12,00 €. ¿Qué función del dinero te deja compararlos directamente?**
+**Un café cuesta 1,50 € y un corte de pelo 12,00 €, y así se pueden comparar. ¿Qué función del dinero es esa?**
 > [!success]- Respuesta
-> La unidad de cuenta: todo se mide con la misma vara. No es el medio de cambio, que es el que permite pagar.
+> Unidad de cuenta: la misma vara de medir para todo. No es medio de cambio (eso es pagar con él).
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Guardas 100,00 € y, con una inflación anual del 3 %, el año que viene compran menos. ¿Qué función falla?**
+**¿Qué problema del trueque resuelve el medio de cambio?**
 > [!success]- Respuesta
-> El depósito de valor: el dinero no mantiene su poder de compra con el tiempo.
+> La doble coincidencia de deseos: ya no hace falta que el otro quiera justo lo que tú ofreces.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Sube el precio de las entradas de un concierto por moda. ¿Es inflación?**
+**Sube el precio de las naranjas por una mala cosecha, y el resto de precios no cambia. ¿Es inflación?**
 > [!success]- Respuesta
-> No. Inflación es que sube el nivel general de precios, de casi todo a la vez, no el de una sola cosa.
+> No. Inflación es una subida general y sostenida de los precios, de casi todo a la vez.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**¿Qué es más líquido, un piso valorado en mucho dinero o 200,00 € en la cartera, y por qué?**
+**Un piso vale mucho más que 50,00 € en la cartera. ¿Por qué es menos líquido?**
 > [!success]- Respuesta
-> Los 200,00 €: se gastan al instante. El piso vale más, pero venderlo bien lleva meses.
+> Porque venderlo bien lleva meses. Liquidez no es cuánto vale algo, sino lo rápido que se convierte en dinero sin perder valor.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía

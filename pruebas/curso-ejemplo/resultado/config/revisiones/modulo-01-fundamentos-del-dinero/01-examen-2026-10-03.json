@@ -1,0 +1,16 @@
+{
+  "revisor": "subagente",
+  "fecha": "2026-10-03",
+  "preguntas": [
+    { "numero": 1, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 2, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 3, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 4, "respuesta": ["d"], "seguridad": "alta", "problemas": [] },
+    { "numero": 5, "respuesta": ["a"], "seguridad": "alta", "problemas": [] },
+    { "numero": 6, "respuesta": ["c"], "seguridad": "alta", "problemas": ["se acierta sin saber: la c es la única opción con una explicación entre paréntesis y la más larga"], "resolucion": "Reescritas las opciones: las cuatro tienen la misma forma y longitud, y todas combinan dos funciones del dinero (sin paréntesis)." },
+    { "numero": 7, "respuesta": ["b"], "seguridad": "alta", "problemas": ["se acierta sin saber: a y d son descartes triviales (el mejor mes es el más fiable; es lo mismo que la media) y la c es poco verosímil"], "resolucion": "Sin cambios: es una pregunta literal del test del centro y sus opciones no se reescriben. El revisor acertó la correcta (b), igual que la clave del centro; la debilidad es del original." },
+    { "numero": 8, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 9, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 10, "respuesta": ["a"], "seguridad": "alta", "problemas": [] }
+  ]
+}

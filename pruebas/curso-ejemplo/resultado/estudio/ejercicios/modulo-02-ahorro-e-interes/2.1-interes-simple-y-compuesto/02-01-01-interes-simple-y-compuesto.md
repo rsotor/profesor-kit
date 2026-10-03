@@ -1,42 +1,26 @@
 ---
-tipo: ejercicio
+tipo: ejercicios
 sesion: 02-01-01-interes-simple-y-compuesto
-conceptos: [interes-compuesto]
 ---
-# Ejercicio · Simple o compuesto: qué cambia al mover los años y el tipo
+# Ejercicios · 02-01-01-interes-simple-y-compuesto
 
-> Concepto: [[interes-compuesto]] · Sesión: [[02-01-01-interes-simple-y-compuesto]]
-> Reto: descubrir **cuándo** la diferencia entre simple y compuesto se dispara y cuándo desaparece. Responde cada pregunta antes de abrir la respuesta.
+## Simple frente a compuesto: ¿quién gana, y cuándo?
 
-Punto de partida: 1.000,00 € de capital. Recuerda: a 3 años y 5 % anual, simple 1.150,00 € y compuesto 1.157,63 €.
+Versión interactiva: abre `02-01-01-interes-simple-vs-compuesto.html` (en esta misma carpeta, con tus controles). Conceptos: [[interes-simple]], [[interes-compuesto]], [[capitalizacion]].
 
-## Caso 1 · Mismo tipo, más años
+Versión a mano, con 1.000,00 € de capital y la opción B capitalizando una vez al año:
 
-Mismo 5 % anual, pero a 30 años.
+- **Opción A:** interés simple al 8 % anual.
+- **Opción B:** interés compuesto al 4 % anual.
 
-¿Qué crece más respecto a los 3 años, la diferencia entre simple y compuesto o la cifra del simple? *(una de las dos, y por qué, en 2-3 líneas)*
+**Pregunta 1 *(elige A o B, sin calcular)*:** a los 10 años, ¿cuál te deja más dinero?
 
-> [!success]- Respuesta
-> La diferencia. Simple: 1.000,00 € × 0,05 × 30 = 1.500,00 € de intereses (2.500,00 € finales). Compuesto: 1.000 × 1,05^30 = 4.321,94 € finales, es decir 3.321,94 € de intereses. La diferencia pasa de 7,63 € a 1.821,94 €. El simple crece en línea recta; el compuesto, cada vez más rápido.
+**Pregunta 2 *(elige A o B, sin calcular)*:** ¿y a los 40 años?
 
-## Caso 2 · Mismos años, tipo más bajo
-
-3 años, pero al 2 % anual.
-
-¿La diferencia entre simple y compuesto será mayor o menor que los 7,63 € de antes? *(una palabra y el porqué en una línea)*
+**Pregunta 3 *(explica el porqué en 2-3 líneas)*:** si cambia el ganador entre 10 y 40 años, ¿qué ha hecho cambiar el resultado?
 
 > [!success]- Respuesta
-> Menor. Simple: 1.060,00 €. Compuesto: 1.000 × 1,02^3 = 1.061,21 €. Diferencia: 1,21 €. Con un tipo bajo hay menos intereses que reinvertir.
-
-## Caso 3 · Un solo año
-
-1 año, 5 % anual.
-
-¿Cuánto vale la diferencia entre simple y compuesto? *(una cifra en euros, y por qué)*
-
-> [!success]- Respuesta
-> 0,00 €: los dos dan 1.050,00 €. El compuesto solo se distingue del simple a partir del segundo año, porque hasta entonces no hay intereses previos que reinvertir.
-
-## Lo que deberías haber descubierto
-
-La diferencia depende de dos cosas que se multiplican: cuántos años y cuánto tipo. Con 1 año, no existe; con muchos años, domina.
+> - A los 10 años gana A: 1.800,00 € frente a 1.480,24 €.
+> - A los 40 años gana B: 4.801,02 € frente a 4.200,00 €.
+> - El compuesto adelanta al simple a partir del año 33 (a los 33 años: 3.640,00 € frente a 3.648,38 €). Antes, el tipo más alto del simple pesa más; después, el interés sobre interés suma más cada año que los 80,00 € fijos del simple.
+> - Qué condición cambiaría el veredicto: subir el tipo compuesto o bajar el simple adelanta el cruce; capitalizar cada mes en B también lo adelanta, algo.

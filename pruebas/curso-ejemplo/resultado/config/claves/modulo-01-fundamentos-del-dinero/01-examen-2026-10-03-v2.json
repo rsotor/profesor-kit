@@ -1,0 +1,17 @@
+{
+  "opciones": 4,
+  "resta_fallo": 0,
+  "aprobado": 6,
+  "preguntas": [
+    { "correctas": ["b"], "explicacion": "Clave del test del centro (1-b). Cada uno tiene que querer justo lo que el otro ofrece, y a la vez: doble coincidencia de deseos.", "concepto": "funciones-del-dinero", "angulo": "reconocer", "origen": "centro", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-03.md, p.1" },
+    { "correctas": ["d"], "explicacion": "Pone precio en euros (200,00 € la portada, 5,00 € la barra): unidad de cuenta. Pero se paga con pan, no con dinero: no hay medio de cambio. Se puede poner precio sin pagar con dinero.", "concepto": "funciones-del-dinero", "angulo": "distinguir", "origen": "examen anterior", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-03.md, p.6" },
+    { "correctas": ["c"], "explicacion": "El colchón tiene que ser líquido: poder convertirse en dinero ya, sin perder valor por las prisas. Una cuenta con retirada el mismo día lo es; el arte, el local y el préstamo informal no.", "concepto": "liquidez", "angulo": "transferir" },
+    { "correctas": ["b"], "explicacion": "La inflación no cambia la cifra guardada (siguen siendo 2.000,00 €), cambia lo que compran: 2.000,00 ÷ 1,04 = 1.923,08 € de hoy.", "concepto": "inflacion", "angulo": "detectar-error" },
+    { "correctas": ["a"], "explicacion": "Clave del test del centro (8-a). Se repite cada mes con la misma cifra sin que el alumno decida nada: fijo (la actualización anual del IPC no cambia eso).", "concepto": "gastos-fijos-y-variables", "angulo": "reconocer", "origen": "centro", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-03.md, p.5" },
+    { "correctas": ["d"], "explicacion": "La tasa se mide contra lo que ingresa: 400,00 ÷ 2.400,00 = 16,7 % mensual el primer mes y 400,00 ÷ 1.300,00 = 30,8 % mensual el segundo. El mismo ahorro pesa más con menos ingresos.", "concepto": "tasa-de-ahorro", "angulo": "distinguir" },
+    { "correctas": ["a"], "explicacion": "Ingreso medio: (2.100,00 + 900,00 + 1.500,00 + 2.700,00 + 600,00 + 1.500,00) ÷ 6 = 9.300,00 ÷ 6 = 1.550,00 € al mes. Ni el mejor mes ni el último, ni la suma de los seis.", "concepto": "presupuesto-personal", "angulo": "transferir" },
+    { "correctas": ["c"], "explicacion": "Cada mes salen del colchón 1.000,00 − 500,00 = 500,00 €. 4.000,00 ÷ 500,00 = 8 meses. (4 serían sin facturar nada.)", "concepto": "colchon-financiero", "angulo": "predecir" },
+    { "correctas": ["b"], "explicacion": "3 × 1.200,00 € = 3.600,00 € es la cifra correcta, pero el colchón debe ser líquido; un fondo que tarda dos meses en devolver el dinero no cubre un mes flojo.", "concepto": "colchon-financiero", "angulo": "detectar-error" },
+    { "correctas": ["a"], "explicacion": "Fijos: cuota 95,00 € + programa 30,00 € = 125,00 €. El material y el curso los decide ella cada mes: variables.", "concepto": "gastos-fijos-y-variables", "angulo": "transferir", "origen": "examen anterior", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-03.md, p.10" }
+  ]
+}

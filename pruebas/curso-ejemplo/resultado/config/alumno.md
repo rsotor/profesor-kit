@@ -31,16 +31,14 @@
 
 ## Conceptos que costaron
 
-- **trueque**: en el examen del módulo 1, p.1, describió la doble coincidencia de deseos como «falta de unidad
-  de cuenta»: mezcla dos problemas distintos del trueque. — *examen 01-examen-2026-10-03, p.1*
-- **colchón financiero**: en la p.6 del mismo examen contó 3 meses cubiertos tras gastar 2 de un colchón de
-  4 meses; salían 2. Falla el cálculo de lo que queda, no la idea. — *examen 01-examen-2026-10-03, p.6*
-- Dejó en blanco las p.5 (liquidez) y p.10 (gastos fijos y variables): no hay prueba de qué piensa, solo de
-  que no contestó. — *examen 01-examen-2026-10-03, p.5 y p.10*
+- **colchon-financiero** — la explicación de la tabla (meses × gastos) no bastó; pidió otro ejemplo sin decir qué parte. Se le ha dado un mes flojo contado como cuenta (qué sale del colchón y cuánto queda). Prueba: duda en conceptos/colchon-financiero.md, 2026-10-03.
 
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
+
+- **funciones-del-dinero** — Confunde las funciones entre sí: en la p.1 marcó "falta de unidad de cuenta" donde el problema era la doble coincidencia de deseos del trueque, y en la p.6 marcó medio de cambio sin unidad de cuenta cuando el caso era justo al revés (pone precio en euros pero no paga con dinero). No distingue poner precio de pagar. Prueba: examen 01-examen-2026-10-03, p.1 y p.6.
+- **gastos-fijos-y-variables** — Dejó en blanco las dos preguntas del concepto (p.5, alquiler; p.10, suma de gastos fijos), así que no hay prueba de que lo domine ni de qué confunde: queda sin demostrar, no es un error concreto. Después, en el test de corrección, marcó «variable» para un alquiler de 700 € que sube una vez al año con el IPC: es fijo (importe conocido y constante, solo se revisa al año). Parece asociar «cambia» con «variable» aunque el cambio sea anual y previsible. Prueba: examen 01-examen-2026-10-03, p.5 y p.10; 01-examen-2026-10-03-correccion, p.5.
 
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
@@ -50,10 +48,10 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-10-03 · 01-01-01-el-dinero-y-sus-funciones, respuesta del alumno en /dudas |
+| estudiada | sí | marcada (true) | 2 | 2026-10-03 · 01-01-01-el-dinero-y-sus-funciones.md, mismo gesto que antes |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-10-03 · conceptos/colchon-financiero.md, 2026-10-03 |
+| colchon-financiero | 1 | 2026-10-03 · conceptos/colchon-financiero.md |
