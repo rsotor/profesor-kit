@@ -507,8 +507,16 @@ function verificarReutilizacionFalladas(destino, { unidad, ficheroAnterior }) {
   // rehecha (otro caso, otras cifras), para medir si ahora lo entiende y no si recuerda la corrección. Las del centro
   // vuelven literales: son del examen oficial. Cada reutilizada se identifica por su "de" (el examen anterior,
   // ", p.<n>"), o, si es del centro y no trae número, por ser la misma pregunta.
-  // `de` lo lee una persona: basta con que identifique el examen anterior, con o sin "estudio/" o "examenes/" delante.
-  const identifica = de => !!de && sinPrefijos(de.replace(/,\s*p\.\s*\d+\s*$/, '')) === sinPrefijos(relAnterior);
+  // `de` lo lee una persona (ningún código del kit lo usa) y la skill solo pide «<examen donde la falló>, p.<n>»: basta
+  // con que identifique el examen anterior. Vale la ruta, con o sin "estudio/" o "examenes/" delante, y también el nombre
+  // del fichero solo, con o sin `.md` ("01-examen-2026-10-03, p.1": así lo escribió el profesor el 2026-10-03).
+  const sinMd = t => t.replace(/\.md$/, '');
+  const identifica = de => {
+    if (!de) return false;
+    const dicho = sinMd(sinPrefijos(de.replace(/,\s*p\.\s*\d+\s*$/, '')));
+    const anterior = sinMd(sinPrefijos(relAnterior));
+    return dicho === anterior || dicho === anterior.split('/').pop();
+  };
   const numeroDe = de => { const m = /,\s*p\.\s*(\d+)\s*$/.exec(de || ''); return m ? Number(m[1]) : null; };
   const reutilizadas = preguntasDeLaClave(destino, nuevo).filter(pr => pr.origen === 'examen anterior'
     || (pr.origen === 'centro' && (identifica(pr.de) || esperadas.some(f => mismoBloque(f.enunciado, pr.enunciado)))));
@@ -684,7 +692,9 @@ function listaDeFrontmatter(texto, campo) {
 // decisión del profesor —ampliar la nota o solo enlazarla, las dos valen según segundo-plano.md—: solo se dice, como
 // observación, nunca tumba la prueba (2026-10-02: la misma clase la amplió un día y la enlazó otro). Se busca por el título (`# <titulo>`) o un alias, no por el slug:
 // el slug lo decide el coordinador. Y no vale que otra nota de esas clases lleve el nombre dentro del suyo ("Interés
-// compuesto a largo plazo"): eso es el duplicado que se quiere cazar, con otro título.
+// compuesto a largo plazo"): eso es el duplicado que se quiere cazar, con otro título. Salvo que esa nota declare el
+// concepto en su `requiere`: entonces se apoya en él y lo dice, no lo repite ("Aportaciones con interés compuesto",
+// 2026-10-03, con su propia fórmula y `requiere: [aportacion-periodica, interes-compuesto]`): solo observación.
 function conceptoCompartido(destino, { titulo, sesiones }) {
   const dir = path.join(destino, 'estudio', 'conceptos');
   const normal = normalDeNombre;
@@ -695,19 +705,29 @@ function conceptoCompartido(destino, { titulo, sesiones }) {
     const m = /^#\s+(.+)$/m.exec(texto);
     const nombres = [m ? normal(m[1]) : '', ...lista(texto, 'alias')].filter(Boolean);
     const visto = lista(texto, 'visto_en').map(v => v.replace(/^\[\[|\]\]$/g, ''));
-    return { f, nombres, visto };
+    const requiere = lista(texto, 'requiere').map(v => v.replace(/^\[\[|\]\]$/g, ''));
+    return { f, nombres, visto, requiere };
   });
   const esSuya = n => n.nombres.includes(buscado);
   const deEsasClases = n => n.visto.some(v => sesiones.some(id => v === id || v.startsWith(`${id}-`)));
   const iguales = notas.filter(esSuya);
-  const parecidas = notas.filter(n => !esSuya(n) && deEsasClases(n) && n.nombres.some(x => x.includes(buscado)));
+  const conElNombreDentro = notas.filter(n => !esSuya(n) && deEsasClases(n) && n.nombres.some(x => x.includes(buscado)));
+  // Se apoya en el concepto si su `requiere` nombra la nota del concepto (por slug, título o alias).
+  const seApoya = n => iguales.length === 1
+    && n.requiere.some(r => r === normal(path.basename(iguales[0].f, '.md')) || iguales[0].nombres.includes(r));
+  const parecidas = conElNombreDentro.filter(n => !seApoya(n));
+  const apoyadas = conElNombreDentro.filter(seApoya);
   const todas = [...iguales, ...parecidas];
   if (iguales.length !== 1 || parecidas.length) {
     return { ok: false, detalle: `"${titulo}": ${todas.length} notas (${todas.map(n => path.basename(n.f)).join(', ') || 'ninguna'}), tiene que haber una` };
   }
   const [nota] = iguales;
   const faltan = sesiones.filter(id => !nota.visto.some(v => v === id || v.startsWith(`${id}-`)));
-  const observacion = faltan.length ? ` (observación: ${faltan.join(', ')} no está en visto_en: la enlaza sin ampliarla)` : '';
+  const observaciones = [
+    faltan.length ? `${faltan.join(', ')} no está en visto_en: la enlaza sin ampliarla` : '',
+    apoyadas.length ? `${apoyadas.map(n => path.basename(n.f)).join(', ')} lleva el nombre en el título y lo declara en requiere: se apoya en él, no se cuenta como duplicado` : '',
+  ].filter(Boolean);
+  const observacion = observaciones.length ? ` (observación: ${observaciones.join(' · ')})` : '';
   const slug = path.basename(nota.f, '.md');
   const progreso = path.join(destino, 'estudio', 'progreso.md');
   const filas = fs.existsSync(progreso)

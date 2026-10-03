@@ -766,6 +766,16 @@ test('verificarReutilizacionFalladas: un examen sin falladas no se puede comprob
   assert.match(r.detalle, /no dejó ninguna pregunta fallada/);
 });
 
+test('verificarReutilizacionFalladas: "de" con solo el nombre del examen, sin carpeta ni .md, también lo identifica', () => {
+  const raiz = temporal('reutilizacion-');
+  const ficheroAnterior = examenAnteriorCorregido(raiz);
+  escribirConfigExamenes(raiz, { tipos: { modulo: { preguntas: 6, aprobado: 6 } } });
+  const corto = n => ({ de: `01-examen-2026-10-01, p.${n}` });
+  examenNuevoOk(raiz, { ajustesClave: { 1: corto(3), 2: { de: '01-examen-2026-10-01.md, p.1' }, 4: corto(2), 5: corto(4) } });
+  const r = p.verificarReutilizacionFalladas(raiz, { unidad: '01', ficheroAnterior });
+  assert.equal(r.ok, true, r.detalle);
+});
+
 test('verificarReutilizacionFalladas: "de" apuntando a otro examen, no pasa', () => {
   const raiz = temporal('reutilizacion-');
   const ficheroAnterior = examenAnteriorCorregido(raiz);
@@ -1309,6 +1319,19 @@ test('conceptoCompartido: visto_en en bloque y alias valen; otra nota de esas cl
 
   fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-a-largo-plazo.md'),
     '---\ntipo: concepto\nvisto_en: [02-02-01-ahorro]\n---\n# Interés compuesto a largo plazo\n');
+  assert.match(p.conceptoCompartido(destino, caso).detalle, /2 notas/);
+
+  // Con el concepto en su `requiere` (por slug o por alias), se apoya en él: observación, no duplicado.
+  for (const requiere of ['[aportacion-periodica, capitalizacion-compuesta]', '[Interés compuesto]']) {
+    fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-a-largo-plazo.md'),
+      `---\ntipo: concepto\nvisto_en: [02-02-01-ahorro]\nrequiere: ${requiere}\n---\n# Aportaciones con interés compuesto\n`);
+    const apoyada = p.conceptoCompartido(destino, caso);
+    assert.equal(apoyada.ok, true, apoyada.detalle);
+    assert.match(apoyada.detalle, /observación: .*se apoya en él/);
+  }
+  // Si requiere otra cosa, sigue siendo el duplicado con otro título.
+  fs.writeFileSync(path.join(destino, 'estudio', 'conceptos', 'interes-compuesto-a-largo-plazo.md'),
+    '---\ntipo: concepto\nvisto_en: [02-02-01-ahorro]\nrequiere: [aportacion-periodica]\n---\n# Interés compuesto a largo plazo\n');
   assert.match(p.conceptoCompartido(destino, caso).detalle, /2 notas/);
 });
 
