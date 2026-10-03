@@ -347,7 +347,7 @@ código — y por eso es la única que usa un LLM de verdad y nunca corre en el 
   procesan en primer plano; la que no hace falta para ese examen se lanza con `preparar.js --lanzar` en segundo plano justo antes de
   `/dudas`, sigue corriendo durante `/ejercicio` y el examen, y se junta con `--juntar` en cuanto el
   examen está corregido — el caso de verdad con choques posibles (plan 0.22, §4). Guarda el resultado en
-  `curso-ejemplo/resultado/` (estudio, `config/alumno.md` y `RESUMEN.md`) y borra siempre la temporal.
+  `curso-ejemplo/resultado/` (estudio, `config/alumno.md`, `config/claves/`, `config/revisiones/` y `RESUMEN.md`) y borra siempre la temporal.
   `--sin-llm` monta y prueba el propio ejecutor sin gastar cuota (también se salta el `--lanzar`: nunca
   llama a `claude`) — es lo único que corren los tests del repo y el CI nunca la lanza con un LLM de
   verdad. Ver CONTRIBUTING.md, "Prueba real del profesor", para cuándo es obligatoria.

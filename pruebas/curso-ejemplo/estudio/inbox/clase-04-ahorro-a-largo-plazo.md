@@ -35,7 +35,15 @@ El **horizonte temporal** es el tiempo que el dinero va a estar ahorrado antes d
 compuesto, es lo que más pesa: el mismo ahorro de 2.400,00 € al año, al 5% anual, durante 30 años en vez
 de 3, da unos 159.453,23 €, de los que solo 72.000,00 € son aportaciones. El resto son intereses.
 
-### Diapositiva 5 · Resumen
+### Diapositiva 5 · Antes de ahorrar a largo plazo: el fondo de emergencia
+
+El dinero que se aparta a muchos años no debería tocarse antes de tiempo. Por eso, antes de empezar, conviene
+tener un **fondo de emergencia**: dinero líquido, guardado aparte, que cubra varios meses de gastos por si un
+mes se ingresa poco o llega un imprevisto. Así una avería o una mala racha no obligan a sacar el ahorro a
+largo plazo y a perder los intereses que iba a dar.
+
+### Diapositiva 6 · Resumen
 
 La tasa de ahorro se convierte en una aportación periódica. Con interés compuesto, cada aportación crece
-por su cuenta, y el horizonte temporal decide cuánto: empezar antes pesa más que aportar un poco más.
+por su cuenta, y el horizonte temporal decide cuánto: empezar antes pesa más que aportar un poco más. Y
+antes de todo eso, el fondo de emergencia.
