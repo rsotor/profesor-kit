@@ -4,21 +4,24 @@ sesion: 02-02-01-ahorro-a-largo-plazo
 ---
 # Flashcards · 02-02-01-ahorro-a-largo-plazo
 
-**Ganas 2.000,00 € al mes y tu tasa de ahorro es del 10 %. ¿Cuánto es eso al año, y es una tasa de interés?**
-> [!success]- Respuesta
-> 200,00 € al mes, 2.400,00 € al año. No es una tasa de interés: es la proporción de tus ingresos que apartas, y no lleva periodo.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Aportas 2.400,00 € al final de cada año con un tipo de interés del 5 % anual compuesto. ¿Cuánto tienes al cabo de 3 años, y cuánto son intereses?**
+**Ingresas 2.000,00 € al mes y tu tasa de ahorro es del 10 %. ¿Cuánto es tu aportación periódica al año?**
 > [!success]- Respuesta
-> 7.566,00 €, de los cuales 366,00 € son intereses (has aportado 7.200,00 €).
+> 200,00 € al mes × 12 = **2.400,00 € al año**.
 
-**Misma aportación de 2.400,00 € al año, mismo 5 % anual. ¿Por qué 30 años dan unos 21 veces más que 3 y no 10 veces más?**
+**2.400,00 € al final de cada año, al 5 % anual compuesto, durante 3 años: ¿cuánto hay y cuánto son intereses?**
 > [!success]- Respuesta
-> Porque con interés compuesto los intereses generan intereses: 159.453,23 € frente a 7.566,00 €, y 87.453,23 € de esos son intereses.
+> 7.566,00 € en total; 7.200,00 € son aportaciones y **366,00 €** intereses.
 
-**¿Por qué conviene tener el fondo de emergencia antes de ahorrar a largo plazo?**
+**Mismo ahorro de 2.400,00 € al año al 5 % anual: ¿por qué 30 años dan mucho más que 10 veces lo de 3 años?**
 > [!success]- Respuesta
-> Para que un imprevisto o un mes flojo no obligue a sacar el ahorro a largo plazo, perdiendo los intereses que iba a dar.
+> Porque con interés compuesto los intereses generan intereses: el horizonte temporal es lo que más pesa. A 30 años son 159.453,23 €, y solo 72.000,00 € son aportaciones.
+
+**¿Qué conviene tener antes de ahorrar a largo plazo, y por qué?**
+> [!success]- Respuesta
+> Un fondo de emergencia (colchón financiero): dinero líquido aparte, para no tener que sacar el ahorro a largo plazo en un imprevisto y perder los intereses que iba a dar.
 
 ---
-Conceptos que cubren: [[tasa-de-ahorro]] · [[aportacion-periodica]] · [[horizonte-temporal]] · [[colchon-financiero]]
+Conceptos que cubren: [[aportacion-periodica]] · [[aportaciones-con-interes-compuesto]] · [[horizonte-temporal]] · [[tasa-de-ahorro]] · [[colchon-financiero]]

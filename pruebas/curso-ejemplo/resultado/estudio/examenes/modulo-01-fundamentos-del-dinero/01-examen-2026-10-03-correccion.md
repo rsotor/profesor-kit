@@ -63,14 +63,15 @@ intentos: 1
 
 > [!example]- Intento 1 · 2026-10-03 · tus respuestas y la corrección
 >
-> ✅ Dominado → tasa-de-ahorro
-> ⚠️ Hay que repasar → liquidez (sabe la idea, no la nombra), gastos-fijos-y-variables (1 fallo: alquiler indexado), colchon-financiero (1 fallo: en blanco)
+> ✅ Dominado → tasa-de-ahorro (p.1)
+> ⚠️ Hay que repasar → liquidez (p.3: la idea bien, falta el nombre), gastos-fijos-y-variables (p.5), colchon-financiero (p.6, en blanco)
+> ℹ️ p.4 (interés mensual): la cifra sin su periodo; no tiene nota propia en el temario
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20 % | ✅ Correcta | 300 ÷ 1.500 = 20 %. La pregunta pedía una cifra; el periodo no hacía falta. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | «Lo tiene atado en el piso y no lo puede sacar a tiempo»: es la idea de inmovilizado, con sus palabras. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre. La idea es correcta (no lo puede vender rápido para tener el dinero ya), pero la pregunta pedía el nombre del concepto: liquidez. | Explica bien qué le falta al piso, pero no lo nombra. |
-> | 4 | 2 % | ⚠️ Le falta: el periodo. «2 %» es la cifra, pero la pregunta pedía la cifra con su periodo: 2 % mensual. | Sin el periodo, la cifra no dice cuánto pagas. |
-> | 5 | Variable. | ❌ Incorrecta | Respondió «variable». Un alquiler de 700 € que solo se revisa una vez al año con el IPC es un gasto fijo: su importe se conoce y se repite cada mes. |
-> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin respuesta; la correcta era 3 meses de gastos. |
+> | 1 | 20 % | ✅ Correcta | 300 ÷ 1.500 = 20 %. La cifra era lo que se pedía. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no se puede sacar a tiempo: es la idea de inmovilizado. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre. La idea es correcta (no se puede vender rápido), pero la pregunta pedía el nombre del concepto: liquidez. | Describe bien lo que falta, pero no lo nombra. |
+> | 4 | 2 % | ⚠️ Le falta: el periodo. Dice «2 %», pero la pregunta pedía la cifra con su periodo: 2 % mensual. | Sin el periodo, la cifra no dice cuánto pagas. |
+> | 5 | Variable. | ❌ Incorrecta | El alquiler es un gasto fijo: se repite cada mes con la misma cifra y solo cambia una vez al año por contrato, no por lo que decidas gastar. |
+> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | El curso recomienda 3 meses de gastos para quien tiene nómina fija. |

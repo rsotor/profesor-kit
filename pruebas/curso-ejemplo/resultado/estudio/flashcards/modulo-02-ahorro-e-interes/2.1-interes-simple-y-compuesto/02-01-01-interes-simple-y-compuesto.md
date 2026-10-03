@@ -4,21 +4,24 @@ sesion: 02-01-01-interes-simple-y-compuesto
 ---
 # Flashcards · 02-01-01-interes-simple-y-compuesto
 
-**1.000,00 € al 5 % anual durante 3 años. ¿Cuánto tienes al final con interés simple y cuánto con compuesto, y por qué difieren?**
-> [!success]- Respuesta
-> Simple: 1.150,00 €. Compuesto: 1.157,63 €. En el compuesto los intereses de cada año se suman al capital y generan intereses ellos también; en el simple se calculan siempre sobre los 1.000,00 € iniciales.
+> El número lo marca `flashcards_por_sesion` de `config/profesor.md`. Prioridad: errores típicos
+> y lo que huela a examen. Se responde mentalmente antes de desplegar.
 
-**Un banco anuncia "un 5 %". ¿Qué falta para poder compararlo con otra oferta?**
+**Al tercer año, ¿sobre qué cantidad se calculan los intereses con interés simple, y con compuesto?**
 > [!success]- Respuesta
-> El periodo: no es lo mismo un 5 % anual que un 5 % mensual. Sin él la cifra no dice nada.
+> Simple: sobre el capital inicial, siempre. Compuesto: sobre el capital inicial más los intereses de los años anteriores.
 
-**Un 5 % anual se capitaliza cada mes en vez de una vez al año. ¿Se aplica el 5 % entero cada mes? ¿Y el resultado a un año sube o baja?**
+**1.000,00 € al 5 % anual durante 3 años: ¿cuánto hay al final con simple y con compuesto?**
 > [!success]- Respuesta
-> No: cada mes se aplica una doceava parte del tipo anual, pero al capital ya crecido. El resultado sube un poco (1.000,00 € dan 1.051,16 € en vez de 1.050,00 €).
+> Simple: 1.150,00 €. Compuesto: 1.157,63 €. A tan pocos años casi no se distinguen; el tiempo es lo que los separa.
 
-**Al 9 % anual de interés compuesto, ¿en cuántos años se dobla un capital, a ojo? ¿Valdría la misma cuenta con interés simple?**
+**Un depósito paga 5 % anual capitalizado cada mes. ¿Es lo mismo que 5 % mensual?**
 > [!success]- Respuesta
-> 72 ÷ 9 = 8 años, aproximadamente. Con interés simple no vale: la regla es solo para el compuesto.
+> No. Cada mes se aplica una doceava parte del 5 % anual. Con 1.000,00 €: 1.051,16 € a un año, no 1.795,86 €.
+
+**Al 6 % anual, ¿cuánto tarda en doblarse un capital según la regla del 72, y es exacto?**
+> [!success]- Respuesta
+> 72 ÷ 6 = 12 años. No es exacto: con la fórmula salen 11,9 años. Es una aproximación.
 
 ---
-Conceptos que cubren: [[capital]] · [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[capitalizacion]] · [[regla-del-72]]
+Conceptos que cubren: [[interes-simple]] · [[interes-compuesto]] · [[capitalizacion]] · [[regla-del-72]]

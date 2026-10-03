@@ -6,33 +6,33 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 
 > Se responde mentalmente antes de desplegar.
 
-**Un café cuesta 1,50 € y un corte de pelo 12,00 €, y así se pueden comparar. ¿Qué función del dinero es esa?**
+**Un supermercado pone precio a todo en puntos ("un café = 150 puntos"), pero solo se canjean en sus tiendas. ¿Qué función del dinero cumplen los puntos y cuál no?**
 > [!success]- Respuesta
-> Unidad de cuenta: la misma vara de medir para todo. No es medio de cambio (eso es pagar con él).
+> Cumplen la de unidad de cuenta (todo tiene precio en la misma vara), pero no la de medio de cambio: no se aceptan en todas partes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**¿Qué problema del trueque resuelve el medio de cambio?**
+**El tomate sube un 40 % en un mes por una mala cosecha. ¿Es inflación?**
 > [!success]- Respuesta
-> La doble coincidencia de deseos: ya no hace falta que el otro quiera justo lo que tú ofreces.
+> No: sube el precio de una cosa concreta. Inflación es la subida general y sostenida del nivel de precios, de casi todo a la vez.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Sube el precio de las naranjas por una mala cosecha, y el resto de precios no cambia. ¿Es inflación?**
+**Con una inflación del 3 % anual, ¿qué compran dentro de un año 100,00 € guardados?**
 > [!success]- Respuesta
-> No. Inflación es una subida general y sostenida de los precios, de casi todo a la vez.
+> Lo que hoy compran unos 97,09 € (100,00 € ÷ 1,03). Pierden poder de compra aunque la cifra siga siendo 100,00 €.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Un piso vale mucho más que 50,00 € en la cartera. ¿Por qué es menos líquido?**
+**Un piso de 200.000,00 € y 2.000,00 € en la cuenta: ¿cuál es más líquido y por qué no significa que valga más?**
 > [!success]- Respuesta
-> Porque venderlo bien lleva meses. Liquidez no es cuánto vale algo, sino lo rápido que se convierte en dinero sin perder valor.
+> Los 2.000,00 € son más líquidos: se gastan ya. Liquidez es la rapidez de convertir algo en dinero sin perder valor, no cuánto vale.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía

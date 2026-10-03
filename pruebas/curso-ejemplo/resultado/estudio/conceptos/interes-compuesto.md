@@ -1,71 +1,64 @@
 ---
 tipo: concepto
-bloques: [modulo-2]
+bloques: [02-01]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 3
-requiere: [interes-simple, tipo-de-interes]
-alias: [interés sobre interés]
+requiere: [interes-simple]
+alias: []
 tags: [interes]
-ejercicio: 02-01-01-interes-simple-vs-compuesto
+ejercicio: 02-01-01-interes-compuesto
 ---
 # Interés compuesto
 
-> **En una frase:** con interés compuesto los intereses de cada periodo se suman al capital y, desde ahí, generan intereses ellos también ("interés sobre interés").
+> **En una frase:** los intereses de cada periodo se suman al capital y, a partir de ahí, generan intereses ellos también ("interés sobre interés").
 
 ## El problema
 
-El interés simple deja los intereses quietos: ganan 0 mientras esperan. Con el compuesto se reinvierten, y el dinero crece cada vez más deprisa. Es lo que el alumno confundió con el simple en el test inicial (pregunta 4).
+Con [[interes-simple]] cobras siempre lo mismo, aunque lleves años con el dinero quieto. Pero esos intereses ya son tuyos: si se quedan dentro, ¿por qué no iban a trabajar también?
 
 ## El ejemplo
 
-Los mismos 1.000,00 € al 5 % anual, 3 años, ahora compuesto:
+Los mismos 1.000,00 € al 5 % anual de la clase anterior, ahora compuesto.
 
-| Año | Capital al empezar | Intereses del año | Capital al acabar |
-|---|---|---|---|
-| 1 | 1.000,00 € | 50,00 € | 1.050,00 € |
-| 2 | 1.050,00 € | 52,50 € | 1.102,50 € |
-| 3 | 1.102,50 € | 55,13 € | 1.157,63 € |
+| Año | Simple | Compuesto |
+|---|---|---|
+| 1 | 1.050,00 € | 1.050,00 € |
+| 2 | 1.100,00 € | 1.102,50 € |
+| 3 | 1.150,00 € | 1.157,63 € |
 
-Con el simple eran 1.150,00 €. Diferencia: **7,63 €**. Poco a 3 años, pero la ventaja crece cada vez más deprisa cuanto más pasa el tiempo.
+El año 2 el compuesto gana 52,50 €, no 50,00 €: el 5 % anual se aplica a 1.050,00 €, que ya incluye los intereses del año 1. A 3 años la diferencia es de 7,63 €: poca cosa. Lo que sorprende es cómo crece después.
 
 > [!info] Ampliación fuera de los apuntes
-> A 30 años, 1.000,00 € al 5 % anual son 2.500,00 € con interés simple y 4.321,94 € con compuesto.
+> A 30 años, con 1.000,00 € al 5 % anual: simple 2.500,00 €, compuesto 4.321,94 €. La diferencia ya es de 1.821,94 €. El simple sube una recta; el compuesto, una curva cada vez más empinada.
 
 ## La fórmula
 
 $$ C_f = C \cdot (1 + i)^n $$
 
-- $C$: capital inicial (€).
-- $i$: tipo en tanto por uno por periodo (5 % anual = 0,05).
-- $n$: número de periodos (con tipo anual, años).
-
-Aquí: 1.000,00 × 1,05³ = 1.000,00 × 1,157625 = **1.157,63 €**. El 1,157625 es el factor por el que se multiplica el capital en 3 años.
+- `C` es el [[capital]] inicial e `i` el [[tipo-de-interes]] en tanto por uno.
+- `n` es el número de periodos de capitalización: con `i` anual, `n` en años.
+- Con los datos de arriba: `Cf = 1.000,00 × 1,05³ = 1.000,00 × 1,157625 = 1.157,63 €`.
 
 ## El error típico
 
-> [!info] Ampliación fuera de los apuntes
-> Pensar que el compuesto "gana más" con cualquier tipo y plazo. Gana más **con el mismo tipo**. Un compuesto con tipo bajo puede perder durante muchos años frente a un simple con tipo alto: el ejercicio lo enseña.
+Dar por hecho que el compuesto siempre "se nota": a pocos años apenas se distingue del simple (7,63 € a 3 años). La diferencia la hace el tiempo y el tipo, no el nombre.
 
 ## Practícalo
 
-→ **[Interés simple frente a compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-simple-vs-compuesto.html)**
+→ **[¿Ha ganado ya el doble que el simple?](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-interes-compuesto.html)**
 
-Compara el compuesto con otro simple y mueve el plazo y el tipo, y también cuándo se capitaliza. Debería sorprender cuánto tarda en notarse la ventaja del interés sobre interés.
+Mueve el tipo y los años y busca el punto donde el compuesto pasa de generar menos del doble de intereses que el simple a generar más. Sorprende lo poco que pesa el capital inicial en esa respuesta.
 
-## Visto desde tus ingresos irregulares
-
-El efecto solo funciona si los intereses **se quedan dentro**. Si en un mes flojo retiras los intereses para llegar a fin de mes, ese capital deja de reinvertirse y, de ahí en adelante, estás cobrando como en el interés simple. El colchón (ver [[colchon-financiero]]) está para que no tengas que tocarlos.
+> [!tip] Visto desde tus ingresos irregulares
+> El compuesto solo funciona si el dinero se queda dentro: si en un mes flojo sacas lo ahorrado, los intereses de después se calculan sobre menos capital. Por eso importa decidir cuánto puedes dejar quieto (tu [[tasa-de-ahorro]], medida sobre un ingreso medio) en vez de ahorrar a golpes.
 
 ## Relacionados
 
-- [[interes-simple]] — el caso en que los intereses no se reinvierten
-- [[capitalizacion]] — cuántas veces al año se suman los intereses al capital
-- [[regla-del-72]] — cuántos años tarda en doblarse un capital así, a ojo
-- [[tipo-de-interes]] — con su periodo siempre
-- [[inflacion]] — contra lo que hay que comparar el crecimiento
-- [[aportacion-periodica]] — qué pasa si, además, vas sumando dinero (clase siguiente)
-- [[horizonte-temporal]] — cuánto tiempo se deja trabajar al dinero (clase siguiente)
+- [[interes-simple]] — el punto de comparación, y lo que hay que entender antes
+- [[capitalizacion]] — cada cuánto se suman los intereses al capital
+- [[regla-del-72]] — cuánto tarda en doblarse, a ojo
+- [[capital]] · [[tipo-de-interes]] — los dos datos de la fórmula
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez

@@ -1,59 +1,58 @@
 ---
 tipo: concepto
-bloques: [modulo-2]
+bloques: [02-02]
 visto_en: [02-02-01-ahorro-a-largo-plazo]
 dificultad: 2
-requiere: [aportacion-periodica, interes-compuesto]
+requiere: [aportaciones-con-interes-compuesto, interes-compuesto]
 alias: []
 tags: [ahorro, interes]
-ejercicio: 02-02-01-ahorro-a-largo-plazo-horizonte-temporal
+ejercicio: 02-02-01-horizonte
 ---
 # Horizonte temporal
 
-> **En una frase:** el horizonte temporal es el tiempo que el dinero va a estar ahorrado antes de usarlo; con interés compuesto, es lo que más pesa en el resultado.
+> **En una frase:** el tiempo que el dinero va a estar ahorrado antes de usarlo; con interés compuesto es lo que más pesa en cuánto acaba valiendo el ahorro.
 
 ## El problema
 
-Parece que lo que decide cuánto juntas es cuánto aportas. Con interés compuesto no es así: los intereses generan intereses, y eso solo despega con los años.
+Dos personas ahorran lo mismo cada año, pero una empieza antes. ¿Qué diferencia hay a la hora de usar el dinero? Si piensas "poca, ahorran lo mismo", te dejas fuera lo que más cuenta.
 
 ## El ejemplo
 
-Misma aportación de 2.400,00 € al final de cada año, con un tipo de interés del 5 % anual compuesto. Solo cambia el tiempo:
+El mismo ahorro de 2.400,00 € al año, al 5 % anual compuesto:
 
-| Horizonte | Aportado | Intereses | Total |
+| Años | Aportado | Al final | Intereses |
 |---|---|---|---|
-| 3 años | 7.200,00 € | 366,00 € | **7.566,00 €** |
-| 30 años | 72.000,00 € | 87.453,23 € | **159.453,23 €** |
+| 3 | 7.200,00 € | 7.566,00 € | 366,00 € |
+| 30 | 72.000,00 € | 159.453,23 € | 87.453,23 € |
 
-Con 10 veces más años, el total es 21 veces mayor (159.453,23 ÷ 7.566,00 ≈ 21,1), porque en 30 años los intereses (87.453,23 €) superan a lo aportado (72.000,00 €).
+Con 30 años en vez de 3, lo aportado se multiplica por 10, pero el resultado por más de 21. Casi todo el final son intereses.
 
-## La fórmula
-
-$$ V_n = A \times \frac{(1+i)^n - 1}{i} $$
-
-Es la de la [[aportacion-periodica]]. Aquí el protagonista es $n$, que está en el exponente: crece más rápido que $A$, que solo multiplica. Con los datos: 2.400,00 × (1,05³⁰ − 1) ÷ 0,05 = 2.400,00 × 66,4388 = **159.453,23 €**.
+> [!info] Ampliación fuera de los apuntes
+> ¿Y si en vez de esperar más años aportas más? Mismo 5 % anual, mismo total aportado (72.000,00 €):
+>
+> | Plan | Aportado | Al final |
+> |---|---|---|
+> | 3.600,00 € al año, 20 años | 72.000,00 € | 119.037,43 € |
+> | 2.400,00 € al año, 30 años | 72.000,00 € | 159.453,23 € |
+>
+> Y aportar 3.000,00 € al año (una cuarta parte más) durante 20 años da 99.197,86 €: sigue por debajo de los 159.453,23 € de aportar 2.400,00 € durante 30 años. Diez años más pesan más que aportar bastante más.
 
 ## El error típico
 
-> [!info] Ampliación fuera de los apuntes
-> Pensar que 10 años más son "un poco más". Con interés compuesto el efecto no es lineal: los últimos años aportan mucho más que los primeros.
+Pensar que "aportar un poco más" arregla haber empezado tarde. El ejemplo de arriba dice lo contrario: con los mismos 72.000,00 € puestos, empezar 10 años antes deja 40.415,80 € más.
 
 ## Practícalo
 
-→ **[Empezar antes o aportar más](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo-horizonte-temporal.md)**
+→ **[¿Aportar más o empezar antes?](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-horizonte.html)**
 
-Mueve los años y el importe de la aportación, y compara dos planes con el mismo dinero aportado. Debería sorprenderte quién gana, y que con un tipo de interés del 0 % anual dejarían de ganar los años.
-
-## Visto desde tus ingresos irregulares
-
-Los años pesan más que acertar con el importe: una aportación pequeña pero constante desde ya le gana a esperar a un buen año para empezar con más. Eso encaja con tus meses flojos: si en uno no llegas, no dejes de aportar el año entero, aporta menos.
+Compara dos planes y mueve la aportación y los años de cada uno. Debería sorprenderte lo poco que compensa subir la aportación frente a sumar años.
 
 ## Relacionados
 
-- [[interes-compuesto]] — el mecanismo que hace pesar el tiempo
-- [[aportacion-periodica]] — lo que se añade cada periodo
-- [[colchon-financiero]] — evita tener que sacar el dinero antes de tiempo y cortar el horizonte
+- [[aportaciones-con-interes-compuesto]] — la cuenta año a año de donde salen las cifras
+- [[interes-compuesto]] — por qué el tiempo pesa tanto
+- [[colchon-financiero]] — protege el horizonte: evita tener que sacar el ahorro antes de tiempo
 
 ## Historial
 
-- **02-02-01** · primera vez
+- **02-02-01-ahorro-a-largo-plazo** · primera vez

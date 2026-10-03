@@ -1,6 +1,6 @@
 ---
 tipo: concepto
-bloques: [modulo-2]
+bloques: [02-01]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [interes-compuesto]
@@ -9,40 +9,41 @@ tags: [interes]
 ---
 # Regla del 72
 
-> **En una frase:** la regla del 72 es una cuenta de cabeza, aproximada, para saber en cuántos años se dobla un capital a interés compuesto: 72 dividido entre el tipo anual.
+> **En una frase:** una cuenta de cabeza para saber, aproximadamente, cuántos años tarda un capital en doblarse a interés compuesto: 72 dividido entre el tipo anual.
 
 ## El problema
 
-Saber cuánto tarda un dinero en doblarse con la fórmula exacta pide calculadora. Para decidir a ojo ("¿merece la pena esto?") basta una cifra rápida.
+Quieres saber si un dinero se duplicará en tu vida, y no tienes calculadora ni ganas de despejar `n` en la fórmula del [[interes-compuesto]].
 
 ## El ejemplo
 
-Con un 6 % anual de interés compuesto:
-
-72 ÷ 6 = **12 años**, aproximadamente.
-
-El cálculo exacto con la fórmula del compuesto da 11,9 años: la regla es una aproximación, no el resultado exacto.
+Al 6 % anual: 72 ÷ 6 = **12 años**, aproximadamente. El cálculo exacto da 11,9 años: se desvía en una décima de año.
 
 > [!info] Ampliación fuera de los apuntes
-> Comprobación: 1.000,00 € al 6 % anual durante 12 años dan 2.012,20 €. Error de la regla: unos 0,1 años (≈ 1 mes).
+> Otros dos tipos, para ver que la desviación cambia con el tipo (exacto, con la fórmula de `n`):
+>
+> | Tipo | Regla del 72 | Exacto |
+> |---|---|---|
+> | 2 % anual | 36,0 años | 35,0 años |
+> | 6 % anual | 12,0 años | 11,9 años |
+> | 12 % anual | 6,0 años | 6,1 años |
 
 ## La fórmula
 
-$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número, sin el \%}} $$
+$$ \text{años para doblar} \approx \frac{72}{i} $$
 
-Con un 9 % anual: 72 ÷ 9 = 8 años.
+- Aquí `i` va **en número, sin el %**: 6 % anual se mete como 6, no como 0,06.
+- Es el símbolo `≈`, no `=`: es una **aproximación**.
 
 ## El error típico
 
-> [!info] Ampliación fuera de los apuntes
-> Aplicarla a interés simple. Solo vale para el compuesto: a un 6 % anual de interés simple, 1.000,00 € tardan 16,7 años en doblarse (1.000,00 ÷ 60,00 € por año), no 12.
+Tratarla como un resultado exacto. Da la cifra "a ojo" y vale para tipos medios; para algo que importe, se calcula con la fórmula de [[interes-compuesto]].
 
 ## Relacionados
 
-- [[interes-compuesto]] — el crecimiento al que se aplica
-- [[tipo-de-interes]] — se mete el tipo anual, sin el símbolo
-- [[inflacion]] — la misma cuenta dice en cuántos años se doblan los precios, si suben a un tipo anual fijo (ampliación fuera de los apuntes)
+- [[interes-compuesto]] — de donde sale: solo vale con interés compuesto
+- [[tipo-de-interes]] — el número que se divide, siempre anual
 
 ## Historial
 
-- **02-01-01** · primera vez
+- **02-01-01-interes-simple-y-compuesto** · primera vez

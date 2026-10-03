@@ -31,14 +31,13 @@
 
 ## Conceptos que costaron
 
-- **colchon-financiero** — la explicación de la tabla (meses × gastos) no bastó; pidió otro ejemplo sin decir qué parte. Se le ha dado un mes flojo contado como cuenta (qué sale del colchón y cuánto queda). Prueba: duda en conceptos/colchon-financiero.md, 2026-10-03.
+- **colchón financiero** — pidió otro ejemplo sin decir qué parte no veía. Respondido con una tabla mes a mes de cómo el colchón se vacía y se rellena con ingresos irregulares; falta saber si eso lo desbloquea. — *duda en conceptos/colchon-financiero.md, 2026-10-03*
 
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
 
-- **funciones-del-dinero** — Confunde las funciones entre sí: en la p.1 marcó "falta de unidad de cuenta" donde el problema era la doble coincidencia de deseos del trueque, y en la p.6 marcó medio de cambio sin unidad de cuenta cuando el caso era justo al revés (pone precio en euros pero no paga con dinero). No distingue poner precio de pagar. Prueba: examen 01-examen-2026-10-03, p.1 y p.6.
-- **gastos-fijos-y-variables** — Dejó en blanco las dos preguntas del concepto (p.5, alquiler; p.10, suma de gastos fijos), así que no hay prueba de que lo domine ni de qué confunde: queda sin demostrar, no es un error concreto. Después, en el test de corrección, marcó «variable» para un alquiler de 700 € que sube una vez al año con el IPC: es fijo (importe conocido y constante, solo se revisa al año). Parece asociar «cambia» con «variable» aunque el cambio sea anual y previsible. Prueba: examen 01-examen-2026-10-03, p.5 y p.10; 01-examen-2026-10-03-correccion, p.5.
+- **presupuesto-personal** — en el examen del módulo 1 falla dos de dos: en la p.6 elige que presupuestar con el mejor mes no tiene riesgo, y en la p.10 deja en blanco el cálculo del ahorro con el ingreso medio (la respuesta era −50,00 €). Se ve que no tiene aún claro por qué se usa la media y no el mejor mes, justo lo que más le afecta con ingresos irregulares. En la p.10 no se puede distinguir un fallo de concepto de no haber llegado; conviene repreguntarlo. — *examen: estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-03.md, p.6 y p.10*
 
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
@@ -48,10 +47,11 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-10-03 · 01-01-01-el-dinero-y-sus-funciones.md, mismo gesto que antes |
+| estudiada | sí | marcada (true) | 1 | 2026-09-20 · respuesta del alumno en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-10-03 · conceptos/colchon-financiero.md |
+| colchon-financiero | 1 | 2026-10-03 · conceptos/colchon-financiero.md, 2026-10-03 |
+| funciones-del-dinero | 1 | 2026-10-03 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-10-03 |

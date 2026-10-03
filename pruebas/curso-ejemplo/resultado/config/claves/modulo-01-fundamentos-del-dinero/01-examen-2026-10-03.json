@@ -3,15 +3,15 @@
   "resta_fallo": 0,
   "aprobado": 6,
   "preguntas": [
-    { "correctas": ["b"], "explicacion": "Clave del test del centro (1-b). Cada uno tiene que querer justo lo que el otro ofrece, y a la vez: doble coincidencia de deseos.", "concepto": "funciones-del-dinero", "angulo": "reconocer", "origen": "centro" },
-    { "correctas": ["b"], "explicacion": "Con más inflación, los mismos 1.000,00 € compran menos: 1.000,00 ÷ 1,06 = 943,40 € de hoy frente a 1.000,00 ÷ 1,02 = 980,39 €. La cifra no cambia, el poder de compra sí.", "concepto": "inflacion", "angulo": "predecir" },
-    { "correctas": ["b"], "explicacion": "Clave del test del centro (4-b). El piso vale mucho pero no se convierte en dinero rápido: liquidez y valor son cosas distintas.", "concepto": "liquidez", "angulo": "distinguir", "origen": "centro" },
-    { "correctas": ["d"], "explicacion": "La tasa de ahorro se mide sobre lo que entra: 500,00 ÷ 2.000,00 = 25,0 % mensual. Dividir entre los gastos es el error típico.", "concepto": "tasa-de-ahorro", "angulo": "detectar-error" },
-    { "correctas": ["a"], "explicacion": "Clave del test del centro (8-a). Se repite cada mes con la misma cifra sin que el alumno decida nada: fijo (la actualización anual del IPC no cambia eso).", "concepto": "gastos-fijos-y-variables", "angulo": "reconocer", "origen": "centro" },
-    { "correctas": ["c"], "explicacion": "Pone precio (300,00 €): unidad de cuenta. Pero no se paga con dinero sino con trabajo: no hay medio de cambio. Es el caso de la nota: se puede poner precio sin pagar con dinero.", "concepto": "funciones-del-dinero", "angulo": "distinguir" },
-    { "correctas": ["b"], "explicacion": "Clave del test del centro (7-b). Presupuestar con el mejor mes lleva a gastar lo que los meses flojos no darán; hay que usar el ingreso medio.", "concepto": "presupuesto-personal", "angulo": "predecir", "origen": "centro" },
-    { "correctas": ["b"], "explicacion": "6.000,00 ÷ 1.500,00 = 4 meses. El colchón es el mismo, pero cada mes se lleva más.", "concepto": "colchon-financiero", "angulo": "predecir" },
-    { "correctas": ["b"], "explicacion": "Clave del test del centro (9-b). 5 × 900 = 4.500 €.", "concepto": "colchon-financiero", "angulo": "transferir", "origen": "centro" },
-    { "correctas": ["a"], "explicacion": "Fijos: cuota 80,00 € + suscripción 55,00 € = 135,00 €. El material y las comidas con clientes los decide él cada mes: variables.", "concepto": "gastos-fijos-y-variables", "angulo": "transferir" }
+    { "correctas": ["b"], "explicacion": "Es la doble coincidencia de deseos: cada parte debe querer justo lo que ofrece la otra, y a la vez. Clave del test del centro (1-b).", "concepto": "trueque", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["b"], "explicacion": "Comparar precios con la misma vara (euros) es la unidad de cuenta. Clave del test del centro (2-b).", "concepto": "funciones-del-dinero", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["c"], "explicacion": "Los puntos ponen precio a las cosas (unidad de cuenta) pero no se aceptan en todas partes, así que no son medio de cambio general; para ser dinero hacen falta las tres funciones.", "concepto": "funciones-del-dinero", "angulo": "distinguir" },
+    { "correctas": ["b"], "explicacion": "Mucho valor pero tarda en convertirse en dinero: poca liquidez. Clave del test del centro (4-b).", "concepto": "liquidez", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["a"], "explicacion": "Inflación es la subida general y sostenida de los precios; que suba el tomate por una mala cosecha es un precio que sube, no inflación.", "concepto": "inflacion", "angulo": "detectar-error" },
+    { "correctas": ["b"], "explicacion": "Presupuestar con el mejor mes lleva a gastar dinero que los meses flojos no tendrán; se usa la media de 6-12 meses. Clave del test del centro (7-b).", "concepto": "presupuesto-personal", "angulo": "predecir", "origen": "centro" },
+    { "correctas": ["c"], "explicacion": "El colchón se mide sobre los gastos, no sobre los ingresos: 1.100,00 € × 6 = 6.600,00 €. 9.600,00 € sale de usar los ingresos (1.600,00 € × 6).", "concepto": "colchon-financiero", "angulo": "transferir" },
+    { "correctas": ["a"], "explicacion": "Misma cifra cada mes y no depende de ti: gasto fijo; la actualización anual no lo convierte en variable. Clave del test del centro (8-a).", "concepto": "gastos-fijos-y-variables", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["a"], "explicacion": "Tasa de ahorro = ahorro ÷ ingresos: Ana 400 ÷ 2.000 = 20 %; Bea 500 ÷ 5.000 = 10 %. La cifra absoluta no sirve para comparar.", "concepto": "tasa-de-ahorro", "angulo": "distinguir" },
+    { "correctas": ["d"], "explicacion": "Media = (2.400 + 1.200 + 1.800 + 900 + 2.100 + 1.500) ÷ 6 = 1.650,00 €. Ahorro = 1.650,00 € − 1.700,00 € = −50,00 €. La a sale de usar el mejor mes; la b, del peor.", "concepto": "presupuesto-personal", "angulo": "transferir" }
   ]
 }

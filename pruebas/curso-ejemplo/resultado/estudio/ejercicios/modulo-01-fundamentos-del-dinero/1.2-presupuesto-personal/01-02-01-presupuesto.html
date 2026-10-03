@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Con qué ingreso presupuestas?</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: .5rem; padding: 1rem; margin-bottom: 1rem; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .6rem 0 .2rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem 1rem; margin: .25rem .25rem 0 0; cursor: pointer; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>¿Con qué ingreso presupuestas?</h1>
+<p>Concepto: <a href="../../../conceptos/presupuesto-personal.md">presupuesto-personal</a></p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <p>Miras los próximos 6 meses. Unos meses facturas bien y otros flojo, y ya has decidido cuánto vas a gastar cada mes.</p>
+  <label for="bueno">Ingreso de un mes bueno: <b id="vBueno"></b></label>
+  <input type="range" id="bueno" min="1800" max="2800" step="100" value="2400">
+  <label for="flojo">Ingreso de un mes flojo: <b id="vFlojo"></b></label>
+  <input type="range" id="flojo" min="800" max="1600" step="100" value="1300">
+  <label for="buenos">Meses buenos de los 6: <b id="vBuenos"></b></label>
+  <input type="range" id="buenos" min="1" max="5" step="1" value="2">
+  <label for="gasto">Gasto que has presupuestado cada mes: <b id="vGasto"></b></label>
+  <input type="range" id="gasto" min="1000" max="2400" step="50" value="1900">
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p>Sin tocar nada más, ¿este presupuesto es <b>sostenible</b>, es decir, al cabo de los 6 meses no has gastado más de lo que ha entrado en total? Elige antes de mirar nada.</p>
+  <button id="si">Sí es sostenible</button>
+  <button id="no">No es sostenible</button>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+function fmt(n) { return n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+function totales(caso) {
+  var b = Number(caso.buenos);
+  var total = b * Number(caso.bueno) + (6 - b) * Number(caso.flojo);
+  return { total: total, media: total / 6, gastos: 6 * Number(caso.gasto) };
+}
+
+window.verificar = function (caso) {
+  var t = totales(caso);
+  return t.total >= t.gastos ? 'si' : 'no';
+};
+
+function pintar() {
+  document.getElementById('vBueno').textContent = fmt(Number(document.getElementById('bueno').value)) + ' €';
+  document.getElementById('vFlojo').textContent = fmt(Number(document.getElementById('flojo').value)) + ' €';
+  document.getElementById('vBuenos').textContent = document.getElementById('buenos').value;
+  document.getElementById('vGasto').textContent = fmt(Number(document.getElementById('gasto').value)) + ' €';
+  document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+}
+
+function responder(eleccion) {
+  var caso = {
+    bueno: document.getElementById('bueno').value,
+    flojo: document.getElementById('flojo').value,
+    buenos: document.getElementById('buenos').value,
+    gasto: document.getElementById('gasto').value
+  };
+  var correcta = window.verificar(caso);
+  var t = totales(caso);
+  var gasto = Number(caso.gasto);
+  var texto = (eleccion === correcta ? 'Correcto. ' : 'No. ') +
+    'Entran ' + fmt(t.total) + ' € en 6 meses (media de ' + fmt(t.media) + ' € al mes) y gastas ' + fmt(t.gastos) + ' €. ';
+  if (correcta === 'si') {
+    texto += 'Te sobran ' + fmt(t.total - t.gastos) + ' €: tu gasto cabe dentro de la media. ';
+  } else {
+    texto += 'Te faltan ' + fmt(t.gastos - t.total) + ' €: tu gasto de ' + fmt(gasto) + ' € supera la media de ' + fmt(t.media) + ' €. ';
+  }
+  if (gasto <= Number(caso.bueno) && correcta === 'no') {
+    texto += 'Con el ingreso del mes bueno (' + fmt(Number(caso.bueno)) + ' €) parecía que cabía: ese es el error típico. ';
+  }
+  if (gasto > Number(caso.flojo) && correcta === 'si') {
+    texto += 'Aun así, cada mes flojo acabas en ' + fmt(Number(caso.flojo) - gasto) + ' €: la media se sostiene porque los meses buenos lo cubren. ';
+  }
+  texto += 'Mueve los controles y busca el punto donde la respuesta se invierte.';
+  document.getElementById('explicacion').textContent = texto;
+}
+
+['bueno', 'flojo', 'buenos', 'gasto'].forEach(function (id) {
+  document.getElementById(id).addEventListener('input', pintar);
+});
+document.getElementById('si').addEventListener('click', function () { responder('si'); });
+document.getElementById('no').addEventListener('click', function () { responder('no'); });
+pintar();
+</script>
+</body>
+</html>
