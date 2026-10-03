@@ -354,9 +354,14 @@ dice así en el informe de la release.
   ejecuciones de `/sesion`) y por el `resultado/` actual: cero rojos falsos; y se ve en rojo con un resultado
   estropeado a mano. Después, una sola prueba entera en verde con todas. «Mejor» = esas comprobaciones activas y
   calibradas, no «más pasos».
-- **Decisiones de Roberto, de una en una:** 1) ¿se guardan `config/claves/` y `config/revisiones/` en el `resultado/`
-  público? (el curso es inventado; el examen del resultado ya enseña veredictos) · 2) ¿se puede tocar la 02-02 para
-  plantar el sinónimo? (se prepara en segundo plano, fuera de la línea base de `/sesion`) · 3) `PROMPT_COMUN`.
+- **Decidido (Roberto, 2026-10-03):** `config/claves/` y `config/revisiones/` se guardan en el `resultado/` de la
+  prueba (el curso es inventado), para poder releer si una clave está mal.
+- **Por decidir con Roberto, de una en una, al abrir la sesión:** 1) ¿se puede tocar la 02-02 para plantar el
+  sinónimo? (se prepara en segundo plano, fuera de la línea base de `/sesion`) · 2) `PROMPT_COMUN`: ¿se quita el
+  «déjala como TODO» para los ejercicios?
+- **Para abrir la sesión:** rama `curso-ejemplo-mide-mas` (local, sale de `piloto-sesion`; con la #88 ya mezclada
+  por squash, pasarla a `main`: `git rebase --onto origin/main piloto-sesion curso-ejemplo-mide-mas`). Roberto
+  quiere decir antes cómo hacerlo bien: preguntarle antes de implementar nada.
 - **Abogado del diablo:** ronda completa 2026-10-03 (noche), 5 objeciones, las 5 aceptadas: 1) las anclas de la
   auditoría incluían un defecto inventado (el «10 %» de la 02-02) y una cifra que no está en el material (97,09),
   y no coincidían con la huella ya usada → rojo solo la hoja de la 01-02, normalizada · 2) la comprobación de
