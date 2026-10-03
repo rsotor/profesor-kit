@@ -121,6 +121,27 @@ cursos hechos por el kit tal cual, así que nunca ven cómo se desvían los dato
    - **Fuera:** TODO: decidir con Roberto.
    - **Cómo sabremos:** TODO: decidir con Roberto.
 
+## Siguiente: recortar las llamadas de escribir de `/sesion` (sin diseñar; con Fable, sesión limpia)
+
+**La pregunta:** cómo hace `/sesion` su trabajo en menos llamadas, sin perder calidad del material. El piloto de
+lectura (abajo, cerrado) ahorró poco porque tocaba la parte barata.
+
+**Lo que ya se sabe** (todo medido; detalle en «prueba real por piezas», abajo):
+- Cada llamada arrastra un suelo fijo de contexto: 27 K con Claude aislado (36 K con la configuración personal), 19 K
+  con Codex. Suelo × llamadas ≈ 51–61 % del gasto.
+- `/sesion 01-01`: 10–12 llamadas, 441–551 K; `/sesion 01-02`: 14, 772–786 K (Claude, Sonnet). El grueso son las
+  **7–9 llamadas de escribir, comprobar y corregir**; leer ya está en 2–4.
+- Cada K que entra en el contexto se paga en todas las llamadas de después: la segunda vuelta del piloto (paquete
+  grande) salió +28 %. Solo compensa lo que evita una llamada entera.
+- Dispersión alta entre ejecuciones iguales (355–608 K y 512–879 K en la misma clase): 3 ejecuciones no distinguen un
+  ±9 %. El diseño de la medida es parte del problema.
+- Ideas que el piloto dejó **fuera** a propósito, candidatas ahora (sin evaluar): pedir que escriba todas las notas
+  en una tanda · una herramienta que escriba las filas de los ficheros vivos (`progreso.md`, `mapa-del-curso.md`,
+  `conceptos/_index.md`). TODO: cuántas vueltas de `comprobar.js` → corregir hay por ejecución (no medido).
+- Restricción: Claude Code solo deja editar un fichero leído con su herramienta (comprobado el 2026-10-03).
+- **Fuera:** TODO (decidir en la sesión de diseño).
+- **Cómo sabremos:** TODO (decidir en la sesión de diseño; ver la dispersión).
+
 ## Siguiente: prueba real por piezas
 
 **Rumbo (Roberto, 2026-10-02, tarde): primero la raíz.** Mover la entera de sitio (al PR, a la noche) «mueve el
@@ -144,7 +165,7 @@ todos lecturas): la necesidad existe y el kit no le da una forma permitida.
   si, en una entera, los permisos denegados por lecturas con la shell pasan de 3–4 a 0. Si no, se descarta.
 - **Antes de implementar:** ronda corta del abogado del diablo sobre el diseño de la herramienta (abajo).
 - **PR #83** (abierto 2026-10-02): los tres arreglos de la auditoría de prompts del producto y la prueba aislada.
-- **Rama `piloto-sesion`** (2026-10-02): sale de las ramas de los PR #83 y #84 juntas, que siguen sin mezclar.
+- **Rama `piloto-sesion`** (2026-10-02): sale de las ramas de los PR #83 y #84 juntas; los dos ya están en `main` (2026-10-02, noche).
 
 **Diseño de la herramienta (2026-10-02; sí de Roberto e implementado el 2026-10-03, sin commit; ver «Estado del piloto», abajo).**
 
