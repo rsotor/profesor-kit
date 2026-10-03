@@ -5,37 +5,41 @@ visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 1
 requiere: [funciones-del-dinero]
 alias: []
-tags: [dinero]
+tags: [dinero, ahorro]
 ---
 # Liquidez
 
-> **En una frase:** lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
+> **En una frase:** la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
 ## El problema
 
-Tener valor no basta: hay que poder usarlo cuando hace falta. Un cobro urgente no se paga con la mitad de un piso.
+Tener valor no basta: hay que poder usarlo cuando hace falta. Un piso vale mucho, pero no sirve para
+pagar el alquiler de mañana.
 
 ## El ejemplo
 
-| Lo que tienes | Liquidez | Por qué |
+| Lo que tienes | Cuánto tardas en gastarlo | Liquidez |
 |---|---|---|
-| 50,00 € en la cartera | 100 % líquido | Se gasta al instante |
-| Un piso | Muy poco líquido | Venderlo bien lleva meses |
+| 50,00 € en la cartera | al instante | máxima |
+| Un piso de 120.000,00 € | meses, y si hay prisa, bajas el precio | muy baja |
 
-Si necesitas el dinero del piso en una semana, tendrás que rebajar el precio: pierdes valor por las prisas.
+Si mañana necesitas 300,00 €, la cartera responde y el piso no.
 
 ## El error típico
 
 > [!info] Ampliación fuera de los apuntes
-> Creer que "líquido" es lo mismo que "valioso". Un piso vale mucho y es poco líquido; la cartera vale poco y es líquida. Son dos preguntas distintas: cuánto vale y con qué rapidez se convierte en dinero.
+> Creer que "valer mucho" es lo mismo que "ser líquido". El piso vale más que la cartera y es peor
+> para una urgencia. La liquidez no mide cuánto vale algo, sino lo rápido que lo conviertes en dinero.
 
-> [!info] Ampliación fuera de los apuntes
-> **Visto desde tus ingresos irregulares.** El dinero para los meses flojos tiene que ser líquido: la utilidad de ese colchón está en poder gastarlo ya, sin esperar ni malvender. En el módulo 2 se compara con invertir, que a veces es menos líquido.
+## Visto desde tus ingresos irregulares
+
+Para un mes flojo necesitas dinero que puedas usar ya: la parte de tu colchón para esos meses tiene
+que ser líquida, aunque rinda menos. Se retoma en el módulo 2, al comparar ahorrar con invertir.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — el dinero es el activo más líquido
-- [[inflacion]] — el coste de guardar todo en líquido
+- [[funciones-del-dinero]] — la liquidez es lo cerca que está algo de funcionar como medio de cambio
+- [[inflacion]] — lo más líquido (efectivo) es también lo que más sufre sus efectos si se deja parado
 
 ## Historial
 

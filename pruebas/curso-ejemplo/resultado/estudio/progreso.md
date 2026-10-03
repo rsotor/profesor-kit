@@ -14,12 +14,18 @@ Estados: `⬜ sin evaluar` · `🟡 flojo` · `✅ sólido` · `🔴 falló dos 
 
 | Concepto | Teoría | Aplicación |
 |---|---|---|
-| [[trueque]] | 🟡 flojo · examen del módulo 1, p.1: elige falta de unidad de cuenta en vez de doble coincidencia de deseos | ⬜ sin evaluar |
-| [[funciones-del-dinero]] | ✅ sólido · examen del módulo 1, p.3 | ⬜ sin evaluar |
-| [[inflacion]] | ✅ sólido · examen del módulo 1, p.2 | ⬜ sin evaluar |
-| [[liquidez]] | 🟡 flojo · test de corrección 2026-10-03, p.3: la idea bien (no lo puede vender rápido) pero no da el nombre que se pedía | ⬜ sin evaluar |
-| [[presupuesto-personal]] | ⬜ sin evaluar | ⬜ sin evaluar |
-| [[ingreso-medio]] | ✅ sólido · examen del módulo 1, p.7 y p.8 | ⬜ sin evaluar |
-| [[gastos-fijos-y-variables]] | 🟡 flojo · test de corrección 2026-10-03, p.5: llama variable al alquiler con subida anual por IPC (es fijo) | ⬜ sin evaluar |
-| [[tasa-de-ahorro]] | ✅ sólido · test de corrección 2026-10-03, p.1: 20 % bien (antes, examen del módulo 1, p.6: mezclaba meses) | ⬜ sin evaluar |
-| [[colchon-financiero]] | 🟡 flojo · test de corrección 2026-10-03, p.6: sin contestar (antes, examen del módulo 1, p.10, también en blanco) | ⬜ sin evaluar |
+| [[funciones-del-dinero]] | 🔴 falló dos veces · examen módulo 1 (2026-10-04), p.1 y p.6: no reconoce la doble coincidencia de deseos y cree que la inflación rompe el medio de cambio | ⬜ sin evaluar |
+| [[inflacion]] | ✅ sólido · examen módulo 1, p.2: predice que con más inflación anual se compra menos | ⬜ sin evaluar |
+| [[liquidez]] | ✅ sólido · examen módulo 1, p.7: separa valor de liquidez en el piso | ⬜ sin evaluar |
+| [[presupuesto]] | 🟡 flojo · examen módulo 1, p.5: en blanco, no contestó el riesgo de presupuestar con el mejor mes | ⬜ sin evaluar |
+| [[gastos-fijos-y-variables]] | 🟡 flojo · test de corrección módulo 1 (2026-10-03), p.5: llama variable al alquiler que sube con el IPC una vez al año (antes, examen módulo 1, p.3 y p.9, bien) | ⬜ sin evaluar |
+| [[tasa-de-ahorro]] | ✅ sólido · examen módulo 1, p.4: compara por porcentaje y no por euros | ⬜ sin evaluar |
+| [[colchon-financiero]] | 🟡 flojo · examen módulo 1, p.10: en blanco, no calculó gastos × meses (acertó la p.8); test de corrección módulo 1, p.6: en blanco, no da los meses que recomienda el curso | ⬜ sin evaluar |
+| [[capital]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[tipo-de-interes]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[interes-simple]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[interes-compuesto]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[capitalizacion]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[regla-del-72]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[aportacion-periodica]] | ⬜ sin evaluar | ⬜ sin evaluar |
+| [[horizonte-temporal]] | ⬜ sin evaluar | ⬜ sin evaluar |

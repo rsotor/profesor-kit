@@ -1,9 +1,8 @@
----
-tipo: ejercicios
-sesion: 01-01-01-el-dinero-y-sus-funciones
----
-# Ejercicios · 01-01-01-el-dinero-y-sus-funciones
+# Ejercicios · 01-01-01 El dinero y sus funciones
 
-- **[Inflación y poder de compra](01-01-01-inflacion-poder-de-compra.html)** — concepto [[inflacion]]. Mueve la inflación anual y los años y mira cuándo cambia el tramo de poder de compra.
+- [[inflacion]] — **[¿Cuánto tarda en perder la mitad?](01-01-01-inflacion-cuanto-tarda-en-perder-la-mitad.html)**:
+  mueve la inflación anual y mira cuántos años aguanta el dinero del cajón antes de comprar la mitad.
+  Se descubre que una inflación anual del 3 % parece inofensiva y aun así se come la mitad en unos 23 años.
 
-Sin ejercicio para [[trueque]], [[funciones-del-dinero]] y [[liquidez]]: son definiciones y clasificaciones, no hay nada que mover.
+Sin ejercicio: [[funciones-del-dinero]] (clasificación cerrada) y [[liquidez]] (definición sin cálculo
+que mover).

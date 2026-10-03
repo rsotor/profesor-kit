@@ -1,59 +1,84 @@
 ---
 tipo: concepto
-bloques: [1.2]
-visto_en: [01-02-01-presupuesto-personal]
+bloques: [1.2, 2.2]
+visto_en: [01-02-01-presupuesto-personal, 02-02-01-ahorro-a-largo-plazo]
 dificultad: 2
-requiere: [liquidez, presupuesto-personal]
-ejercicio: 01-02-01-colchon-meses-flojos
-alias: []
+requiere: [presupuesto, gastos-fijos-y-variables, liquidez]
+alias: [fondo de emergencia]
 tags: [ahorro, presupuesto]
+ejercicio: 01-02-01-colchon-racha-mala
 ---
 # Colchón financiero
 
-> **En una frase:** dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o llega un imprevisto, medido en meses de gastos cubiertos.
+> **En una frase:** el colchón financiero es dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o pasa un imprevisto, medido en meses de gastos cubiertos.
 
 ## El problema
 
-Un mes flojo o una avería no avisan. Sin reserva, hay que endeudarse o vender algo deprisa (y [[liquidez]] es justo poder usar el dinero ya, sin perder valor).
+Un mes sin ingresos o un imprevisto (una avería, una factura) te obliga a endeudarte o a malvender algo si
+no tienes nada a mano.
 
 ## El ejemplo
 
-Con gastos de **1.195,00 €** al mes, un colchón de 3 meses son 1.195,00 × 3 = **3.585,00 €**. Para ingresos irregulares se apunta a 5-6 meses: **5.975,00 €** a **7.170,00 €**.
+Con 1.195,00 € de gastos al mes, un colchón de 3 meses es 1.195,00 € × 3 = **3.585,00 €**.
+
+Debe ser [[liquidez]] alta: que lo puedas gastar ya, sin perder valor por las prisas.
+
+**El paso previo al ahorro a largo plazo** (clase 2.2): el dinero que se aparta a muchos años no debería
+tocarse antes de tiempo. Con el colchón (el "fondo de emergencia" de la clase) una avería o un mes flojo no
+obligan a sacar ese ahorro y a perder los intereses que iba a dar.
+
+> [!info] Ampliación fuera de los apuntes
+> Con 2.400,00 € al final de cada año, a los 2 años tienes 4.920,00 € (ver [[aportacion-periodica]]). Si una
+> avería te obliga a sacar 2.400,00 € ese día, quedan 2.520,00 € trabajando en vez de 4.920,00 €, y todos los
+> años siguientes crecerá una cifra menor.
 
 ## La fórmula
 
-$$ \text{colchón} = \text{gastos mensuales} \times \text{meses a cubrir} $$
+$$ \text{colchón} = \text{gastos del mes} \times \text{meses a cubrir} $$
 
 ## El error típico
 
-Pensar que "tener ahorros" ya es tener colchón. Si el dinero está en algo que no puedes sacar sin perder (no líquido), no cubre un imprevisto.
-
-> [!info] Ampliación fuera de los apuntes
-> **Visto desde tus ingresos irregulares.** Los apuntes recomiendan 5-6 meses para un freelance, frente a 3 con nómina fija. A tu ritmo, con 1.222,00 € de gastos (con el gimnasio incluido), serían de 6.110,00 € a 7.332,00 €.
+Ahorrar para otra cosa antes de tenerlo. El colchón es el primer objetivo.
 
 ## Practícalo
 
-[[ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-meses-flojos.html|¿Aguanta tu colchón una racha floja?]]: mueve los meses de racha, lo que facturas y la parte de tus ahorros que puedes sacar ya, y mira cuándo el colchón deja de cubrir.
+→ **[El colchón y una racha mala](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-racha-mala.html)**
+
+Mueve los meses de colchón, lo que facturas en la racha y cuánto dura. Lo que debería sorprender: con 3 meses
+de colchón aguantas 6 meses de racha si facturas 600,00 € al mes, pero no 4 meses si no facturas nada.
+
+## Visto desde tus ingresos irregulares
+
+Con ingresos irregulares, la clase recomienda apuntar más alto: 5-6 meses en vez de 3. Con 1.195,00 € de
+gastos: 5 meses son **5.975,00 €** y 6 meses, **7.170,00 €**.
 
 ## Relacionados
 
-- [[presupuesto-personal]] — de donde sale el gasto mensual
-- [[tasa-de-ahorro]] — lo que ahorras cada mes para llenarlo
-- [[liquidez]] — por qué debe estar al alcance
+- [[liquidez]] — el colchón tiene que ser fácil de convertir en dinero
+- [[inflacion]] — un colchón guardado años pierde poder de compra
+- [[gastos-fijos-y-variables]] — su total marca el tamaño del colchón
+- [[horizonte-temporal]] — el ahorro a muchos años solo rinde si no hay que sacarlo antes de tiempo
 
 ## Historial
 
 - **01-02-01-presupuesto-personal** · primera vez
+- **02-02-01-ahorro-a-largo-plazo** · paso previo al ahorro a largo plazo: evita sacar el ahorro ante un imprevisto y perder los intereses
 
-> [!question]- Duda · 2026-10-03
+> [!question]- Duda · 2026-10-04
 > no entiendo bien esta parte, ¿me lo explicas con otro ejemplo?
 >
-> **Respuesta:** el marcador no decía qué parte, así que he cogido la fórmula y los meses a cubrir, que es lo que más suele atascar. Otro ejemplo, con tus ingresos irregulares:
+> **Respuesta:** como no decías qué parte, he tomado la que más cuesta: para qué sirve el colchón cuando
+> facturas a trompicones. Otro ejemplo, esta vez mes a mes, con gastos de 1.195,00 €:
 >
-> | Mes | Facturas | Gastos | Qué pasa |
-> |---|---|---|---|
-> | Enero | 2.000,00 € | 1.200,00 € | Sobran 800,00 € |
-> | Febrero | 300,00 € | 1.200,00 € | Faltan 900,00 € |
-> | Marzo | 0,00 € | 1.200,00 € | Faltan 1.200,00 € |
+> | Mes | Facturas | Gastos | Diferencia | Colchón |
+> |---|---|---|---|---|
+> | 1 | 1.900,00 € | 1.195,00 € | +705,00 € | sin tocar |
+> | 2 | 600,00 € | 1.195,00 € | −595,00 € | saca 595,00 € |
+> | 3 | 500,00 € | 1.195,00 € | −695,00 € | saca 695,00 € |
 >
-> Entre febrero y marzo te faltan **2.100,00 €**. Con un colchón de 1 mes (1.200,00 €) no llegas; con 3 meses (**1.200,00 × 3 = 3.600,00 €**) cubres esos dos meses flojos y aún te quedan 1.500,00 €. Los meses a cubrir son, en la práctica, cuántos meses seguidos flojos quieres aguantar sin tocar nada más. Si otra parte te chirriaba, dime cuál y la rehago.
+> Sin colchón, los meses 2 y 3 te obligan a endeudarte por **1.290,00 €** (595,00 + 695,00). Con él, solo
+> bajas la cuenta de ahorro y sigues pagando todo.
+>
+> Por eso con ingresos irregulares se recomienda 5-6 meses y no 3: una racha mala puede durar varios
+> meses seguidos, y el colchón tiene que aguantarla entera. Si otra parte era la que no veías, dime cuál
+> y la rehago.

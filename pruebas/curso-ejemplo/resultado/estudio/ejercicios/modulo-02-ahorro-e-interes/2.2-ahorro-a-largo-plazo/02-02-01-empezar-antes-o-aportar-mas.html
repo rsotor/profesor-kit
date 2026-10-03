@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Empezar antes o aportar más</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  input[type=range] { width: 100%; }
+  button { font: inherit; padding: .5rem 1rem; margin: .25rem .25rem .25rem 0; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>Empezar antes o aportar más</h1>
+<p>Conceptos: <a href="../../../conceptos/horizonte-temporal.md">horizonte temporal</a> · <a href="../../../conceptos/aportacion-periodica.md">aportación periódica</a> · <a href="../../../conceptos/interes-compuesto.md">interés compuesto</a>.</p>
+
+<section id="condiciones">
+  <h2>1 · Condiciones</h2>
+  <p>Ana ahorra <strong>2.400,00 €</strong> al final de cada año, empezando hoy. Luis empieza más tarde, pero
+  los dos sacan el dinero dentro de <strong>30 años</strong>. Las aportaciones van al final de cada año y el
+  dinero rinde el mismo tipo anual compuesto para los dos.</p>
+  <label for="tipo">Tipo de interés: <strong id="tipo-txt">5 % anual</strong></label>
+  <input type="range" id="tipo" min="1" max="8" step="1" value="5">
+  <label for="retraso">Luis empieza dentro de: <strong id="retraso-txt">10 años</strong></label>
+  <input type="range" id="retraso" min="0" max="20" step="1" value="10">
+  <label for="aportacion">Luis aporta al año: <strong id="aportacion-txt">3.600,00 €</strong></label>
+  <input type="range" id="aportacion" min="2600" max="7200" step="200" value="3600">
+</section>
+
+<section id="reto">
+  <h2>2 · Reto</h2>
+  <p>Con esas condiciones, ¿quién tiene más dinero dentro de 30 años? (elige una opción antes de ver las cifras)</p>
+  <button data-op="ana">Ana, que empieza hoy con 2.400,00 € al año</button>
+  <button data-op="luis">Luis, que empieza más tarde pero aporta más</button>
+</section>
+
+<section id="explicacion-s">
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+var AHORRO_ANA = 2400, HORIZONTE = 30;
+function factor(tipo, anios) {
+  if (anios <= 0) return 0;
+  var r = Number(tipo) / 100;
+  return (Math.pow(1 + r, anios) - 1) / r;
+}
+function resultado(c) {
+  var anios = HORIZONTE - Number(c.retraso);
+  var ana = AHORRO_ANA * factor(c.tipo, HORIZONTE);
+  var luis = Number(c.aportacion) * factor(c.tipo, anios);
+  return { ana: ana, luis: luis, anios: anios, falta: ana / factor(c.tipo, anios) };
+}
+window.verificar = function (caso) {
+  var r = resultado(caso);
+  return r.luis > r.ana ? 'luis' : 'ana';
+};
+function eur(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+function caso() {
+  return {
+    tipo: document.getElementById('tipo').value,
+    retraso: document.getElementById('retraso').value,
+    aportacion: document.getElementById('aportacion').value
+  };
+}
+function reset() {
+  var c = caso();
+  document.getElementById('tipo-txt').textContent = c.tipo + ' % anual';
+  document.getElementById('retraso-txt').textContent = c.retraso + (Number(c.retraso) === 1 ? ' año' : ' años');
+  document.getElementById('aportacion-txt').textContent = eur(Number(c.aportacion));
+  document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+}
+['tipo', 'retraso', 'aportacion'].forEach(function (id) {
+  document.getElementById(id).addEventListener('input', reset);
+});
+document.querySelectorAll('#reto button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var c = caso(), r = resultado(c), ok = window.verificar(c);
+    var txt = (b.dataset.op === ok ? 'Correcto. ' : 'No: gana ' + (ok === 'ana' ? 'Ana' : 'Luis') + '. ') +
+      'Ana: ' + eur(r.ana) + ' tras 30 años. Luis aporta durante ' + r.anios + ' años y llega a ' + eur(r.luis) + '. ';
+    if (r.anios === HORIZONTE) {
+      txt += 'Luis empieza hoy, como Ana: gana quien aporta más.';
+    } else {
+      txt += 'Para igualar a Ana, Luis tendría que aportar ' + eur(r.falta) + ' al año, ' +
+        'en vez de los ' + eur(AHORRO_ANA) + ' de Ana. ' +
+        'Prueba a mover el retraso: cada año que empieza más tarde exige más aportación para compensarlo.';
+    }
+    document.getElementById('explicacion').textContent = txt;
+  });
+});
+</script>
+</body>
+</html>

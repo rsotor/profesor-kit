@@ -4,39 +4,37 @@ sesion: 01-02-01-presupuesto-personal
 ---
 # Flashcards · 01-02-01-presupuesto-personal
 
-> Se responde mentalmente antes de desplegar.
-
-**Gastas algo en ocio todos los meses. ¿Es un gasto fijo?**
+**Gastas algo en ocio todos los meses. ¿Es un gasto fijo? ¿Por qué?**
 > [!success]- Respuesta
-> No. Es variable: aunque gastes siempre algo, la cifra la decides tú cada mes.
+> No, es variable: que lo gastes siempre no lo hace fijo; la cifra la decides tú cada mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Con ingresos que varían entre 1.300,00 € y 2.400,00 €, ¿con qué cifra presupuestas?**
+**Facturas por tu cuenta y tus ingresos oscilan entre 1.300,00 € y 2.400,00 €. ¿Con qué cifra presupuestas?**
 > [!success]- Respuesta
-> Con el ingreso medio de los últimos 6-12 meses, no con el mejor mes.
+> Con el ingreso medio de los últimos 6-12 meses, no con el del mejor mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**Ahorras 655,00 € con unos ingresos de 1.850,00 €. ¿Cuál es la tasa de ahorro?**
+**Ingresos de 2.000,00 € y ahorro de 500,00 €. ¿Qué tasa de ahorro del mes es?**
 > [!success]- Respuesta
-> 655,00 ÷ 1.850,00 × 100 ≈ 35,4 % del mes.
+> 500,00 € ÷ 2.000,00 € × 100 = 25 % del mes.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
-**¿Cuántos meses de gastos conviene cubrir con el colchón si tus ingresos son irregulares?**
+**Con 1.000,00 € de gastos al mes, ¿qué colchón de 6 meses necesitas y por qué 6 y no 3?**
 > [!success]- Respuesta
-> 5-6 meses, frente a unos 3 con nómina fija.
+> 6.000,00 €. Seis porque con ingresos irregulares conviene un colchón mayor que con nómina fija.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
 *Caja 1 de 5 · te toca el 3/10*
 
 ---
-Conceptos que cubren: [[gastos-fijos-y-variables]] · [[ingreso-medio]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
+Conceptos que cubren: [[gastos-fijos-y-variables]] · [[presupuesto]] · [[tasa-de-ahorro]] · [[colchon-financiero]]
