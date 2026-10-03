@@ -275,8 +275,10 @@ semanal del 13 % al 14 % (seis ejecuciones y la sonda de Haiku).
   auditoría y las tres plantillas; fuera los `config/*.md`, `ajustes.json`, los ejemplos y `/ejercicio` (el punto 6
   vuelve a «léela antes del primero»). Quitada la frase de `guardar.js --empezar` (0 de 6 la siguió). `leer.test.js`
   18/18. La suite entera falla en `preparar.test.js` (y `guardar` solo dentro de la suite) por el entorno, no por
-  esto: el curso de los tests ve `M .claude/worktrees/prueba-aislada`, un worktree que sigue en el disco. TODO: decidir
-  si se borra ese worktree o los tests ignoran `.claude/worktrees/`.
+  esto: el curso de los tests ve `M .claude/worktrees/prueba-aislada`, un worktree que sigue en el disco. **Arreglado:**
+  `preparar.test.js` y `extremo-a-extremo.test.js` no copian `.claude/worktrees/` (suite 843/844, 0 fallos). Los
+  worktrees se quedan como histórico (Roberto); se borran al cerrar esta línea de trabajo. Ojo: `prueba-aislada`
+  (`4b3bb2a`) no está en ninguna rama remota ni en `piloto-sesion`.
 - **Codex, `--solo "/sesion 01-01"` con el paquete pequeño (2026-10-03, 16:41):** 1/1, 0 permisos denegados, 0
   errores de `comprobar.js`, 208 s, 283 K tokens (sin línea base de Codex: dato, no resultado). Usó `leer.js --para
   sesion` en su 2.ª llamada y los tres ficheros que edita en la misma tanda. El primer intento falló por el sandbox
