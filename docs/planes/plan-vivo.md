@@ -367,6 +367,20 @@ observación y cómo se ve en rojo):
    `--asistente codex --solo "preparar.js --lanzar 02-01, 02-02"` (el sinónimo; `--solo` ejecuta también juntar y
    los compartidos). No una entera: la cuota de Codex es la más corta, y el examen y la corrección no cambian con
    este plan. Sin esto, de Codex solo hay la calibración sobre su resultado guardado del 2026-10-02 (frase vieja).
+   **Hecho con una entera (2026-10-06, 803bcfe, macOS): 17/22, corrección 6/6.** Los `--solo` no se podían: las
+   copias de Codex eran de la lista de pasos vieja, y `--solo` restauraba la de Claude y ejecutaba Claude sin avisar
+   (arreglado en `4104b53`: solo restaura copias del asistente pedido). Bien: `/sesion 01-02` crea el ejercicio con
+   la frase nueva; examen, corrección y repaso, por primera vez con Codex en Mac. Los rojos, con su arreglo (sin
+   probar con Codex real):
+   - `/dudas`: Codex respondió con `**Respuesta · Ampliación fuera de los apuntes:**` (regla 2 de `AGENTS.md`) y la
+     comprobación exigía `**Respuesta:**` literal. Se acepta la marca. Pendiente, con la próxima release (toca
+     skill): una línea en `dudas/SKILL.md` que diga que la marca va dentro de la etiqueta.
+   - `--juntar 02-01, 02-02` «fallida» (y en cascada los dos «lo que deja /sesion» y los compartidos): con
+     `workspace-write`, Codex no puede crear el `index.lock` del worktree (vive en el `.git` del curso, fuera de su
+     carpeta); escribió todo y no guardó. Afecta a cualquier preparación con Codex en Mac. Arreglo en
+     `preparar.js`: si el asistente acaba con 0 y todas las sesiones están en disco, guarda él (con `guardar.js`,
+     que comprueba igual). Sin explicar: el 2026-10-02 Codex sí juntó, sin cambios en su adaptador ni en
+     `preparar.js` desde entonces (¿versión nueva de Codex?). Se confirma en la próxima entera con Codex.
 
 - **Estado (2026-10-03, noche):**
   - Punto 1, hecho y sin enganchar en `prueba-real.js`: las funciones están en `pruebas/lib/pasos.js`
