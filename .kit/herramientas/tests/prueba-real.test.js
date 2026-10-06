@@ -1308,6 +1308,38 @@ test('carpetaCopiasMasReciente con la copia necesaria: salta las más recientes 
   assert.equal(carpetaCopiasMasReciente(base, '09-z'), null);
 });
 
+test('carpetaCopiasMasReciente con asistente: ignora las copias de otro asistente, aunque sean más recientes', () => {
+  const base = temporal('copias-asistente-');
+  const copia = (nombre, llm, antes) => {
+    const c = path.join(base, nombre);
+    escribir(c, { '02-b/curso/config/ajustes.json': JSON.stringify(llm ? { llm } : {}) });
+    const t = new Date(Date.now() - antes); fs.utimesSync(c, t, t);
+    return c;
+  };
+  const codex = copia('prueba-real-pasos-codex', 'codex', 60000);
+  const claude = copia('prueba-real-pasos-claude-code', 'claude-code', 0);
+  assert.equal(carpetaCopiasMasReciente(base, '02-b', 'codex'), codex);
+  assert.equal(carpetaCopiasMasReciente(base, '02-b', 'claude-code'), claude);
+  assert.equal(carpetaCopiasMasReciente(base, '02-b', 'otro'), null);
+  assert.equal(carpetaCopiasMasReciente(base, '02-b'), claude);   // sin asistente, como antes
+});
+
+test('ejecutar --solo/--desde: si la copia restaurada es de otro asistente, error antes de lanzar nada y sin dejar el curso', () => {
+  const nombres = nombresDePasos(CLASES_EJEMPLO, false);
+  const destino = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'profesor-kit-prueba-'));
+  fs.rmSync(destino, { recursive: true, force: true });
+  const copiasDir = temporal('copias-otro-asistente-');
+  escribir(copiasDir, {
+    [`${carpetaDeCopia(1, nombres[0])}/curso/config/ajustes.json`]: JSON.stringify({ llm: 'claude-code' }),
+    [`${carpetaDeCopia(1, nombres[0])}/estado.json`]: JSON.stringify({ destino, pasos: [] }),
+  });
+  assert.throws(
+    () => ejecutar({ sinLlm: false, asistente: 'codex', solo: nombres[1], copiasDir }),
+    /copia restaurada es de `claude-code` y se pidió `codex`/,
+  );
+  assert.equal(fs.existsSync(destino), false);
+});
+
 test('conceptoCompartido: visto_en en bloque y alias valen; otra nota de esas clases con el nombre dentro es un duplicado; filas exactas', () => {
   const destino = temporal('compartido-2-');
   escribir(destino, {
