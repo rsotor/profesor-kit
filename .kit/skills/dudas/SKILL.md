@@ -58,6 +58,9 @@ La respuesta se queda **donde nació la duda**. El marcador se consume y se conv
 > **Respuesta:** …
 ```
 
+Si la respuesta lleva marca de origen (regla 2 de `AGENTS.md`), va en la etiqueta:
+`**Respuesta · Ampliación fuera de los apuntes:** …`.
+
 La duda se cita **sin el marcador**, para que `node .kit/herramientas/comprobar.js` no la vuelva
 a contar como pendiente. Callout **plegado** (el guion): queda para releer sin ensuciar la nota.
 
