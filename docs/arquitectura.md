@@ -73,7 +73,7 @@ el alumno/instalador a través del LLM.
 | `diagnostico.js` | Repasa toda la instalación (Node, git, `gh`, sesión, acceso al kit, identidad, copia privada, skills, atajo, salud del curso) y dice qué falta; sin adaptador para el LLM del curso, el aviso de skills distingue si ya existe la nota vieja `config/adaptacion-llm.md` (propone convertirla al JSON) de no tener nada | El instalador (paso 8) y cuando algo no va (`AGENTS.md`, "si algo de la instalación no va") |
 | `obsidian.js` | Aplica los ajustes recomendados de Obsidian (sin pisar los del alumno) y descarga los complementos fijados por versión y hash | Tras preparar el curso (paso 9) y tras `/actualizar` |
 | `preparar.js` | Prepara una clase en segundo plano: `--lanzar` (con un cerrojo, uno a la vez) guarda antes el material de esa clase si estaba sin guardar, crea un `git worktree` en `.preparacion/<id>/` (rama `preparacion/<id>`), comprueba que el material llega con la misma huella, copia las skills y lanza el asistente sin conversación como proceso aparte (`detached`; prompt por stdin, límite de 90 min). Solo queda **terminada** si la copia tiene guardada la sesión `<id>-…`. `estado.json` y `registro.txt` están excluidos de git. `--estado` dice cómo va; `--juntar` mezcla esa copia con la principal: los generados se regeneran, las sesiones y el README se fusionan a tres bandas sin su parte generada, `progreso.md` y `_index.md` por filas; un choque de verdad para sin tocar nada. Al descartar una fallida se guardan su registro y, si guardó algo, su rama (`preparacion-descartada/…`, las 3 últimas) | El profesor, caso 2/3 de `AGENTS.md` ("Al empezar cada sesión"); `--trabajar <id>` es el envoltorio interno que se lanza a sí mismo detached, nunca lo llama el profesor a mano |
-| `issue.js` | Prepara (y, con `--enviar`, crea) una issue de feedback al kit; se niega si detecta datos personales | Skills cuando escalan algo ("Feedback al kit") |
+| `.base-kit/hooks/kit-issue.js` (de base-kit, no de `.kit/`) | Abre la issue de feedback al kit, solo, sin pedir el sí del alumno: sustituye claves, rutas y correos, se suma a una issue igual si ya existe y, si `gh` falla, deja la nota en `.git/base-kit/feedback-pending.md`. Lo configura `.kit/base-kit.json` (issue #99) | Skills cuando escalan algo ("Feedback al kit") |
 
 `.kit/herramientas/lib/*.js` (no son CLI: las usan las herramientas de arriba):
 
@@ -81,7 +81,7 @@ el alumno/instalador a través del LLM.
 |---|---|
 | `vault.js` | El núcleo de datos: rutas protegidas, listar notas/conceptos, leer/escribir `frontmatter` y `ajustes.json`, detectar propiedades no estándar, piezas ausentes, leer el adaptador. Lo importa casi todo lo demás |
 | `arranque.js` | Punto de entrada común: atrapa una excepción inesperada; si es del sistema (`EACCES`/`EPERM`/`EIO`: permiso denegado; `ENOENT`: comando inexistente) lo explica como tal, y solo si no lo es le dice al LLM que abra una issue |
-| `proceso.js` | Lanza un proceso externo (`git`, `gh`, `node`, `powershell`) y clasifica por qué falló (`ok` / `permiso` / `no-existe` / `fallo`), para que ningún mensaje se quede vacío o con "undefined" cuando el proceso ni llega a arrancar. Lo usan `git.js`, `actualizar.js`, `crear-atajo.js`, `diagnostico.js` e `issue.js` |
+| `proceso.js` | Lanza un proceso externo (`git`, `gh`, `node`, `powershell`) y clasifica por qué falló (`ok` / `permiso` / `no-existe` / `fallo`), para que ningún mensaje se quede vacío o con "undefined" cuando el proceso ni llega a arrancar. Lo usan `git.js`, `actualizar.js`, `crear-atajo.js` y `diagnostico.js` |
 | `git.js` | Envoltorio fino sobre `git` (estado, commit, identidad, remoto), sobre `proceso.js` |
 | `indice.js` | Calcula `estudio/inicio.md` y el pie de navegación de cada sesión, a partir de las sesiones, el progreso y los exámenes en disco; por módulo, conceptos dominados y "🏁 superado" (se quita con `progreso_en_inicio: no` en `config/profesor.md`) |
 | `generados.js` | Calcula el resto de ficheros que escribe `guardar.js`: pendientes, auditoría del material, formulario, índice de ejercicios y la sección "Estado" del README |
@@ -138,7 +138,9 @@ intento; ver `.kit/guias/revisor-de-examenes.md`).
 
 **Secretos (error)**: `secreto` — un fichero de secretos sin ignorar (`.env`, `.pem`, `.key`) o un patrón
 de token/clave conocido (`lib/secretos.js#PATRONES`) en cualquier línea de un fichero candidato a `git`.
-El mismo detector (`tipoDeSecreto`) lo usan `issue.js` y la revisión de lo que se va a subir (ver "Subir").
+El mismo detector (`tipoDeSecreto`) lo usa la revisión de lo que se va a subir (ver "Subir"). Convive con el
+`secret-guard` de base-kit (`.base-kit/hooks/`, registrado en `.claude/settings.json`), que hace otro trabajo: impide
+que el asistente lea `.env` o imprima una clave en el chat, antes de que pase.
 
 **Subir (`guardar.js#subirSiProcede`)**: solo con `subir_a_github: true` de verdad (sin el ajuste, no se sube),
 fuera de una rama `preparacion/*`, sin secretos en los ficheros **ni en los guardados que aún no están en el
@@ -262,7 +264,7 @@ abrir una issue por ellos.
 Si el LLM no tiene adaptador de kit, `.kit/ESTANDARES.md` dice qué hacer: comprobar en su documentación
 oficial (nunca inventar), escribir `config/adaptador-llm.json`, instalar skills, crear el atajo, verificar
 con `diagnostico.js` (que, si el curso conserva la nota vieja `config/adaptacion-llm.md` sin el JSON
-nuevo, lo dice en el aviso de skills), y **proponer devolverlo al kit** con `issue.js --titulo "[adaptador]
+nuevo, lo dice en el aviso de skills), y **devolverlo al kit** con `kit-issue.js --title "[adaptador]
 <id>"` — así el adaptador vuelve al motor y el siguiente alumno con ese mismo LLM no tiene que montarlo de
 cero. Sin adaptador ni `--destino` explícito, `instalar-skills.js` se niega a instalar en `.claude/skills`
 para un LLM que no es `claude-code` (issue #33): copiar ahí sin adaptador sería un error silencioso.

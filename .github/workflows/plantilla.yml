@@ -1,6 +1,9 @@
 name: plantilla
 # Un issue sin etiqueta de plantilla (feedback, instalación, mejora) no entra en la cola nocturna: se le pide al
 # autor que use una. Sin LLM: solo mira las etiquetas que pone la plantilla al abrir el issue.
+# Excepción (issue #99): las issues que abre el profesor de un alumno con `kit-issue.js` (base-kit) llegan sin
+# etiqueta, porque GitHub descarta las que pone quien no es colaborador. Se reconocen por la marca
+# `**Kit:** profesor-kit` del cuerpo, y aquí se les pone `feedback`.
 on:
   issues:
     types: [opened]
@@ -17,7 +20,13 @@ jobs:
       !contains(github.event.issue.labels.*.name, 'mejora')
     runs-on: ubuntu-latest
     steps:
-      - run: >
+      - if: contains(github.event.issue.body, '**Kit:** profesor-kit')
+        run: gh issue edit "$ISSUE" -R "$GITHUB_REPOSITORY" --add-label feedback
+        env:
+          ISSUE: ${{ github.event.issue.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - if: ${{ !contains(github.event.issue.body, '**Kit:** profesor-kit') }}
+        run: >
           gh issue comment "$ISSUE" -R "$GITHUB_REPOSITORY" --body
           "Gracias por abrirlo. Para poder trabajarlo, ¿lo puedes abrir de nuevo con una de las plantillas
           (*New issue* → elegir tipo)? Así llega con los datos que hacen falta y con su etiqueta."

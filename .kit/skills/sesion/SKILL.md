@@ -192,7 +192,7 @@ Flashcards: 5 · Ejercicios: 2
 Auditoría: <discrepancia encontrada, si la hubo>
 FALTA INFO: 1 → <qué falta y dónde debería estar>
 Guardado: sin avisos
-Del kit:   nada   ← o qué has visto que valdría para cualquier alumno (→ issue.js)
+Del kit:   nada   ← o qué has visto que valdría para cualquier alumno (→ kit-issue.js)
 ```
 
 Y termina siempre con **qué hacer ahora**, en el orden de estudio y con los nombres tal como los ve en

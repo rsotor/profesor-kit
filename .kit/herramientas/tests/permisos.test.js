@@ -19,6 +19,8 @@ function curso({ llm = 'claude-code', extra = {} } = {}) {
     '.kit/herramientas/comprobar.js': '',
     '.kit/herramientas/guardar.js': '',
     '.kit/herramientas/lib/vault.js': '',
+    '.base-kit/hooks/kit-issue.js': '',
+    '.base-kit/hooks/secret-guard.js': '',
     ...extra,
   });
 }
@@ -34,8 +36,10 @@ test('aplicar (Claude Code): acceptEdits y las herramientas del kit, en la raíz
     assert.equal(p.defaultMode, 'acceptEdits');
     assert.ok(p.allow.includes('Bash(node .kit/herramientas/comprobar.js *)'));
     assert.ok(p.allow.includes('Bash(git status *)'));
-    assert.ok(p.allow.every(r => /^Bash\((node (\.\.\/)?\.kit\/herramientas\/[a-z-]+\.js|git (status|log|diff)) \*\)$/.test(r)), 'solo herramientas del kit y git de lectura');
+    assert.ok(p.allow.every(r => /^Bash\((node (\.\.\/)?(\.kit\/herramientas\/[a-z-]+|\.base-kit\/hooks\/kit-issue)\.js|git (status|log|diff)) \*\)$/.test(r)), 'solo herramientas del kit, el feedback de base-kit y git de lectura');
     assert.ok(!p.allow.some(r => r.includes('vault')), 'ni piezas internas de lib/');
+    assert.ok(p.allow.includes('Bash(node .base-kit/hooks/kit-issue.js *)'), 'el feedback al kit, sin preguntar (issue #99)');
+    assert.ok(!p.allow.some(r => r.includes('secret-guard')), 'los hooks no: los lanza el asistente');
   }
   assert.ok(enEstudio.allow.includes('Bash(node ../.kit/herramientas/guardar.js *)'), 'desde estudio/, la ruta con ..');
   assert.deepEqual(enEstudio.additionalDirectories, ['..']);
@@ -83,6 +87,7 @@ test('Codex: .codex/config.toml (la raíz del curso escribible, sin red) y regla
   const reglas = fs.readFileSync(path.join(raiz, '.codex', 'rules', 'profesor-kit.rules'), 'utf8');
   assert.match(reglas, /prefix_rule\(pattern=\["node", "\.kit\/herramientas\/comprobar\.js"\], decision="allow"\)/);
   assert.match(reglas, /prefix_rule\(pattern=\["node", "\.\.\/\.kit\/herramientas\/guardar\.js"\], decision="allow"\)/);
+  assert.match(reglas, /prefix_rule\(pattern=\["node", "\.base-kit\/hooks\/kit-issue\.js"\], decision="allow"\)/);
   assert.match(reglas, /prefix_rule\(pattern=\["git", "status"\], decision="allow"\)/);
   assert.match(reglas, /prefix_rule\(pattern=\["python3"\], decision="prompt"\)/);
   assert.doesNotMatch(reglas, /vault/);

@@ -55,8 +55,8 @@ fichero de proyecto. **No des por hecho que tu asistente hace lo mismo.** Codex 
   claude.ai/code) llega con git y con red, pero sin la CLI `gh`, y no es cosa tuya ni del alumno instalarla
   ahí. No es un fallo del kit ni de tu adaptador: `actualizar.js` y `guardar.js` ya caen solos a git y a la
   API pública de GitHub sin credenciales cuando `gh` falta o falla, y `diagnostico.js` lo trata como un
-  aviso, no como algo que bloquee la instalación. Lo único que se pierde sin `gh` es enviar feedback al kit
-  con `issue.js` (`prepararIssue`/`enviarIssue` ya lo dicen y dejan el texto listo para pegarlo a mano).
+  aviso, no como algo que bloquee la instalación. Lo único que se pierde sin `gh` es el envío del feedback al
+  kit: `kit-issue.js` responde *not sent* y deja la nota apuntada en `.git/base-kit/feedback-pending.md`.
   **Por verificar en la nube de verdad:** Claude Code en claude.ai/code no habla con GitHub directo, sino con
   un proxy local del propio contenedor (`origin` con pinta de `http://usuario@127.0.0.1:<puerto>/git/<owner>/
   <repo>`), que solo deja subir a la rama de esa sesión. `lib/git.js` reconoce ese formato para la comprobación
@@ -97,10 +97,10 @@ pregunta al alumno o déjalo anotado como `**TODO:**` pendiente.
 4. `node .kit/herramientas/crear-atajo.js --nombre <palabra>` (toma el comando de tu adaptador) y
    `node .kit/herramientas/diagnostico.js` hasta que la línea de skills salga en verde y el resto
    también.
-5. **Propón al alumno devolver el adaptador al kit**, con su sí (sección "Feedback al kit" de
-   `AGENTS.md`):
+5. **Devuelve el adaptador al kit** (sección "Feedback al kit" de `AGENTS.md`; no hace falta el sí del
+   alumno, porque no lleva nada suyo):
 
-       node .kit/herramientas/issue.js --titulo "[adaptador] <id>" --cuerpo <fichero>
+       node .base-kit/hooks/kit-issue.js --title "[adaptador] <id>" --body-file <fichero>
 
    El cuerpo lleva: el JSON completo de tu `config/adaptador-llm.json`, tu versión exacta y el sistema
    operativo, qué tuviste que hacer a mano y qué te confundió de esta guía. Si ya existía un adaptador

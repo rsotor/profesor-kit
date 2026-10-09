@@ -5,7 +5,9 @@ const v = require('./lib/vault');
 const g = require('./lib/git');
 const { aplicarAjustes } = require('./lib/obsidian');
 
-const SOLO_DEL_KIT = ['docs', '.claude/rules', '.github', '.githooks', 'pruebas', 'CONTRIBUTING.md', 'SECURITY.md', 'LICENSE', 'package.json', 'eslint.config.js', 'node_modules', 'package-lock.json'];
+// `.claude/rules` y `.claude/agents` son de base-kit en modo desarrollo (las reglas y los agentes con los que se
+// desarrolla el kit): un curso no los recibe. Lo que sí recibe de base-kit es `.base-kit/` (va en el motor).
+const SOLO_DEL_KIT = ['docs', '.claude/rules', '.claude/agents', '.github', '.githooks', 'pruebas', 'CONTRIBUTING.md', 'SECURITY.md', 'LICENSE', 'package.json', 'eslint.config.js', 'node_modules', 'package-lock.json'];
 const MARCA_README_DEL_KIT = '# profesor-kit';
 
 function prepararCurso({ raiz, subir, llm = 'claude-code', nombre = '' }) {

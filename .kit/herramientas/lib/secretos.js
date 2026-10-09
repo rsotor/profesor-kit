@@ -1,4 +1,8 @@
 'use strict';
+// Por qué sigue aquí, con base-kit instalado (issue #99): `secret-guard` (.base-kit/hooks/) impide que el asistente
+// lea `.env` o imprima una clave, y revisa un `git commit` lanzado desde la shell; pero el curso no hace commits
+// desde la shell, los hace guardar.js desde Node. Esta pieza es la que revisa lo que guardar.js va a subir (los
+// commits sin subir y el árbol entero) y lo cuenta en castellano. Hacen trabajos distintos; las dos se quedan.
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');

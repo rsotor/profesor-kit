@@ -237,6 +237,28 @@ nació. A partir de la `1.0.0`, la regla es **qué le pasa al alumno**, no cuán
 `actualizar.js` aplica las migraciones solo; lo que hace mayor a una versión es que el alumno **note** el
 cambio o tenga que intervenir.
 
+Al subir `.kit/VERSION`, sube también `feedback.label` de `.kit/base-kit.json` (`profesor-kit X.Y.Z`): es lo que
+dice cada issue de feedback sobre de qué versión viene, y `tests/base-kit.test.js` exige que coincidan.
+
+## base-kit dentro del kit
+
+La forma de trabajar común (feedback al kit, protección de claves, reglas y agentes de desarrollo) viene de
+[base-kit](https://github.com/rsotor/base-kit), instalado aquí en modo `project --distribute` (issue #99):
+
+- **Lo que reciben los cursos**, por el motor (`.kit/motor.json`): `.base-kit/` (el motor de base-kit, con
+  `hooks/kit-issue.js` y `hooks/secret-guard.js`), el hook `secret-guard` de `.claude/settings.json` y la config
+  `.kit/base-kit.json` (feedback encendido hacia este repo, autosave apagado: un curso guarda con `guardar.js`).
+- **Lo que se queda aquí:** `.claude/rules/base-kit.md` (el bloque de reglas) y `.claude/agents/` (los agentes);
+  `preparar-curso.js` los borra (`SOLO_DEL_KIT`) y no están en el motor. Las skills de base-kit (`.claude/skills/`)
+  no se versionan (`.gitignore`): `instalar-skills.js` regenera esa carpeta.
+- **Actualizar base-kit:** desde un clon de base-kit, `node install.js --target <este repo> --agent claude-code`.
+  El manifiesto (`.base-kit/installed.json`) recuerda el modo, el fichero de reglas, la config y los hooks
+  (`secret-guard` solo), así que no hay que repetir los argumentos. Se revisa el diff y se mezcla como cualquier
+  cambio; si sube una versión del kit (los cursos lo notan), con su línea en el CHANGELOG. Nunca `--remove` a la ligera:
+  deja `.claude/settings.json` sin el hook.
+- **Hooks de desarrollo** (reglas de acción, capture, diablo): no se registran en `.claude/settings.json`, que es el
+  que reciben los cursos. Si un día hacen falta aquí, van en `.claude/settings.local.json`.
+
 ## Código de terceros que el kit descarga
 
 Los complementos de Obsidian (`.kit/herramientas/lib/obsidian.js`) van fijados a una versión y a un sha256 por

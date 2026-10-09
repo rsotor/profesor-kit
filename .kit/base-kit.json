@@ -1,0 +1,16 @@
+{
+  "_comment": "Config de base-kit que reciben los cursos (viaja con .kit/ en cada /actualizar). Solo se usa el feedback al kit (.base-kit/hooks/kit-issue.js): feedback.label va con .kit/VERSION y lo comprueba un test. El autosave y la comprobación del repo quedan apagados: un curso guarda con guardar.js.",
+  "status": "configured",
+  "language": "Hablamos en castellano; todo el material del curso va en castellano.",
+  "feedback": {
+    "auto": true,
+    "repo": "rsotor/profesor-kit",
+    "label": "profesor-kit 0.31.0"
+  },
+  "autosave": {
+    "enabled": false
+  },
+  "repoCheck": {
+    "enabled": false
+  }
+}

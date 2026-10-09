@@ -13,6 +13,16 @@ cuando el kit haya demostrado que puede sustituir al curso con el que nació. A 
 
 Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al saludar; actualizar es cosa tuya.
 
+## 0.31.0
+- **Si algo del kit falla, tu profesor lo avisa él solo a quien lo mantiene.** Antes te enseñaba la issue y
+  esperaba tu sí; ahora la abre directamente, porque no lleva nada tuyo: ni material del curso, ni tu perfil, ni tu
+  nombre, ni rutas de tu ordenador (lo que se le escape, lo sustituye). Solo viaja la versión del kit, tu sistema y
+  tu asistente. Si no la puede enviar (sin `gh` o sin red), te lo dice para que la pases tú.
+- **Tu asistente ya no puede leer tus ficheros de claves.** Un fichero `.env` o una clave no llegan al chat aunque
+  se lo pidas sin querer: lo para antes, y te dice cómo comprobarla sin enseñarla.
+- **Si ya tenías tu curso:** tu profesor te ofrece volver a aceptar los permisos una vez (`permisos.js`), para que
+  pueda avisar al kit sin preguntarte cada vez. Si dices que no, te lo preguntará cuando toque.
+
 ## 0.30.0
 - **Preparar una clase tiene menos idas y venidas.** Tu profesor lee de una vez el material de la clase y lo que
   necesita consultar, y la cierra con un solo guardado, en el que repasa los avisos de lo que acaba de escribir.

@@ -24,8 +24,10 @@ Lo específico de cada curso sale de una configuración al instalar.
 
 ## Depende de / lo usan
 
-- **Depende de:** Claude Code o Codex en el ordenador del alumno; las releases de GitHub para actualizar. En
-  desarrollo, la forma de trabajar de base-kit, instalada en modo local (no viaja a los cursos).
+- **Depende de:** Claude Code o Codex en el ordenador del alumno; las releases de GitHub para actualizar.
+  base-kit, instalado aquí en modo `project --distribute` (issue #99): los cursos reciben `.base-kit/` por el motor
+  (el feedback al kit, `kit-issue.js`, y la protección de claves, `secret-guard`); las reglas y los agentes de
+  desarrollo (`.claude/rules/base-kit.md`, `.claude/agents/`) se quedan aquí.
 - **Lo usan:** los cursos creados a partir de él, que se actualizan con `/actualizar`.
 
 ## Piezas clave

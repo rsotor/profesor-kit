@@ -18,7 +18,7 @@ function arrancar(cli, raiz, nombre) {
       process.exit(3);
     }
     console.error(`Fallo inesperado en ${nombre}: ${error.message}`);
-    console.error('Esto es del kit, no del curso: abre una issue con node .kit/herramientas/issue.js (ver "Feedback al kit" en AGENTS.md).');
+    console.error('Esto es del kit, no del curso: avísalo con node .base-kit/hooks/kit-issue.js (ver "Feedback al kit" en AGENTS.md).');
     process.exit(3);
   };
   // El final normal fija process.exitCode en vez de llamar a process.exit: con stdout en una tubería la

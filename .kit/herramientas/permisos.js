@@ -10,11 +10,15 @@ const path = require('node:path');
 const v = require('./lib/vault');
 
 const GIT_DE_SOLO_LECTURA = ['Bash(git status *)', 'Bash(git log *)', 'Bash(git diff *)'];
+// Lo que el profesor ejecuta de base-kit: el feedback al kit (issue #99). Los hooks no hace falta permitirlos: los
+// lanza el asistente, no el profesor.
+const DE_BASE_KIT = ['.base-kit/hooks/kit-issue.js'];
 
-// Las herramientas del kit que hay en este curso (no las piezas internas de lib/ ni los tests).
+// Las herramientas del kit que hay en este curso (no las piezas internas de lib/ ni los tests), con su ruta.
 function herramientas(raiz) {
   const dir = path.join(raiz, '.kit', 'herramientas');
-  return fs.existsSync(dir) ? fs.readdirSync(dir).filter(n => n.endsWith('.js')).sort() : [];
+  const delKit = fs.existsSync(dir) ? fs.readdirSync(dir).filter(n => n.endsWith('.js')).sort() : [];
+  return [...delKit.map(n => `.kit/herramientas/${n}`), ...DE_BASE_KIT.filter(r => fs.existsSync(path.join(raiz, ...r.split('/'))))];
 }
 
 // ── Claude Code ──────────────────────────────────────────────────────────────────────────────────────
@@ -22,7 +26,7 @@ function herramientas(raiz) {
 // donde lo abre Obsidian. Desde estudio/ necesita llegar a la raíz (config/, .kit/): `..`. Probado el 2026-09-24:
 // la confianza en la carpeta del curso vale para sus subcarpetas, y se respeta el .local.
 function sitiosClaudeCode(raiz) {
-  const reglas = prefijo => [...herramientas(raiz).map(n => `Bash(node ${prefijo}.kit/herramientas/${n} *)`), ...GIT_DE_SOLO_LECTURA];
+  const reglas = prefijo => [...herramientas(raiz).map(n => `Bash(node ${prefijo}${n} *)`), ...GIT_DE_SOLO_LECTURA];
   return [
     { fichero: path.join(raiz, '.claude', 'settings.local.json'), allow: reglas(''), directorios: [] },
     { fichero: path.join(raiz, v.CARPETA_ALUMNO, '.claude', 'settings.local.json'),
@@ -92,7 +96,7 @@ function cadenaToml(texto) {
 }
 
 function ficherosCodex(raiz) {
-  const permitidas = prefijo => herramientas(raiz).map(n => `prefix_rule(pattern=["node", "${prefijo}.kit/herramientas/${n}"], decision="allow")`);
+  const permitidas = prefijo => herramientas(raiz).map(n => `prefix_rule(pattern=["node", "${prefijo}${n}"], decision="allow")`);
   return [
     { fichero: path.join(raiz, '.codex', 'config.toml'), texto: [MARCA,
       'sandbox_mode = "workspace-write"', 'approval_policy = "on-request"', '',

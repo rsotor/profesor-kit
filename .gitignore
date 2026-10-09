@@ -39,3 +39,14 @@ node_modules/
 Thumbs.db
 *.tmp
 *~
+
+# base-kit:start v0.6.1
+.base-kit/pending/
+.base-kit/state/
+~$*
+.~lock.*#
+Thumbs.db
+desktop.ini
+.DS_Store
+.claude/worktrees/
+# base-kit:end

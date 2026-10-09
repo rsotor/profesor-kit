@@ -6,6 +6,8 @@ module.exports = [
   {
     ignores: [
       'node_modules/**', 'pruebas-local/**', '.claude/worktrees/**', '.claude/skills/**', '.agents/skills/**', '.codex/skills/**',
+      // Código de base-kit, copiado por su instalador (issue #99): se lintea en su repo, no aquí.
+      '.base-kit/**',
       // Lo que haya aquí es material generado por la prueba real (ejercicios .html con JS embebido, por
       // ejemplo): no es código del kit, y su calidad la juzga comprobar.js, no el linter. `resultado-*/**`
       // es lo mismo, pero con otro asistente que Claude Code (issue #45): pruebas/curso-ejemplo/resultado-<id>-<sistema>/.

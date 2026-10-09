@@ -11,6 +11,22 @@ Para abrir una sesión:
 
 ## En curso
 
+- **#99, migrar a base-kit** (rama `claude/pensive-babbage-e6dals`, 2026-10-09; base-kit 0.6.1 ya publicada con
+  `--hooks`). Hecho en la rama: instalación `--mode project --distribute --rules-file .claude/rules/base-kit.md
+  --config .kit/base-kit.json --hooks secret-guard`; `.base-kit` en el motor; `.claude/agents` en `SOLO_DEL_KIT`;
+  `issue.js` retirado y todo apunta a `kit-issue.js` (AGENTS.md, guía de feedback, `sesion`, ESTANDARES, diagnóstico,
+  adaptadores, arquitectura); `plantilla.yml` y la cola nocturna reconocen `**Kit:** profesor-kit`; `/configurar`
+  avisa en una frase; `permisos.js` permite `kit-issue`; `lib/secretos.js` explica por qué sigue; tests en
+  `tests/base-kit.test.js`; 0.31.0 en VERSION, CHANGELOG y `feedback.label`.
+  - **Pendiente, en el Mac:** `.claude/settings.json` con el hook (el entorno de la nube no deja escribirlo: el
+    fichero exacto está en el cierre de la sesión); `--remove` de la instalación local anterior; `prueba-real`
+    entera con los dos asistentes sobre el commit; y, para los cursos abiertos desde `estudio/` (Claudian),
+    comprobar si Claude Code carga el `settings.json` de la raíz, porque el hook usa `$CLAUDE_PROJECT_DIR`.
+  - **Fuera:** reglas de base-kit para el alumno; hooks en Codex; sustituir `lib/secretos.js`; versionar las skills
+    de base-kit.
+  - **Cómo sabremos:** lo de la issue (prueba-real en verde con los dos, `.env` denegado en un curso de prueba, un
+    fallo forzado abre una issue aquí con la etiqueta de versión y sin rutas, `prueba-actualizar` desde 0.30.0).
+
 - **forma-de-trabajar** (plan en `~/Documents/workspace/initiatives/forma-de-trabajar/plan-phase-1.md`,
   sección "profesor-kit"). Hecho, ya en `main`: K1, G5, K2. Queda: K3, K4, K5 (PR, con OK), K6 (con OK).
 - **#56, revisor independiente de exámenes** (rama `claude/epic-feynman-5sxy9o`; 0.28.0 ya publicada). Cada
