@@ -18,10 +18,13 @@ Para abrir una sesión:
   adaptadores, arquitectura); `plantilla.yml` y la cola nocturna reconocen `**Kit:** profesor-kit`; `/configurar`
   avisa en una frase; `permisos.js` permite `kit-issue`; `lib/secretos.js` explica por qué sigue; tests en
   `tests/base-kit.test.js`; 0.31.0 en VERSION, CHANGELOG y `feedback.label`.
-  - **Pendiente, en el Mac:** `.claude/settings.json` con el hook (el entorno de la nube no deja escribirlo: el
-    fichero exacto está en el cierre de la sesión); `--remove` de la instalación local anterior; `prueba-real`
-    entera con los dos asistentes sobre el commit; y, para los cursos abiertos desde `estudio/` (Claudian),
-    comprobar si Claude Code carga el `settings.json` de la raíz, porque el hook usa `$CLAUDE_PROJECT_DIR`.
+  - **La 0.31.0 junta más (Roberto, 2026-10-09):** la rama `siguiente-release` (PR #98: clave primero en `/examen`,
+    `preparar.js` con Codex en Mac, marca de origen en `/dudas`, `--solo`/`--desde` por asistente) fusionada aquí, y
+    la #91 (`inicio.md` enlaza los repasos de cada unidad, `lib/indice.js#leerRepasos`). #98 y #95 se cierran como
+    incluidas. PR: #102. La #97 (Codex en Windows no escribe `config/claves`) queda fuera: Roberto la está leyendo.
+  - **Pendiente, en el Mac:** `--remove` de la instalación local anterior; `prueba-real` entera con los dos asistentes
+    sobre el commit; y, para los cursos abiertos desde `estudio/` (Claudian), comprobar si Claude Code carga el
+    `settings.json` de la raíz, porque el hook usa `$CLAUDE_PROJECT_DIR`.
   - **Fuera:** reglas de base-kit para el alumno; hooks en Codex; sustituir `lib/secretos.js`; versionar las skills
     de base-kit.
   - **Cómo sabremos:** lo de la issue (prueba-real en verde con los dos, `.env` denegado en un curso de prueba, un

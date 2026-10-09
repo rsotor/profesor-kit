@@ -20,6 +20,13 @@ Tu profesor comprueba una vez al día si hay versión nueva y te lo dice al salu
   tu asistente. Si no la puede enviar (sin `gh` o sin red), te lo dice para que la pases tú.
 - **Tu asistente ya no puede leer tus ficheros de claves.** Un fichero `.env` o una clave no llegan al chat aunque
   se lo pidas sin querer: lo para antes, y te dice cómo comprobarla sin enseñarla.
+- **Tus hojas de repaso salen en inicio.** Lo que tu profesor deja en la carpeta **repasos** (una página de
+  `/repaso` o un resumen de un módulo) aparece ahora en **inicio**, en el módulo que le toca; antes solo se llegaba
+  abriendo la carpeta.
+- **Un examen no se queda sin clave.** Tu profesor escribe primero la clave de corrección y, si no puede, no crea el
+  examen: te ofrece aceptar los permisos y lo intenta después. Antes podía quedarte un examen que no se podía corregir.
+- **Arreglo: preparar una clase con Codex en un Mac ya se guarda.** La copia donde trabaja Codex no podía guardarse
+  sola y la clase quedaba como fallida aunque estuviera entera; ahora la guarda el kit.
 - **Si ya tenías tu curso:** tu profesor te ofrece volver a aceptar los permisos una vez (`permisos.js`), para que
   pueda avisar al kit sin preguntarte cada vez. Si dices que no, te lo preguntará cuando toque.
 
