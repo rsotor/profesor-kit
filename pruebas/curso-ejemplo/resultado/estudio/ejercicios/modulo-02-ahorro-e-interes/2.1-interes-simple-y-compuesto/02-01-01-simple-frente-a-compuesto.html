@@ -6,80 +6,106 @@
 <title>Simple frente a compuesto</title>
 <style>
   :root { color-scheme: light dark; }
-  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
   section { border: 1px solid #8884; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
   h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .6rem 0; }
   input[type=range] { width: 100%; }
-  button { font: inherit; padding: .5rem 1rem; margin: .25rem .25rem .25rem 0; }
+  button { display: block; width: 100%; margin: .4rem 0; padding: .6rem; font-size: 1rem; text-align: left; }
   #explicacion { min-height: 3rem; }
 </style>
 </head>
 <body>
 <h1>Simple frente a compuesto</h1>
-<p>Conceptos: <a href="../../../conceptos/interes-simple.md">interés simple</a> e
-<a href="../../../conceptos/interes-compuesto.md">interés compuesto</a>.</p>
+<p>Conceptos: <a href="../../../conceptos/interes-compuesto.md">interes-compuesto</a> · <a href="../../../conceptos/interes-simple.md">interes-simple</a></p>
 
-<section id="condiciones">
+<section>
   <h2>1 · Condiciones</h2>
-  <p>Depositas <strong>1.000,00 €</strong> y no los tocas. Compara dos cuentas con el mismo tipo: una paga interés simple y la otra, compuesto.</p>
-  <label for="tipo">Tipo de interés: <strong id="tipo-txt">5,0 % anual</strong></label>
-  <input type="range" id="tipo" min="1" max="15" step="0.5" value="5">
-  <label for="anios">Plazo: <strong id="anios-txt">3 años</strong></label>
-  <input type="range" id="anios" min="1" max="40" step="1" value="3">
-  <input type="hidden" id="capital" value="1000">
+  <label>Capital inicial: <b id="vC">1.000,00 €</b>
+    <input type="range" id="C" min="500" max="5000" step="100" value="1000"></label>
+  <label>Tipo de interés: <b id="vI">5,0 % anual</b>
+    <input type="range" id="i" min="0" max="10" step="0.5" value="5"></label>
+  <label>Años: <b id="vN">3 años</b>
+    <input type="range" id="n" min="1" max="40" step="1" value="3"></label>
 </section>
 
-<section id="reto">
+<section>
   <h2>2 · Reto</h2>
-  <p>Con estas condiciones, los intereses que da la cuenta compuesta frente a los de la simple son... (elige una opción)</p>
-  <button data-op="casi">Casi los mismos (menos de un 10 % más)</button>
-  <button data-op="algo">Bastante más (entre un 10 % y un 50 % más)</button>
-  <button data-op="mucho">Muchísimos más (más de un 50 % más)</button>
+  <p id="pregunta"></p>
+  <div id="opciones"></div>
 </section>
 
-<section id="explicacion-s">
+<section>
   <h2>3 · Explicación</h2>
   <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
 </section>
 
 <script>
-function simple(c, i, n) { return c * i * n; }
-function compuesto(c, i, n) { return c * Math.pow(1 + i, n) - c; }
-window.verificar = function (caso) {
-  var c = Number(caso.capital);
-  var i = Number(caso.tipo) / 100;
-  var n = Number(caso.anios);
-  var r = compuesto(c, i, n) / simple(c, i, n);
-  return r < 1.1 ? 'casi' : (r <= 1.5 ? 'algo' : 'mucho');
-};
 function eur(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
-function num(x, d) { return x.toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d }); }
-var nombres = { casi: 'casi los mismos (menos de un 10 % más)', algo: 'bastante más (entre un 10 % y un 50 % más)', mucho: 'muchísimos más (más de un 50 % más)' };
-var tipo = document.getElementById('tipo');
-var anios = document.getElementById('anios');
-function reset() {
-  document.getElementById('tipo-txt').textContent = num(Number(tipo.value), 1) + ' % anual';
-  document.getElementById('anios-txt').textContent = anios.value + (Number(anios.value) === 1 ? ' año' : ' años');
+function num(x) { return String(x).replace('.', ','); }
+
+// Capital C (€), tipo anual i (en %), n años. Simple: C + C*i*n. Compuesto: C*(1+i)^n.
+// Veredicto: 'igual' (sin ventaja), 'pequena' (ventaja < una décima parte del capital) o 'grande' (>= una décima parte).
+window.verificar = function (caso) { return calcular(caso).correcta; };
+
+function calcular(caso) {
+  var C = Number(caso.C), i = Number(caso.i) / 100, n = Number(caso.n);
+  var simple = C + C * i * n;
+  var compuesto = C * Math.pow(1 + i, n);
+  var ventaja = compuesto - simple;
+  var correcta;
+  if (n === 1 || i === 0) correcta = 'igual';
+  else if (ventaja * 10 >= C) correcta = 'grande';
+  else correcta = 'pequena';
+  var opciones = [
+    { id: 'igual', texto: 'Acaban igual: no hay ventaja del compuesto', ok: correcta === 'igual' },
+    { id: 'pequena', texto: 'El compuesto gana, pero por menos de una décima parte del capital', ok: correcta === 'pequena' },
+    { id: 'grande', texto: 'El compuesto gana por una décima parte del capital o más', ok: correcta === 'grande' }
+  ];
+  return { simple: simple, compuesto: compuesto, ventaja: ventaja, correcta: correcta, opciones: opciones };
+};
+
+function leer() {
+  return { C: document.getElementById('C').value, i: document.getElementById('i').value, n: document.getElementById('n').value };
+}
+
+function pintar() {
+  var c = leer();
+  document.getElementById('vC').textContent = eur(Number(c.C));
+  document.getElementById('vI').textContent = num(c.i) + ' % anual';
+  document.getElementById('vN').textContent = c.n + (Number(c.n) === 1 ? ' año' : ' años');
+  document.getElementById('pregunta').textContent =
+    'Pones ' + eur(Number(c.C)) + ' a ' + num(c.i) + ' % anual durante ' + c.n + (Number(c.n) === 1 ? ' año' : ' años') +
+    ', una vez con interés simple y otra con compuesto. ¿Cómo acaban? (elige una)';
+  var cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  calcular(c).opciones.forEach(function (o) {
+    var b = document.createElement('button');
+    b.textContent = o.texto;
+    b.onclick = function () { responder(o.id); };
+    cont.appendChild(b);
+  });
   document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
 }
-tipo.addEventListener('input', reset);
-anios.addEventListener('input', reset);
-document.querySelectorAll('button[data-op]').forEach(function (b) {
-  b.addEventListener('click', function () {
-    var caso = { capital: document.getElementById('capital').value, tipo: tipo.value, anios: anios.value };
-    var c = Number(caso.capital), i = Number(caso.tipo) / 100, n = Number(caso.anios);
-    var correcta = window.verificar(caso);
-    var is = simple(c, i, n), ic = compuesto(c, i, n);
-    var extra = (ic / is - 1) * 100;
-    var txt = (b.dataset.op === correcta ? 'Correcto. ' : 'No: lo correcto era ' + nombres[correcta] + '. ') +
-      'Con ' + num(Number(caso.tipo), 1) + ' % anual durante ' + n + (n === 1 ? ' año' : ' años') + ': simple, ' +
-      eur(is) + ' de intereses (' + eur(c + is) + ' en total); compuesto, ' + eur(ic) + ' (' + eur(c + ic) +
-      ' en total). El compuesto da un ' + num(extra, 1) + ' % más de intereses. ' +
-      (n === 1 ? 'Al primer año no hay nada que reinvertir: son iguales. ' : '') +
-      'Mueve el plazo y el tipo y mira dónde se cruzan el 10 % y el 50 %.';
-    document.getElementById('explicacion').textContent = txt;
-  });
-});
+
+function responder(id) {
+  var c = leer(), r = calcular(c);
+  var txt = (id === r.correcta ? 'Correcto. ' : 'No. ') +
+    'Simple: ' + eur(r.simple) + '. Compuesto: ' + eur(r.compuesto) + '. Diferencia: ' + eur(r.ventaja) + '. ';
+  if (r.correcta === 'igual') {
+    txt += Number(c.n) === 1
+      ? 'Con 1 año aún no hay intereses que reinvertir: los dos dan lo mismo.'
+      : 'Con tipo 0 no hay intereses que reinvertir: los dos dan lo mismo.';
+  } else if (r.correcta === 'pequena') {
+    txt += 'Todavía es poco. Alarga los años o sube el tipo: la ventaja crece cada vez más deprisa.';
+  } else {
+    txt += 'El compuesto reinvierte sus intereses y el simple no: ya se nota.';
+  }
+  document.getElementById('explicacion').textContent = txt;
+}
+
+['C', 'i', 'n'].forEach(function (k) { document.getElementById(k).addEventListener('input', pintar); });
+pintar();
 </script>
 </body>
 </html>

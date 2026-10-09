@@ -1,0 +1,28 @@
+{
+  "revisor": "subagente",
+  "fecha": "2026-10-09",
+  "preguntas": [
+    { "numero": 1, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 2, "respuesta": ["c"], "seguridad": "alta", "problemas": [] },
+    { "numero": 3, "respuesta": ["a"], "seguridad": "alta",
+      "problemas": ["se acierta sin saber: la a es la única opción con un matiz (casi todos los precios) y la más larga; la b y la d se descartan sin saber la materia"],
+      "resolucion": "Quitado «casi todos» de la a y alargadas la b, c y d para que las cuatro midan parecido; la d se queda como distractor plausible (una subida pequeña)." },
+    { "numero": 4, "respuesta": ["b"], "seguridad": "alta",
+      "problemas": ["se acierta sin saber: la a y la d son descartes triviales y la b es la única con un riesgo razonado"],
+      "resolucion": "Es una pregunta literal del test del centro: no se reescribe (regla de las del centro). Se queda." },
+    { "numero": 5, "respuesta": ["d"], "seguridad": "alta", "problemas": [] },
+    { "numero": 6, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 7, "respuesta": ["a"], "seguridad": "alta",
+      "problemas": ["se acierta sin saber: la d es un descarte trivial y la b contradice lo que dice el propio enunciado (cuota siempre igual)"],
+      "resolucion": "La b es el error típico (creer que lo fijo es lo fácil de cambiar) y es el distractor que se busca; la d es de relleno pero no sobra. Se queda." },
+    { "numero": 8, "respuesta": ["d"], "seguridad": "alta",
+      "problemas": ["se acierta sin saber: la a y la b son descartes triviales; la d es la única con cifras calculables entre las dos opciones numéricas, y la c (12 %) se descarta con una cuenta rápida"],
+      "resolucion": "La a y la b son los errores típicos (confundir euros con parte de lo ingresado); la c exige la cuenta. Medir la tasa implica hacer la cuenta, así que se queda." },
+    { "numero": 9, "respuesta": ["c"], "seguridad": "media",
+      "problemas": ["ambigua: la etiqueta pide una cifra y un presupuesto prudente podría usar el mes más bajo (b) en vez de la media; la pregunta no dice que se use la media", "se acierta sin saber: la c es la única cifra no redonda, y por tanto la que sale de un cálculo"],
+      "resolucion": "Enunciado: añadido «según el criterio del curso para ingresos irregulares». Opción b cambiada de 1.000,00 € (peor mes) a 1.760,00 € (media sin el peor mes), cifra no redonda como la correcta." },
+    { "numero": 10, "respuesta": ["a"], "seguridad": "alta",
+      "problemas": ["se acierta sin saber: la a es la única que razona en el sentido esperado; la b ignora el dato de la irregularidad y la d da a Leo menos colchón que a Ana"],
+      "resolucion": "Los distractores son los errores típicos (mismo colchón para todos; irregular = más margen para facturar). Se queda." }
+  ]
+}

@@ -1,8 +1,16 @@
-# Ejercicios · 02-01-01 Interés simple y compuesto
+---
+tipo: ejercicios
+sesion: 02-01-01-interes-simple-y-compuesto
+---
+# Ejercicios · 02-01-01-interes-simple-y-compuesto
 
-- [[interes-compuesto]] e [[interes-simple]] — **[Simple frente a compuesto](02-01-01-simple-frente-a-compuesto.html)**:
-  mueve el tipo y el plazo y mira cuántos más intereses da el compuesto que el simple. Se descubre que a
-  1 año son iguales y que la distancia crece con los años y con el tipo.
+## Simple frente a compuesto
 
-Sin ejercicio: [[capital]] y [[tipo-de-interes]] (definiciones), [[capitalizacion]] (el material no trae
-cifras con las que mover nada) y [[regla-del-72]] (una división; la comparación con el exacto la cubre una flashcard).
+→ **[Simple frente a compuesto](02-01-01-simple-frente-a-compuesto.html)** (conceptos: [[interes-compuesto]], [[interes-simple]])
+
+Mueve los años y el tipo anual: con 1 año o con tipo 0 los dos acaban igual, y a partir de cierto plazo la ventaja del compuesto pasa de una décima parte del capital. Cuántos años hacen falta cambia mucho con el tipo.
+
+**Versión a mano:** con 3.000,00 € al 4 % anual durante 5 años, ¿cuánto más tienes con interés compuesto que con simple? *(una cifra, en €)*
+
+> [!success]- Respuesta
+> Simple: 3.000,00 € + 3.000,00 € × 0,04 × 5 = 3.600,00 €. Compuesto: 3.000,00 € × 1,04⁵ = 3.649,96 €. La diferencia es **49,96 €**.

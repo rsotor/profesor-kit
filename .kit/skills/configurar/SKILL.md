@@ -220,6 +220,9 @@ Ejecuta `node .kit/herramientas/permisos.js --ver` y cuéntale lo que dice en do
 de pedirle permiso a cada paso, solo dentro de su curso, y lo puede quitar cuando quiera. Con su sí,
 `permisos.js --aplicar`. Si dice que no, o que su asistente aún no sabe, sigue: preguntarás como hasta ahora.
 
+Dile también, en una frase, que si algo del kit falla (no de su curso), se lo avisas tú solo a quien lo mantiene,
+sin datos suyos ni material de su curso.
+
 ### La hoja para otro día
 
 Antes de guardar, escribe **`estudio/como-usar-tu-profesor.md`** a partir de

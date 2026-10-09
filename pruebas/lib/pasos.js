@@ -799,7 +799,8 @@ function respuestasEnLaTabla(destino, ficheroExamen, respuestas = null) {
 
 // Fila 2 · Tras /dudas, cada nota donde el alumno dejó una duda (`tocado`, lo que devuelve simularAlumnoTrasSesiones)
 // ya no lleva el marcador y sí un callout `> [!question]- Duda` con su `**Respuesta:**` escrita (dudas/SKILL.md, §4).
-// Cómo la responde (ejemplo nuevo, enlace, TODO) es cosa suya: solo se exige que haya respuesta.
+// Cómo la responde (ejemplo nuevo, enlace, TODO) es cosa suya: solo se exige que haya respuesta. Vale la etiqueta
+// con la marca de origen de AGENTS.md (regla 2): «**Respuesta · Ampliación fuera de los apuntes:** …».
 function dudasRespondidas(destino, tocado, marcador) {
   const problemas = [];
   const notas = [tocado && tocado.concepto && `conceptos/${tocado.concepto.replace(/^conceptos\//, '')}`, tocado && tocado.sesion].filter(Boolean);
@@ -819,7 +820,7 @@ function dudasRespondidas(destino, tocado, marcador) {
       callouts.push(lineas.slice(i + 1, j).map(x => x.replace(/^[>\s]*/, '')).join('\n'));
     });
     if (!callouts.length) { problemas.push(`${rel}: no hay ningún «> [!question]- Duda»`); continue; }
-    const conRespuesta = callouts.some(c => { const m = /\*\*Respuesta:\*\*([\s\S]*)/.exec(c); return m && m[1].trim().length > 0; });
+    const conRespuesta = callouts.some(c => { const m = /\*\*Respuesta(?:\s*·[^:*\n]*)?:\*\*([\s\S]*)/.exec(c); return m && m[1].trim().length > 0; });
     if (!conRespuesta) problemas.push(`${rel}: la duda no lleva «**Respuesta:**» con texto`);
   }
   return problemas.length

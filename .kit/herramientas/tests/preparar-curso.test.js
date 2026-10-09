@@ -17,12 +17,15 @@ function conObsidian(raiz) {
 
 test('borra docs y .github, y crea ajustes con la version_datos del motor', () => {
   const raiz = conObsidian(cursoTemporal({ ...MOTOR, 'docs/spec.md': 'x', '.github/ISSUE_TEMPLATE/f.md': 'x', 'README.md': '# profesor-kit\n\ndel kit', 'CONTRIBUTING.md': 'del kit', 'SECURITY.md': 'del kit', 'LICENSE': 'del kit', '.githooks/pre-push': 'del kit', 'package.json': '{}',
-    'pruebas/curso-ejemplo/README.md': 'x', '.claude/rules/desarrollo.md': 'del kit', '.claude/settings.json': '{}',
+    'pruebas/curso-ejemplo/README.md': 'x', '.claude/rules/desarrollo.md': 'del kit', '.claude/rules/base-kit.md': 'de base-kit',
+    '.claude/agents/delegate.md': 'de base-kit', '.claude/settings.json': '{}', '.base-kit/hooks/kit-issue.js': 'de base-kit, viaja',
     '.kit/plantillas/readme-del-curso.md': '# {{NOMBRE_DEL_CURSO}}\n\n{{DE_QUE_VA}}\n\n{{TEMARIO}}\n\n{{ESTADO}}\n\n`{{ATAJO}}`\n' }));
   fs.rmSync(path.join(raiz, 'config', 'ajustes.json'));
   const r = prepararCurso({ raiz, subir: false });
-  assert.deepEqual(r.borrado.sort(), ['.claude/rules', '.githooks', '.github', 'CONTRIBUTING.md', 'LICENSE', 'SECURITY.md', 'docs', 'package.json', 'pruebas'].sort());
+  assert.deepEqual(r.borrado.sort(), ['.claude/rules', '.claude/agents', '.githooks', '.github', 'CONTRIBUTING.md', 'LICENSE', 'SECURITY.md', 'docs', 'package.json', 'pruebas'].sort());
   assert.ok(fs.existsSync(path.join(raiz, '.claude', 'settings.json')), 'los permisos del curso se quedan');
+  assert.ok(fs.existsSync(path.join(raiz, '.base-kit', 'hooks', 'kit-issue.js')), 'lo de base-kit que usa el curso se queda (issue #99)');
+  assert.ok(!fs.existsSync(path.join(raiz, '.claude', 'agents')), 'los agentes de desarrollo de base-kit, no');
   assert.equal(r.readmeCreado, true);
   const readme = fs.readFileSync(path.join(raiz, 'README.md'), 'utf8');
   assert.match(readme, /^# Mi curso/);

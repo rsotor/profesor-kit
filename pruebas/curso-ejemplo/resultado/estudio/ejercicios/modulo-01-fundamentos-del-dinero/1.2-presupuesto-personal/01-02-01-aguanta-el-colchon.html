@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aguanta el colchón</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .6rem 0; }
+  input[type=range] { width: 100%; }
+  button { display: block; width: 100%; margin: .4rem 0; padding: .6rem; font-size: 1rem; text-align: left; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>Aguanta el colchón</h1>
+<p>Concepto: <a href="../../../conceptos/colchon-financiero.md">colchon-financiero</a></p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <label>Colchón ahorrado: <b id="vC">3.585,00 €</b>
+    <input type="range" id="C" min="0" max="8000" step="100" value="3585"></label>
+  <label>Gastos al mes: <b id="vG">1.195,00 €</b>
+    <input type="range" id="G" min="500" max="2500" step="5" value="1195"></label>
+  <label>Ingreso de cada mes flojo: <b id="vI">300,00 €</b>
+    <input type="range" id="I" min="0" max="2500" step="50" value="300"></label>
+  <label>Meses flojos seguidos: <b id="vM">4 meses</b>
+    <input type="range" id="M" min="1" max="12" step="1" value="4"></label>
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p id="pregunta"></p>
+  <div id="opciones"></div>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+function eur(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+
+// El colchón cubre lo que falta cada mes flojo (gastos - ingreso), durante M meses
+window.verificar = function (caso) {
+  var C = Number(caso.C), G = Number(caso.G), I = Number(caso.I), M = Number(caso.M);
+  var faltaMes = Math.max(0, G - I);
+  var falta = faltaMes * M;
+  var aguanta = C >= falta;
+  var opciones = [
+    { id: 'si', texto: 'Sí, el colchón aguanta todo el bache', ok: aguanta },
+    { id: 'no', texto: 'No, el colchón se agota antes', ok: !aguanta },
+  ];
+  return { faltaMes: faltaMes, falta: falta, correcta: aguanta ? 'si' : 'no', opciones: opciones };
+};
+
+function leer() {
+  return { C: document.getElementById('C').value, G: document.getElementById('G').value,
+           I: document.getElementById('I').value, M: document.getElementById('M').value };
+}
+
+function pintar() {
+  var c = leer();
+  document.getElementById('vC').textContent = eur(Number(c.C));
+  document.getElementById('vG').textContent = eur(Number(c.G));
+  document.getElementById('vI').textContent = eur(Number(c.I));
+  document.getElementById('vM').textContent = c.M + (Number(c.M) === 1 ? ' mes' : ' meses');
+  document.getElementById('pregunta').textContent =
+    'Con ' + eur(Number(c.C)) + ' de colchón y gastos de ' + eur(Number(c.G)) + ' al mes, entran solo ' +
+    eur(Number(c.I)) + ' durante ' + c.M + (Number(c.M) === 1 ? ' mes' : ' meses') + ' seguidos. ¿Aguanta? (elige una)';
+  var cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  window.verificar(c).opciones.forEach(function (o) {
+    var b = document.createElement('button');
+    b.textContent = o.texto;
+    b.onclick = function () { responder(o.id); };
+    cont.appendChild(b);
+  });
+  document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+}
+
+function responder(id) {
+  var c = leer(), r = window.verificar(c);
+  var txt = (id === r.correcta ? 'Correcto. ' : 'No. ') +
+    'Cada mes faltan ' + eur(r.faltaMes) + ' y en ' + c.M + (Number(c.M) === 1 ? ' mes' : ' meses') + ' faltan ' + eur(r.falta) +
+    ', frente a un colchón de ' + eur(Number(c.C)) + '. ';
+  if (r.faltaMes === 0) txt += 'Con ese ingreso cubres tus gastos sin tocar el colchón.';
+  else if (Number(c.C) >= r.falta) txt += 'Sobran ' + eur(Number(c.C) - r.falta) + '. Alarga los meses y verás dónde se invierte.';
+  else txt += 'Te faltan ' + eur(r.falta - Number(c.C)) + '. Por eso con ingresos irregulares se apunta a 5-6 meses de gastos.';
+  document.getElementById('explicacion').textContent = txt;
+}
+
+['C', 'G', 'I', 'M'].forEach(function (k) { document.getElementById(k).addEventListener('input', pintar); });
+pintar();
+</script>
+</body>
+</html>

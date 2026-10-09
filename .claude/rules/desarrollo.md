@@ -4,7 +4,8 @@ Aquí **estás desarrollando el kit**, no haciendo de profesor. `AGENTS.md` es e
 dice al profesor de cada alumno, no a ti. Se cambia como cualquier otro fichero del kit, con sus tests.
 
 Este fichero no llega a los cursos: no está en `ficheros` de `.kit/motor.json` y `preparar-curso.js` lo borra
-(`SOLO_DEL_KIT`).
+(`SOLO_DEL_KIT`). Lo mismo `base-kit.md`, al lado (el bloque de reglas de base-kit, que escribe su instalador) y
+`.claude/agents/`. Lo que sí viaja de base-kit es `.base-kit/` (ver `CONTRIBUTING.md`, "base-kit dentro del kit").
 
 Un curso de prueba en `pruebas-local/` hereda estas reglas (y las de `.claude/rules/` sin seguir, como las de
 base-kit) de la carpeta de arriba. Para que se porte como el de un alumno, su `.claude/settings.local.json` lleva

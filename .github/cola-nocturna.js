@@ -22,11 +22,16 @@ const TOPE_POR_DEFECTO = 6;
 
 const tiene = (issue, etiqueta) => issue.etiquetas.includes(etiqueta);
 const esDelBot = login => /\[bot\]$/.test(login || '');
+// Las issues que abre el profesor de un alumno (`kit-issue.js`, de base-kit, issue #99) llegan sin etiqueta: GitHub
+// descarta las que pone quien no es colaborador. Se reconocen por la marca que deja en el cuerpo, y valen como
+// `feedback` (el workflow `plantilla` les pone la etiqueta al abrirse; esto cubre que llegue sin ella).
+const MARCA_DEL_KIT = /^\*\*Kit:\*\* profesor-kit\b/m;
+const delProfesor = issue => MARCA_DEL_KIT.test(issue.cuerpo || '');
 
 // Pura: qué hacer con un issue esta noche. null = no entra (y `motivo` dice por qué, para el informe).
 function clasificar(issue) {
   const fuera = motivo => ({ numero: issue.numero, entra: false, motivo });
-  if (!PLANTILLAS.some(p => tiene(issue, p))) return fuera('sin etiqueta de plantilla');
+  if (!PLANTILLAS.some(p => tiene(issue, p)) && !delProfesor(issue)) return fuera('sin etiqueta de plantilla');
   const autorizado = issue.autor === DUENO || issue.goPor === DUENO || tiene(issue, 'claude:aprobado');
   if (!autorizado) return fuera(`claude:go no la puso ${DUENO}`);
   if (issue.tienePR) return fuera('ya tiene PR abierto');

@@ -1,0 +1,17 @@
+{
+  "opciones": 4,
+  "resta_fallo": 0,
+  "aprobado": 6,
+  "preguntas": [
+    { "correctas": ["b"], "explicacion": "Que ninguna parte quiera lo que ofrece la otra en ese momento es la doble coincidencia de deseos. Sin unidad de cuenta no se podrían comparar precios, pero ese no es el problema descrito. Clave del test del centro, p.1.", "concepto": "funciones-del-dinero", "angulo": "reconocer", "origen": "centro", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-09.md, p.1" },
+    { "correctas": ["c"], "explicacion": "Meses = colchón ÷ gastos mensuales: 4.500,00 € ÷ 900,00 € = 5 meses. Dividir entre los 1.500,00 € de antes del recorte daría 3 meses, pero el gasto que cuenta es el nuevo.", "concepto": "colchon-financiero", "angulo": "predecir", "origen": "examen anterior", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-09.md, p.6" },
+    { "correctas": ["a"], "explicacion": "Inflación es la subida general y sostenida de los precios, casi todos a la vez. Que un solo producto (el aguacate) suba por una mala cosecha es un precio que sube, no inflación.", "concepto": "inflacion", "angulo": "detectar-error" },
+    { "correctas": ["b"], "explicacion": "Presupuestar con el mejor mes cuenta con ingresos que los meses flojos no traen, y se acaba gastando dinero que no está. La cifra correcta es la media de 6-12 meses. Clave del test del centro, p.7.", "concepto": "presupuesto-personal", "angulo": "detectar-error", "origen": "centro", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-09.md, p.5" },
+    { "correctas": ["d"], "explicacion": "El colchón tiene que poder gastarse ya, sin perder valor por las prisas: la cuenta de la que se saca el mismo día es lo más líquido. La furgoneta se malvende, y el terreno y las obras de arte tardan meses o no tienen comprador seguro.", "concepto": "liquidez", "angulo": "transferir", "origen": "examen anterior", "de": "examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-09.md, p.10" },
+    { "correctas": ["b"], "explicacion": "Comparar precios de cosas distintas con la misma vara (el euro) es la unidad de cuenta. Clave del test del centro, p.2.", "concepto": "funciones-del-dinero", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["a"], "explicacion": "Lo variable es lo que decide él cada mes (las comidas fuera); la cuota de autónomo es fija y se paga igual un mes flojo. Recortar solo se puede donde él decide la cifra.", "concepto": "gastos-fijos-y-variables", "angulo": "transferir" },
+    { "correctas": ["d"], "explicacion": "Antes: 320,00 ÷ 1.600,00 × 100 = 20 % mensual. Ahora: 320,00 ÷ 2.000,00 × 100 = 16 % mensual. Ahorra los mismos euros, pero una parte menor de lo que ingresa.", "concepto": "tasa-de-ahorro", "angulo": "predecir" },
+    { "correctas": ["c"], "explicacion": "Con ingresos irregulares la cifra es la media de los últimos 6-12 meses: (1.000,00 + 2.400,00 + 1.400,00 + 1.200,00 + 2.000,00 + 1.800,00) ÷ 6 = 9.800,00 ÷ 6 = 1.633,33 €. Ni el mejor mes, ni el último, ni una media que deje fuera el peor (1.760,00 €).", "concepto": "presupuesto-personal", "angulo": "transferir" },
+    { "correctas": ["a"], "explicacion": "Con nómina fija bastan unos 3 meses; con ingresos irregulares se apunta más alto, 5-6. Con 1.000,00 € de gasto mensual: 3.000,00 € para Ana y 6.000,00 € para Leo.", "concepto": "colchon-financiero", "angulo": "distinguir" }
+  ]
+}

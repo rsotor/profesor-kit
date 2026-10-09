@@ -130,6 +130,33 @@ function leerExamenes(raiz) {
   });
 }
 
+// Las hojas de repaso (issue #91): lo que el profesor deja en estudio/repasos/ (una página .html de /repaso, o un
+// resumen .md de un módulo) no se encontraba desde inicio, y como inicio no se edita, el profesor no tenía forma de
+// ponerlo en la portada. Cada hoja va con su unidad: la carpeta donde está (la de la unidad, como la de sus sesiones)
+// y, si no casa, el prefijo de su nombre; sin unidad, es una hoja suelta (un concepto). El título sale del `# ` del
+// .md o del <title> del .html; si no hay, del nombre del fichero.
+function leerRepasos(raiz, estructura) {
+  const base = v.baseAlumno(raiz);
+  const carpeta = path.join(base, 'repasos');
+  return v.recorrer(carpeta, n => /\.(md|html)$/i.test(n) && !n.startsWith('_')).map(abs => {
+    const rel = v.aPosix(path.relative(base, abs));
+    const nombre = path.basename(abs).replace(/\.(md|html)$/i, '');
+    let texto = '';
+    try { texto = fs.readFileSync(abs, 'utf8'); } catch { /* ilegible: se enlaza por su nombre */ }
+    const m = /\.md$/i.test(rel) ? /^#\s+(.+?)\s*$/m.exec(texto) : /<title>([^<]*)<\/title>/i.exec(texto);
+    const titulo = (m && m[1].trim()) || nombre.replace(/-/g, ' ');
+    const subcarpeta = v.aPosix(path.relative(carpeta, path.dirname(abs)));
+    let unidad = null;
+    if (estructura) {
+      unidad = estructura.unidades.filter(u => subcarpeta === u.carpeta || subcarpeta.startsWith(`${u.carpeta}/`))
+        .sort((a, b) => b.carpeta.length - a.carpeta.length)[0] || unidadDe(nombre, estructura) || null;
+    }
+    // Obsidian enlaza un .md sin extensión y un .html con ella.
+    return { rel, enlace: `[[${/\.md$/i.test(rel) ? rel.replace(/\.md$/i, '') : rel}|${titulo}]]`, titulo, unidad: unidad ? unidad.prefijo : null };
+  }).sort((a, b) => a.rel.localeCompare(b.rel));
+}
+const lineaRepasos = lista => (lista.length ? [`📚 Repasos: ${lista.map(r => r.enlace).join(' · ')}`, ''] : []);
+
 // La nota de una unidad es la de su último examen de módulo completo: nunca la media, que castiga haber
 // mejorado. Un examen final o de trimestre no es "de módulo" (esDeModulo, lib/examenes.js): abarca otro alcance
 // y no pone nota a una unidad sola.
@@ -280,8 +307,10 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
     ...lista.map(s => `| ${enlace(s, true)} | ${s.estudiada ? '✅' : '⬜'} | ${MARCA[estado.get(s.id).marca](estado.get(s.id))} |`), ''];
 
   const estructura = estructuraSegura(raiz);
+  const repasos = leerRepasos(raiz, estructura);
   if (!estructura) {
     if (sesiones.length) l.push('## Sesiones', '', ...tabla(sesiones));
+    l.push(...lineaRepasos(repasos));
   } else {
     const unidades = estructura.unidades.map(u => ({ ...u, hijas: [], sesiones: [] }));
     const porPrefijo = new Map(unidades.map(u => [u.prefijo, u]));
@@ -296,6 +325,7 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
       (u ? porPrefijo.get(u.prefijo).sesiones : sueltas).push(s);
     }
     const todasBajo = u => [...u.sesiones, ...u.hijas.flatMap(todasBajo)];
+    const repasosDe = u => repasos.filter(r => r.unidad === u.prefijo);
     const pintar = (u, nivel) => {
       const todas = todasBajo(u);
 
@@ -303,6 +333,7 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
       if (todas.length === 0) {
         const titulo = u.titulo || path.posix.basename(u.carpeta).replace(/-/g, ' ');
         l.push(`${'#'.repeat(Math.min(nivel + 2, 6))} ${titulo} · aún sin sesiones`, '');
+        l.push(...lineaRepasos(repasosDe(u)));
         return;
       }
 
@@ -323,10 +354,13 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
       }
       l.push(`${'#'.repeat(Math.min(nivel + 2, 6))} ${partes.join(' · ')}`, '');
       if (u.sesiones.length) l.push(...tabla(u.sesiones));
+      l.push(...lineaRepasos(repasosDe(u)));
       for (const h of u.hijas) pintar(h, nivel + 1);
     };
     for (const u of raices) pintar(u, 0);
     if (sueltas.length) l.push('## Sin unidad', '', ...tabla(sueltas));
+    // Las hojas que no son de ninguna unidad (un concepto suelto), al final, antes de las otras hojas.
+    l.push(...lineaRepasos(repasos.filter(r => !r.unidad)));
   }
 
   if (logros.length && posLogros >= 0) l.splice(posLogros, 0, ...logros, '');
@@ -338,6 +372,6 @@ function markdownInicio(raiz, { pendientes = 0, hoy = new Date().toISOString().s
 
 module.exports = {
   INICIO, leerSesiones, compararSesiones, ordenAmbiguo, leerProgreso, estadoProfesor,
-  leerExamenes, notaDeUnidad, leerAprobado, lineaExamenFinal, progresoEnInicio, enlace, tituloDe, markdownInicio,
+  leerExamenes, leerRepasos, notaDeUnidad, leerAprobado, lineaExamenFinal, progresoEnInicio, enlace, tituloDe, markdownInicio,
   MARCA_INICIO, MARCA_FIN, pieDeSesion, ponerPie, marcadoresRotos, piesDeSesion, sinPie,
 };

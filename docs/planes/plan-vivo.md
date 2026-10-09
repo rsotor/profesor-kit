@@ -11,10 +11,29 @@ Para abrir una sesión:
 
 ## En curso
 
-- **Prueba real solo en la release** (Roberto, 2026-10-09; PR propio, antes que la migración de la #99): `cambio-grande.js` exige
+- **#99, migrar a base-kit** (rama `claude/pensive-babbage-e6dals`, 2026-10-09; base-kit 0.6.1 ya publicada con
+  `--hooks`). Hecho en la rama: instalación `--mode project --distribute --rules-file .claude/rules/base-kit.md
+  --config .kit/base-kit.json --hooks secret-guard`; `.base-kit` en el motor; `.claude/agents` en `SOLO_DEL_KIT`;
+  `issue.js` retirado y todo apunta a `kit-issue.js` (AGENTS.md, guía de feedback, `sesion`, ESTANDARES, diagnóstico,
+  adaptadores, arquitectura); `plantilla.yml` y la cola nocturna reconocen `**Kit:** profesor-kit`; `/configurar`
+  avisa en una frase; `permisos.js` permite `kit-issue`; `lib/secretos.js` explica por qué sigue; tests en
+  `tests/base-kit.test.js`; 0.31.0 en VERSION, CHANGELOG y `feedback.label`.
+  - **La 0.31.0 junta más (Roberto, 2026-10-09):** la rama `siguiente-release` (PR #98: clave primero en `/examen`,
+    `preparar.js` con Codex en Mac, marca de origen en `/dudas`, `--solo`/`--desde` por asistente) fusionada aquí, y
+    la #91 (`inicio.md` enlaza los repasos de cada unidad, `lib/indice.js#leerRepasos`). #98 y #95 se cierran como
+    incluidas. PR: #102. La #97 (Codex en Windows no escribe `config/claves`) queda fuera: Roberto la está leyendo.
+  - **Pendiente, en el Mac:** `--remove` de la instalación local anterior; `prueba-real` entera con los dos asistentes
+    sobre el commit; y, para los cursos abiertos desde `estudio/` (Claudian), comprobar si Claude Code carga el
+    `settings.json` de la raíz, porque el hook usa `$CLAUDE_PROJECT_DIR`.
+  - **Fuera:** reglas de base-kit para el alumno; hooks en Codex; sustituir `lib/secretos.js`; versionar las skills
+    de base-kit.
+  - **Cómo sabremos:** lo de la issue (prueba-real en verde con los dos, `.env` denegado en un curso de prueba, un
+    fallo forzado abre una issue aquí con la etiqueta de versión y sin rutas, `prueba-actualizar` desde 0.30.0).
+
+- **Prueba real solo en la release** (Roberto, 2026-10-09; mezclado en `main` en la PR #101): `cambio-grande.js` exige
   `RESUMEN.md` solo en el PR que sube `.kit/VERSION`. Motivo: los cursos solo reciben releases, y exigirla en cada
-  PR tenía en rojo las PR #95 y #98 (tocan `/examen` sin subir versión). Conviene sacarlo a `main` en su propio PR
-  (`ci: …`) antes que la migración, para que esas dos se pongan en verde al repetir su CI.
+  PR tenía en rojo las PR #95 y #98 (tocan `/examen` sin subir versión). Fue a `main` en su propio PR (#101) antes que la
+  migración; la #95 y la #98 quedaron dentro de la #102.
   - **Fuera:** quitar la prueba real de la release; probar por piezas (sigue en "Siguiente: prueba real por piezas").
   - **Cómo sabremos:** `tests/cambio-grande.test.js`: skill sin `VERSION` pasa; skill con `VERSION` sin resumen falla.
 
@@ -374,6 +393,20 @@ observación y cómo se ve en rojo):
    `--asistente codex --solo "preparar.js --lanzar 02-01, 02-02"` (el sinónimo; `--solo` ejecuta también juntar y
    los compartidos). No una entera: la cuota de Codex es la más corta, y el examen y la corrección no cambian con
    este plan. Sin esto, de Codex solo hay la calibración sobre su resultado guardado del 2026-10-02 (frase vieja).
+   **Hecho con una entera (2026-10-06, 803bcfe, macOS): 17/22, corrección 6/6.** Los `--solo` no se podían: las
+   copias de Codex eran de la lista de pasos vieja, y `--solo` restauraba la de Claude y ejecutaba Claude sin avisar
+   (arreglado en `4104b53`: solo restaura copias del asistente pedido). Bien: `/sesion 01-02` crea el ejercicio con
+   la frase nueva; examen, corrección y repaso, por primera vez con Codex en Mac. Los rojos, con su arreglo (sin
+   probar con Codex real):
+   - `/dudas`: Codex respondió con `**Respuesta · Ampliación fuera de los apuntes:**` (regla 2 de `AGENTS.md`) y la
+     comprobación exigía `**Respuesta:**` literal. Se acepta la marca. Pendiente, con la próxima release (toca
+     skill): una línea en `dudas/SKILL.md` que diga que la marca va dentro de la etiqueta.
+   - `--juntar 02-01, 02-02` «fallida» (y en cascada los dos «lo que deja /sesion» y los compartidos): con
+     `workspace-write`, Codex no puede crear el `index.lock` del worktree (vive en el `.git` del curso, fuera de su
+     carpeta); escribió todo y no guardó. Afecta a cualquier preparación con Codex en Mac. Arreglo en
+     `preparar.js`: si el asistente acaba con 0 y todas las sesiones están en disco, guarda él (con `guardar.js`,
+     que comprueba igual). Sin explicar: el 2026-10-02 Codex sí juntó, sin cambios en su adaptador ni en
+     `preparar.js` desde entonces (¿versión nueva de Codex?). Se confirma en la próxima entera con Codex.
 
 - **Estado (2026-10-03, noche):**
   - Punto 1, hecho y sin enganchar en `prueba-real.js`: las funciones están en `pruebas/lib/pasos.js`

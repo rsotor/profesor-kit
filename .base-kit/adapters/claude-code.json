@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "id": "claude-code",
+  "comando": "claude",
+  "skills": ".claude/skills",
+  "puente": "CLAUDE.md",
+  "autocarga": [
+    ".claude/rules"
+  ],
+  "agents": {
+    "dir": ".claude/agents",
+    "format": "md"
+  },
+  "hooks": {
+    "project": ".claude/settings.json",
+    "local": ".claude/settings.local.json",
+    "command": "node \"$CLAUDE_PROJECT_DIR/.base-kit/hooks/{script}\""
+  },
+  "tiers": {
+    "cheap": "haiku",
+    "mid": "sonnet",
+    "top": "opus"
+  },
+  "probado": "macOS · Claude Code CLI · 2026-09-28 (B11a: rules via bridge, agents, skills; B11b: hooks, docs/safety-pass.md) · macOS · Claude Code · 2026-10-07 · autosave live (scripts/live-autosave.sh claude, claude-two): Stop async + SessionStart/SessionEnd photographed and pushed, two sessions at once without index.lock",
+  "soporte": [
+    {
+      "sistema": "macOS",
+      "estado": "verified",
+      "check": "static+smoke",
+      "evidencia": "B11a: claude -p quoted rule 4 through the bridge, 3 agents and 2 skills listed; B11b: hooks fire once per tool event, nothing denied (@diablo not exercised live)"
+    }
+  ],
+  "fuentes": {
+    "skills": "profesor-kit .kit/adaptadores/claude-code.json:5 (.claude/skills); installed and listed on this Mac in B11a (forma-de-trabajar technical-notes.md, 'B11a')",
+    "autocarga": "code.claude.com/docs/en/memory: .claude/rules/*.md are loaded as project memory, no import needed",
+    "puente": "profesor-kit .kit/adaptadores/claude-code.json:6 (CLAUDE.md); B11a: block loaded through @AGENTS.md",
+    "agents": ".claude/agents/*.md project subagents: B11a listed 3 agents on this Mac (technical-notes.md); code.claude.com/docs/en/sub-agents",
+    "hooks": "code.claude.com/docs/en/hooks: settings.json / settings.local.json, $CLAUDE_PROJECT_DIR in commands; merge covered by tests/install.test.js (B14)",
+    "tiers": "model aliases haiku/sonnet/opus, in lib/agents.js since B4 and used by the B11a run"
+  }
+}

@@ -1,19 +1,19 @@
 ---
 tipo: concepto
-bloques: [1.2]
+bloques: [modulo-01]
 visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
-requiere: [presupuesto]
+requiere: [presupuesto-personal]
 alias: [gastos fijos, gastos variables]
 tags: [presupuesto, gastos]
 ---
 # Gastos fijos y variables
 
-> **En una frase:** un gasto es fijo si se repite con (casi) la misma cifra y no depende de lo que decidas ese mes; es variable si la cifra la decides tú cada mes.
+> **En una frase:** un gasto es fijo si se repite cada mes con (casi) la misma cifra sin que tú decidas, y variable si la cifra la decides tú cada mes.
 
 ## El problema
 
-Si metes todos los gastos en un saco, no sabes cuáles puedes recortar un mes flojo y cuáles te llegan igual.
+Si mezclas todo en una sola columna, no sabes qué puedes recortar un mes flojo. Separarlos dice dónde hay margen.
 
 ## El ejemplo
 
@@ -26,24 +26,21 @@ Si metes todos los gastos en un saco, no sabes cuáles puedes recortar un mes fl
 | Transporte | Variable | 60,00 € |
 | Ocio | Variable | 120,00 € |
 
-Total fijos: **715,00 €** · Total variables: **480,00 €** · Total gastos: **1.195,00 €**.
+**Fijos: 715,00 €. Variables: 480,00 €. Total: 1.195,00 €.**
 
-Un mes flojo solo puedes tocar los 480,00 € de variables; los 715,00 € de fijos llegan igual.
+El alquiler te lo cobran igual si has tenido un mes bueno o malo. La comida y el ocio los puedes apretar.
 
 ## El error típico
 
-Meter el ocio en "fijos" porque "todos los meses gasto algo". Que gastes algo siempre no lo hace fijo: la
-cifra exacta la decides tú, y eso es lo que define "variable".
+Meter el ocio en "fijos" porque "todos los meses gasto algo". Que gastes algo siempre no lo hace fijo: la cifra exacta la decides tú, y eso es lo que define "variable".
 
-## Visto desde tus ingresos irregulares
-
-En un mes de 1.300,00 € solo puedes recortar variables. Tu suelo de gasto son los fijos (715,00 € en el
-ejemplo): conviene que quepan en tu mes más flojo.
+> [!tip] Visto desde tus ingresos irregulares
+> En un mes de 1.300,00 € solo puedes recortar lo variable (480,00 € aquí). Cuanto más pese lo fijo, menos margen tienes.
 
 ## Relacionados
 
-- [[presupuesto]] — donde se suman los dos tipos
-- [[colchon-financiero]] — se calcula con el total de gastos
+- [[presupuesto-personal]] — de donde salen los gastos del mes
+- [[colchon-financiero]] — se calcula sobre los gastos totales
 
 ## Historial
 

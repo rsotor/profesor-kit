@@ -1,90 +1,69 @@
 ---
 tipo: sesion
-bloque: 2.2
+bloque: modulo-02
 clases: [2.2]
-trabajada: 2026-10-04
-fuente: inbox/clase-04-ahorro-a-largo-plazo.md
+trabajada: 2026-10-09
+fuente:
+  - inbox/clase-04-ahorro-a-largo-plazo.md
 estudiada: false
 ---
-# 02-02-01 · Ahorro a largo plazo
+# 02-02-01-ahorro-a-largo-plazo · Ahorro a largo plazo
 
 ## En una frase
 
-Cómo convertir la tasa de ahorro en una cantidad regular (aportación periódica), qué pasa cuando esa cantidad
-rinde con interés compuesto, por qué el tiempo (horizonte temporal) es lo que más pesa y qué hay que tener antes
-de empezar (el fondo de emergencia).
+Cómo pasar de la tasa de ahorro a una aportación regular, cuánto crece con interés compuesto, por qué el tiempo pesa más que la cantidad y qué hay que tener antes.
 
 ## Conceptos
 
-- [[aportacion-periodica]] — **nuevo**
+- [[aportacion-periodica]] — **nuevo** (incluye el paso de tasa de ahorro a cifra anual y las aportaciones con interés compuesto)
 - [[horizonte-temporal]] — **nuevo**
-- [[tasa-de-ahorro]] — ampliado: se convierte en cifra anual (2.000,00 € al mes → 200,00 € al mes → 2.400,00 € al año)
-- [[colchon-financiero]] — ampliado: es el paso previo al ahorro a largo plazo (alias "fondo de emergencia")
-- [[interes-compuesto]] — de la clase 2.1; aquí se aplica a aportaciones periódicas
+- [[colchon-financiero]] — ampliado: va antes del ahorro a largo plazo (la clase lo llama "fondo de emergencia")
+- Enlazados, de otras clases: [[tasa-de-ahorro]] (1.2) · [[interes-compuesto]] · [[tipo-de-interes]] · [[capital]] · [[capitalizacion]] (2.1)
 
 ## Lo que hay que llevarse
 
-1. La tasa de ahorro se convierte en una aportación fija: con ingresos de 2.000,00 € al mes, ahorrar 200,00 € al mes son 2.400,00 € al año.
-2. Con aportaciones periódicas e interés compuesto, 2.400,00 € al año a un 5 % anual dan 7.566,00 € en 3 años, de los que 366,00 € son intereses.
-3. El horizonte pesa más de lo que parece: a 30 años salen 159.453,23 €, con solo 72.000,00 € aportados.
-4. Antes de ahorrar a largo plazo, el colchón: así un imprevisto no obliga a sacar el ahorro.
+1. La tasa de ahorro se convierte en una cifra: 10 por ciento de 2.000,00 € al mes son 2.400,00 € al año.
+2. Con interés compuesto cada aportación crece por su cuenta: 2.400,00 € al año, 3 años, 5 % anual = 7.566,00 €, de los que 366,00 € son intereses.
+3. El horizonte temporal decide: empezar antes pesa más que aportar un poco más. Y antes de todo, el colchón.
 
 ## Material
 
-- Flashcards: [[flashcards/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]]
-- Ejercicios: [[ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-ahorro-a-largo-plazo]]
+- Flashcards: [[flashcards/02-02-01-ahorro-a-largo-plazo]]
+- Ejercicios: [[ejercicios/02-02-01-ahorro-a-largo-plazo]]
 
 ## Cobertura del material
 
-| Sección | Destino |
+| Sección del material | Destino |
 |---|---|
-| Diapositiva 1 · De la tasa de ahorro a una cifra al año | [[tasa-de-ahorro]] |
-| Diapositiva 2 · Las aportaciones periódicas | [[aportacion-periodica]] |
-| Diapositiva 3 · Aportaciones con interés compuesto | [[aportacion-periodica]] (ejemplo y fórmula) e [[interes-compuesto]] (aplicación) |
-| Diapositiva 4 · El horizonte temporal | [[horizonte-temporal]] |
-| Diapositiva 5 · Antes de ahorrar a largo plazo: el fondo de emergencia | [[colchon-financiero]] |
-| Diapositiva 6 · Resumen | Repite lo anterior; sin nota. Su frase "empezar antes pesa más que aportar un poco más" va a [[horizonte-temporal]] como ampliación (ver Auditoría) |
+| Diap. 1 · De la tasa de ahorro a una cifra al año | [[aportacion-periodica]] (paso 1 del ejemplo) |
+| Diap. 2 · Las aportaciones periódicas | [[aportacion-periodica]] |
+| Diap. 3 · Aportaciones con interés compuesto | [[aportacion-periodica]] (paso 2 del ejemplo) |
+| Diap. 4 · El horizonte temporal | [[horizonte-temporal]] |
+| Diap. 5 · Fondo de emergencia | [[colchon-financiero]] (ampliado) |
+| Diap. 6 · Resumen | Esta nota, "Lo que hay que llevarse" |
 
 ## Auditoría del material
 
-Control de calidad del material, no contenido del curso.
+*Control de calidad del material, no contenido del curso.*
 
-- **Diapositiva 3 (3 años) cuadra.** Reproducido: año 1, 2.400,00 €; año 2, 2.400,00 € × 1,05 + 2.400,00 € =
-  4.920,00 €; año 3, 4.920,00 € × 1,05 + 2.400,00 € = 7.566,00 €. Aportado 7.200,00 €, intereses 366,00 €.
-- **Diapositiva 4 (30 años) cuadra.** Reproducido con el factor de la fórmula, 2.400,00 € × (1,05³⁰ − 1) ÷ 0,05
-  = 2.400,00 € × 66,4388 = **159.453,23 €** (también año a año). Aportado 72.000,00 €, intereses
-  **87.453,23 €**, más que todo lo aportado. La clase dice «unos» pero la cifra coincide al céntimo.
-- **«Empezar antes pesa más que aportar un poco más» (diapositiva 6) no está demostrado en el material:** la
-  clase lo afirma sin ninguna cifra. Comprobado por nuestra cuenta (a un 5 % anual, aportaciones al final de
-  año, ambos sacan el dinero a los 30 años): empezando hoy con 2.400,00 € al año se llega a 159.453,23 €;
-  esperando 10 años y aportando 3.600,00 € al año (50 % más) durante 20 años, a 119.037,43 € (40.415,80 €
-  menos); para igualar haría falta aportar unos 4.822,28 € al año. Con un retraso de 1 año bastan unos
-  2.558,51 € al año. O sea: la frase es cierta con estas cifras, pero depende del retraso y de «un poco más»;
-  la clase no dice cuánto es «un poco». No es contenido de la clase: está como ampliación en [[horizonte-temporal]].
-- **Fórmula:** la clase no la da; solo la recurrencia año a año. La nota la añade como ampliación
-  (suma de aportaciones) en [[aportacion-periodica]].
-- **Supuestos que la clase no dice:** aportaciones a final de año (si fueran al principio, saldría más) y
-  tipo constante los 30 años. Tampoco descuenta la inflación: ver [[inflacion]] (los 159.453,23 € de dentro
-  de 30 años no compran lo mismo que hoy).
-- **Sin instrucciones para el asistente.** Algo raro en el material: nada.
+- **Cifras reproducidas, todas cuadran.** Diap. 3: 2.400,00 × 1,05 + 2.400,00 = 4.920,00 €; 4.920,00 × 1,05 + 2.400,00 = 7.566,00 €; intereses 7.566,00 − 7.200,00 = 366,00 €. Diap. 4: la cuenta año a año a 30 años da 159.453,23 € (159.453,234…); intereses 159.453,23 − 72.000,00 = 87.453,23 €. No hay discrepancia, solo el "unos" de la diapositiva, que redondea.
+- **Supuesto no dicho en la diap. 4:** las aportaciones son al final de cada año (como en la diap. 3). Si fueran al principio, el resultado sería otro. Se ha tomado el de la diap. 3.
+- **Afirmación de la diap. 6 comprobada:** "empezar antes pesa más que aportar un poco más". Con 5 años de retraso hay que aportar 3.340,94 € en vez de 2.400,00 € (940,94 € más al año) para llegar a lo mismo; se enseña en [[horizonte-temporal]].
+- **Número que falta:** la diap. 5 dice "varios meses" de gastos para el fondo de emergencia, sin cifra. La nota usa los 3 meses y los 5-6 meses de la clase 1.2.
+- **Nombre distinto, mismo concepto:** "fondo de emergencia" ya era alias de [[colchon-financiero]] desde la 1.2. Esta clase no repite ningún error de las anteriores.
+- No hay instrucciones dirigidas al asistente en este material.
 
 ## Para pensarlo despacio
 
-1. Tus meses de facturación son irregulares: ¿qué aportación fija anual te comprometerías a mantener y por
-   qué esa y no la de tus mejores meses?
-2. La clase dice que empezar antes pesa más que aportar un poco más. ¿Con qué datos lo comprobarías, y a partir
-   de qué retraso dejaría de ser verdad que «un poco más» compensa?
-3. ¿Por qué el colchón tiene que ir antes del ahorro a largo plazo y no después? Piensa qué pasa si llega un
-   imprevisto a mitad del horizonte.
-4. De los 159.453,23 € del ejemplo de 30 años, ¿qué parte es tuya y qué parte es de los intereses, y qué te
-   dice eso sobre dónde conviene poner el esfuerzo?
+1. Dos amigos ahorran lo mismo al año al mismo tipo anual, uno empieza 10 años antes. ¿Quién acaba con más y por qué la diferencia es más grande que lo que aportó de más?
+2. Si tus ingresos son irregulares, ¿qué prefieres fijar, una aportación mensual o una anual? ¿Qué ganas y qué pierdes con cada una?
+3. ¿Por qué tiene sentido tener el colchón antes de empezar a ahorrar a largo plazo, aunque el ahorro a largo plazo "rinda" más?
+4. En el ejemplo de 30 años los intereses (87.453,23 €) superan a lo aportado (72.000,00 €). ¿En qué punto del horizonte crees que pasa eso, y qué te dice sobre cuándo empezar?
 
 ## Pendiente
 
-- **TODO:** la clase no dice cuántas veces al año entra la aportación en el dinero a un año (si mensual,
-  habría que repetir los cálculos con el tipo mensual equivalente); solo trata el caso anual.
-- **TODO:** el título oficial de la unidad 2.2 no consta en `config/curso.md` (el temario solo llega a la 2.1).
-  Se propuso «2.2 Ahorro a largo plazo»; confirmar con el alumno y añadirlo al temario.
+- **TODO:** la clase no da cuántos meses debe cubrir el fondo de emergencia; confirmar con el alumno si usa los 3 o 5-6 meses de la 1.2.
+- **TODO:** la clase no dice si las aportaciones son al principio o al final del periodo; se ha supuesto al final (diap. 3).
 
 %% navegación: la genera guardar.js; no se edita a mano %%
 

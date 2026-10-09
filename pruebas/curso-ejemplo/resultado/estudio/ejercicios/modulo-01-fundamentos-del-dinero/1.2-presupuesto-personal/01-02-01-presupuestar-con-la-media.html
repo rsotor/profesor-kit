@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presupuestar con la media</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .6rem 0; }
+  input[type=range] { width: 100%; }
+  button { display: block; width: 100%; margin: .4rem 0; padding: .6rem; font-size: 1rem; text-align: left; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>Presupuestar con la media</h1>
+<p>Concepto: <a href="../../../conceptos/presupuesto-personal.md">presupuesto-personal</a></p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <p>Lo que has facturado en los últimos 6 meses:</p>
+  <label>Mes 1: <b id="v1">2.400,00 €</b>
+    <input type="range" id="i1" min="300" max="3500" step="50" value="2400"></label>
+  <label>Mes 2: <b id="v2">1.300,00 €</b>
+    <input type="range" id="i2" min="300" max="3500" step="50" value="1300"></label>
+  <label>Mes 3: <b id="v3">2.000,00 €</b>
+    <input type="range" id="i3" min="300" max="3500" step="50" value="2000"></label>
+  <label>Mes 4: <b id="v4">900,00 €</b>
+    <input type="range" id="i4" min="300" max="3500" step="50" value="900"></label>
+  <label>Mes 5: <b id="v5">3.100,00 €</b>
+    <input type="range" id="i5" min="300" max="3500" step="50" value="3100"></label>
+  <label>Mes 6: <b id="v6">1.400,00 €</b>
+    <input type="range" id="i6" min="300" max="3500" step="50" value="1400"></label>
+  <label>Gastos al mes: <b id="vG">1.195,00 €</b>
+    <input type="range" id="G" min="600" max="2200" step="5" value="1195"></label>
+  <label>Cuota nueva al mes (un préstamo, un equipo a plazos): <b id="vK">700,00 €</b>
+    <input type="range" id="K" min="0" max="1200" step="25" value="700"></label>
+  <button type="button" id="nuevo">Probar otro caso al azar</button>
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p id="pregunta"></p>
+  <div id="opciones"></div>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+function eur(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+
+var IDS = ['i1', 'i2', 'i3', 'i4', 'i5', 'i6'];
+
+// Se presupuesta con la media de los meses, no con el mejor: asumes la cuota si media - gastos - cuota >= 0
+window.verificar = function (caso) { return calcular(caso).correcta; };
+
+function calcular(caso) {
+  var suma = 0, mejor = 0;
+  IDS.forEach(function (k) { var v = Number(caso[k]); suma += v; if (v > mejor) mejor = v; });
+  var media = suma / IDS.length;
+  var G = Number(caso.G), K = Number(caso.K);
+  var ahorroMedia = media - G - K;
+  var ahorroMejor = mejor - G - K;
+  var puede = ahorroMedia >= 0;
+  return {
+    media: media, mejor: mejor, ahorroMedia: ahorroMedia, ahorroMejor: ahorroMejor,
+    correcta: puede ? 'si' : 'no',
+    opciones: [
+      { id: 'si', texto: 'Sí, puedo asumirla', ok: puede },
+      { id: 'no', texto: 'No, no me cuadra el presupuesto', ok: !puede },
+    ],
+  };
+}
+
+function leer() {
+  var c = { G: document.getElementById('G').value, K: document.getElementById('K').value };
+  IDS.forEach(function (k) { c[k] = document.getElementById(k).value; });
+  return c;
+}
+
+function pintar() {
+  var c = leer();
+  IDS.forEach(function (k, n) { document.getElementById('v' + (n + 1)).textContent = eur(Number(c[k])); });
+  document.getElementById('vG').textContent = eur(Number(c.G));
+  document.getElementById('vK').textContent = eur(Number(c.K));
+  document.getElementById('pregunta').textContent =
+    'Tus gastos son ' + eur(Number(c.G)) + ' al mes y te ofrecen una cuota de ' + eur(Number(c.K)) +
+    ' al mes. Con los ingresos de arriba, ¿puedes asumirla? (elige una)';
+  var cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  calcular(c).opciones.forEach(function (o) {
+    var b = document.createElement('button');
+    b.textContent = o.texto;
+    b.onclick = function () { responder(o.id); };
+    cont.appendChild(b);
+  });
+  document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+}
+
+function responder(id) {
+  var r = calcular(leer());
+  var txt = (id === r.correcta ? 'Correcto. ' : 'No. ') +
+    'Tu ingreso de referencia es la media de los 6 meses: ' + eur(r.media) + ' (tu mejor mes fue ' + eur(r.mejor) + '). ' +
+    'Ahorro del mes con la media: ' + eur(r.media) + ' − gastos − cuota = ' + eur(r.ahorroMedia) + '. ';
+  if (r.ahorroMedia >= 0) txt += 'Es cero o más: la cuota te cabe. Los meses flojos los cubren los buenos, y para eso está el colchón.';
+  else txt += 'Es negativo: de media gastarías más de lo que entra.';
+  if (r.ahorroMejor >= 0 && r.ahorroMedia < 0) txt += ' Con el mejor mes saldrían ' + eur(r.ahorroMejor) + ' de sobra, y ahí está la trampa: presupuestar con el mejor mes.';
+  document.getElementById('explicacion').textContent = txt;
+}
+
+// Caso al azar: la media queda a más de 50,00 € del umbral, para que nunca sea un empate
+function alAzar() {
+  var G = 800 + 5 * Math.floor(Math.random() * 200);
+  var meses, media, umbral, K;
+  do {
+    meses = IDS.map(function () { return 300 + 50 * Math.floor(Math.random() * 65); });
+    media = meses.reduce(function (a, b) { return a + b; }, 0) / 6;
+    K = 25 * Math.floor(Math.random() * 49);
+    umbral = media - G - K;
+  } while (Math.abs(umbral) < 50);
+  IDS.forEach(function (k, n) { document.getElementById(k).value = meses[n]; });
+  document.getElementById('G').value = G;
+  document.getElementById('K').value = K;
+  pintar();
+}
+
+IDS.concat(['G', 'K']).forEach(function (k) { document.getElementById(k).addEventListener('input', pintar); });
+document.getElementById('nuevo').addEventListener('click', alAzar);
+pintar();
+</script>
+</body>
+</html>

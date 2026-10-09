@@ -69,12 +69,18 @@ const copiasGuardadasDe = asistente => path.join(COPIAS_GUARDADAS, `${PREFIJO_CO
 // cuando no se les da --copias. Sin ninguna, null (quien llama decide cómo avisar).
 // Con `necesaria` (el nombre de la copia que se va a restaurar), solo cuentan las que la tienen: una ejecución --desde
 // que falla deja en el temporal copias parciales, más recientes que las buenas.
-function carpetaCopiasMasReciente(bases = [os.tmpdir(), COPIAS_GUARDADAS], necesaria = null) {
+// Con `asistente`, solo las copias de ese asistente (el `llm` de config/ajustes.json del curso guardado en la copia
+// `necesaria`; sin `llm`, claude-code): restaurar la de otro lanzaría el asistente equivocado y gastaría su cuota.
+function carpetaCopiasMasReciente(bases = [os.tmpdir(), COPIAS_GUARDADAS], necesaria = null, asistente = null) {
   const candidatas = [];
   for (const base of [].concat(bases)) {
     try { candidatas.push(...fs.readdirSync(base).filter(n => n.startsWith(PREFIJO_COPIAS)).map(n => path.join(base, n))); } catch { /* no existe */ }
   }
   if (necesaria) candidatas.splice(0, candidatas.length, ...candidatas.filter(c => fs.existsSync(path.join(c, necesaria))));
+  if (necesaria && asistente) {
+    const llmDe = c => { try { return leerJson(path.join(c, necesaria, 'curso', 'config', 'ajustes.json')).llm || 'claude-code'; } catch { return null; } };
+    candidatas.splice(0, candidatas.length, ...candidatas.filter(c => llmDe(c) === asistente));
+  }
   if (!candidatas.length) return null;
   candidatas.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
   return candidatas[0];
@@ -858,6 +864,12 @@ function ejecutar({
     indiceDesde = restaurado.indiceDesde;
     if (restaurado.destino) {
       destino = restaurado.destino; pasosAnteriores = solo ? [] : restaurado.pasosAnteriores; Object.assign(ctx, restaurado.ctxRestaurado);
+      // Red de seguridad: nunca lanzar un asistente distinto del pedido sobre un curso restaurado de otro.
+      const llmRestaurado = adaptadorDelCurso(destino).llm;
+      if (asistente && llmRestaurado !== asistente) {
+        borrar(destino);
+        throw new Error(`la copia restaurada es de \`${llmRestaurado}\` y se pidió \`${asistente}\`: no se lanza nada. Hace falta una prueba entera con --asistente ${asistente}.`);
+      }
       refrescarCursoRestaurado({ trabajo, datosCurso, destino });
     }
   }
@@ -947,18 +959,18 @@ function ejecutar({
 // Todo lo que hay que validar de --desde antes de tocar nada (ni montar un curso, ni comprobar si hay
 // `claude`): un argumento mal puesto se dice al momento, sin esperar a que arranque el resto. Aparte de
 // cli(), para poder probarlo sin lanzar nada de verdad.
-function validarDesde(desde, sinLlm, copiasArg) {
+function validarDesde(desde, sinLlm, copiasArg, asistente = null) {
   if (!desde) return { ok: true, copiasDir: null };
   if (sinLlm) return { ok: false, mensaje: '--desde no se puede combinar con --sin-llm: hace falta una ejecución real para poder continuarla.' };
   const nombresValidos = nombresDePasos(leerJson(path.join(EJEMPLO, 'clases.json')), false);
   const indiceDesde = nombresValidos.indexOf(desde);
   if (indiceDesde < 0) return { ok: false, mensaje: `Paso desconocido: "${desde}". Pasos válidos:\n${nombresValidos.map(n => `  - ${n}`).join('\n')}` };
   if (indiceDesde === 0) return { ok: true, copiasDir: null };   // el primer paso: nada que restaurar, es una ejecución normal
-  const copiasDir = copiasArg || carpetaCopiasMasReciente(undefined, carpetaDeCopia(indiceDesde, nombresValidos[indiceDesde - 1]));
+  const copiasDir = copiasArg || carpetaCopiasMasReciente(undefined, carpetaDeCopia(indiceDesde, nombresValidos[indiceDesde - 1]), asistente);
   if (!copiasDir || !fs.existsSync(copiasDir)) {
     return {
       ok: false,
-      mensaje: `No hay ninguna copia que restaurar${copiasArg ? ` en ${copiasArg}` : ' (no se encontró ninguna carpeta prueba-real-pasos-* en el temporal)'}: indica --copias <carpeta>.`,
+      mensaje: `No hay ninguna copia que restaurar${copiasArg ? ` en ${copiasArg}` : ` (no se encontró ninguna copia${asistente ? ` de ${asistente}` : ''} con el paso anterior a "${desde}" en el temporal ni en pruebas-local/${asistente ? `: hace falta una prueba entera con --asistente ${asistente}` : ''})`}: indica --copias <carpeta>.`,
     };
   }
   return { ok: true, copiasDir };
@@ -999,7 +1011,7 @@ function cli(args) {
   if (!fs.existsSync(ficheroAdaptador)) { console.error(`el curso usa \`${asistente}\` y no tiene adaptador`); return 1; }
   const lanzador = lanzadorPara(leerJson(ficheroAdaptador));
 
-  const validacion = validarDesde(solo || desde, sinLlm, copiasArg);
+  const validacion = validarDesde(solo || desde, sinLlm, copiasArg, asistente);
   if (!validacion.ok) { console.error(validacion.mensaje); return 2; }
   const copiasDir = validacion.copiasDir;
 

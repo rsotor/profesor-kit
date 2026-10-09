@@ -1,0 +1,16 @@
+{
+  "revisor": "subagente",
+  "fecha": "2026-10-09",
+  "preguntas": [
+    { "numero": 1, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 2, "respuesta": ["c"], "seguridad": "alta", "problemas": ["se acierta sin saber: la c es la única opción matizada y la más larga; las demás se descartan sin pensar (la d mezcla inflación con pérdida nominal de euros)"], "resolucion": "Se deja: la b y la d son los errores típicos (confundir 'compra menos' con 'compra igual que antes' y la cifra nominal con el poder de compra); la c es la única que compara los dos escenarios, que es lo que pide el enunciado." },
+    { "numero": 3, "respuesta": ["b"], "seguridad": "alta", "problemas": [] },
+    { "numero": 4, "respuesta": ["a"], "seguridad": "alta", "problemas": [] },
+    { "numero": 5, "respuesta": ["b"], "seguridad": "alta", "problemas": ["se acierta sin saber: la b es la única opción que describe un riesgo real; la a y la d se descartan por absurdas y la c contradice el enunciado"], "resolucion": "Se deja: es literal del test del centro (p.7) y las preguntas del centro no se reescriben; el revisor acertó con la clave del centro." },
+    { "numero": 6, "respuesta": ["d"], "seguridad": "alta", "problemas": [] },
+    { "numero": 7, "respuesta": ["c"], "seguridad": "alta", "problemas": [] },
+    { "numero": 8, "respuesta": ["b"], "seguridad": "baja", "problemas": ["ambigua: a) 20 % y b) 20 % mensual son ambas defendibles como tasa bien expresada; sin conocer la regla del curso no se puede decidir, y la pista solo sale de que la pregunta 9 usa siempre «% mensual»", "se acierta sin saber, o se falla sabiendo: depende de una convención del curso que el enunciado no da"], "resolucion": "Se deja: es literal del test del centro (p.10), con su clave (b), y el enunciado ya remite a 'tal como se pide en este curso': la regla de que toda tasa lleva su periodo está en config/curso.md y en las notas. No se reescribe una pregunta del centro." },
+    { "numero": 9, "respuesta": ["d"], "seguridad": "alta", "problemas": ["se acierta sin saber: las opciones a y b se descartan sin calcular y la d es la única que da la comparación correcta de porcentajes; la c repite el cálculo de Ana de la d, así que basta calcular una de las dos"], "resolucion": "Se deja: la c es el distractor del error típico (dividir Luis entre lo que ingresa Ana) y la a el de comparar euros en vez de porcentajes; hay que calcular las dos tasas para distinguir c de d." },
+    { "numero": 10, "respuesta": ["a"], "seguridad": "alta", "problemas": ["se acierta sin saber: la a es la única opción sin matiz negativo; las otras tres traen una pega explícita (espera, rebaja, meses)"], "resolucion": "Arreglado: la opción a ahora también lleva su pega ('aunque rinda poco'), para que no sea la única sin matiz negativo." }
+  ]
+}

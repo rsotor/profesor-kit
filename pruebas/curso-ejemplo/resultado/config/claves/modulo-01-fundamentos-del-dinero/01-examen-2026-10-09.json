@@ -1,0 +1,17 @@
+{
+  "opciones": 4,
+  "resta_fallo": 0,
+  "aprobado": 6,
+  "preguntas": [
+    { "correctas": ["b"], "explicacion": "Que ninguna parte quiera lo que ofrece la otra en ese momento es la doble coincidencia de deseos. Sin unidad de cuenta no se podrían comparar precios, pero ese no es el problema descrito. Clave del test del centro, p.1.", "concepto": "funciones-del-dinero", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["c"], "explicacion": "Con precios que suben más deprisa, los mismos 3.000,00 € compran menos y la pérdida es mayor que con el 2 % anual. En el cajón siguen siendo 3.000,00 €: lo que baja es lo que compran, no la cifra.", "concepto": "inflacion", "angulo": "predecir" },
+    { "correctas": ["b"], "explicacion": "Un piso vale mucho pero tarda meses en convertirse en dinero: mucho valor y poca liquidez. Clave del test del centro, p.4.", "concepto": "liquidez", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["a"], "explicacion": "La cuota del software es la misma cada mes sin que ella decida: fijo. El material lo decide según los encargos que acepte: variable.", "concepto": "gastos-fijos-y-variables", "angulo": "distinguir" },
+    { "correctas": ["b"], "explicacion": "Presupuestar con el mejor mes cuenta con ingresos que los meses flojos no traen, y se acaba gastando dinero que no está. La cifra correcta es la media de 6-12 meses. Clave del test del centro, p.7.", "concepto": "presupuesto-personal", "angulo": "detectar-error", "origen": "centro" },
+    { "correctas": ["d"], "explicacion": "Meses = colchón ÷ gastos mensuales: 3.600,00 € ÷ 900,00 € = 4 meses. Recortar lo variable alarga el colchón.", "concepto": "colchon-financiero", "angulo": "predecir" },
+    { "correctas": ["c"], "explicacion": "Poner el precio en euros es medir (unidad de cuenta); pagar es entregar el dinero (medio de cambio). Se pueden dar por separado.", "concepto": "funciones-del-dinero", "angulo": "detectar-error" },
+    { "correctas": ["b"], "explicacion": "La tasa de ahorro bien expresada lleva su periodo: 20 % mensual. Un 20 % suelto no dice a qué periodo se refiere. Clave del test del centro, p.10.", "concepto": "tasa-de-ahorro", "angulo": "reconocer", "origen": "centro" },
+    { "correctas": ["d"], "explicacion": "Ana: 300,00 ÷ 2.000,00 × 100 = 15 % mensual. Luis: 240,00 ÷ 1.200,00 × 100 = 20 % mensual. Se divide entre lo que ingresa cada uno; ahorrar más euros no es ahorrar una parte mayor.", "concepto": "tasa-de-ahorro", "angulo": "distinguir" },
+    { "correctas": ["a"], "explicacion": "El colchón tiene que poder gastarse ya, sin perder valor por las prisas: la cuenta de la que se saca el mismo día es lo más líquido. El cuadro, el coche y el local tardan o se malvenden.", "concepto": "liquidez", "angulo": "transferir" }
+  ]
+}

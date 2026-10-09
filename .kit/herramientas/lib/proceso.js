@@ -19,8 +19,8 @@ function motivoDe(r) {
   return 'fallo';
 }
 
-// Mismo resultado { ok, salida } que ya devolvían git.js, actualizar.js, crear-atajo.js, diagnostico.js
-// e issue.js (nadie que ya lea esas dos claves se rompe), con tres añadidos: `motivo` (clasificado
+// Mismo resultado { ok, salida } que ya devolvían git.js, actualizar.js, crear-atajo.js y diagnostico.js
+// (nadie que ya lea esas dos claves se rompe), con tres añadidos: `motivo` (clasificado
 // arriba), `stdout` sin mezclar (para quien necesita parsear JSON de verdad, como comprobar.js --json) y
 // una `salida` que nunca se queda vacía cuando el proceso ni arrancó: ahí solo `error.message` explica
 // qué pasó, así que se añade siempre que exista.

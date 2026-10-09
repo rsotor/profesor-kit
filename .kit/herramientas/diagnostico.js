@@ -27,10 +27,10 @@ function diagnostico({ raiz, ejecutar = ejecutarReal, versionNode = process.vers
   // Sin gh, actualizar.js y guardar.js siguen funcionando (issue #50: caen a git y a la API pública de GitHub sin
   // credenciales). Un asistente en la nube (Claude Code en claude.ai/code, por ejemplo) no trae gh y no es cosa
   // del alumno instalarlo ahí: no es un fallo del kit ni de la instalación, así que no bloquea. Con gh, la
-  // comprobación es más completa (privacidad de un vistazo, y feedback al kit con issue.js).
+  // comprobación es más completa (privacidad de un vistazo, y el feedback al kit de kit-issue.js llega solo).
   const hayGh = ejecutar('gh', ['--version'], raiz).ok;
   anota('gh', hayGh, 'GitHub CLI (gh)',
-    'No tienes gh: el kit funciona igual (actualizar y guardar caen a git y a la API pública de GitHub), pero sin él no puedes enviar feedback al kit con issue.js ni ver aquí la privacidad de tu copia de un vistazo. Si tu entorno lo permite, instala GitHub CLI.', false);
+    'No tienes gh: el kit funciona igual (actualizar y guardar caen a git y a la API pública de GitHub), pero sin él el feedback al kit (kit-issue.js) se queda en local y tampoco se ve aquí la privacidad de tu copia de un vistazo. Si tu entorno lo permite, instala GitHub CLI.', false);
 
   const motor = v.leerMotor(raiz);
   const sesion = hayGh && ejecutar('gh', ['auth', 'status'], raiz).ok;

@@ -1,62 +1,44 @@
 ---
 tipo: concepto
-bloques: [1.2, 2.2]
-visto_en: [01-02-01-presupuesto-personal, 02-02-01-ahorro-a-largo-plazo]
+bloques: [modulo-01]
+visto_en: [01-02-01-presupuesto-personal]
 dificultad: 2
-requiere: [presupuesto]
+requiere: [presupuesto-personal]
 alias: []
 tags: [presupuesto, ahorro]
-ejercicio: 01-02-01-tasa-de-ahorro-mes-flojo
 ---
 # Tasa de ahorro
 
-> **En una frase:** la tasa de ahorro es qué parte de lo que ganas en el mes te queda, y sirve para comparar personas o meses con ingresos distintos.
+> **En una frase:** la tasa de ahorro es la parte de lo que ganas que te queda, en porcentaje, y por eso se puede comparar entre personas con sueldos distintos.
 
 ## El problema
 
-El ahorro en euros no se puede comparar: 655,00 € son mucho para quien gana 1.850,00 € y poco para quien
-gana 5.000,00 €. Hace falta medirlo en proporción.
+"Ahorro 655,00 € al mes" no dice si es mucho o poco: depende de cuánto ganes. Quien gana 5.000,00 € y ahorra 655,00 € ahorra mucho menos que quien gana 1.850,00 € y ahorra lo mismo.
 
 ## El ejemplo
 
-Ingresos del mes: 1.850,00 €. Ahorro del mes: 655,00 €.
+Con el ejemplo del presupuesto: ingresos de 1.850,00 € y ahorro de 655,00 €.
 
-655,00 € ÷ 1.850,00 € × 100 ≈ **35,4 % del mes**: de cada 100,00 € que entran, te quedan unos 35,40 €.
-
-**De la tasa a una cifra al año** (clase 2.2): con unos ingresos de 2.000,00 € al mes y una tasa de ahorro
-del 10 % del mes, ahorras 2.000,00 € × 10 ÷ 100 = **200,00 € al mes**, es decir, 200,00 € × 12 =
-**2.400,00 € al año**. Esa cantidad regular es la [[aportacion-periodica]] con la que se planifica el largo plazo.
+655,00 ÷ 1.850,00 × 100 ≈ **35,4 % del mes**: de cada 100,00 € que entran, te quedan 35,40 €.
 
 ## La fórmula
 
 $$ \text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100 $$
 
-Es un porcentaje **del mes** (no un interés): cambia cada mes con los ingresos y los gastos.
+Se divide entre lo que **ingresas**, no entre lo que gastas.
 
 ## El error típico
 
-Compararla con la rentabilidad de un ahorro. No lo es: la tasa de ahorro mide cuánto apartas de lo que
-ganas, no lo que te da el dinero guardado.
+Confundirla con un interés. No lo es: es cuánto de tu ingreso mensual conservas, no lo que te da un banco por tu dinero.
 
-## Practícalo
-
-→ **[Tasa de ahorro en un mes flojo](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-tasa-de-ahorro-mes-flojo.html)**
-
-Mueve los ingresos y los gastos variables. Lo que debería sorprender: con los mismos gastos, un mes de
-1.300,00 € deja una tasa muy distinta a la de uno de 2.400,00 €, y bajo cierto ingreso se vuelve negativa.
-
-## Visto desde tus ingresos irregulares
-
-Con ingresos que oscilan, la tasa de un solo mes engaña. Mídela sobre la media de varios meses: un mes de
-2.400,00 € dispara la tasa y uno de 1.300,00 € la hunde, aunque tus gastos sean los mismos.
+> [!tip] Visto desde tus ingresos irregulares
+> Calcúlala con tu ingreso medio, no con el de un mes suelto: con 2.400,00 € saldría muy alta y con 1.300,00 € muy baja, y ninguna de las dos es tu realidad.
 
 ## Relacionados
 
-- [[presupuesto]] — de donde sale el ahorro del mes
-- [[colchon-financiero]] — el destino del ahorro
-- [[aportacion-periodica]] — la tasa convertida en una cantidad fija que se aparta cada periodo
+- [[presupuesto-personal]] — de ahí sale el ahorro del mes
+- [[colchon-financiero]] — a donde conviene que vaya ese ahorro primero
 
 ## Historial
 
 - **01-02-01-presupuesto-personal** · primera vez
-- **02-02-01-ahorro-a-largo-plazo** · la tasa se convierte en cifra anual (con ingresos de 2.000,00 € al mes, ahorrar 200,00 € al mes son 2.400,00 € al año)

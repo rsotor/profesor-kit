@@ -127,6 +127,9 @@ examen se hace sin conexión: la consulta es cosa tuya al escribirlo.
 
 ## 4. Escribir el examen y su clave
 
+**Primero la clave** (`config/claves/`): si no puedes escribirla, no crees el examen (sin clave no se corrige);
+enséñale `permisos.js --ver` y, con su sí, `--aplicar`.
+
 **El examen**, en `estudio/examenes/<carpeta de la unidad>/<prefijo>-examen-YYYY-MM-DD.md` (o
 `-final-YYYY-MM-DD.md` para el final). Sin estructura, directamente en `estudio/examenes/`.
 

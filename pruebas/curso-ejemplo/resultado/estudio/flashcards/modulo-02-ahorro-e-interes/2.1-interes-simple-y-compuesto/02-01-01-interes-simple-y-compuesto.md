@@ -4,21 +4,23 @@ sesion: 02-01-01-interes-simple-y-compuesto
 ---
 # Flashcards · 02-01-01-interes-simple-y-compuesto
 
-**Un amigo dice "te presto con un 5 % de interés". ¿Qué le falta a esa frase?**
-> [!success]- Respuesta
-> El periodo: no es lo mismo un 5 % anual que un 5 % mensual.
+> Se responde mentalmente antes de desplegar.
 
-**1.000,00 € a interés simple, 5 % anual, 3 años. ¿Cuánto tienes al final?**
+**¿Por qué "un 5 %" no es un tipo de interés completo, y qué le falta?**
 > [!success]- Respuesta
-> 1.000,00 € + 1.000,00 € × 0,05 × 3 = 1.150,00 €.
+> Le falta el periodo: no es lo mismo un 5 % anual que un 5 % mensual. Un tipo siempre se dice con su periodo.
 
-**Mismo caso con interés compuesto: ¿por qué sale más (1.157,63 €)?**
+**Mismos 1.000,00 € al 5 % anual durante 3 años: ¿por qué el compuesto acaba con 7,63 € más que el simple?**
 > [!success]- Respuesta
-> Porque los intereses de cada año se suman al capital y generan intereses ellos también.
+> Porque en el compuesto los intereses ya ganados se suman al capital y generan intereses ellos también. Compuesto: 1.157,63 €. Simple: 1.150,00 €.
 
-**Quieres saber a ojo cuánto tarda en doblarse un dinero al 8 % anual compuesto. ¿Qué haces y por qué es solo aproximado?**
+**Con el mismo tipo anual, ¿por qué capitalizar cada mes da algo más que capitalizar una vez al año?**
 > [!success]- Respuesta
-> 72 ÷ 8 = 9 años; es una aproximación, no sale de la fórmula exacta.
+> Porque cada mes se aplica una doceava parte del tipo sobre un capital que ya ha crecido. Es una mejora pequeña (1.000,00 € al 5 % anual: 1.051,16 € frente a 1.050,00 €).
+
+**Al 9 % anual, ¿en cuántos años dobla un capital la regla del 72, y es un resultado exacto?**
+> [!success]- Respuesta
+> 72 ÷ 9 = 8 años. No es exacto: es una aproximación (el cálculo exacto da algo más de 8 años).
 
 ---
-Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[regla-del-72]]
+Conceptos que cubren: [[tipo-de-interes]] · [[interes-simple]] · [[interes-compuesto]] · [[capitalizacion]] · [[regla-del-72]]

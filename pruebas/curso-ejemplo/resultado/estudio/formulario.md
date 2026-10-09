@@ -3,107 +3,114 @@
 > Lo genera tu profesor cada vez que guarda: **no lo edites**. Lo que hay que saberse de cada concepto, por
 > bloque: su fórmula si la tiene, y si no, su definición en una frase.
 
-## Bloque 1.1
-
-### [[inflacion|Inflación]]
-
-$$ \text{valor real} = \frac{\text{dinero}}{(1 + i)^{n}} $$
-
-- $i$: la inflación de cada año (con su periodo: anual).
-- $n$: los años que pasan.
-
-### Definiciones
-
-- [[funciones-del-dinero|Funciones del dinero]]: el dinero resuelve el problema del trueque cumpliendo tres funciones a la vez: medio de cambio, unidad de cuenta y depósito de valor.
-- [[liquidez|Liquidez]]: la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
-
-## Bloque 1.2
+## Bloque modulo-01
 
 ### [[colchon-financiero|Colchón financiero]]
 
-$$ \text{colchón} = \text{gastos del mes} \times \text{meses a cubrir} $$
+$$ \text{colchón} = \text{gastos mensuales} \times \text{meses a cubrir} $$
 
-### [[presupuesto|Presupuesto]]
+### [[inflacion|Inflación]]
+
+$$ V = \frac{D}{(1+i)^n} $$
+
+- $V$: lo que vale ese dinero en compra real, a precios de hoy.
+- $D$: el dinero que guardas.
+- $i$: la inflación **anual**, en tanto por uno (3 % anual → 0,03).
+- $n$: los años que pasan.
+
+Con 1.000,00 € guardados 5 años a un 3 % anual de inflación: 1.000,00 ÷ 1,03⁵ = **862,61 €** de poder de compra.
+
+### [[presupuesto-personal|Presupuesto personal]]
 
 $$ \text{ahorro del mes} = \text{ingresos del mes} - \text{gastos del mes} $$
 
-Si sale negativo, ese mes has gastado más de lo que entró.
+Lo que entra menos lo que sale. Lo que sobra es el ahorro.
 
 ### [[tasa-de-ahorro|Tasa de ahorro]]
 
 $$ \text{tasa de ahorro} = \frac{\text{ahorro del mes}}{\text{ingresos del mes}} \times 100 $$
 
-Es un porcentaje **del mes** (no un interés): cambia cada mes con los ingresos y los gastos.
+Se divide entre lo que **ingresas**, no entre lo que gastas.
 
 ### Definiciones
 
-- [[gastos-fijos-y-variables|Gastos fijos y variables]]: un gasto es fijo si se repite con (casi) la misma cifra y no depende de lo que decidas ese mes; es variable si la cifra la decides tú cada mes.
+- [[funciones-del-dinero|Funciones del dinero]]: el dinero sirve para tres cosas a la vez: cambiar cosas sin trueque (medio de cambio), ponerles precio con la misma vara (unidad de cuenta) y guardar valor para más adelante (depósito de valor).
+- [[gastos-fijos-y-variables|Gastos fijos y variables]]: un gasto es fijo si se repite cada mes con (casi) la misma cifra sin que tú decidas, y variable si la cifra la decides tú cada mes.
+- [[liquidez|Liquidez]]: la liquidez es lo fácil y rápido que es convertir algo en dinero para gastarlo ya, sin perder valor por las prisas.
 
-## Bloque 2.1
+## Bloque modulo-02
+
+### [[aportacion-periodica|Aportación periódica]]
+
+$$ C_{\text{año}} = C_{\text{año anterior}} \cdot (1 + i) + A $$
+
+- $A$: la aportación de cada año (2.400,00 €).
+- $i$: el tipo de interés anual en tanto por uno (5 % anual = 0,05).
+- Se repite año a año, empezando en 0,00 €. La versión cerrada, para saltar directo al año $n$, está en [[horizonte-temporal]].
 
 ### [[capitalizacion|Capitalización]]
 
-Mismo mecanismo que el compuesto: `n` cuenta los **periodos de capitalización**, no los años. Si el tipo
-se reparte en doce meses, `n` son meses y `i` es el tipo de cada mes.
+$$ C_f = C \cdot \left(1 + \frac{i}{m}\right)^{m \cdot t} $$
 
-$$ C_f = C \cdot (1 + i)^n $$
+- $i$: el tipo anual en tanto por uno (5 % anual → 0,05 anual).
+- $m$: veces al año que se capitaliza (12 si es mensual, 4 si es trimestral, 1 si es anual).
+- $t$: años.
+
+Con $m = 1$ vuelve a ser la fórmula de [[interes-compuesto]].
+
+> [!info] Ampliación fuera de los apuntes
+> La fórmula general no está en los apuntes; sale de aplicar la del compuesto $m \cdot t$ veces con un tipo de $i/m$.
+
+### [[horizonte-temporal|Horizonte temporal]]
+
+$$ C_n = A \cdot \frac{(1+i)^n - 1}{i} $$
+
+- $A$: la aportación de cada año.
+- $i$: el tipo de interés anual, en tanto por uno (5 % anual = 0,05).
+- $n$: los años, es decir, el horizonte.
+- $C_n$: el capital al final del año $n$, con las aportaciones al final de cada año.
+
+Es la cuenta año a año de [[aportacion-periodica]] resumida: el $n$ está como exponente, y por eso el tiempo pesa tanto. Con 30 años: 2.400,00 € × 66,44 ≈ **159.453,23 €**.
 
 ### [[interes-compuesto|Interés compuesto]]
 
-$$ C_f = C \cdot (1 + i)^n $$
+$$ C_f = C \cdot (1+i)^n $$
 
-`C` es el capital inicial, `i` el tipo en tanto por uno (un 5 % anual es 0,05) y `n` el número de
-periodos de capitalización (si `i` es anual, `n` en años). En el ejemplo: 1.000 × 1,05³ = 1.000 × 1,157625
-= 1.157,63 €.
+- $C_f$: el capital final, en €.
+- $C$: el capital inicial, en €.
+- $i$: el tipo en tanto por uno **con su periodo** (5 % anual → 0,05 anual).
+- $n$: cuántos periodos de capitalización pasan (si $i$ es anual, $n$ en años).
 
-Con aportaciones periódicas, cada una genera intereses desde que entra, y esos intereses generan más
-(ver [[aportacion-periodica]]): 2.400,00 € al final de cada año a un 5 % anual durante 3 años dan
-4.920,00 € y luego 7.566,00 €, con 7.200,00 € aportados y 366,00 € de intereses.
+Con los números: 1.000,00 € × 1,05³ = 1.000,00 € × 1,157625 = **1.157,63 €**.
 
 ### [[interes-simple|Interés simple]]
 
 $$ I = C \cdot i \cdot t \qquad C_f = C + I $$
 
-`C` es el capital inicial, `i` el tipo en tanto por uno (un 5 % anual es 0,05) y `t` el tiempo, en el
-mismo periodo que `i` (si `i` es anual, `t` en años). `I` son los intereses y `C_f` el capital final.
+- $I$: los intereses ganados, en €.
+- $C$: el capital inicial, en €.
+- $i$: el tipo en tanto por uno **con su periodo** (5 % anual → 0,05 anual).
+- $t$: el tiempo, **medido en el mismo periodo que $i$** (si $i$ es anual, $t$ en años).
+- $C_f$: el capital final.
 
 ### [[regla-del-72|Regla del 72]]
 
-$$ \text{años para doblar} \approx \frac{72}{\text{tipo anual, en número, sin el signo de porcentaje}} $$
+$$ T \approx \frac{72}{p} $$
 
-El 6 % anual entra como 6, no como 0,06.
+- $T$: años para doblar el capital.
+- $p$: el tipo anual en número, sin el % (6 % anual → 6).
+
+La cuenta exacta sale de $(1+i)^T = 2$. La regla es una aproximación, **no** el resultado exacto.
 
 ### [[tipo-de-interes|Tipo de interés]]
 
-$$ i = \frac{\text{tanto por ciento}}{100} $$
+$$ i = \frac{p}{100} $$
 
-Para calcular se usa en **tanto por uno**: un 5 % anual es `i = 0,05`. Y el tiempo se cuenta en el mismo
-periodo que el tipo (tipo anual, tiempo en años).
+- $i$: el tipo en tanto por uno, el que entra en las fórmulas (5 % anual → 0,05 anual).
+- $p$: el tipo en número, sin el símbolo %.
+
+El periodo viaja con el tipo: un 0,05 anual se combina con años; un 0,05 mensual, con meses.
 
 ### Definiciones
 
 - [[capital|Capital]]: el capital es la cantidad de dinero de la que se parte: lo que se presta, se deposita o se invierte.
-
-## Bloque 2.2
-
-### [[aportacion-periodica|Aportación periódica]]
-
-$$ F = A \cdot \frac{(1+i)^n - 1}{i} $$
-
-`A` es la aportación de cada periodo, `i` el tipo por periodo en tanto por uno (un 5 % anual es 0,05) y `n`
-el número de periodos. Aquí las aportaciones entran **al final** de cada periodo, como en el ejemplo. Con
-`A` = 2.400,00 €, `i` = 0,05 y `n` = 3: 2.400,00 € × 3,1525 = 7.566,00 €.
-
-> [!info] Ampliación fuera de los apuntes
-> La clase no da esta fórmula; es la suma de las aportaciones del ejemplo: la primera trabaja 2 años
-> (2.400,00 € × 1,05² = 2.646,00 €), la segunda 1 año (2.520,00 €) y la última ninguno (2.400,00 €):
-> 2.646,00 € + 2.520,00 € + 2.400,00 € = 7.566,00 €.
-
-### [[horizonte-temporal|Horizonte temporal]]
-
-Es la de la [[aportacion-periodica]], con `n` = el horizonte en años:
-
-$$ F = A \cdot \frac{(1+i)^n - 1}{i} $$
-
-Lo que aquí se mueve es `n`. Con `A` = 2.400,00 € e `i` = 0,05, pasar de `n` = 3 a
-`n` = 30 multiplica el factor de 3,1525 a 66,4388.

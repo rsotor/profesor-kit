@@ -206,6 +206,35 @@ test('inicio sin estructura: una sola tabla con todas las sesiones', () => {
   assert.match(md, /\[\[s01-intro\\\|Intro\]\]/);
 });
 
+// issue #91: lo que el profesor deja en estudio/repasos/ quedaba huérfano (inicio no se edita a mano).
+test('inicio: enlaza los repasos de cada unidad (por carpeta o por prefijo), y los sueltos al final', () => {
+  const raiz = cursoConIndice({
+    'estudio/repasos/modulo-01/01-repaso.html': '<html><head><title>Repaso del módulo 1</title></head><body></body></html>',
+    'estudio/repasos/modulo-01/1.2-medidores/01-02-resumen.md': '---\ntipo: repaso\n---\n# Resumen 1.2 · qué estudiar\n\ntexto\n',
+    'estudio/repasos/01-02-04-van-chuleta.html': '<html><body>sin title</body></html>',   // por el prefijo del nombre
+    'estudio/repasos/roi.html': '<html><head><title>ROI</title></head><body></body></html>',   // un concepto: sin unidad
+    'estudio/repasos/_borrador.md': '# no\n',
+  });
+  const r = ix.leerRepasos(raiz, require('../organizar').leerEstructura(raiz));
+  assert.deepEqual(r.map(x => [x.rel, x.unidad, x.titulo]), [
+    ['repasos/01-02-04-van-chuleta.html', '01-02', '01 02 04 van chuleta'],
+    ['repasos/modulo-01/01-repaso.html', '01', 'Repaso del módulo 1'],
+    ['repasos/modulo-01/1.2-medidores/01-02-resumen.md', '01-02', 'Resumen 1.2 · qué estudiar'],
+    ['repasos/roi.html', null, 'ROI'],
+  ]);
+  const md = ix.markdownInicio(raiz);
+  assert.match(md, /^## Módulo 1 · Conceptos[^\n]*\n\n📚 Repasos: \[\[repasos\/modulo-01\/01-repaso\.html\|Repaso del módulo 1\]\]\n\n### 1\.2 Medidores/m);
+  assert.match(md, /\| ⬜ \| 📝 faltan 1 \|\n\n📚 Repasos: \[\[repasos\/01-02-04-van-chuleta\.html\|01 02 04 van chuleta\]\] · \[\[repasos\/modulo-01\/1\.2-medidores\/01-02-resumen\|Resumen 1\.2 · qué estudiar\]\]\n/);
+  assert.match(md, /📚 Repasos: \[\[repasos\/roi\.html\|ROI\]\]\n\nOtras hojas:/);
+  assert.doesNotMatch(md, /_borrador/);
+  assert.doesNotMatch(ix.markdownInicio(cursoConIndice()), /📚 Repasos/);
+});
+
+test('inicio sin estructura: los repasos van tras la tabla de sesiones', () => {
+  const md = ix.markdownInicio(cursoTemporal({ 'estudio/repasos/intro.md': '# Repaso de la intro\n' }));
+  assert.match(md, /## Sesiones\n\n\|[^]*?\n\n📚 Repasos: \[\[repasos\/intro\|Repaso de la intro\]\]\n/);
+});
+
 test('inicio solo enlaza las hojas que existen', () => {
   const md = ix.markdownInicio(cursoTemporal());
   assert.match(md, /\[\[mapa-del-curso\]\]/);

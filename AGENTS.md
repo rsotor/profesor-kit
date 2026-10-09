@@ -307,8 +307,10 @@ herramienta falla de forma inesperada, ella misma te lo dice. Escala cuando: una
 instalación no encaja con este sistema o con tu LLM · ves una mejora que valdría para **cualquier** alumno.
 No escales lo que es de este curso (errores del material, del temario, del centro) ni de este alumno.
 
-Cómo se abre la issue (con `issue.js` y el sí del alumno): `.kit/guias/feedback-al-kit.md`. Si te corrige qué skill
-tocaba, o usas una con una frase que no se parece a sus ejemplos: `.kit/guias/cuando-pide-a-su-manera.md`.
+La issue la abres tú, sin pedirle el sí al alumno, con `node .base-kit/hooks/kit-issue.js`: no lleva nada suyo (sin
+material del curso, sin `config/alumno.md`, sin nombres; la herramienta sustituye claves, rutas y correos) y, si
+responde *not sent*, díselo al alumno para que lo pase él. Cómo: `.kit/guias/feedback-al-kit.md`. Si te corrige qué
+skill tocaba, o usas una con una frase que no se parece a sus ejemplos: `.kit/guias/cuando-pide-a-su-manera.md`.
 
 ## Otro asistente
 

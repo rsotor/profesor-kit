@@ -638,3 +638,12 @@ test('25. #56: cuota acabada a mitad: lo escrito sin guardar no se pierde al des
   esperarTerminada('z1');
   assert.equal(herramienta('preparar', '--juntar', 'z1').codigo, 0);
 });
+
+test('26. Codex en macOS: un asistente con sandbox que no puede guardar en el worktree, pero lo dejó todo escrito y acabó con 0, se guarda desde preparar.js', () => {
+  escribirAdaptador('s1');
+  assert.equal(lanzarCon('s1', { PROFESOR_KIT_ASISTENTE_DE_MENTIRA_SANDBOX_SIN_INDICE: '1' }).codigo, 0);
+  assert.equal(esperarTerminada('s1').resultado, 'terminada');
+  assert.match(git(['log', '-1', '--format=%s', 'preparacion/s1']).salida, /^sesion\(s1\): Clase de mentira s1/);
+  assert.equal(herramienta('preparar', '--juntar', 's1').codigo, 0);
+  assert.ok(existe('estudio/sesiones/s1-clase-de-mentira.md'));
+});

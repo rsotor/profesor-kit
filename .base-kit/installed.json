@@ -1,0 +1,70 @@
+{
+  "version": "0.6.1",
+  "agent": "claude-code",
+  "mode": "project",
+  "distribute": true,
+  "rulesFile": ".claude/rules/base-kit.md",
+  "rulesFileExisted": false,
+  "bridgeFile": null,
+  "bridgeCreated": false,
+  "skillsDir": ".claude/skills",
+  "skills": [
+    "systematic-debugging",
+    "plan",
+    "close"
+  ],
+  "agentsDir": ".claude/agents",
+  "agents": [
+    "delegate.md",
+    "devils-advocate.md",
+    "devils-advocate-short.md"
+  ],
+  "hashes": {
+    ".base-kit/hooks/action-rules.js": "52bc142ff22e20ca0a16ecc5f8348b8d986671d60706b2dcc649868cf248bdb6",
+    ".base-kit/hooks/autosave.js": "e6a8d40c080e09f10b0ee3f18ff5e5eb68c298d1f17e05a6eb4a073a5a6ae9b5",
+    ".base-kit/hooks/capture-prompt.md": "c9b3d70bae8c702bc86e396d0786d5ab09da8ee55aa3fed86f35c5040b52674a",
+    ".base-kit/hooks/capture-verify-prompt.md": "b27266c20dd401de13622d54ce48ee2bb1240a14eb5508ca2b1052b304e491cc",
+    ".base-kit/hooks/capture.js": "86b7b311c379f2c7e93df02d2aade9894111e64de172ff24f3d67d5ec5466b07",
+    ".base-kit/hooks/diablo-check.js": "e0605e1dee356b2c8bf1b830b800b105ae49d6361fb6ed47be6f43880e56c7b5",
+    ".base-kit/hooks/kit-issue.js": "a88dab67720a6853b72d2d04fe19346f24a7da4e1bed989ade075ba774913ca8",
+    ".base-kit/hooks/lib/actions.js": "14306cffb722642af55293494bb414c51173ace13260516c8b1ae210bf39e922",
+    ".base-kit/hooks/lib/config.js": "20f98edf17e6756bd6bfafdb62114eeac49166b9a977e7194de452ef7485b550",
+    ".base-kit/hooks/lib/secrets.js": "120ffc66ceec437c74bb3afe4eb742c5f72b31662b7fbc152aa5865abe11f520",
+    ".base-kit/hooks/lib/snapshot.js": "7a62ab3db5b66f0b0dd7300177c282f94462a62b351bee233705bdf511443c15",
+    ".base-kit/hooks/lib/transcript-reduce.js": "b20aa4673bf9e7b99931bf0758466fcf033c220664041f759a37ec9eb4e2af3e",
+    ".base-kit/hooks/pre-commit.js": "dbd61e9e9c8d2c2186b92f6651fbebf61b17f70fba41c7b57f6c9f1a5836b6db",
+    ".base-kit/hooks/repo-check.js": "d11e89afe71eb82cf7a4e7bfa145d87f7751366d6dee92d5d3ba86e3d4431da3",
+    ".base-kit/hooks/scope-gate.js": "97c83008b2b79bec808652f6b1cecb53a6d2085f2c777b4063fb02d2ce5dcb52",
+    ".base-kit/hooks/secret-guard.js": "bc27203c798161419c441770e034510fe22c71901d705fb93e0e4029fd47388f",
+    ".base-kit/hooks/word-cap.js": "adc6c387cbcf775cacac700c77a0b0c534d1a62b444be154b3282179f15c2223",
+    ".claude/skills/systematic-debugging/SKILL.md": "280f055cb3cd862dc352a9dc4e7ae8a5086277ec42f5e24a967b8bba1ef6c093",
+    ".claude/skills/systematic-debugging/condition-based-waiting-example.ts": "40ae5ebe497fdf310200e43fe986552546d0a22837c0d39e855db1cfd33eb88e",
+    ".claude/skills/systematic-debugging/condition-based-waiting.md": "e89fec8400d6cd50f43407cec9fab50976ba4d55d0ec2eb51c0bd68036b54c26",
+    ".claude/skills/systematic-debugging/defense-in-depth.md": "1e175fb86fc357e58c6aebf5441e481e1b7868b4380c0456b63a17eefbd18ba7",
+    ".claude/skills/systematic-debugging/find-polluter.sh": "dd7b8f13c4cc2a24b33ff87b18da9248f3e1c80a085c3316224f69ff0fa5c43c",
+    ".claude/skills/systematic-debugging/root-cause-tracing.md": "75b933b6a8c40bdb2031b10f21654395b56ec6ab6bc7b018c18d3fe57aeb7fb8",
+    ".claude/skills/systematic-debugging/LICENSE-superpowers": "a37e0e9697144819e1d965176ac4ae5bc3fa02d11e7812036bbcadf6dafe2400",
+    ".claude/skills/plan/SKILL.md": "755d45829902333677a8658774df1f095ebc10164ddbd9c842e156b2692775ad",
+    ".claude/skills/plan/LICENSE-superpowers": "a37e0e9697144819e1d965176ac4ae5bc3fa02d11e7812036bbcadf6dafe2400",
+    ".claude/skills/close/SKILL.md": "a26c24b5792cca24073a82b2a7b51ca74f65842da3fa28f206d6cac15b07b1ba",
+    ".claude/agents/delegate.md": "ba458cd59213dc7c7221f96a96ca8d4b0096cc96b2ef26bf0f71bc62372bb352",
+    ".claude/agents/devils-advocate.md": "5bd04ddb104afc05086ae6cbddd4477f00997413236f44e43c63344fcaac7fbf",
+    ".claude/agents/devils-advocate-short.md": "6614c086a0dd3184e1f65158369ca763ef6d098d8b4964e1a302a5d5a15ffdad"
+  },
+  "configFile": ".kit/base-kit.json",
+  "configCreated": true,
+  "hooksFile": ".claude/settings.json",
+  "settingsCreated": false,
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "matcher": "Read|Bash",
+      "command": "node \"$CLAUDE_PROJECT_DIR/.base-kit/hooks/secret-guard.js\""
+    }
+  ],
+  "hookSet": [
+    "secret-guard"
+  ],
+  "ignoreFile": ".gitignore",
+  "release": "v0.6.1"
+}

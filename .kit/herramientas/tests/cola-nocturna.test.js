@@ -16,6 +16,13 @@ test('clasificar: sin etiqueta de plantilla no entra', () => {
   assert.match(r.motivo, /plantilla/);
 });
 
+test('clasificar: una issue del profesor de un alumno (marca **Kit:** en el cuerpo, sin etiqueta) vale como feedback', () => {
+  const cuerpo = 'Esperado: …\n\n---\n**Kit:** profesor-kit 0.31.0\n**Entorno:** base-kit 0.6.1 · claude-code · macOS\n';
+  assert.equal(clasificar(issue(['claude:go'], { cuerpo })).entra, true, 'con claude:go de rsotor, entra como un fallo');
+  assert.equal(clasificar(issue(['claude:go'], { cuerpo })).grupo, 1, 'fallo, no mejora');
+  assert.equal(clasificar(issue(['claude:go'], { cuerpo: 'dice **Kit:** otro-kit 1.0' })).entra, false, 'la marca de otro kit no cuenta');
+});
+
 test('clasificar: claude:go puesta por otro no entra; abierto por rsotor sí', () => {
   assert.equal(clasificar(issue(['feedback', 'claude:go'], { goPor: 'intruso' })).entra, false);
   assert.equal(clasificar(issue(['feedback', 'claude:go'], { goPor: null, autor: 'rsotor' })).entra, true);

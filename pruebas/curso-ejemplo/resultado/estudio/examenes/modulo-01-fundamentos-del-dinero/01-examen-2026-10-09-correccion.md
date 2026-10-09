@@ -1,7 +1,7 @@
 ---
 tipo: examen
 unidad: 01
-fecha: 2026-10-04
+fecha: 2026-10-09
 nota: 5
 parcial: true
 intentos: 1
@@ -59,19 +59,18 @@ intentos: 1
 
 | Intento | Fecha | Nota | Enteras | A medias | Falladas | En blanco |
 |---|---|---|---|---|---|---|
-| 1 | 2026-10-04 | 5 | 2 | 2 | 1 | 1 |
+| 1 | 2026-10-09 | 5 | 2 | 2 | 1 | 1 |
 
-> [!example]- Intento 1 · 2026-10-04 · tus respuestas y la corrección
+> [!example]- Intento 1 · 2026-10-09 · tus respuestas y la corrección
 >
-> ✅ Dominado → tasa-de-ahorro
-> ⚠️ Hay que repasar → liquidez (la idea bien, falta el nombre), interés (falta el periodo), gastos-fijos-y-variables (1 fallo), colchon-financiero (1 fallo, en blanco)
-> 🔴 Vuelve a la nota → ninguno (ningún concepto con 2 o más fallos en este examen)
+> Test del módulo 1 (corrección): 2 correctas, 2 a medias, 1 incorrecta y 1 en blanco.
+> Dominado: tasa-de-ahorro. Hay que repasar: liquidez (le faltó el nombre), gastos-fijos-y-variables (p.5), colchon-financiero (p.6, en blanco). Ninguno llega a 2 fallos en este test. La p.4 (interés con su periodo) no tiene nota de concepto propia.
 >
 > | # | Tu respuesta | Resultado | Por qué |
 > |---|---|---|---|
-> | 1 | 20 % | ✅ Correcta | 300 ÷ 1.500 = 20 %. La cifra es la que se pedía; el periodo (mensual) ya venía en el caso. |
-> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Dice que el dinero está atado en el piso y no llega a tiempo: es la idea de inmovilizado. |
-> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre del concepto (liquidez) | Describe bien la idea (no puede venderlo rápido para tener el dinero ya), pero la pregunta pedía el nombre y no lo da. |
-> | 4 | 2 % | ⚠️ Le falta: el periodo (mensual) | La cifra 2 % es correcta, pero la pregunta pedía la cifra con su periodo: un 2 % mensual. |
-> | 5 | Variable. | ❌ Incorrecta | El alquiler es un gasto fijo: que se actualice una vez al año con el IPC no lo hace variable, porque no cambia con tu uso mes a mes. |
-> | 6 | *(en blanco)* | ❌ Incorrecta (en blanco) | Sin respuesta. El curso recomienda cubrir 3 meses de gastos con nómina fija. |
+> | 1 | 20 % | ✅ Correcta | 300 ÷ 1.500 = 20 %. La pregunta pedía una cifra, y la tienes. |
+> | 2 | Que lo tiene atado en el piso y no lo puede sacar a tiempo para pagar. | ✅ Correcta | Con tus palabras: está inmovilizado y no se convierte en dinero a tiempo. |
+> | 3 | Que no lo puede vender rápido para tener el dinero ya. | ⚠️ Le falta: el nombre | La idea es correcta, pero se pedía el nombre del concepto: liquidez. |
+> | 4 | 2 % | ⚠️ Le falta: el periodo | La cifra está bien, pero se pedía con su periodo: 2 % mensual. Sin periodo no se sabe cuánto pagas. |
+> | 5 | Variable. | ❌ Incorrecta | Es fijo: 700 € cada mes, y que suba una vez al año con el IPC no lo hace variable. |
+> | 6 | *(en blanco)* | ❌ Incorrecta | En blanco. El curso recomienda cubrir 3 meses de gastos. |

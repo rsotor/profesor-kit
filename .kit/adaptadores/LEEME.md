@@ -34,8 +34,8 @@ comparar)" y ábrelo igual.
 
 **Sin `gh`, no es un fallo de tu entorno ni de este adaptador (issue #50).** Un asistente en la nube (Claude
 Code en claude.ai/code, por ejemplo) trae git y red, pero no la CLI `gh`: `actualizar.js` y `guardar.js` caen
-solos a git y a la API pública de GitHub sin credenciales, así que el kit funciona igual. Solo se pierde el
-envío de feedback al kit con `issue.js`.
+solos a git y a la API pública de GitHub sin credenciales, así que el kit funciona igual. Solo el feedback al
+kit (`kit-issue.js`) se queda en local, apuntado en `.git/base-kit/feedback-pending.md`.
 
 **Claude Code en la nube, por verificar de verdad:** ese entorno habla con GitHub a través de un proxy local
 del propio contenedor (no directo), y solo deja subir a la rama de la sesión. El kit ya reconoce ese proxy

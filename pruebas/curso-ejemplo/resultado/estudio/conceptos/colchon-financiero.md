@@ -1,84 +1,86 @@
 ---
 tipo: concepto
-bloques: [1.2, 2.2]
+bloques: [modulo-01, modulo-02]
 visto_en: [01-02-01-presupuesto-personal, 02-02-01-ahorro-a-largo-plazo]
 dificultad: 2
-requiere: [presupuesto, gastos-fijos-y-variables, liquidez]
-alias: [fondo de emergencia]
-tags: [ahorro, presupuesto]
-ejercicio: 01-02-01-colchon-racha-mala
+requiere: [presupuesto-personal, gastos-fijos-y-variables, liquidez]
+alias: [fondo de emergencia, colchón]
+tags: [ahorro, riesgo]
+ejercicio: 01-02-01-aguanta-el-colchon
 ---
 # Colchón financiero
 
-> **En una frase:** el colchón financiero es dinero líquido guardado aparte para cubrir los gastos si un mes se factura poco o pasa un imprevisto, medido en meses de gastos cubiertos.
+> **En una frase:** el colchón financiero es dinero líquido guardado aparte para cubrir tus gastos si un mes entra poco o llega un imprevisto, y se mide en meses de gastos cubiertos.
 
 ## El problema
 
-Un mes sin ingresos o un imprevisto (una avería, una factura) te obliga a endeudarte o a malvender algo si
-no tienes nada a mano.
+Un mes se factura poco, o se rompe algo. Sin reserva, tiras de deuda o malvendes lo que tengas. Por eso es el primer objetivo, antes de ahorrar para otra cosa. Y tiene que ser [[liquidez]]: dinero que puedas usar ya.
 
 ## El ejemplo
 
-Con 1.195,00 € de gastos al mes, un colchón de 3 meses es 1.195,00 € × 3 = **3.585,00 €**.
+Gastos del mes: 1.195,00 €.
 
-Debe ser [[liquidez]] alta: que lo puedas gastar ya, sin perder valor por las prisas.
+Colchón de 3 meses: 1.195,00 € × 3 = **3.585,00 €**.
 
-**El paso previo al ahorro a largo plazo** (clase 2.2): el dinero que se aparta a muchos años no debería
-tocarse antes de tiempo. Con el colchón (el "fondo de emergencia" de la clase) una avería o un mes flojo no
-obligan a sacar ese ahorro y a perder los intereses que iba a dar.
-
-> [!info] Ampliación fuera de los apuntes
-> Con 2.400,00 € al final de cada año, a los 2 años tienes 4.920,00 € (ver [[aportacion-periodica]]). Si una
-> avería te obliga a sacar 2.400,00 € ese día, quedan 2.520,00 € trabajando en vez de 4.920,00 €, y todos los
-> años siguientes crecerá una cifra menor.
+Con ese dinero aguantas tres meses sin ingresos.
 
 ## La fórmula
 
-$$ \text{colchón} = \text{gastos del mes} \times \text{meses a cubrir} $$
+$$ \text{colchón} = \text{gastos mensuales} \times \text{meses a cubrir} $$
 
 ## El error típico
 
-Ahorrar para otra cosa antes de tenerlo. El colchón es el primer objetivo.
+Fijar los mismos meses para todo el mundo. Con nómina fija bastan unos 3 meses; con ingresos irregulares se apunta más alto, 5-6.
+
+> [!tip] Visto desde tus ingresos irregulares
+> Con tus gastos de 1.195,00 €, 6 meses son 1.195,00 € × 6 = **7.170,00 €**, el doble que con nómina fija. Es mucho, y se construye poco a poco con el ahorro de los meses buenos.
+
+## Antes de ahorrar a largo plazo
+
+*(De la clase 2.2.)* Lo que se aparta a muchos años no debería tocarse antes de tiempo. Por eso el colchón (en esa clase, "fondo de emergencia") va **primero**: dinero líquido, aparte, que cubra varios meses de gastos. Así una avería o una mala racha no te obligan a sacar el ahorro a largo plazo y a perder los intereses que iba a dar ([[horizonte-temporal]], [[aportacion-periodica]]).
+
+> [!info] Ampliación fuera de los apuntes
+> Lo que se pierde, con cifras: 2.400,00 € ahorrados hoy, al 5 % anual compuesto, serían unos 8.960,30 € dentro de 27 años. Sacarlos antes de tiempo para tapar un imprevisto no cuesta solo esos 2.400,00 €, sino también todo lo que habrían crecido. La clase no da cuántos meses: los 3 o 5-6 meses de arriba son los de la clase 1.2.
+
+Con ingresos irregulares (la lectura de arriba), el colchón también protege a la aportación: si un mes flojo te obliga a vaciar el ahorro a largo plazo, el mes bueno siguiente no recupera los años que ese dinero estuvo creciendo. Primero el colchón de 5-6 meses; después, aportar.
 
 ## Practícalo
 
-→ **[El colchón y una racha mala](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-colchon-racha-mala.html)**
+→ **[Aguanta el colchón](../ejercicios/modulo-01-fundamentos-del-dinero/1.2-presupuesto-personal/01-02-01-aguanta-el-colchon.html)**
 
-Mueve los meses de colchón, lo que facturas en la racha y cuánto dura. Lo que debería sorprender: con 3 meses
-de colchón aguantas 6 meses de racha si facturas 600,00 € al mes, pero no 4 meses si no facturas nada.
-
-## Visto desde tus ingresos irregulares
-
-Con ingresos irregulares, la clase recomienda apuntar más alto: 5-6 meses en vez de 3. Con 1.195,00 € de
-gastos: 5 meses son **5.975,00 €** y 6 meses, **7.170,00 €**.
+Mueve el ingreso del mes flojo y cuántos meses seguidos dura: verás cuándo el colchón de 3 meses deja de bastar.
 
 ## Relacionados
 
-- [[liquidez]] — el colchón tiene que ser fácil de convertir en dinero
-- [[inflacion]] — un colchón guardado años pierde poder de compra
-- [[gastos-fijos-y-variables]] — su total marca el tamaño del colchón
-- [[horizonte-temporal]] — el ahorro a muchos años solo rinde si no hay que sacarlo antes de tiempo
+- [[liquidez]] — el colchón tiene que poder gastarse ya
+- [[presupuesto-personal]] — de ahí sale el gasto mensual
+- [[gastos-fijos-y-variables]] — recortar lo variable alarga el colchón
+- [[tasa-de-ahorro]] — lo que ahorras es lo que lo llena
+- [[aportacion-periodica]] — el ahorro a largo plazo empieza cuando el colchón está hecho
+- [[horizonte-temporal]] — sacar el dinero antes de tiempo acorta el horizonte
 
 ## Historial
 
 - **01-02-01-presupuesto-personal** · primera vez
-- **02-02-01-ahorro-a-largo-plazo** · paso previo al ahorro a largo plazo: evita sacar el ahorro ante un imprevisto y perder los intereses
+- **02-02-01-ahorro-a-largo-plazo** · ampliada: el colchón va antes del ahorro a largo plazo ("fondo de emergencia" en la clase)
 
-> [!question]- Duda · 2026-10-04
+> [!question]- Duda · 2026-10-09
 > no entiendo bien esta parte, ¿me lo explicas con otro ejemplo?
 >
-> **Respuesta:** como no decías qué parte, he tomado la que más cuesta: para qué sirve el colchón cuando
-> facturas a trompicones. Otro ejemplo, esta vez mes a mes, con gastos de 1.195,00 €:
+> **Respuesta:** el marcador no señalaba una frase concreta, así que he reexplicado la idea central de la nota (cuántos meses cubrir y por qué) con un caso nuevo, sin fórmula.
 >
-> | Mes | Facturas | Gastos | Diferencia | Colchón |
-> |---|---|---|---|---|
-> | 1 | 1.900,00 € | 1.195,00 € | +705,00 € | sin tocar |
-> | 2 | 600,00 € | 1.195,00 € | −595,00 € | saca 595,00 € |
-> | 3 | 500,00 € | 1.195,00 € | −695,00 € | saca 695,00 € |
+> Imagina un mes en que no facturas nada. Tus gastos son 900,00 € (alquiler, comida, internet). El colchón es una **bolsa de meses**: cada mes sin ingresos se lleva 900,00 € de la bolsa.
 >
-> Sin colchón, los meses 2 y 3 te obligan a endeudarte por **1.290,00 €** (595,00 + 695,00). Con él, solo
-> bajas la cuenta de ahorro y sigues pagando todo.
+> | Colchón | Meses que aguantas |
+> |---|---|
+> | 1.800,00 € | 2 |
+> | 4.500,00 € | 5 |
+> | 5.400,00 € | 6 |
 >
-> Por eso con ingresos irregulares se recomienda 5-6 meses y no 3: una racha mala puede durar varios
-> meses seguidos, y el colchón tiene que aguantarla entera. Si otra parte era la que no veías, dime cuál
-> y la rehago.
+> Fíjate en que la cuenta es al revés de la fórmula: **meses = colchón ÷ gastos mensuales**. Con 4.500,00 € ÷ 900,00 € = **5 meses**.
+>
+> ¿Por qué más meses si tus ingresos son irregulares? Si cobras 0 € en un mes malo y 0 € en el siguiente, con 2 meses de colchón ya estás sin red; con 6 sobrevives a una racha larga sin tocar deuda. Cuantos más meses seguidos puedan salir flojos, más grande la bolsa.
+>
+> Cojea en un punto: la bolsa no se vacía solo por quedarte sin ingresos; un imprevisto (una avería de 600,00 €) también la gasta. Por eso se cuenta aparte del presupuesto normal.
+>
+> Si lo que no cuadraba era otra parte de la nota, dímelo con el marcador pegado a esa frase y la reescribo.
