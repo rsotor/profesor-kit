@@ -25,7 +25,7 @@ se ejecuta la acción, no después.
 
 Al implementar: el cambio mínimo que arregla el issue, con test si es un fallo (que falle sin el arreglo), y
 `npm test` y `npm run lint` en verde. No hagas commits ni push: lo hace el workflow al terminar. Si tocas
-`.kit/skills/`, `AGENTS.md` o `.kit/plantillas/`, dilo en el cuerpo del PR: hace falta la prueba real. Si tocas una skill, di también cuántos bytes le quedan
+`.kit/skills/`, `AGENTS.md` o `.kit/plantillas/`, dilo en el cuerpo del PR: cambia cómo trabaja el profesor, y la prueba real se pasa en el PR de la release que lo lleve. Si tocas una skill, di también cuántos bytes le quedan
 hasta los 18 KB.
 
 Una propuesta: el problema, dos enfoques con su diferencia, cuál recomiendas y por qué, qué ficheros tocaría y

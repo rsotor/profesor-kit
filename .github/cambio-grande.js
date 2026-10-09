@@ -1,6 +1,9 @@
 'use strict';
-// Recordatorio obligatorio en el CI: un PR que cambia cómo trabaja el profesor (skills, AGENTS.md,
-// plantillas) tiene que traer una prueba real hecha en el Mac del mantenedor. Ver CONTRIBUTING.md,
+// Recordatorio obligatorio en el CI: el PR que publica una versión (sube `.kit/VERSION`) y cambia cómo trabaja
+// el profesor (skills, AGENTS.md, plantillas) tiene que traer una prueba real hecha en el Mac del mantenedor sobre
+// ese código. Un PR que solo acumula cambios para la siguiente versión no la necesita: los cursos solo reciben
+// releases, así que la prueba entera se pasa una vez, en la release (decisión de Roberto, 2026-10-09; antes se
+// exigía en cada PR que tocara esas rutas y paraba arreglos que hacían falta para otras PR). Ver CONTRIBUTING.md,
 // "Prueba real del profesor".
 //
 //   node .github/cambio-grande.js [rama-base]     # por defecto, GITHUB_BASE_REF (lo pone Actions en un pull_request)
@@ -13,6 +16,8 @@ const RAIZ = path.resolve(__dirname, '..');
 // alguna, tiene que traer también el resumen de una prueba real hecha después de ese cambio.
 const TOCA_COMPORTAMIENTO = f => f.startsWith('.kit/skills/') || f === 'AGENTS.md' || f.startsWith('.kit/plantillas/');
 const RESUMEN = 'pruebas/curso-ejemplo/resultado/RESUMEN.md';
+// El PR que publica: el que sube `.kit/VERSION`. Solo ahí se exige la prueba real.
+const VERSION = '.kit/VERSION';
 
 // `ficheros`: rutas cambiadas en el PR, relativas a la raíz, con /. Pura función de la lista: sin git
 // real, se puede probar con cualquier lista inyectada.
@@ -33,10 +38,12 @@ function resultadoCompleto(resumen) {
 }
 function evaluar(ficheros, resumen = '', alDia = true) {
   const tocaComportamiento = ficheros.some(TOCA_COMPORTAMIENTO);
+  const publica = ficheros.includes(VERSION);
   const tocaResumen = ficheros.includes(RESUMEN);
   const resumenReal = tocaResumen && !DE_PRUEBA.test(resumen);
   const completo = resultadoCompleto(resumen);
-  return { ok: !tocaComportamiento || (resumenReal && completo && alDia), tocaComportamiento, tocaResumen, resumenReal, completo, alDia };
+  const exige = tocaComportamiento && publica;
+  return { ok: !exige || (resumenReal && completo && alDia), exige, tocaComportamiento, publica, tocaResumen, resumenReal, completo, alDia };
 }
 
 function ficherosCambiados(ramaBase, raiz = RAIZ) {
@@ -84,7 +91,7 @@ function cli(args) {
   const r = evaluar(ficheros, texto, orden.alDia);
   if (!r.ok) {
     console.error(
-      'Este PR cambia cómo trabaja el profesor (toca .kit/skills/, AGENTS.md o .kit/plantillas/) pero no '
+      'Este PR publica una versión (sube .kit/VERSION) y cambia cómo trabaja el profesor (toca .kit/skills/, AGENTS.md o .kit/plantillas/) pero no '
       + `trae ${RESUMEN} de una prueba real${r.tocaResumen && !r.resumenReal ? ' (el que trae es de --sin-llm)' : ''}`
       + `${r.resumenReal && !r.alDia && orden.motivo === 'commit-viejo' ? ` hecha sobre el código del PR: el resumen dice que se probó el commit ${orden.probado}, que no incluye el último cambio (${orden.comportamiento.slice(0, 7)}) — ¿la copia de tu Mac iba atrasada?` : ''}`
       + `${r.resumenReal && !r.alDia && orden.motivo === 'commit-desconocido' ? ` de un commit de este repo: el resumen dice que se probó ${orden.probado}, y ese commit no existe aquí` : ''}`
@@ -94,10 +101,12 @@ function cli(args) {
     );
     return 1;
   }
-  console.log(r.tocaComportamiento ? `OK: el PR toca cómo trabaja el profesor, y trae ${RESUMEN} actualizado.` : 'OK: este PR no cambia cómo trabaja el profesor; no hace falta una prueba real nueva.');
+  console.log(r.exige ? `OK: el PR publica una versión y toca cómo trabaja el profesor, y trae ${RESUMEN} actualizado.`
+    : r.tocaComportamiento ? 'OK: este PR toca cómo trabaja el profesor pero no publica versión; la prueba real se pasa en el PR de la release.'
+      : 'OK: este PR no cambia cómo trabaja el profesor; no hace falta una prueba real nueva.');
   return 0;
 }
 
 if (require.main === module) process.exit(cli(process.argv.slice(2)));
 
-module.exports = { evaluar, ficherosCambiados, resumenAlDia, commitProbado, cli, TOCA_COMPORTAMIENTO, RESUMEN };
+module.exports = { evaluar, ficherosCambiados, resumenAlDia, commitProbado, cli, TOCA_COMPORTAMIENTO, RESUMEN, VERSION };
