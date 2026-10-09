@@ -17,7 +17,8 @@ Cómo se cambia y se publica: `CONTRIBUTING.md`. Además:
 
 - **Los cambios se juntan.** Una release agrupa varios cambios; no se publica un cambio suelto si puede
   esperar a la siguiente.
-- **`npm run prueba-real` en verde antes de cada release**, entera y sobre el commit que se publica.
+- **`npm run prueba-real` en verde antes de cada release**, entera y sobre el commit que se publica. Solo ahí:
+  el CI (`cambio-grande.js`) la exige en el PR que sube `.kit/VERSION`, no en los que se acumulan.
 - **Nunca dos releases el mismo día.**
 
 ## Planes
