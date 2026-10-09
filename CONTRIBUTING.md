@@ -67,11 +67,13 @@ Los tests de `.kit/herramientas/tests/` comprueban el código. Nadie comprueba c
 **explica bien**, si un examen sale razonable o si `/dudas` de verdad resuelve lo que el alumno dejó
 anotado — eso solo lo ve un LLM de verdad trabajando en un curso de verdad. Para eso está la prueba real.
 
-**Cuándo es obligatoria.** Si tu PR toca `.kit/skills/`, `AGENTS.md` o `.kit/plantillas/` (cualquier cosa
-que cambie cómo trabaja el profesor, no cómo funciona una herramienta), tiene que traer
-`pruebas/curso-ejemplo/resultado/RESUMEN.md` actualizado tras ejecutarla. El CI lo exige
-(`.github/cambio-grande.js`, solo en `pull_request`): un PR que toque esas rutas sin ese fichero no
-pasa. Tampoco pasa con un resumen de `--sin-llm`, ni con uno **anterior** al último commit que toca esas rutas:
+**Cuándo es obligatoria.** En el PR que **publica** (sube `.kit/VERSION`), si la versión toca `.kit/skills/`,
+`AGENTS.md` o `.kit/plantillas/` (cualquier cosa que cambie cómo trabaja el profesor, no cómo funciona una
+herramienta): tiene que traer `pruebas/curso-ejemplo/resultado/RESUMEN.md` actualizado tras ejecutarla sobre ese
+código. Los cursos solo reciben releases, así que la prueba entera se pasa una vez, ahí, y no en cada PR que se
+acumula para la siguiente versión (decidido el 2026-10-09: exigirla en cada PR paraba arreglos que hacían falta
+para otras PR). El CI lo exige (`.github/cambio-grande.js`, solo en `pull_request`): un PR que suba la versión y
+toque esas rutas sin ese fichero no pasa. Tampoco pasa con un resumen de `--sin-llm`, ni con uno **anterior** al último commit que toca esas rutas:
 si cambias una skill después de la prueba, hay que repetirla. Y el commit que dice el resumen (`· commit <sha>`) tiene
 que incluir ese último cambio: un resumen recién subido pero hecho sobre una copia atrasada tampoco pasa. Para no
 gastar la cuota en balde, `npm run prueba-real` trae la rama de GitHub antes de empezar y no lanza nada si tu copia
