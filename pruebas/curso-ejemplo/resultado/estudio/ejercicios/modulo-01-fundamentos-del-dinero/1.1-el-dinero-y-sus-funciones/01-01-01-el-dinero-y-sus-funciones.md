@@ -1,8 +1,16 @@
-# Ejercicios · 01-01-01 El dinero y sus funciones
+---
+tipo: ejercicios
+sesion: 01-01-01-el-dinero-y-sus-funciones
+---
+# Ejercicios · 01-01-01-el-dinero-y-sus-funciones
 
-- [[inflacion]] — **[¿Cuánto tarda en perder la mitad?](01-01-01-inflacion-cuanto-tarda-en-perder-la-mitad.html)**:
-  mueve la inflación anual y mira cuántos años aguanta el dinero del cajón antes de comprar la mitad.
-  Se descubre que una inflación anual del 3 % parece inofensiva y aun así se come la mitad en unos 23 años.
+## Inflación y poder de compra
 
-Sin ejercicio: [[funciones-del-dinero]] (clasificación cerrada) y [[liquidez]] (definición sin cálculo
-que mover).
+→ **[Inflación y poder de compra](01-01-01-inflacion-poder-de-compra.html)** (concepto: [[inflacion]])
+
+Mueve la inflación anual y los años: con 0 % anual no se pierde nada, y con cualquier inflación positiva la pérdida de compra crece al alargar el plazo.
+
+**Versión a mano:** con 2.000,00 € guardados 10 años con inflación de 2 % anual, ¿cuánto compran en euros de hoy? *(una cifra)*
+
+> [!success]- Respuesta
+> 2.000,00 ÷ 1,02¹⁰ = **1.640,66 €**. Pierdes unos 359,34 € de poder de compra.

@@ -1,12 +1,12 @@
 ---
 tipo: concepto
-bloques: [1.1]
+bloques: [modulo-01]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 2
 requiere: [funciones-del-dinero]
-alias: []
+alias: [poder adquisitivo]
 tags: [dinero, precios]
-ejercicio: 01-01-01-inflacion-cuanto-tarda-en-perder-la-mitad
+ejercicio: 01-01-01-inflacion-poder-de-compra
 ---
 # Inflación
 
@@ -14,46 +14,43 @@ ejercicio: 01-01-01-inflacion-cuanto-tarda-en-perder-la-mitad
 
 ## El problema
 
-El dinero guardado debería conservar su valor (tercera función de [[funciones-del-dinero]]). Si los
-precios de casi todo suben a la vez, ese valor se va comiendo solo.
+Guardas dinero para usarlo más adelante (el depósito de valor, de [[funciones-del-dinero]]). Pero si los precios suben, esos euros alcanzan para menos cosas. Guardarlos tiene un enemigo.
 
 ## El ejemplo
 
-Tienes 100,00 € en el cajón y los precios suben una media de un 3 % anual (inflación anual del 3 %).
+Hoy tienes **100,00 €** y una cesta de la compra cuesta 100,00 €. Si los precios suben un **3 % anual**, la misma cesta cuesta 103,00 € dentro de un año. Tus 100,00 € ya no la pagan entera: en compra real valen unos **97,00 €** de hoy.
 
-- Hoy: 100,00 € compran una cesta de la compra.
-- Dentro de un año esa cesta cuesta 103,00 €. Con tus 100,00 € ya no te llega.
-- En poder de compra, tus 100,00 € de hoy equivalen a unos **97,09 €** de los de este año.
+> [!info] Ampliación fuera de los apuntes
+> El número exacto es 100,00 € ÷ 1,03 = **97,09 €**; los apuntes dicen "unos 97 €", que es una aproximación válida para una cuenta rápida.
 
 ## La fórmula
 
-$$ \text{valor real} = \frac{\text{dinero}}{(1 + i)^{n}} $$
+$$ V = \frac{D}{(1+i)^n} $$
 
-- $i$: la inflación de cada año (con su periodo: anual).
+- $V$: lo que vale ese dinero en compra real, a precios de hoy.
+- $D$: el dinero que guardas.
+- $i$: la inflación **anual**, en tanto por uno (3 % anual → 0,03).
 - $n$: los años que pasan.
+
+Con 1.000,00 € guardados 5 años a un 3 % anual de inflación: 1.000,00 ÷ 1,03⁵ = **862,61 €** de poder de compra.
 
 ## El error típico
 
-Confundir "sube el precio de una cosa" con "inflación". Si el aguacate sube por una mala cosecha, es
-escasez de esa cosa; inflación es que suba el nivel general de precios, casi todo a la vez.
+Confundir "sube el precio de una cosa" con "inflación". Si el aguacate sube por una mala cosecha, es un precio que sube; inflación es que sube el nivel general, casi todo a la vez.
 
 ## Practícalo
 
-→ **[¿Cuánto tarda en perder la mitad?](../ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion-cuanto-tarda-en-perder-la-mitad.html)**
+→ **[Inflación y poder de compra](../ejercicios/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-inflacion-poder-de-compra.html)**
 
-Mueve la inflación anual y mira cuánto aguanta el dinero del cajón antes de comprar la mitad. Lo que
-debería sorprender: un 3 % anual parece poco y aun así tarda solo unos 23 años en quitarle la mitad.
+Mueve los años y la inflación anual: fíjate en cuánto poder de compra se pierde y en que la pérdida crece más de lo que esperas al alargar el plazo.
 
-## Visto desde tus ingresos irregulares
-
-Tu colchón para los meses flojos es dinero guardado: si lo dejas años sin moverlo, la inflación lo
-encoge mientras tus gastos siguen subiendo. Un colchón de 1.200,00 € (un mes de gastos) con una
-inflación anual del 3 % cubre en un año lo que costaba 1.200,00 € hace un año: ya no llega.
+> [!tip] Visto desde tus ingresos irregulares
+> Si guardas un colchón para los meses flojos, no se queda quieto: cuanto más tiempo esté parado, menos compra. Un colchón de 3.000,00 € a un 3 % anual de inflación, tras 2 años, equivale a unos **2.827,79 €** de hoy. No es motivo para no tenerlo, sino para no dejarlo olvidado años sin mirarlo.
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la función que la inflación debilita: depósito de valor
-- [[liquidez]] — guardar de forma líquida no te protege de la inflación
+- [[funciones-del-dinero]] — la inflación ataca al depósito de valor
+- [[liquidez]] — el otro rasgo de guardar dinero: fácil de gastar, pero expuesto a la inflación
 
 ## Historial
 

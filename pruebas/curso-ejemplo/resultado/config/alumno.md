@@ -31,18 +31,13 @@
 
 ## Conceptos que costaron
 
-- **colchon-financiero:** pidió otro ejemplo sin decir qué parte no veía. Se le dio una tabla mes a mes con
-  sus gastos y facturación irregular (encaja con "Cómo explicarle"). — *duda en conceptos/colchon-financiero.md, 2026-10-04*
+- **Colchón financiero:** en la p.6 divide entre el gasto de antes del recorte (3.600 ÷ 1.200 = 3) en vez de entre el nuevo (900). — *examen 01-examen-2026-10-09, p.6*
+- **Doble coincidencia de deseos:** en la p.1 la confunde con la falta de unidad de cuenta. — *examen 01-examen-2026-10-09, p.1*
+- Dejó en blanco las p.5 (presupuestar con el mejor mes) y p.10 (dónde poner el colchón): no se sabe si no las sabía o no llegó; conviene repasarlas. — *examen 01-examen-2026-10-09, p.5 y p.10*
 
 ## Conceptos que entraron a la primera
 
 ## Errores repetidos
-
-- **funciones-del-dinero:** falló dos preguntas del mismo examen. No reconoce la doble coincidencia de deseos
-  como problema del trueque (p.1) y atribuye a la inflación un efecto sobre el medio de cambio, cuando solo
-  debilita el depósito de valor (p.6). Confunde unas funciones con otras. — *estudio/examenes/modulo-01-fundamentos-del-dinero/01-examen-2026-10-04.md, p.1 y p.6*
-- Dejó en blanco dos preguntas (presupuesto, p.5; colchón financiero, p.10) que sabía calcular en otro caso
-  (p.8 bien): no es un hueco probado, pero conviene ver si es falta de tiempo o de seguridad. — *mismo examen, p.5 y p.10*
 
 ## Qué funcionó
 <!-- analogías y enfoques que desbloquearon algo -->
@@ -52,11 +47,11 @@
 
 | Propiedad | Escribió | Quería decir | Veces | Última |
 |---|---|---|---|---|
-| estudiada | sí | marcada (true) | 2 | 2026-10-04 · sesión 01-01-01, `estudiada: sí` → true (respuesta del alumno en /dudas) |
+| estudiada | sí | marcada (true) | 1 | 2026-09-20 · respuesta del alumno en /dudas |
 
 ## Registro de dudas
 
 | Concepto | Nº de dudas | Última |
 |---|---|---|
-| colchon-financiero | 1 | 2026-10-03 · conceptos/colchon-financiero.md, 2026-10-04 |
-| funciones-del-dinero | 1 | 2026-10-03 · sesiones/modulo-01-fundamentos-del-dinero/1.1-el-dinero-y-sus-funciones/01-01-01-el-dinero-y-sus-funciones.md, 2026-10-04 |
+| colchon-financiero | 1 | 2026-10-09 · conceptos/colchon-financiero.md, 2026-10-09 |
+| funciones-del-dinero | 1 | 2026-10-09 · sesiones/01-01-01-el-dinero-y-sus-funciones.md, 2026-10-09 |

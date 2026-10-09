@@ -4,37 +4,39 @@ sesion: 01-01-01-el-dinero-y-sus-funciones
 ---
 # Flashcards · 01-01-01-el-dinero-y-sus-funciones
 
-**Un café cuesta 1,50 € y un corte de pelo 12,00 €, y así los comparas de golpe. ¿Qué función del dinero es? (el nombre)**
+> Se responde mentalmente antes de desplegar.
+
+**Un café cuesta 1,50 € y un corte de pelo 12,00 €, y los comparas sin pensar en gallinas. ¿Qué función del dinero usas?**
 > [!success]- Respuesta
-> Unidad de cuenta: todo se mide con la misma vara.
+> Unidad de cuenta: poner precio a todo con la misma vara. No es medio de cambio (eso sería pagar).
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 3/10*
+*Caja 1 de 5 · te toca el 9/10*
 
-**¿Qué problema del trueque resuelve el medio de cambio? (en una frase)**
+**¿Qué problema del trueque elimina el medio de cambio?**
 > [!success]- Respuesta
 > La doble coincidencia de deseos: ya no hace falta que el vendedor quiera justo lo que tú ofreces.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 3/10*
+*Caja 1 de 5 · te toca el 9/10*
 
-**Por una mala cosecha, el aguacate sube de precio. ¿Es inflación? (sí o no, y por qué)**
+**Sube el precio del aguacate por una mala cosecha. ¿Es inflación? ¿Por qué?**
 > [!success]- Respuesta
-> No: sube una sola cosa. Inflación es que suba el nivel general de precios, de casi todo a la vez.
+> No. Inflación es que sube el nivel general de precios, de casi todo a la vez; aquí sube una sola cosa.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 3/10*
+*Caja 1 de 5 · te toca el 9/10*
 
-**Tienes un piso de 120.000,00 € y 50,00 € en la cartera. ¿Cuál es más líquido y por qué? (2 líneas)**
+**Un piso vale mucho. ¿Es líquido?**
 > [!success]- Respuesta
-> La cartera: se gasta al instante. El piso vale mucho más, pero convertirlo en dinero sin perder valor lleva meses.
+> No: valer mucho no es ser líquido. Venderlo bien lleva meses; liquidez es convertirlo en dinero rápido sin perder valor.
 
 - [ ] ✅ la sabía
 - [ ] ❌ no la sabía
-*Caja 1 de 5 · te toca el 3/10*
+*Caja 1 de 5 · te toca el 9/10*
 
 ---
 Conceptos que cubren: [[funciones-del-dinero]] · [[inflacion]] · [[liquidez]]

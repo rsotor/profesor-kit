@@ -1,82 +1,73 @@
 ---
 tipo: concepto
-bloques: [2.1, 2.2]
-visto_en: [02-01-01-interes-simple-y-compuesto, 02-02-01-ahorro-a-largo-plazo]
+bloques: [modulo-02]
+visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 3
 requiere: [interes-simple]
-alias: []
-tags: [interes]
+alias: [interés sobre interés]
+tags: [interes, ahorro]
 ejercicio: 02-01-01-simple-frente-a-compuesto
 ---
 # Interés compuesto
 
-> **En una frase:** con interés compuesto los intereses de cada periodo se suman al capital y, a partir de ahí, generan intereses ellos también ("interés sobre interés").
+> **En una frase:** con interés compuesto, los intereses de cada periodo se suman al capital y, a partir de ahí, generan intereses ellos también.
 
 ## El problema
 
-Con el interés simple, los intereses ganados se quedan aparte, parados. Pero ese dinero también podría
-trabajar. Si lo sumas al capital, el año siguiente ya cobras interés sobre una cifra mayor.
+Con el [[interes-simple]] lo que ganas se queda cobrado y quieto. Pero si lo ganado se queda dentro y vuelve a trabajar, el dinero crece sobre una base cada vez mayor. La pregunta es cuánta diferencia hace eso.
 
 ## El ejemplo
 
-1.000,00 € a un 5 % anual durante 3 años:
+Los mismos **1.000,00 €** al 5 % anual, 3 años, año a año:
 
-| Año | Capital al empezar | Interés del año | Capital al acabar |
+| Año | Cálculo | Saldo compuesto | Saldo simple |
 |---|---|---|---|
-| 1 | 1.000,00 € | 50,00 € | 1.050,00 € |
-| 2 | 1.050,00 € | 52,50 € | 1.102,50 € |
-| 3 | 1.102,50 € | 55,13 € | 1.157,63 € |
+| 1 | 1.000,00 € × 1,05 | 1.050,00 € | 1.050,00 € |
+| 2 | 1.050,00 € × 1,05 | 1.102,50 € | 1.100,00 € |
+| 3 | 1.102,50 € × 1,05 | 1.157,63 € | 1.150,00 € |
 
-Con interés simple eran 1.150,00 €. La diferencia, **7,63 €**, no parece mucho a 3 años, pero crece cada
-vez más rápido cuantos más periodos pasan.
+Al tercer año el compuesto lleva **7,63 €** más. Poco a 3 años. Pero la distancia no crece en línea recta:
+
+| Años | Compuesto | Simple | Diferencia |
+|---|---|---|---|
+| 10 | 1.628,89 € | 1.500,00 € | 128,89 € |
+| 20 | 2.653,30 € | 2.000,00 € | 653,30 € |
+| 30 | 4.321,94 € | 2.500,00 € | 1.821,94 € |
+
+> [!info] Ampliación fuera de los apuntes
+> Las filas de 10, 20 y 30 años y el desglose año a año son cálculos añadidos con la misma fórmula del material; los apuntes solo dan el caso de 3 años.
 
 ## La fórmula
 
-$$ C_f = C \cdot (1 + i)^n $$
+$$ C_f = C \cdot (1+i)^n $$
 
-`C` es el capital inicial, `i` el tipo en tanto por uno (un 5 % anual es 0,05) y `n` el número de
-periodos de capitalización (si `i` es anual, `n` en años). En el ejemplo: 1.000 × 1,05³ = 1.000 × 1,157625
-= 1.157,63 €.
+- $C_f$: el capital final, en €.
+- $C$: el capital inicial, en €.
+- $i$: el tipo en tanto por uno **con su periodo** (5 % anual → 0,05 anual).
+- $n$: cuántos periodos de capitalización pasan (si $i$ es anual, $n$ en años).
 
-Con aportaciones periódicas, cada una genera intereses desde que entra, y esos intereses generan más
-(ver [[aportacion-periodica]]): 2.400,00 € al final de cada año a un 5 % anual durante 3 años dan
-4.920,00 € y luego 7.566,00 €, con 7.200,00 € aportados y 366,00 € de intereses.
+Con los números: 1.000,00 € × 1,05³ = 1.000,00 € × 1,157625 = **1.157,63 €**.
 
 ## El error típico
 
-Confundirlo con el simple y pensar que crece "un poco más rápido" y nada más. La diferencia no es
-constante: el simple crece en línea recta; el compuesto, cada vez más deprisa.
-
-> [!info] Ampliación fuera de los apuntes
-> Más plazo, más distancia. Con 1.000,00 € a un 5 % anual: a 3 años, 1.150,00 € (simple) frente a
-> 1.157,63 € (compuesto); a 10 años, 1.500,00 € frente a 1.628,89 €; a 30 años, 2.500,00 € frente a
-> 4.321,94 €.
+Pensar que, como a 3 años la diferencia es de unos pocos euros, el compuesto "casi es lo mismo" que el simple. A corto plazo lo es; con el tiempo, no.
 
 ## Practícalo
 
 → **[Simple frente a compuesto](../ejercicios/modulo-02-ahorro-e-interes/2.1-interes-simple-y-compuesto/02-01-01-simple-frente-a-compuesto.html)**
 
-Mueve el tipo y los años. Lo que debería sorprender: a 1 año no hay diferencia, y a muchos años o con un
-tipo alto el compuesto da muchos más intereses que el simple.
+Mueve los años y el tipo anual: con 1 año (o con tipo 0) no hay ventaja, y a partir de cierto plazo supera una décima parte del capital. Cuánto plazo hace falta depende mucho del tipo.
 
-→ **[Empezar antes o aportar más](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-empezar-antes-o-aportar-mas.html)**
-
-Mueve el retraso de Luis y su aportación. Lo que debería sorprender: el interés compuesto premia más los años que las aportaciones extra.
-
-## Visto desde tus ingresos irregulares
-
-Un mes bueno que apartas hoy empieza a generar intereses antes que uno que apartas dentro de un año: con
-el compuesto, el **tiempo** que el dinero lleva guardado pesa tanto como la cantidad.
+> [!tip] Visto desde tus ingresos irregulares
+> El compuesto necesita que el dinero **se quede dentro**. Un buen mes apartas 1.000,00 € al 5 % anual: a 10 años son 1.628,89 € (628,89 € de intereses). Si en un mes flojo los sacas al año 5, solo has ganado 276,28 €; los otros 352,61 € nacen precisamente en los 5 últimos años. Con ingresos irregulares, la tentación de tocarlo existe: por eso va primero el [[colchon-financiero]], para que el mes flojo se pague con él y no con lo que está creciendo.
 
 ## Relacionados
 
-- [[interes-simple]] — lo que ocurre si los intereses no se reinvierten
-- [[capitalizacion]] — cada cuánto se suman los intereses al capital
-- [[regla-del-72]] — cuánto tarda en doblarse un capital así
-- [[aportacion-periodica]] — qué pasa si, además del capital inicial, se va sumando dinero
-- [[horizonte-temporal]] — el plazo, que pesa tanto en este crecimiento
+- [[interes-simple]] — el punto de comparación: crece en línea recta
+- [[capitalizacion]] — cuántas veces al año se suman los intereses al capital
+- [[regla-del-72]] — un atajo para estimar cuánto tarda en doblarse
+- [[colchon-financiero]] — el dinero líquido que evita tocar lo que crece
 
 ## Historial
 
 - **02-01-01-interes-simple-y-compuesto** · primera vez
-- **02-02-01-ahorro-a-largo-plazo** · aplicación a aportaciones periódicas: 2.400,00 € al final de cada año a un 5 % anual durante 3 años → 4.920,00 € → 7.566,00 €; 7.200,00 € aportados y 366,00 € de intereses.

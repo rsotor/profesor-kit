@@ -1,6 +1,6 @@
 ---
 tipo: concepto
-bloques: [1.1]
+bloques: [modulo-01]
 visto_en: [01-01-01-el-dinero-y-sus-funciones]
 dificultad: 1
 requiere: [funciones-del-dinero]
@@ -13,33 +13,34 @@ tags: [dinero, ahorro]
 
 ## El problema
 
-Tener valor no basta: hay que poder usarlo cuando hace falta. Un piso vale mucho, pero no sirve para
-pagar el alquiler de mañana.
+Tener riqueza no basta: hay que poder usarla cuando hace falta. Un imprevisto no espera a que vendas lo que tienes.
 
 ## El ejemplo
 
-| Lo que tienes | Cuánto tardas en gastarlo | Liquidez |
-|---|---|---|
-| 50,00 € en la cartera | al instante | máxima |
-| Un piso de 120.000,00 € | meses, y si hay prisa, bajas el precio | muy baja |
+Te llega una factura urgente de 800,00 €.
 
-Si mañana necesitas 300,00 €, la cartera responde y el piso no.
+- Dinero en la cartera o en la cuenta: lo pagas al instante. Liquidez total.
+- Un piso: venderlo bien lleva meses; con prisas, lo malvendes.
+
+| Lo que tienes | Tiempo para gastarlo | Liquidez |
+|---|---|---|
+| Dinero en la cartera | Al instante | Máxima |
+| Un piso | Meses | Muy baja |
 
 ## El error típico
 
+Pensar que "valer mucho" es lo mismo que "ser líquido". Un piso vale mucho y casi no es líquido.
+
 > [!info] Ampliación fuera de los apuntes
-> Creer que "valer mucho" es lo mismo que "ser líquido". El piso vale más que la cartera y es peor
-> para una urgencia. La liquidez no mide cuánto vale algo, sino lo rápido que lo conviertes en dinero.
+> Un piso de 150.000,00 € no te saca de una factura de 800,00 € mañana, aunque valga mucho más.
 
-## Visto desde tus ingresos irregulares
-
-Para un mes flojo necesitas dinero que puedas usar ya: la parte de tu colchón para esos meses tiene
-que ser líquida, aunque rinda menos. Se retoma en el módulo 2, al comparar ahorrar con invertir.
+> [!tip] Visto desde tus ingresos irregulares
+> En un mes flojo necesitas dinero **ya**, no en tres meses. Parte de lo que ahorres tiene que ser muy líquido, aunque rinda menos. En el módulo 2 se compara ahorrar (muy líquido) con invertir (a veces menos líquido).
 
 ## Relacionados
 
-- [[funciones-del-dinero]] — la liquidez es lo cerca que está algo de funcionar como medio de cambio
-- [[inflacion]] — lo más líquido (efectivo) es también lo que más sufre sus efectos si se deja parado
+- [[funciones-del-dinero]] — el dinero es el activo más líquido
+- [[inflacion]] — lo más líquido (el efectivo) es también lo más expuesto a perder poder de compra
 
 ## Historial
 

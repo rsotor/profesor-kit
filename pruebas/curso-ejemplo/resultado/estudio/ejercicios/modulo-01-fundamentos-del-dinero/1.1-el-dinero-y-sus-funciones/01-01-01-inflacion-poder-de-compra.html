@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inflación y poder de compra</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 1rem; line-height: 1.5; }
+  section { border: 1px solid #8884; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  label { display: block; margin: .6rem 0; }
+  input[type=range] { width: 100%; }
+  button { display: block; width: 100%; margin: .4rem 0; padding: .6rem; font-size: 1rem; text-align: left; }
+  #explicacion { min-height: 3rem; }
+</style>
+</head>
+<body>
+<h1>Inflación y poder de compra</h1>
+<p>Concepto: <a href="../../../conceptos/inflacion.md">inflacion</a></p>
+
+<section>
+  <h2>1 · Condiciones</h2>
+  <label>Dinero guardado: <b id="vD">1.000,00 €</b>
+    <input type="range" id="D" min="500" max="5000" step="100" value="1000"></label>
+  <label>Inflación anual: <b id="vI">3,0 % anual</b>
+    <input type="range" id="i" min="0" max="10" step="0.5" value="3"></label>
+  <label>Años guardado: <b id="vN">5 años</b>
+    <input type="range" id="n" min="1" max="30" step="1" value="5"></label>
+</section>
+
+<section>
+  <h2>2 · Reto</h2>
+  <p id="pregunta"></p>
+  <div id="opciones"></div>
+</section>
+
+<section>
+  <h2>3 · Explicación</h2>
+  <div id="explicacion">Elige una respuesta y aquí verás por qué.</div>
+</section>
+
+<script>
+function eur(x) { return x.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+
+// Poder de compra de D euros tras n años con inflación anual i (en %)
+window.verificar = function (caso) {
+  var D = Number(caso.D), i = Number(caso.i), n = Number(caso.n);
+  var valor = D / Math.pow(1 + i / 100, n);
+  var perdida = D - valor;
+  var opciones = [
+    { id: 'igual', texto: 'Sigue valiendo lo mismo: son los mismos euros', ok: i === 0 },
+    { id: 'menos', texto: 'Vale menos: compra menos que hoy', ok: i > 0 },
+  ];
+  return { valor: valor, perdida: perdida, correcta: i === 0 ? 'igual' : 'menos', opciones: opciones };
+};
+
+function leer() {
+  return { D: document.getElementById('D').value, i: document.getElementById('i').value, n: document.getElementById('n').value };
+}
+
+function pintar() {
+  var c = leer(), r = window.verificar(c);
+  document.getElementById('vD').textContent = eur(Number(c.D));
+  document.getElementById('vI').textContent = String(c.i).replace('.', ',') + ' % anual';
+  document.getElementById('vN').textContent = c.n + (Number(c.n) === 1 ? ' año' : ' años');
+  document.getElementById('pregunta').textContent =
+    '¿Qué pasa con ' + eur(Number(c.D)) + ' guardados ' + c.n + ' años, con inflación de ' + String(c.i).replace('.', ',') + ' % anual? (elige una)';
+  var cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  r.opciones.forEach(function (o) {
+    var b = document.createElement('button');
+    b.textContent = o.texto;
+    b.onclick = function () { responder(o.id); };
+    cont.appendChild(b);
+  });
+  document.getElementById('explicacion').textContent = 'Elige una respuesta y aquí verás por qué.';
+}
+
+function responder(id) {
+  var c = leer(), r = window.verificar(c);
+  var acierto = id === r.correcta;
+  var txt = (acierto ? 'Correcto. ' : 'No. ') +
+    'Con ' + eur(Number(c.D)) + ', tras ' + c.n + ' años, el poder de compra es ' + eur(r.valor) +
+    ' de hoy: has perdido ' + eur(r.perdida) + ' de compra aunque el saldo siga igual. ';
+  if (Number(c.i) === 0) txt += 'Sin inflación el dinero no pierde poder de compra.';
+  else txt += 'Prueba a mover los años: la pérdida crece más de lo que parece al alargar el plazo.';
+  document.getElementById('explicacion').textContent = txt;
+}
+
+['D', 'i', 'n'].forEach(function (k) { document.getElementById(k).addEventListener('input', pintar); });
+pintar();
+</script>
+</body>
+</html>

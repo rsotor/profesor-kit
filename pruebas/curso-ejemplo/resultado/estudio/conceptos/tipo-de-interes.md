@@ -1,43 +1,53 @@
 ---
 tipo: concepto
-bloques: [2.1]
+bloques: [modulo-02]
 visto_en: [02-01-01-interes-simple-y-compuesto]
 dificultad: 2
 requiere: [capital]
-alias: []
-tags: [interes]
+alias: [tasa de interés]
+tags: [interes, ahorro]
 ---
 # Tipo de interés
 
-> **En una frase:** el tipo de interés es el precio del dinero: cuánto se paga (o se cobra) por tenerlo prestado durante un tiempo, en tanto por ciento **y con su periodo**.
+> **En una frase:** el tipo de interés es el precio del dinero: cuánto se paga (o se cobra) por tenerlo prestado durante un tiempo, en tanto por ciento y con su periodo.
 
 ## El problema
 
-Si te dicen "te doy un 5 %", no sabes qué te dan: ¿al año, al mes? Un 5 % anual y un 5 % mensual
-son dos cosas muy distintas. Sin periodo, la cifra no dice nada.
+Si te dicen "te dan un cinco por ciento", no sabes nada: ¿cada año, cada mes, cada día? El dinero no tiene precio hasta que se dice **por cuánto tiempo**. Por eso en este curso un tipo nunca va sin su periodo.
 
 ## El ejemplo
 
-Prestas 1.000,00 € a un 5 % anual: al cabo de un año, el precio de haber tenido ese dinero es
-50,00 €. Con un 5 % mensual, serían 50,00 € **cada mes**: 600,00 € al año, doce veces más.
+Con **1.000,00 €** de capital:
+
+| Tipo | Interés en 1 año (simple) |
+|---|---|
+| 5 % anual | 50,00 € |
+| 5 % mensual | 600,00 € (12 meses × 50,00 €) |
+
+Mismo número, el 5, y una diferencia de 550,00 €. Lo único que cambia es el periodo.
 
 ## La fórmula
 
-$$ i = \frac{\text{tanto por ciento}}{100} $$
+$$ i = \frac{p}{100} $$
 
-Para calcular se usa en **tanto por uno**: un 5 % anual es `i = 0,05`. Y el tiempo se cuenta en el mismo
-periodo que el tipo (tipo anual, tiempo en años).
+- $i$: el tipo en tanto por uno, el que entra en las fórmulas (5 % anual → 0,05 anual).
+- $p$: el tipo en número, sin el símbolo %.
+
+El periodo viaja con el tipo: un 0,05 anual se combina con años; un 0,05 mensual, con meses.
 
 ## El error típico
 
-Dejar el periodo sin decir. En este curso, toda tasa lo dice siempre: "5 % anual", nunca "el 5 %".
+Comparar dos ofertas con el mismo número sin mirar el periodo, o mezclar un tipo anual con el tiempo en meses (se ve en [[interes-simple]]).
+
+> [!info] Ampliación fuera de los apuntes
+> Un truco de lectura: ante un tipo, pregúntate siempre "¿por cada qué?". Si la respuesta no está escrita, falta un dato.
 
 ## Relacionados
 
 - [[capital]] — el dinero sobre el que se aplica el tipo
-- [[interes-simple]] — cómo se usa el tipo si los intereses no se reinvierten
-- [[interes-compuesto]] — cómo se usa si sí se reinvierten
-- [[capitalizacion]] — cada cuánto se aplica el tipo dentro del año
+- [[interes-simple]] — aplica el tipo sobre el capital inicial
+- [[interes-compuesto]] — aplica el tipo sobre el capital ya crecido
+- [[inflacion]] — otro porcentaje anual que también hay que leer con su periodo
 
 ## Historial
 

@@ -1,12 +1,11 @@
 ---
 tipo: concepto
-bloques: [2.2]
+bloques: [modulo-02]
 visto_en: [02-02-01-ahorro-a-largo-plazo]
 dificultad: 2
-requiere: [tasa-de-ahorro, interes-compuesto]
-alias: [aportaciones periódicas]
+requiere: [tasa-de-ahorro, interes-compuesto, tipo-de-interes, capital]
+alias: []
 tags: [ahorro, interes]
-ejercicio: 02-02-01-empezar-antes-o-aportar-mas
 ---
 # Aportación periódica
 
@@ -14,64 +13,48 @@ ejercicio: 02-02-01-empezar-antes-o-aportar-mas
 
 ## El problema
 
-Casi nadie tiene un montón de dinero para ahorrar de una vez. Lo que sí se puede es apartar una cantidad
-pequeña cada mes. La pregunta es: ¿en qué se convierte eso con los años, si el dinero además gana intereses?
+Tienes una tasa de ahorro ([[tasa-de-ahorro]]), pero para planificar a largo plazo "ahorro el 10 por ciento" no sirve: hace falta una **cifra** y un **ritmo**. Y si cada aportación se deja en una cuenta con interés compuesto, hay que saber cuánto habrás juntado al cabo de unos años.
 
 ## El ejemplo
 
-Apartas 2.400,00 € al final de cada año (los 200,00 € al mes de tu [[tasa-de-ahorro]], juntados) y cada
-euro rinde un 5 % anual compuesto. Durante 3 años:
+**Paso 1: de la tasa a la cifra.** Ingresos de 2.000,00 € al mes y una tasa de ahorro del 10 por ciento:
 
-| Año | Cuenta | Total al acabar el año |
+- Al mes: 2.000,00 € × 0,10 = **200,00 €**.
+- Al año: 200,00 € × 12 = **2.400,00 €**.
+
+**Paso 2: la cifra con tipo de interés.** 2.400,00 € al final de cada año, al 5 % anual compuesto, durante 3 años:
+
+| Año | Cuenta | Capital |
 |---|---|---|
 | 1 | 2.400,00 € | 2.400,00 € |
 | 2 | 2.400,00 € × 1,05 + 2.400,00 € | 4.920,00 € |
-| 3 | 4.920,00 € × 1,05 + 2.400,00 € | 7.566,00 € |
+| 3 | 4.920,00 € × 1,05 + 2.400,00 € | **7.566,00 €** |
 
-Has aportado 3 × 2.400,00 € = 7.200,00 €. Los otros **366,00 €** son intereses: cada aportación genera
-intereses desde que entra, y esos intereses generan a su vez intereses (es el [[interes-compuesto]]).
+Has aportado 3 × 2.400,00 € = 7.200,00 €. Los otros **366,00 €** son intereses: cada aportación genera los suyos desde que entra, y esos intereses generan a su vez más.
 
 ## La fórmula
 
-$$ F = A \cdot \frac{(1+i)^n - 1}{i} $$
+$$ C_{\text{año}} = C_{\text{año anterior}} \cdot (1 + i) + A $$
 
-`A` es la aportación de cada periodo, `i` el tipo por periodo en tanto por uno (un 5 % anual es 0,05) y `n`
-el número de periodos. Aquí las aportaciones entran **al final** de cada periodo, como en el ejemplo. Con
-`A` = 2.400,00 €, `i` = 0,05 y `n` = 3: 2.400,00 € × 3,1525 = 7.566,00 €.
-
-> [!info] Ampliación fuera de los apuntes
-> La clase no da esta fórmula; es la suma de las aportaciones del ejemplo: la primera trabaja 2 años
-> (2.400,00 € × 1,05² = 2.646,00 €), la segunda 1 año (2.520,00 €) y la última ninguno (2.400,00 €):
-> 2.646,00 € + 2.520,00 € + 2.400,00 € = 7.566,00 €.
+- $A$: la aportación de cada año (2.400,00 €).
+- $i$: el tipo de interés anual en tanto por uno (5 % anual = 0,05).
+- Se repite año a año, empezando en 0,00 €. La versión cerrada, para saltar directo al año $n$, está en [[horizonte-temporal]].
 
 ## El error típico
 
-Pensar que todas las aportaciones rinden lo mismo. La primera lleva más tiempo trabajando que la última, y
-por eso pesa más en los intereses. Además, "regular" significa mismo importe **y** mismo periodo:
-2.400,00 € una vez al año y 200,00 € al mes suman lo mismo en euros, pero son dos calendarios distintos y la
-fórmula de arriba solo sirve si `i` y `n` van en el periodo de las aportaciones.
+Que "la aportación" sea lo que sobra a fin de mes. Si no es un importe fijado de antemano y con el mismo periodo, deja de ser periódica: unos meses entra y otros no, y el cálculo de arriba ya no vale.
 
-## Practícalo
-
-→ **[Empezar antes o aportar más](../ejercicios/modulo-02-ahorro-e-interes/2.2-ahorro-a-largo-plazo/02-02-01-empezar-antes-o-aportar-mas.html)**
-
-Mueve la aportación de Luis y su retraso. Lo que debería sorprender: con 10 años de retraso, subir la
-aportación en 1.200,00 € (hasta 3.600,00 € al año) no basta para alcanzar a quien empezó antes con 2.400,00 € al año.
-
-## Visto desde tus ingresos irregulares
-
-Con facturación irregular, una aportación fija es difícil de cumplir cada mes. 
-
-> [!info] Ampliación fuera de los apuntes
-> Una opción es fijar como mínimo lo que aguantas en tus meses flojos y completar en los buenos. Es una idea
-> nuestra, no de la clase, y la clase tampoco cubre cómo afecta a la fórmula una aportación que varía.
+> [!tip] Visto desde tus ingresos irregulares
+> Un importe fijo cada mes es lo más difícil de cumplir con ingresos que varían. Dos ajustes, sin cambiar la idea: fijar el periodo **anual** (2.400,00 € al año, aportados cuando entre el dinero de los meses buenos, en vez de 200,00 € cada mes) o calcular la tasa de ahorro con tu ingreso medio, no con el de un mes suelto, como en [[tasa-de-ahorro]]. Lo que no cambia: lo que aportas tiene que ser un importe que puedas mantener incluso en un mal año, y el [[colchon-financiero]] va antes.
 
 ## Relacionados
 
-- [[tasa-de-ahorro]] — de donde sale la cantidad que se aparta
-- [[interes-compuesto]] — hace que cada aportación genere intereses sobre intereses
-- [[horizonte-temporal]] — cuántos años se mantiene la aportación, lo que más pesa en el resultado
-- [[capital]] — aquí se va formando poco a poco, en vez de partir de una cifra inicial
+- [[tasa-de-ahorro]] — de ahí sale la cifra que se aporta
+- [[interes-compuesto]] — cada aportación crece por su cuenta
+- [[tipo-de-interes]] — el porcentaje, siempre con su periodo
+- [[capital]] — lo acumulado en cada momento
+- [[horizonte-temporal]] — cuántos años dura la aportación, y lo que más pesa
+- [[colchon-financiero]] — conviene tenerlo antes de empezar a aportar
 
 ## Historial
 
