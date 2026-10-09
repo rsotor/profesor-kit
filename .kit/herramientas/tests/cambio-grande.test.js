@@ -11,19 +11,22 @@ const BUENO = '# Prueba real\n\nResultado: 15/15 pasos bien · corrección 6/6 �
 
 test('evaluar: PR que no toca skills/AGENTS.md/plantillas no necesita el resumen', () => {
   const r = evaluar(['.kit/herramientas/comprobar.js', 'docs/arquitectura.md', VERSION]);
-  assert.deepEqual(r, { ok: true, exige: false, tocaComportamiento: false, publica: true, tocaResumen: false, resumenReal: false, completo: false, alDia: true });
+  assert.deepEqual(r, { ok: true, exige: false, tocaComportamiento: false, publica: true, tocaResumen: false, resumenReal: false, completo: false,
+    alDia: true });
 });
 
 // 2026-10-09: los cursos solo reciben releases, así que la prueba entera se pasa una vez, en el PR que publica. Un PR
 // que toca skills sin subir la versión se acumula para la siguiente y no la necesita.
 test('evaluar: toca una skill sin subir la versión y NO trae el resumen → pasa (la prueba real va en la release)', () => {
   const r = evaluar(['.kit/skills/sesion/SKILL.md']);
-  assert.deepEqual(r, { ok: true, exige: false, tocaComportamiento: true, publica: false, tocaResumen: false, resumenReal: false, completo: false, alDia: true });
+  assert.deepEqual(r, { ok: true, exige: false, tocaComportamiento: true, publica: false, tocaResumen: false, resumenReal: false, completo: false,
+    alDia: true });
 });
 
 test('evaluar: publica (sube .kit/VERSION), toca una skill y NO trae el resumen → falla', () => {
   const r = evaluar(['.kit/skills/sesion/SKILL.md', VERSION]);
-  assert.deepEqual(r, { ok: false, exige: true, tocaComportamiento: true, publica: true, tocaResumen: false, resumenReal: false, completo: false, alDia: true });
+  assert.deepEqual(r, { ok: false, exige: true, tocaComportamiento: true, publica: true, tocaResumen: false, resumenReal: false, completo: false,
+    alDia: true });
 });
 
 test('evaluar: publica, toca AGENTS.md y SÍ trae el resumen → pasa', () => {
