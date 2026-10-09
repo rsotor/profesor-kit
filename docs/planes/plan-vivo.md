@@ -30,10 +30,10 @@ Para abrir una sesión:
   - **Cómo sabremos:** lo de la issue (prueba-real en verde con los dos, `.env` denegado en un curso de prueba, un
     fallo forzado abre una issue aquí con la etiqueta de versión y sin rutas, `prueba-actualizar` desde 0.30.0).
 
-- **Prueba real solo en la release** (Roberto, 2026-10-09; misma rama, commit aparte): `cambio-grande.js` exige
+- **Prueba real solo en la release** (Roberto, 2026-10-09; mezclado en `main` en la PR #101): `cambio-grande.js` exige
   `RESUMEN.md` solo en el PR que sube `.kit/VERSION`. Motivo: los cursos solo reciben releases, y exigirla en cada
-  PR tenía en rojo las PR #95 y #98 (tocan `/examen` sin subir versión). Conviene sacarlo a `main` en su propio PR
-  (`ci: …`) antes que la migración, para que esas dos se pongan en verde al repetir su CI.
+  PR tenía en rojo las PR #95 y #98 (tocan `/examen` sin subir versión). Fue a `main` en su propio PR (#101) antes que la
+  migración; la #95 y la #98 quedaron dentro de la #102.
   - **Fuera:** quitar la prueba real de la release; probar por piezas (sigue en "Siguiente: prueba real por piezas").
   - **Cómo sabremos:** `tests/cambio-grande.test.js`: skill sin `VERSION` pasa; skill con `VERSION` sin resumen falla.
 
