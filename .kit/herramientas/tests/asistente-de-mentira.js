@@ -8,7 +8,7 @@
 //
 // Variables de entorno: PROFESOR_KIT_ASISTENTE_DE_MENTIRA_FALLA=1 (revienta), _NO_HACE_NADA=1 (sale con 0 sin
 // hacer nada), _DUERME_MS=<ms> (tarda antes de trabajar), _EDITA=<fichero> (toca una línea que ya existía), _FALTA=<id>
-// (no deja la sesión de esa clase) y _SIN_GUARDAR=1 (escribe, pero revienta antes de guardar: se acabó la cuota).
+// (no deja la sesión de esa clase) y _SANDBOX_SIN_INDICE=1 (escribe todo y acaba con 0 sin guardar) y _SIN_GUARDAR=1 (escribe, pero revienta antes de guardar: se acabó la cuota).
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
@@ -67,6 +67,12 @@ for (const id of ids) {
 if (process.env.PROFESOR_KIT_ASISTENTE_DE_MENTIRA_SIN_GUARDAR === '1') {
   console.error('se acabó la cuota a mitad (simulado)');
   process.exit(1);
+}
+
+// Un asistente con sandbox (Codex): lo escribe todo, intenta guardar, no puede crear el índice del worktree y acaba con 0.
+if (process.env.PROFESOR_KIT_ASISTENTE_DE_MENTIRA_SANDBOX_SIN_INDICE === '1') {
+  console.error("Fallo inesperado en guardar.js: git add falló: fatal: Unable to create '.git/worktrees/x/index.lock': Operation not permitted");
+  process.exit(0);
 }
 
 execFileSync(process.execPath, [path.join(raiz, '.kit', 'herramientas', 'guardar.js'), `sesion(${ids.join(', ')}): clase de mentira`], { cwd: raiz, encoding: 'utf8' });

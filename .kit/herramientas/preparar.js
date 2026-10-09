@@ -330,6 +330,22 @@ function sesionGuardada(dir, id, base) {
   return guardadas.ok && guardadas.salida.split(/\r?\n/).some(rel => path.posix.basename(rel).startsWith(`${id}-`) && rel.endsWith('.md'));
 }
 
+// ¿Está la nota de sesión de esta clase escrita en la copia (guardada o no)?
+function sesionEnDisco(dir, id) {
+  return v.recorrer(path.join(v.baseAlumno(dir), 'sesiones'), n => n.endsWith('.md') && !n.startsWith('_')).some(f => path.basename(f).startsWith(`${id}-`));
+}
+
+// Un asistente con sandbox (Codex: workspace-write) escribe la copia pero no puede crear el índice de git de un
+// `git worktree`, que vive en el .git del curso principal, fuera de su carpeta: acaba bien, con todo escrito y
+// sin guardar. Si terminó con 0 y todas las sesiones están en disco, guarda aquí, que no tiene sandbox; `guardar.js`
+// comprueba igual (con errores no guarda y la preparación sigue fallida). Con otro código de salida (cuota, tiempo)
+// no se toca: eso es trabajo a medias.
+function guardarLoQueElSandboxNoDejo(dir, estado) {
+  const ids = clasesDe(estado).map(c => c.id);
+  if (!ids.every(c => sesionEnDisco(dir, c))) return false;
+  try { return guardar({ raiz: dir, mensaje: mensajeDeJuntar(dir, estado) }).guardado === true; } catch { return false; }
+}
+
 // Nunca deja `estado.json` en "en-curso" para siempre si algo revienta antes de lanzar el asistente:
 // captura sus propios fallos y los deja en el registro, como si el asistente hubiera fallado.
 function trabajar(raiz, id) {
@@ -353,7 +369,8 @@ function trabajar(raiz, id) {
     else if (r.error || r.status !== 0) motivo = 'el asistente terminó con un error';
     else {
       // Cada clase deja su sesión: con varias, una que falte basta para no darla por terminada (#56).
-      const faltan = clasesDe(estado).map(c => c.id).filter(c => !sesionGuardada(dir, c, estado.base));
+      let faltan = clasesDe(estado).map(c => c.id).filter(c => !sesionGuardada(dir, c, estado.base));
+      if (faltan.length && guardarLoQueElSandboxNoDejo(dir, estado)) faltan = faltan.filter(c => !sesionGuardada(dir, c, estado.base));
       if (faltan.length) motivo = `el asistente terminó, pero no ha dejado ${faltan.length > 1 ? 'las sesiones' : 'la sesión'} ${faltan.join(', ')} guardada${faltan.length > 1 ? 's' : ''} en la copia`;
     }
     fs.writeFileSync(registro, `${salida}\n${motivo ? `\n[preparar.js] ${motivo}.\n` : ''}`);

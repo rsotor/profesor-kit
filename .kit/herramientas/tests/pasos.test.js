@@ -143,6 +143,12 @@ test('dudasRespondidas: verde si el marcador pasó a «> [!question]- Duda» con
   const sinRespuesta = dudasRespondidas(destino, tocado, '@@');
   assert.equal(sinRespuesta.ok, false);
   assert.match(sinRespuesta.detalle, /sesiones\/s01-intro\.md: la duda no lleva/);
+  // la marca de origen de AGENTS.md (regla 2) dentro de la etiqueta cuenta como respuesta (Codex, 2026-10-06)
+  const conMarca = '> [!question]- Duda · 2026-10-03\n> ¿por qué?\n>\n> **Respuesta · Ampliación fuera de los apuntes:** un ejemplo nuevo.';
+  escribirNotas(conMarca, conMarca);
+  assert.equal(dudasRespondidas(destino, tocado, '@@').ok, true);
+  escribirNotas(bien, '> [!question]- Duda · 2026-10-03\n> ¿por qué?\n>\n> **Respuesta · Ampliación fuera de los apuntes:**\n');
+  assert.equal(dudasRespondidas(destino, tocado, '@@').ok, false, 'con marca pero sin texto sigue siendo rojo');
   escribirNotas(bien, '@@ ¿por qué?');
   assert.match(dudasRespondidas(destino, tocado, '@@').detalle, /sigue el marcador @@/);
   escribirNotas('Se ha borrado la duda sin más.', bien);
