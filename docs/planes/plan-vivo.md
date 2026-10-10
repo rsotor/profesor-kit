@@ -1024,6 +1024,17 @@ a los demás repos.
 5. **0.29.0:** el revisor independiente (#56, en curso) y, después, plan con calendario (E2 + E9) y examen acumulativo (E7).
    - **Fuera:** TODO: decidir con Roberto al abrir el plan.
    - **Cómo sabremos:** TODO: decidir con Roberto al abrir el plan.
+6. **Aparcado, de mirar typedai.com (2026-10-10; Roberto: ahora no interesa).** Es un SaaS para opositores, no la
+   plataforma de agentes de typedai.dev. Casi todo lo suyo el kit ya lo tiene; sus minijuegos y su biblioteca de leyes
+   no van con el kit. Tres cosas que valdrían, por orden, si algún día se retoma `/examen`:
+   - **Casilla "dudosa" por pregunta:** un acierto marcado dudoso no mueve el concepto a ✅ sino a 🟡 con su cita.
+     Cubre el falso positivo que `AGENTS.md` reconoce en un examen escrito. Toca plantilla, `examen.js --corregir` y
+     la regla de `progreso.md`.
+   - **`fuente:` en cada pregunta de la clave** (fichero del inbox y página o sección): le da al revisor independiente
+     algo verificable. Exige que `leer.js` devuelva posiciones de página.
+   - **Cuadros transversales** (tablas por tipo de dato, cada fila con su origen; `formulario.md` ya lo es para
+     fórmulas). Solo cuando haya un curso real de oposiciones.
+   Su "repaso semanal de fallos" es E2 + E8: confirma el orden del punto 5, no añade nada.
 
 ## Hecho
 
